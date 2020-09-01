@@ -1,0 +1,210 @@
+import moment from 'moment';
+import {
+  dbperprincipal,
+  dbperarea,
+  dbperymtsat,
+} from '../../database/sqliteSetup';
+export var ModuleAccess = {
+  PerTeam: 'NOT ALLOWED',
+  PerSalesman: 'NOT ALLOWED',
+  PerPrincipal: 'NOT ALLOWED',
+  PerArea: 'NOT ALLOWED',
+};
+
+function SQLerror(err) {
+  console.log('SQL Error: ' + err);
+}
+export var APIToken = {
+  access_token: '',
+};
+
+export var CurrentAppVersionUpdate = {
+  CurrentAppVersionUpdateField: 1006,
+};
+
+export var CurrentDashboardScreen = {
+  Screen: '',
+};
+
+export var CurrentAppScreen = {
+  Screen: '',
+};
+export var LocalAppVersionUpdate = {
+  LocalAppVersionUpdateField: 0,
+};
+
+export var DashboardMonths = [];
+export var DashboardYears = [];
+export var DashboardTeams = [];
+
+export var FilterList = {
+  DashboardFilterMonth: moment().utcOffset('+08:00').format('MMMM'),
+  DashboardFilterYear: moment().utcOffset('+08:00').format('YYYY'),
+  DashboardFilterTeam: '',
+  DashboardFilterYearNMonthTeam:
+    moment().utcOffset('+08:00').format('YYYY') +
+    moment().utcOffset('+08:00').format('MMMM') +
+    '',
+};
+
+export var FilterListMirror = {
+  DashboardFilterMonth: '',
+  DashboardFilterYear: '',
+  DashboardFilterTeam: '',
+};
+
+export var DashboardModalVisible = {
+  isVisibleModal: false,
+};
+
+export var APIUpdateVersion = {
+  APIUpdateVersionField: 0,
+  APIUpdateVersionDateTimeRelease: '',
+  APIUpdateVersionStatus: '',
+  APIUpdateVersionNotice: '',
+};
+
+export const ResetModuleAccess = () => {
+  return (
+    (ModuleAccess.PerTeam = 'NOT ALLOWED'),
+    (ModuleAccess.PerSalesman = 'NOT ALLOWED'),
+    (ModuleAccess.PerPrincipal = 'NOT ALLOWED'),
+    (ModuleAccess.PerArea = 'NOT ALLOWED')
+  );
+};
+
+// List of global variables
+export const ClearTeamAccess = () => {
+  return (global.TeamAccessList = ''), (global.TeamAccessListForAPI = '');
+};
+
+export function ClearDefaults() {
+  global.name = '';
+  global.account_type = '';
+  DeletePerAreaAPIData();
+  DeletePerymtsatAPIData();
+  DeletePerPrincipalAPIData();
+}
+
+function DeletePerAreaAPIData() {
+  dbperarea.transaction(function (tx) {
+    tx.executeSql(
+      'Delete from perareapermonth_tbl ',
+      [],
+      (tx, results) => {},
+      SQLerror,
+    );
+  });
+}
+
+function DeletePerymtsatAPIData() {
+  dbperymtsat.transaction(function (tx) {
+    tx.executeSql(
+      'Delete from perymtsat_tbl ',
+      [],
+      (tx, results) => {},
+      SQLerror,
+    );
+  });
+}
+
+function DeletePerPrincipalAPIData() {
+  dbperprincipal.transaction(function (tx) {
+    tx.executeSql(
+      'Delete from perprincipalpermonth_tbl ',
+      [],
+      (tx, results) => {},
+      SQLerror,
+    );
+  });
+}
+
+export function UpdateYearMonthsFilter() {
+  GetTeamsforFilter();
+  GetYearforFilter();
+  GetMonthsforFilter();
+  // console.log('GLOBAL YEARS MONTHS TEAM  LOADED');
+}
+
+function GetTeamsforFilter() {
+  DashboardTeams.length = 0;
+  dbperymtsat.transaction((tx) => {
+    tx.executeSql(
+      'SELECT Distinct team as label, team as value FROM perymtsat_tbl ' +
+        ' where  business_year = 2020 ' +
+        ' and team in ' +
+        global.TeamAccessList +
+        ' order  by team  ',
+      [],
+      (tx, results) => {
+        var len = results.rows.length;
+
+        if (len > 1) {
+          DashboardTeams.push({
+            label: 'ALL',
+            value: 'ALL',
+          });
+        }
+
+        if (len > 0) {
+          for (let i = 0; i < results.rows.length; ++i) {
+            DashboardTeams.push({
+              label: results.rows.item(i).label,
+              value: results.rows.item(i).value,
+            });
+          }
+        }
+      },
+    );
+  });
+}
+
+function GetMonthsforFilter() {
+  DashboardMonths.length = 0;
+
+  // console.log('months adding  from START..');
+  dbperymtsat.transaction((tx) => {
+    tx.executeSql(
+      'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
+        ' where  business_year = 2020 ' +
+        'order  by invoice_date desc ',
+      [],
+      (tx, results) => {
+        var len = results.rows.length;
+        if (len > 0) {
+          for (let i = 0; i < results.rows.length; ++i) {
+            DashboardMonths.push({
+              label: results.rows.item(i).label,
+              value: results.rows.item(i).value,
+            });
+          }
+        }
+      },
+    );
+  });
+}
+
+function GetYearforFilter() {
+  DashboardYears.length = 0;
+
+  // console.log('years adding from START..');
+  dbperymtsat.transaction((tx) => {
+    tx.executeSql(
+      'SELECT Distinct business_year as label, business_year as value FROM perymtsat_tbl ' +
+        'order  by invoice_date desc ',
+      [],
+      (tx, results) => {
+        var len = results.rows.length;
+        if (len > 0) {
+          for (let i = 0; i < results.rows.length; ++i) {
+            DashboardYears.push({
+              label: results.rows.item(i).label,
+              value: results.rows.item(i).value,
+            });
+          }
+          console.log('YEARS LOADED');
+        }
+      },
+    );
+  });
+}

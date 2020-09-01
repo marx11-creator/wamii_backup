@@ -1,0 +1,518 @@
+/* eslint-disable no-lone-blocks */
+
+import React from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {Alert, BackHandler} from 'react-native';
+
+import {useEffect} from 'react';
+import {openDatabase} from 'react-native-sqlite-storage';
+import {LocalAppVersionUpdate} from '../sharedComponents/globalCommands/globalCommands';
+import moment from 'moment';
+
+export var dbUpdateDbVersion = openDatabase({name: 'updateversion_tbl.db'});
+export var dbAppToken = openDatabase({name: 'AppToken_tbl.db'});
+export var dbsystem_users = openDatabase({name: 'system_users_tbl.db'});
+export var dbperymtsat = openDatabase({name: 'perymtsat_tbl.db'});
+export var dbperarea = openDatabase({name: 'perareapermonth_tbl.db'});
+export var dbperprincipal = openDatabase({name: 'perprincipalpermonth_tbl.db'});
+export var dbpromoitems = openDatabase({name: 'promo_items_tbl.db'});
+//SETUP DATABASE
+export default function CreateDatabase() {
+  dbUpdateDbVersion.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='updateversion_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length == 0) {
+          txn.executeSql('DROP TABLE IF EXISTS updatedbversion_tbl', []);
+          txn.executeSql(
+            'CREATE TABLE IF NOT EXISTS updateversion_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, updateversion VARCHAR(255), dateTimeUpdated VARCHAR(255))',
+            [],
+          );
+        }
+      },
+    );
+  });
+
+  dbAppToken.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='AppToken_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length == 0) {
+          txn.executeSql('DROP TABLE IF EXISTS AppToken_tbl', []);
+          txn.executeSql(
+            // 'CREATE TABLE IF NOT EXISTS perymia_tbl_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, principal_name VARCHAR(255), product_id VARCHAR(255),product_variant VARCHAR(255), product_name VARCHAR(255), inventory VARCHAR(255), img_url VARCHAR(255), DateandTimeUpdated VARCHAR(255))',
+            'CREATE TABLE IF NOT EXISTS AppToken_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, access_token VARCHAR(255), dateTimeObtained VARCHAR(255))',
+            [],
+          );
+        }
+      },
+    );
+  });
+
+  dbsystem_users.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='system_users_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length == 0) {
+          txn.executeSql('DROP TABLE IF EXISTS system_users_tbl', []);
+          txn.executeSql(
+            // 'CREATE TABLE IF NOT EXISTS perymia_tbl_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, principal_name VARCHAR(255), product_id VARCHAR(255),product_variant VARCHAR(255), product_name VARCHAR(255), inventory VARCHAR(255), img_url VARCHAR(255), DateandTimeUpdated VARCHAR(255))',
+            'CREATE TABLE IF NOT EXISTS system_users_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, user_name VARCHAR(255), name VARCHAR(255), last_name VARCHAR(255),  password VARCHAR(255), account_type VARCHAR(255),  constant_type VARCHAR(255), constant_value VARCHAR(255), dateTimeLogin VARCHAR(255), activeStatus VARCHAR(255))',
+            [],
+          );
+        }
+      },
+    );
+  });
+
+  dbperarea.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='perareapermonth_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length == 0) {
+          txn.executeSql('DROP TABLE IF EXISTS perareapermonth_tbl', []);
+          txn.executeSql(
+            'CREATE TABLE IF NOT EXISTS perareapermonth_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255),invoice_date VARCHAR(255), province VARCHAR(255), sales VARCHAR(255), uba VARCHAR(255), dateTimeUpdated VARCHAR(255))',
+            [],
+          );
+        }
+      },
+    );
+  });
+
+  dbperprincipal.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='perprincipalpermonth_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length == 0) {
+          txn.executeSql('DROP TABLE IF EXISTS perprincipalpermonth_tbl', []);
+          txn.executeSql(
+            // 'CREATE TABLE IF NOT EXISTS perymia_tbl_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, principal_name VARCHAR(255), product_id VARCHAR(255),product_variant VARCHAR(255), product_name VARCHAR(255), inventory VARCHAR(255), img_url VARCHAR(255), DateandTimeUpdated VARCHAR(255))',
+            'CREATE TABLE IF NOT EXISTS perprincipalpermonth_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255),invoice_date VARCHAR(255), principal_name VARCHAR(255),principal_acronym VARCHAR(255), sales VARCHAR(255), target VARCHAR(255), dateTimeUpdated VARCHAR(255))',
+            [],
+            // 'CREATE TABLE IF NOT EXISTS table_user(user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_name VARCHAR(20), user_contact INT(10), user_address VARCHAR(255))',[],
+          );
+        }
+      },
+    );
+  });
+
+  dbperymtsat.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='perymtsat_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length == 0) {
+          txn.executeSql('DROP TABLE IF EXISTS perymtsat_tbl', []);
+          txn.executeSql(
+            // 'CREATE TABLE IF NOT EXISTS perymia_tbl_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, principal_name VARCHAR(255), product_id VARCHAR(255),product_variant VARCHAR(255), product_name VARCHAR(255), inventory VARCHAR(255), img_url VARCHAR(255), DateandTimeUpdated VARCHAR(255))',
+            'CREATE TABLE IF NOT EXISTS perymtsat_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255),invoice_date VARCHAR(255), team VARCHAR(255), salesman_name VARCHAR(255), position_name VARCHAR(255), amount VARCHAR(255), target VARCHAR(255), dateTimeUpdated VARCHAR(255))',
+            [],
+            // 'CREATE TABLE IF NOT EXISTS table_user(user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_name VARCHAR(20), user_contact INT(10), user_address VARCHAR(255))',[],
+          );
+        }
+      },
+    );
+  });
+
+  // // console.log('SQLite database initialize');
+  dbpromoitems.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='promo_items_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length == 0) {
+          txn.executeSql('DROP TABLE IF EXISTS promo_items_tbl', []);
+          txn.executeSql(
+            'CREATE TABLE IF NOT EXISTS promo_items_tbl (ref_id INTEGER PRIMARY KEY AUTOINCREMENT, principal_name VARCHAR(255), product_id VARCHAR(255),product_variant VARCHAR(255), product_name VARCHAR(255), inventory VARCHAR(255), img_url VARCHAR(255), DateandTimeUpdated VARCHAR(255))',
+            [],
+            // 'CREATE TABLE IF NOT EXISTS table_user(user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_name VARCHAR(20), user_contact INT(10), user_address VARCHAR(255))',[],
+          );
+        }
+      },
+    );
+  });
+}
+
+function SQLerror(err) {
+  console.log('SQL Error: ' + err);
+}
+
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>.UPDATE DATABASE TBL FOR ADDITIONAL TBL
+export function Update1001() {
+  dbperprincipal.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='perprincipalpermonth_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length === 1) {
+          //if tbl exists
+          console.log('main tbl exist1');
+          txn.executeSql(
+            'SELECT uba FROM perprincipalpermonth_tbl  LIMIT 1',
+            [],
+            function (tx2, res2) {
+              //if column exists
+              console.log('1001 update already found nothing to do');
+              LocalAppVersionUpdate.LocalAppVersionUpdateField =
+                Number(LocalAppVersionUpdate.LocalAppVersionUpdateField) +
+                Number(1);
+              Add1001UpdatetoLocal();
+            },
+            //if not function below is a error part where it run a fucntion
+            Alter_perprincipalpermonth_tbl_uba,
+          );
+        }
+      },
+    );
+  });
+}
+
+function Alter_perprincipalpermonth_tbl_uba() {
+  console.log(
+    '1001 query error finding new field, it means field is missing. run alter or udpdate now',
+  );
+  dbperprincipal.transaction(function (txn) {
+    txn.executeSql(
+      'ALTER TABLE perprincipalpermonth_tbl ADD COLUMN uba VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1001 new field added');
+        LocalAppVersionUpdate.LocalAppVersionUpdateField =
+          Number(LocalAppVersionUpdate.LocalAppVersionUpdateField) + Number(1);
+        CheckUpdate1001();
+      },
+      SQLerror,
+    );
+  });
+}
+
+function CheckUpdate1001() {
+  if (LocalAppVersionUpdate.LocalAppVersionUpdateField === 1001) {
+    Add1001UpdatetoLocal();
+    console.log('1001 updated has been processed');
+  } else {
+    console.log('1001 updated NOT processed');
+  }
+}
+
+function Add1001UpdatetoLocal() {
+  {
+    dbUpdateDbVersion.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  updateversion_tbl (updateversion, dateTimeUpdated) VALUES (?,?)',
+        [1001, moment().utcOffset('+08:00').format('YYYY-MM-DD hh:mm:ss a')],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('1001 updated added to local');
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+}
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1002
+
+export function Update1002() {
+  dbperprincipal.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='perprincipalpermonth_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length === 1) {
+          //if tbl exists
+          console.log('main tbl exist2');
+          txn.executeSql(
+            'SELECT OutofStock FROM perprincipalpermonth_tbl  LIMIT 1',
+            [],
+            function (tx2, res2) {
+              //if column exists
+              console.log('1002 update already found nothing to do');
+              LocalAppVersionUpdate.LocalAppVersionUpdateField =
+                Number(LocalAppVersionUpdate.LocalAppVersionUpdateField) +
+                Number(1);
+              Add1002UpdatetoLocal();
+            },
+            //if not function below is a error part where it run a fucntion
+            Alter_perprincipalpermonth_tbl_OutofStock,
+          );
+        }
+      },
+    );
+  });
+}
+
+function Alter_perprincipalpermonth_tbl_OutofStock() {
+  console.log(
+    '1002 query error finding new field, it means field is missing. run alter or udpdate now',
+  );
+  dbperprincipal.transaction(function (txn) {
+    txn.executeSql(
+      'ALTER TABLE perprincipalpermonth_tbl ADD COLUMN OutofStock VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1002 new field added');
+        LocalAppVersionUpdate.LocalAppVersionUpdateField =
+          Number(LocalAppVersionUpdate.LocalAppVersionUpdateField) + Number(1);
+        CheckUpdate1002();
+      },
+      SQLerror,
+    );
+  });
+}
+
+function CheckUpdate1002() {
+  if (LocalAppVersionUpdate.LocalAppVersionUpdateField === 1002) {
+    Add1002UpdatetoLocal();
+    console.log('1002 updated has been processed');
+  } else {
+    console.log('1002 updated NOT processed');
+  }
+}
+
+function Add1002UpdatetoLocal() {
+  {
+    dbUpdateDbVersion.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  updateversion_tbl (updateversion, dateTimeUpdated) VALUES (?,?)',
+        [1002, moment().utcOffset('+08:00').format('YYYY-MM-DD hh:mm:ss a')],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('1002 updated added to local test');
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+}
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1003
+
+export function Update1003() {
+  dbperprincipal.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='perprincipalpermonth_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length === 1) {
+          //if tbl exists
+          console.log('main tbl exist3');
+          txn.executeSql(
+            'SELECT NOTBUYINHCUSTOMER FROM perprincipalpermonth_tbl  LIMIT 1',
+            [],
+            function (tx2, res2) {
+              //if column exists
+              console.log('1003 update already found nothing to do');
+              LocalAppVersionUpdate.LocalAppVersionUpdateField =
+                Number(LocalAppVersionUpdate.LocalAppVersionUpdateField) +
+                Number(1);
+              Add1003UpdatetoLocal();
+            },
+            //if not function below is a error part where it run a fucntion
+            Alter_perprincipalpermonth_tbl_NOTBUYINHCUSTOMER,
+          );
+        }
+      },
+    );
+  });
+}
+
+function Alter_perprincipalpermonth_tbl_NOTBUYINHCUSTOMER() {
+  console.log(
+    '1003 query error finding new field, it means field is missing. run alter or udpdate now',
+  );
+  dbperprincipal.transaction(function (txn) {
+    txn.executeSql(
+      'ALTER TABLE perprincipalpermonth_tbl ADD COLUMN NOTBUYINHCUSTOMER VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1003 new field added');
+        LocalAppVersionUpdate.LocalAppVersionUpdateField =
+          Number(LocalAppVersionUpdate.LocalAppVersionUpdateField) + Number(1);
+        CheckUpdate1003();
+      },
+      SQLerror,
+    );
+  });
+}
+
+function CheckUpdate1003() {
+  if (LocalAppVersionUpdate.LocalAppVersionUpdateField === 1003) {
+    Add1003UpdatetoLocal();
+    console.log('1003 updated has been processed');
+  } else {
+    console.log('1003 updated NOT processed');
+  }
+}
+
+function Add1003UpdatetoLocal() {
+  {
+    dbUpdateDbVersion.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  updateversion_tbl (updateversion, dateTimeUpdated) VALUES (?,?)',
+        [1003, moment().utcOffset('+08:00').format('YYYY-MM-DD hh:mm:ss a')],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('1003 updated added to local test');
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+}
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1004
+
+export function Update1004() {
+  {
+    dbUpdateDbVersion.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  updateversion_tbl (updateversion, dateTimeUpdated) VALUES (?,?)',
+        [1004, moment().utcOffset('+08:00').format('YYYY-MM-DD hh:mm:ss a')],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('1004 updated added to local test');
+
+            Alert.alert(
+              'System Message',
+              'System updated Automatically, Please restart application.',
+              [
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    BackHandler.exitApp();
+                  },
+                },
+              ],
+              {cancelable: true},
+            );
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+}
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1005
+
+export function Update1005() {
+
+  dbpromoitems.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name ='promo_items_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length === 1) {
+          //if tbl exists
+          console.log('main tbl exist5');
+          txn.executeSql(
+            'SELECT promo_product FROM promo_items_tbl  LIMIT 1',
+            [],
+            function (tx2, res2) {
+              //if column exists
+              console.log('1005 update already found nothing to do');
+              LocalAppVersionUpdate.LocalAppVersionUpdateField =
+                Number(LocalAppVersionUpdate.LocalAppVersionUpdateField) +
+                Number(1);
+              Add1005UpdatetoLocal();
+            },
+            //if not function below is a error part where it run a fucntion
+            Alter_promoitems_promo_product,
+          );
+        }  
+      },
+    );
+  });
+}
+
+function Alter_promoitems_promo_product() {
+  console.log(
+    '1005 query error finding new field, it means field is missing. run alter or udpdate now',
+  );
+  dbpromoitems.transaction(function (txn) {
+    txn.executeSql(
+      'ALTER TABLE promo_items_tbl ADD COLUMN promo_product VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1005 new field added');
+        LocalAppVersionUpdate.LocalAppVersionUpdateField =
+          Number(LocalAppVersionUpdate.LocalAppVersionUpdateField) + Number(1);
+        CheckUpdate1005();
+      },
+      SQLerror,
+    );
+  });
+}
+
+function CheckUpdate1005() {
+  if (LocalAppVersionUpdate.LocalAppVersionUpdateField === 1005) {
+    Add1005UpdatetoLocal();
+    console.log('1005 updated has been processed');
+  } else {
+    console.log('1005 updated NOT processed');
+  }
+}
+
+function Add1005UpdatetoLocal() {
+  {
+    dbUpdateDbVersion.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  updateversion_tbl (updateversion, dateTimeUpdated) VALUES (?,?)',
+        [1005, moment().utcOffset('+08:00').format('YYYY-MM-DD hh:mm:ss a')],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('1005 updated added to local test');
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+}
+
+
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1006
+
+export function Update1006() {
+  {
+    dbUpdateDbVersion.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  updateversion_tbl (updateversion, dateTimeUpdated) VALUES (?,?)',
+        [1006, moment().utcOffset('+08:00').format('YYYY-MM-DD hh:mm:ss a')],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('1006 updated added to local test');
+
+            Alert.alert(
+              'System Message',
+              'System updated Automatically, Please restart application.',
+              [
+                {
+                  text: 'OK',
+                  onPress: () => {
+                    BackHandler.exitApp();
+                  },
+                },
+              ],
+              {cancelable: true},
+            );
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+}
