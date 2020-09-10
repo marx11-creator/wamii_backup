@@ -1,7 +1,15 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Button, Image, BackHandler} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Button,
+  Image,
+  BackHandler,
+  Alert,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import {
   Avatar,
@@ -29,6 +37,7 @@ import {
   ClearTeamAccess,
   ClearDefaults,
   CurrentAppScreen,
+  CurrentAppVersionUpdate,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users} from '../../database/sqliteSetup';
 
@@ -166,7 +175,7 @@ export function DrawerContent(props) {
                 props.navigation.navigate('Home');
               }}
             />
-            <DrawerItem
+            {/* <DrawerItem
               icon={({color, size}) => (
                 <Icon name="clock" color={color} size={size} />
               )}
@@ -181,9 +190,9 @@ export function DrawerContent(props) {
               onPress={() => {
                 props.navigation.navigate('Customer');
               }}
-            />
+            /> */}
           </Drawer.Section>
- 
+
           <Drawer.Section title="Update App Data">
             <TouchableRipple
               onPress={() => {
@@ -241,6 +250,45 @@ export function DrawerContent(props) {
               }}
             />
           </Drawer.Section>
+
+          <Drawer.Section style={styles.bottomDrawerSection}>
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="cellphone-information" color={color} size={size} />
+              )}
+              label="About"
+              onPress={() => {
+                Alert.alert(
+                  'About Application',
+                  '\nWAMii App \n' +
+                    'Version : ' +
+                    CurrentAppVersionUpdate.CurrentAppVersionUpdateField +
+                    ' \n \nRelease Date : ' +
+                    CurrentAppVersionUpdate.CurrentAppVersionUpdateFieldDateRelease +
+                    "  utcOffset('+08:00')",
+                  [
+                    {
+                      text: 'OK',
+                    },
+                  ],
+                  {cancelable: true},
+                );
+              }}
+            />
+          </Drawer.Section>
+
+          <Drawer.Section style={styles.bottomDrawerSection}>
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="home-outline" color={color} size={size} />
+              )}
+              label="Home"
+              onPress={() => {
+                props.navigation.navigate('Home');
+              }}
+            />
+          </Drawer.Section>
+
           <Drawer.Section style={styles.bottomDrawerSection}>
             <DrawerItem
               icon={({color, size}) => (

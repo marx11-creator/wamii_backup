@@ -328,9 +328,8 @@ export default function UpdateModal(props) {
       });
 
       if (currIndex === lineChartLocalData.length) {
-        console.log(currIndex);
-        console.log(lineChartLocalData.length);
-
+        console.log(perymtsatString);
+   
         console.log('SavePerymtsatAPIData done concatenating, saving...');
         updateProgress = Number(updateProgress) + Number(10);
 

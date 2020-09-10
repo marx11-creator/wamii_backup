@@ -13,6 +13,7 @@ export default function FlatButton({text, onPress, gradientFrom, gradientTo}) {
           {
             width: scale(160),
             borderRadius: 10,
+            borderWidth: 0.3,
             height: moderateScale(40, 0.3),
             justifyContent: 'center',
             textAlign: 'center',

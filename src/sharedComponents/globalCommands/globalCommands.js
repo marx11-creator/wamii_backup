@@ -18,8 +18,15 @@ export var APIToken = {
   access_token: '',
 };
 
+export var server = {
+  //http://172.16.0.150:3003
+  //https://boiling-atoll-20376.herokuapp.com
+  server_address: 'https://boiling-atoll-20376.herokuapp.com',
+};
+
 export var CurrentAppVersionUpdate = {
   CurrentAppVersionUpdateField: 1006,
+  CurrentAppVersionUpdateFieldDateRelease: 'September 10, 2020',
 };
 
 export var CurrentDashboardScreen = {
@@ -51,6 +58,12 @@ export var FilterListMirror = {
   DashboardFilterMonth: '',
   DashboardFilterYear: '',
   DashboardFilterTeam: '',
+};
+
+export var WorkingDays = {
+  TotalDays: '0',
+  RemainingDays: '0',
+  DaysGone: '0',
 };
 
 export var DashboardModalVisible = {
@@ -202,7 +215,7 @@ function GetYearforFilter() {
               value: results.rows.item(i).value,
             });
           }
-          console.log('YEARS LOADED');
+          // console.log('YEARS LOADED');
         }
       },
     );

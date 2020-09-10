@@ -16,8 +16,28 @@ export var dbperymtsat = openDatabase({name: 'perymtsat_tbl.db'});
 export var dbperarea = openDatabase({name: 'perareapermonth_tbl.db'});
 export var dbperprincipal = openDatabase({name: 'perprincipalpermonth_tbl.db'});
 export var dbpromoitems = openDatabase({name: 'promo_items_tbl.db'});
+export var dbBusinessCalendar = openDatabase({
+  name: 'business_calendar_tbl.db',
+});
+
 //SETUP DATABASE
 export default function CreateDatabase() {
+  dbBusinessCalendar.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='business_calendar_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length === 0) {
+          txn.executeSql('DROP TABLE IF EXISTS business_calendar_tbl', []);
+          txn.executeSql(
+            'CREATE TABLE IF NOT EXISTS business_calendar_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, date VARCHAR(255), year VARCHAR(255), month VARCHAR(255), day VARCHAR(255), constant_type VARCHAR(255), constant_value VARCHAR(255), update_version VARCHAR(255))',
+            [],
+          );
+        }
+      },
+    );
+  });
+
   dbUpdateDbVersion.transaction(function (txn) {
     txn.executeSql(
       "SELECT name FROM sqlite_master WHERE type='table' AND name='updateversion_tbl'",
