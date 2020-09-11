@@ -211,7 +211,7 @@ export default function UpdateModal(props) {
     //  console.log(tempstr1);
     Promise.race([
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/persalesmansalestarget/' +
+        'https://boiling-atoll-20376.herokuapp.com/coslor/persalesmansalestarget/' +
           tempstr1,
         {
           method: 'GET',
@@ -356,7 +356,7 @@ export default function UpdateModal(props) {
     var tempstr3 = teams + '&' + sales_position_name;
     Promise.race([
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/perprincipalsalestargetuba/' +
+        'https://boiling-atoll-20376.herokuapp.com/coslor/perprincipalsalestargetuba/' +
           tempstr3,
         {
           method: 'GET',
@@ -492,7 +492,7 @@ export default function UpdateModal(props) {
     var tempstr2 = teams + '&' + sales_position_name;
     Promise.race([
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/perareasalesuba/' + tempstr2,
+        'https://boiling-atoll-20376.herokuapp.com/coslor/perareasalesuba/' + tempstr2,
         {
           method: 'GET',
           headers: {
@@ -617,7 +617,7 @@ export default function UpdateModal(props) {
 
   const APISaveUpdate = () => {
     Promise.race([
-      fetch('https://boiling-atoll-20376.herokuapp.com/UserUpdateLog', {
+      fetch('https://boiling-atoll-20376.herokuapp.com/coslor/UserUpdateLog', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -674,7 +674,7 @@ export default function UpdateModal(props) {
     Promise.race([
       //---------------------------------------------------------------first command
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/updateversion2/' +
+        'https://boiling-atoll-20376.herokuapp.com/coslor/updateversion2/' +
           user_name +
           '&' +
           dateTimeUpdated,

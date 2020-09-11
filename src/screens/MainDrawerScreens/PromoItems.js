@@ -372,7 +372,7 @@ export default function PromoItems() {
 
   const DownloadPromoItems = () => {
     Promise.race([
-      fetch('https://boiling-atoll-20376.herokuapp.com/promo_item', {
+      fetch('https://boiling-atoll-20376.herokuapp.com/coslor/promo_item', {
         method: 'GET',
         headers: {
           Accept: 'application/json',

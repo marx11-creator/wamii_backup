@@ -160,7 +160,7 @@ const SignScreen = (props) => {
     const unpw = data.user_name + '&' + data.password;
     // console.log(unpw);
     Promise.race([
-      fetch('https://boiling-atoll-20376.herokuapp.com/users/search/' + unpw, {
+      fetch('https://boiling-atoll-20376.herokuapp.com/coslor/users/search/' + unpw, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -274,7 +274,7 @@ const SignScreen = (props) => {
     // console.log(unpw);
     Promise.race([
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/users/getuseraccess/' + unpw,
+        'https://boiling-atoll-20376.herokuapp.com/coslor/users/getuseraccess/' + unpw,
         {
           method: 'GET',
           headers: {
