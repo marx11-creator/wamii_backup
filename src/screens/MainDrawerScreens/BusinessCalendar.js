@@ -226,7 +226,9 @@ export default function BusinessCalendar(props) {
       Promise.race([
         fetch(
           server.server_address +
-            '/business_calendar/update/' +
+            '/' +
+            global.company +
+            'business_calendar/update/' +
             YearToSearch +
             '&' +
             MonthToSearch,
@@ -301,16 +303,29 @@ export default function BusinessCalendar(props) {
       '&' +
       BusinessCalendarField.update_version;
 
-    console.log(server.server_address + '/business_calendar/edit/' + YMU);
+    console.log(
+      server.server_address +
+        '/' +
+        global.company +
+        'business_calendar/edit/' +
+        YMU,
+    );
     Promise.race([
-      fetch(server.server_address + '/business_calendar/edit/' + YMU, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + APIToken.access_token,
+      fetch(
+        server.server_address +
+          '/' +
+          global.company +
+          'business_calendar/edit/' +
+          YMU,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + APIToken.access_token,
+          },
         },
-      }),
+      ),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
@@ -342,14 +357,17 @@ export default function BusinessCalendar(props) {
     var CurrIndex = 0;
 
     Promise.race([
-      fetch(server.server_address + '/business_calendar/get/', {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + APIToken.access_token,
+      fetch(
+        server.server_address + '/' + global.company + 'business_calendar/get/',
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + APIToken.access_token,
+          },
         },
-      }),
+      ),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
@@ -562,10 +580,7 @@ export default function BusinessCalendar(props) {
               },
             ]);
 
-
-            settotalDays(moment(dateString.dateString).format('YYYY-MM'))
-
-
+            settotalDays(moment(dateString.dateString).format('YYYY-MM'));
           }}
           // Hide month navigation arrows. Default = false
           hideArrows={false}
@@ -807,10 +822,10 @@ export default function BusinessCalendar(props) {
               fontSize: moderateScale(20, 0.5),
               fontWeight: 'bold',
             }}>
-            Working Day(s)  :  {selectedDays.length}
+            Working Day(s) : {selectedDays.length}
             {'\n'}
             {'\n'}
-            Total Days  :  {moment(totalDays, 'YYYY-MM').daysInMonth()}
+            Total Days : {moment(totalDays, 'YYYY-MM').daysInMonth()}
           </Text>
         </View>
       </View>

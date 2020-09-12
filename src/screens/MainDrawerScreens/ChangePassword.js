@@ -89,7 +89,7 @@ const SignScreen = (props) => {
   };
 
   const UpdateAccount = () => {
-    fetch('https://boiling-atoll-20376.herokuapp.com/UpdateAccount', {
+    fetch('https://boiling-atoll-20376.herokuapp.com/coslor/UpdateAccount', {
       method: 'PUT',
       headers: {
         Accept: 'application/json',

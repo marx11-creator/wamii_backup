@@ -753,7 +753,7 @@ export default function PerPrincipalDashboard(props) {
                 </Text>
                 <PieChart
                   style={{height: scale(470), opacity: 0.9}}
-                  outerRadius={'100%'}
+                  outerRadius={'80%'}
                   innerRadius={'30%'}
                   data={data}>
                   <Labels />
