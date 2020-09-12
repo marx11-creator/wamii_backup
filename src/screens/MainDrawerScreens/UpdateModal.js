@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import FlatButton from '../../sharedComponents/custombutton';
 import {dbperymtsat} from '../../database/sqliteSetup';
-import {dbperprincipal, dbperarea} from '../../database/sqliteSetup';
+import {dbperprincipal, dbperarea, dbBusinessCalendar} from '../../database/sqliteSetup';
 import {
   scale,
   moderateScale,
@@ -26,6 +26,7 @@ import {
   APIToken,
   UpdateYearMonthsFilter,
   CurrentAppScreen,
+  server,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
 
@@ -197,6 +198,7 @@ export default function UpdateModal(props) {
     setq4Area(false); //update status of function to false
     setq3UserUpdateLog(false); //update status of function to false
 
+    BusinessCalendarDownload();
     GetPerymtsatAPIData(); //GET API DATA
     GetPerPrincipalAPIData(); //GET API DATA
     GetPerAreaAPIData(); //GET API DATA
@@ -328,7 +330,7 @@ export default function UpdateModal(props) {
       });
 
       if (currIndex === lineChartLocalData.length) {
-        console.log(perymtsatString);
+        ///console.log(perymtsatString);
    
         console.log('SavePerymtsatAPIData done concatenating, saving...');
         updateProgress = Number(updateProgress) + Number(10);
@@ -376,7 +378,7 @@ export default function UpdateModal(props) {
       })
       .then((jsonData) => {
         if (jsonData.length > 0) {
-          console.log(jsonData.length);
+        ///  console.log(jsonData.length);
           PerPrincipalAPIdatalength = jsonData.length;
           setPerPrincipalLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(3);
@@ -729,6 +731,100 @@ export default function UpdateModal(props) {
       })
       .done();
   };
+
+
+  const BusinessCalendarDownload = () => {
+    var BusinessCalendarString = '';
+    var CurrIndex = 0;
+
+    Promise.race([
+      fetch(server.server_address + '/business_calendar/get/', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + APIToken.access_token,
+        },
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), 40000),
+      ),
+    ])
+      .then((responseData) => {
+        return responseData.json();
+      })
+      .then((jsonData) => {
+        if (jsonData.length > 0) {
+          jsonData.map((item, index) => {
+            // if (index < 1) {
+            //   BusinessCalendarField.update_version = item.update_version;
+            // }
+            CurrIndex = CurrIndex + 1;
+            BusinessCalendarString =
+              BusinessCalendarString +
+              "('" +
+              item.date +
+              "'" +
+              ',' +
+              "'" +
+              item.year +
+              "'" +
+              ',' +
+              "'" +
+              item.month +
+              "'" +
+              ',' +
+              "'" +
+              item.day +
+              "'" +
+              ',' +
+              "'" +
+              item.update_version +
+              "'),";
+          });
+
+          if (CurrIndex === jsonData.length) {
+            
+            dbBusinessCalendar.transaction(function (tx) {
+              tx.executeSql(
+                'Delete from business_calendar_tbl   ',
+                [],
+                (tx, results) => {
+                  // if (results.rowsAffected > 0) {}
+                  console.log('deleted local business_calendar_tbl');
+                  dbBusinessCalendar.transaction(function (tx) {
+                    tx.executeSql(
+                      'INSERT INTO business_calendar_tbl (date, year, month, day, update_version) VALUES ' +
+                        BusinessCalendarString.slice(0, -1),
+                      [],
+                      (tx, results) => {
+                        // Alert.alert('Sucess', 'Calendar Updated', [{text: 'OK'}], {
+                        //   cancelable: false,
+                        // });
+
+                        // setisVisibleCaldendarModal(false);
+                        // setisEditing(true);
+                        // GetSelectedDays();
+                      },
+                      SQLerror,
+                    );
+                  });
+                },
+                SQLerror,
+              );
+            });
+          }
+        }
+      })
+      .catch(function (error) {
+        console.log('error in BusinessCalendarDownload :' + error);
+      })
+      .done();
+  };
+
+
+
+
 
   return (
     <View style={{flex: 1}}>
