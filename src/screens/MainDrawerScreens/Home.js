@@ -158,11 +158,11 @@ export default function Home(props) {
           var len = results.rows.length;
           if (len > 0) {
             //setTotalSales();
-            console.log(
-              (parseInt(results.rows.item(0).amount) /
-                parseInt(results.rows.item(0).target)) *
-                100,
-            );
+            // console.log(
+            //   (parseInt(results.rows.item(0).amount) /
+            //     parseInt(results.rows.item(0).target)) *
+            //     100,
+            // );
 
             setTarget({
               ...Target,

@@ -39,7 +39,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import Modal from 'react-native-modal';
 import LinearGradient from 'react-native-linear-gradient';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {APIToken} from '../../sharedComponents/globalCommands/globalCommands';
+import {APIToken, globalCompany, server} from '../../sharedComponents/globalCommands/globalCommands';
 
 var ApiRowsCount = 0;
 var count = 0;
@@ -372,7 +372,7 @@ export default function PromoItems() {
 
   const DownloadPromoItems = () => {
     Promise.race([
-      fetch('https://boiling-atoll-20376.herokuapp.com/coslor/promo_item', {
+      fetch(server.server_address + globalCompany.company + 'promo_item', {
         method: 'GET',
         headers: {
           Accept: 'application/json',

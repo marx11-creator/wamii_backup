@@ -27,6 +27,7 @@ import {
   UpdateYearMonthsFilter,
   CurrentAppScreen,
   server,
+  globalCompany,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
 
@@ -213,7 +214,7 @@ export default function UpdateModal(props) {
     //  console.log(tempstr1);
     Promise.race([
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/coslor/persalesmansalestarget/' +
+        server.server_address + globalCompany.company + 'persalesmansalestarget/' +
           tempstr1,
         {
           method: 'GET',
@@ -358,7 +359,7 @@ export default function UpdateModal(props) {
     var tempstr3 = teams + '&' + sales_position_name;
     Promise.race([
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/coslor/perprincipalsalestargetuba/' +
+        server.server_address + globalCompany.company + 'perprincipalsalestargetuba/' +
           tempstr3,
         {
           method: 'GET',
@@ -494,7 +495,7 @@ export default function UpdateModal(props) {
     var tempstr2 = teams + '&' + sales_position_name;
     Promise.race([
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/coslor/perareasalesuba/' + tempstr2,
+       server.server_address + globalCompany.company + 'perareasalesuba/' + tempstr2,
         {
           method: 'GET',
           headers: {
@@ -619,7 +620,7 @@ export default function UpdateModal(props) {
 
   const APISaveUpdate = () => {
     Promise.race([
-      fetch('https://boiling-atoll-20376.herokuapp.com/coslor/UserUpdateLog', {
+      fetch(server.server_address + globalCompany.company + 'UserUpdateLog', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -676,7 +677,7 @@ export default function UpdateModal(props) {
     Promise.race([
       //---------------------------------------------------------------first command
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/coslor/updateversion2/' +
+        server.server_address + globalCompany.company + 'updateversion2/' +
           user_name +
           '&' +
           dateTimeUpdated,
@@ -738,7 +739,7 @@ export default function UpdateModal(props) {
     var CurrIndex = 0;
 
     Promise.race([
-      fetch(server.server_address + '/business_calendar/get/', {
+      fetch(server.server_address + 'business_calendar/get/', {
         method: 'GET',
         headers: {
           Accept: 'application/json',

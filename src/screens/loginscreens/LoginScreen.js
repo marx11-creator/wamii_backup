@@ -29,7 +29,7 @@ import {
 } from '../../sharedComponents/scaling';
 import FlatButton from '../../sharedComponents/custombutton';
 
-import {ModuleAccess} from '../../sharedComponents/globalCommands/globalCommands';
+import {globalCompany, ModuleAccess, server} from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users, dbAppToken} from '../../database/sqliteSetup';
 import moment from 'moment';
 import {APIToken} from '../../sharedComponents/globalCommands/globalCommands';
@@ -160,7 +160,7 @@ const SignScreen = (props) => {
     const unpw = data.user_name + '&' + data.password;
     // console.log(unpw);
     Promise.race([
-      fetch('https://boiling-atoll-20376.herokuapp.com/coslor/users/search/' + unpw, {
+      fetch(server.server_address + globalCompany.company + 'users/search/' + unpw, {
         method: 'GET',
         headers: {
           Accept: 'application/json',
@@ -274,7 +274,7 @@ const SignScreen = (props) => {
     // console.log(unpw);
     Promise.race([
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/coslor/users/getuseraccess/' + unpw,
+        server.server_address + globalCompany.company + 'users/getuseraccess/' + unpw,
         {
           method: 'GET',
           headers: {

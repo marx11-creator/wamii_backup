@@ -26,6 +26,7 @@ import {
 } from '../../sharedComponents/scaling';
 import {
   APIToken,
+  globalCompany,
   server,
 } from '../../sharedComponents/globalCommands/globalCommands';
 var isMonthChanged = false;
@@ -226,8 +227,7 @@ export default function BusinessCalendar(props) {
       Promise.race([
         fetch(
           server.server_address +
-            '/' +
-            global.company +
+            globalCompany.company +
             'business_calendar/update/' +
             YearToSearch +
             '&' +
@@ -305,16 +305,14 @@ export default function BusinessCalendar(props) {
 
     console.log(
       server.server_address +
-        '/' +
-        global.company +
+        globalCompany.company +
         'business_calendar/edit/' +
         YMU,
     );
     Promise.race([
       fetch(
         server.server_address +
-          '/' +
-          global.company +
+          globalCompany.company +
           'business_calendar/edit/' +
           YMU,
         {
@@ -358,7 +356,7 @@ export default function BusinessCalendar(props) {
 
     Promise.race([
       fetch(
-        server.server_address + '/' + global.company + 'business_calendar/get/',
+        server.server_address + globalCompany.company + 'business_calendar/get/',
         {
           method: 'GET',
           headers: {

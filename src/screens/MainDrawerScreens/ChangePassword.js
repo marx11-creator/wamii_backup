@@ -24,7 +24,7 @@ import {
   width,
   height,
 } from '../../sharedComponents/scaling';
-import {APIToken} from '../../sharedComponents/globalCommands/globalCommands';
+import {APIToken, globalCompany, server} from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users} from '../../database/sqliteSetup';
 
 const SignScreen = (props) => {
@@ -89,7 +89,7 @@ const SignScreen = (props) => {
   };
 
   const UpdateAccount = () => {
-    fetch('https://boiling-atoll-20376.herokuapp.com/coslor/UpdateAccount', {
+    fetch(server.server_address + globalCompany.company + 'UpdateAccount', {
       method: 'PUT',
       headers: {
         Accept: 'application/json',

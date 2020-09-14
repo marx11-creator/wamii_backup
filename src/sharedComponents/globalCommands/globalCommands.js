@@ -3,6 +3,8 @@ import {
   dbperprincipal,
   dbperarea,
   dbperymtsat,
+  dbBusinessCalendar,
+  dbpromoitems,
 } from '../../database/sqliteSetup';
 export var ModuleAccess = {
   PerTeam: 'NOT ALLOWED',
@@ -21,7 +23,7 @@ export var APIToken = {
 export var server = {
   //http://172.16.0.150:3003
   //https://boiling-atoll-20376.herokuapp.com
-  server_address: 'https://boiling-atoll-20376.herokuapp.com',
+  server_address: 'https://boiling-atoll-20376.herokuapp.com/',
 };
 
 export var CurrentAppVersionUpdate = {
@@ -31,6 +33,10 @@ export var CurrentAppVersionUpdate = {
 
 export var CurrentDashboardScreen = {
   Screen: '',
+};
+
+export var globalCompany = {
+  company: 'coslor/',
 };
 
 export var CurrentAppScreen = {
@@ -97,7 +103,36 @@ export function ClearDefaults() {
   DeletePerAreaAPIData();
   DeletePerymtsatAPIData();
   DeletePerPrincipalAPIData();
+  DeleteCalendar();
+  DeleteItems();
 }
+
+function DeleteItems() {
+  dbpromoitems.transaction(function (tx) {
+    tx.executeSql(
+      'Delete from promo_items_tbl ',
+      [],
+      (tx, results) => {
+        // console.log('Results', results.rowsAffected);
+        // if (results.rowsAffected > 0) {
+        //   setupdateMessage('Current inventory cleared..');
+        //   setItemsDeleted(true);
+        // } else {
+        //   if (LocalPromoItemData.length > 1) {
+        //     console.log('error deleting');
+        //   } else {
+        //     console.log('nothing to delete, set true to save fetch sku');
+        //     setItemsDeleted(true);
+        //   }
+        // }
+      },
+      SQLerror,
+    );
+  });
+}
+
+
+
 
 function DeletePerAreaAPIData() {
   dbperarea.transaction(function (tx) {
@@ -127,6 +162,20 @@ function DeletePerPrincipalAPIData() {
       'Delete from perprincipalpermonth_tbl ',
       [],
       (tx, results) => {},
+      SQLerror,
+    );
+  });
+}
+
+function DeleteCalendar() {
+  dbBusinessCalendar.transaction(function (tx) {
+    tx.executeSql(
+      'Delete from business_calendar_tbl   ',
+      [],
+      (tx, results) => {
+        // if (results.rowsAffected > 0) {}
+        console.log('deleted local business_calendar_tbl');
+      },
       SQLerror,
     );
   });
