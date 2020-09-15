@@ -287,7 +287,7 @@ export default function Home(props) {
 
   return (
     <ImageOverlay
-      source={require('../../assets/building.jpg')}
+      source={require('../../assets/homepagecoslor.jpg')}
       height={height}
       contentPosition="top">
       <View
@@ -309,7 +309,7 @@ export default function Home(props) {
           }}>
           <Image
             style={{width: 120, height: 120, resizeMode: 'center'}}
-            source={require('../../assets/wamilogo.png')}
+            source={require('../../assets/coslorlogo.png')}
           />
         </View>
 
@@ -328,7 +328,7 @@ export default function Home(props) {
               marginHorizontal: 10,
             }}>
             {' '}
-            Wing An Marketing Inc.
+            COSLOR ENTERPRISES
           </Text>
           {/* <Button
             title="test"

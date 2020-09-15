@@ -139,7 +139,8 @@ export default function PerSalesmanDashboard(props) {
           P {numFormatter(item.sales)}
         </Text>
         <Text style={[styles.DetailtTextDetails]}>
-          P {numFormatter(item.target)}
+         P {item.target > 0 ?  numFormatter(item.target) : 0}
+        
         </Text>
 
         {item.sales > 0 && item.target > 0 ? (
@@ -164,11 +165,11 @@ export default function PerSalesmanDashboard(props) {
 
   const ref_video = useRef(null);
   function numFormatter(num) {
-    if (num > 999 && num < 1000000) {
-      return (num / 1000).toFixed(2) + 'K'; // convert to K for number from > 1000 < 1 million
-    } else if (num > 1000000) {
-      return (num / 1000000).toFixed(2) + 'M'; // convert to M for number from > 1 million
-    } else if (num < 900) {
+    if (num > 999 && num < 1000000) {    // 1000 to 999,999.00
+      return (num / 1000).toFixed(2) + 'K';
+    } else if (num > 999999) {     //    1M up
+      return (num / 1000000).toFixed(2) + 'M';
+    } else if (num < 1000) {         //   999 below
       return num; // if value < 1000, nothing to do
     }
   }

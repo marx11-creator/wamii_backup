@@ -356,7 +356,9 @@ export default function BusinessCalendar(props) {
 
     Promise.race([
       fetch(
-        server.server_address + globalCompany.company + 'business_calendar/get/',
+        server.server_address +
+          globalCompany.company +
+          'business_calendar/get/',
         {
           method: 'GET',
           headers: {
@@ -761,18 +763,31 @@ export default function BusinessCalendar(props) {
             <FlatButton
               text={isEditing ? 'UPDATE' : 'EDIT'}
               onPress={() => {
-                if (isEditing === false) {
-                  setisMonthMoveEnabled(1);
-                  console.log(BusinessCalendarField.update_version);
-                  setisVisibleCaldendarModal(true);
-                  setModalMessage('Checking for updates...');
-                  BusinessCalendarEdit();
-                  GetSelectedDays();
+                if (global.account_type === 'Administrator') {
+                  if (isEditing === false) {
+                    setisMonthMoveEnabled(1);
+                    console.log(BusinessCalendarField.update_version);
+                    setisVisibleCaldendarModal(true);
+                    setModalMessage('Checking for updates...');
+                    BusinessCalendarEdit();
+                    GetSelectedDays();
+                  } else {
+                    SaveSelectedDays();
+                    setisEditing(false);
+                    setisMonthMoveEnabled(0);
+                    GetSelectedDays();
+                  }
                 } else {
-                  SaveSelectedDays();
-                  setisEditing(false);
-                  setisMonthMoveEnabled(0);
-                  GetSelectedDays();
+                  Alert.alert(
+                    'Note',
+                    'You are not authorize to update business calendar.',
+                    [
+                      {
+                        text: 'OK',
+                      },
+                    ],
+                    {cancelable: true},
+                  );
                 }
               }}
               gradientFrom={isEditing ? '#F3769A' : '#08d4c4'}

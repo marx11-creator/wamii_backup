@@ -35,6 +35,8 @@ export var CurrentDashboardScreen = {
   Screen: '',
 };
 
+//   company: 'coslor/',
+
 export var globalCompany = {
   company: 'coslor/',
 };

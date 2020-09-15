@@ -46,6 +46,7 @@ import {
   CurrentDashboardScreen,
   FilterList,
   DashboardYears,
+  globalCompany,
 } from '../../sharedComponents/globalCommands/globalCommands';
 
 export default function PerPrincipalDashboard(props) {
@@ -232,7 +233,7 @@ export default function PerPrincipalDashboard(props) {
   function numFormatter(num) {
     if (num > 999 && num < 1000000) {
       return (num / 1000).toFixed(2) + 'K'; // convert to K for number from > 1000 < 1 million
-    } else if (num > 1000000) {
+    } else if (num > 999999) {
       return (num / 1000000).toFixed(1) + 'M'; // convert to M for number from > 1 million
     } else if (num < 1000) {
       return num; // if value < 1000, nothing to do
@@ -242,7 +243,7 @@ export default function PerPrincipalDashboard(props) {
   function numFormatterTotal(num) {
     if (num > 999 && num < 1000000) {
       return (num / 1000).toFixed(2) + 'K'; // convert to K for number from > 1000 < 1 million
-    } else if (num > 1000000) {
+    } else if (num > 999999) {
       return (num / 1000000).toFixed(2) + 'M'; // convert to M for number from > 1 million
     } else if (num < 1000) {
       return num; // if value < 1000, nothing to do
@@ -753,7 +754,7 @@ export default function PerPrincipalDashboard(props) {
                 </Text>
                 <PieChart
                   style={{height: scale(470), opacity: 0.9}}
-                  outerRadius={'80%'}
+                  outerRadius={globalCompany.company === 'coslor/' ? '80%' : '100%'}
                   innerRadius={'30%'}
                   data={data}>
                   <Labels />

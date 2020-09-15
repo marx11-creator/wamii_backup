@@ -368,7 +368,7 @@ export default function SplashScreen(props) {
         <Animatable.Image
           animation={LogoAnimation ? 'bounceIn' : undefined}
           duration={1000}
-          source={require('../../assets/wamilogo.png')}
+          source={require('../../assets/coslorlogo.png')}
           style={styles.logo}
           resizeMode="stretch"
         />
