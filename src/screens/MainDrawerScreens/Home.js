@@ -117,9 +117,9 @@ export default function Home(props) {
       "'" +
       moment().utcOffset('+08:00').format('YYYY-MM-DD') +
       "'";
-    console.log(
-      'SELECT  * from business_calendar_tbl  where ' + YearQuery + MonthQuery,
-    );
+    // console.log(
+    //   'SELECT  * from business_calendar_tbl  where ' + YearQuery + MonthQuery,
+    // );
     dbBusinessCalendar.transaction((tx) => {
       tx.executeSql(
         'SELECT  * from business_calendar_tbl  where ' + YearQuery + MonthQuery,
@@ -282,12 +282,14 @@ export default function Home(props) {
       } else {
         UpdateYearMonthsFilter();
       }
+      // props.navigation.navigate('SalesmanNet');
     });
   }, []);
 
   return (
     <ImageOverlay
-      source={require('../../assets/homepagecoslor.jpg')}
+    // source={require('../../assets/homepagecoslor.jpg')}
+      source={require('../../assets/building.jpg')}
       height={height}
       contentPosition="top">
       <View
@@ -309,7 +311,8 @@ export default function Home(props) {
           }}>
           <Image
             style={{width: 120, height: 120, resizeMode: 'center'}}
-            source={require('../../assets/coslorlogo.png')}
+            source={require('../../assets/wamilogo.png')}
+            // source={require('../../assets/coslorlogo.png')}
           />
         </View>
 
@@ -328,7 +331,7 @@ export default function Home(props) {
               marginHorizontal: 10,
             }}>
             {' '}
-            COSLOR ENTERPRISES
+            Wing An Marketing Inc.
           </Text>
           {/* <Button
             title="test"

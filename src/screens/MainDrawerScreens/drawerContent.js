@@ -172,7 +172,7 @@ export function DrawerContent(props) {
               )}
               label="Salesman Reports"
               onPress={() => {
-                props.navigation.navigate('Home');
+                props.navigation.navigate('SalesmanNet');
               }}
             />
             {/* <DrawerItem

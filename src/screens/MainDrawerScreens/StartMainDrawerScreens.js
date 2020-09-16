@@ -10,6 +10,7 @@ import UpdateModal from './UpdateModal'
 import {DrawerContent} from '../MainDrawerScreens/drawerContent';
 import ChangePassword from './ChangePassword';
 import BusinessCalendar from './BusinessCalendar';
+import ViewScreen from '../SalesmanReports/SalesmanNet';
 
 const Drawer = createDrawerNavigator();
 
@@ -30,6 +31,7 @@ export default function StartMainDrawerScreen(props) {
       <Drawer.Screen name="UpdateModal" component={UpdateModal} />
       <Drawer.Screen name="ChangePassword" component={ChangePassword} />
       <Drawer.Screen name="BusinessCalendar" component={BusinessCalendar} />
+      <Drawer.Screen name="SalesmanNet" component={ViewScreen} />
     </Drawer.Navigator>
   );
 }

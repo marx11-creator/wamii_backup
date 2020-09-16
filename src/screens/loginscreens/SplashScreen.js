@@ -42,6 +42,14 @@ import {cos} from 'react-native-reanimated';
 
 // LogBox.ignoreAllLogs();
 
+
+// global.salespositionname = 'PMS 1 PAMPANGA';
+// global.team = 'TEAM JR';
+// global.date_from = '2020-09-01';
+// global.date_to = '2020-09-31';
+
+
+
 export default function SplashScreen(props) {
   CreateDatabase();
 
@@ -368,7 +376,8 @@ export default function SplashScreen(props) {
         <Animatable.Image
           animation={LogoAnimation ? 'bounceIn' : undefined}
           duration={1000}
-          source={require('../../assets/coslorlogo.png')}
+          source={require('../../assets/wamilogo.png')}
+          //       source={require('../../assets/coslorlogo.png')}
           style={styles.logo}
           resizeMode="stretch"
         />

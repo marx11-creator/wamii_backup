@@ -5,6 +5,7 @@ import {
   dbperymtsat,
   dbBusinessCalendar,
   dbpromoitems,
+  dbSalesmanNet,
 } from '../../database/sqliteSetup';
 export var ModuleAccess = {
   PerTeam: 'NOT ALLOWED',
@@ -38,7 +39,7 @@ export var CurrentDashboardScreen = {
 //   company: 'coslor/',
 
 export var globalCompany = {
-  company: 'coslor/',
+  company: '',
 };
 
 export var CurrentAppScreen = {
@@ -107,7 +108,43 @@ export function ClearDefaults() {
   DeletePerPrincipalAPIData();
   DeleteCalendar();
   DeleteItems();
+  delete_per_customer_tbl();
+  delete_net_tbl();
+  delete_per_vendor_tbl();
+  delete_per_category_tbl();
 }
+
+let delete_per_customer_tbl = () => {
+  dbSalesmanNet.transaction(function (tx) {
+    tx.executeSql('DELETE FROM tbl_sales_per_customer ', [], (tx, results) => {
+      // console.log('Deleted customer result :', results.rowsAffected);
+    });
+  });
+};
+
+let delete_net_tbl = () => {
+  dbSalesmanNet.transaction(function (tx) {
+    tx.executeSql('DELETE FROM tbl_sales_net ', [], (tx, results) => {
+      // console.log('Deleted net result :', results.rowsAffected);
+    });
+  });
+};
+
+let delete_per_vendor_tbl = () => {
+  dbSalesmanNet.transaction(function (tx) {
+    tx.executeSql('DELETE FROM tbl_sales_per_vendor ', [], (tx, results) => {
+      // console.log('Deleted vendor result :', results.rowsAffected);
+    });
+  });
+};
+
+let delete_per_category_tbl = () => {
+  dbSalesmanNet.transaction(function (tx) {
+    tx.executeSql('DELETE FROM tbl_sales_per_category ', [], (tx, results) => {
+      // console.log('Deleted category result :', results.rowsAffected);
+    });
+  });
+};
 
 function DeleteItems() {
   dbpromoitems.transaction(function (tx) {
@@ -132,9 +169,6 @@ function DeleteItems() {
     );
   });
 }
-
-
-
 
 function DeletePerAreaAPIData() {
   dbperarea.transaction(function (tx) {

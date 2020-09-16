@@ -19,6 +19,7 @@ export var dbpromoitems = openDatabase({name: 'promo_items_tbl.db'});
 export var dbBusinessCalendar = openDatabase({
   name: 'business_calendar_tbl.db',
 });
+export var dbSalesmanNet = openDatabase({name: 'Sales_report.db'});
 
 //SETUP DATABASE
 export default function CreateDatabase() {
@@ -162,6 +163,78 @@ export default function CreateDatabase() {
 function SQLerror(err) {
   console.log('SQL Error: ' + err);
 }
+
+// SALESMAN NET MARC
+
+dbSalesmanNet.transaction(function (txn) {
+  txn.executeSql(
+    "SELECT name FROM sqlite_master WHERE type='table' AND name='tbl_sales_per_customer'",
+    [],
+    function (tx, res) {
+      console.log('item:', res.rows.length);
+      if (res.rows.length == 0) {
+        txn.executeSql('DROP TABLE IF EXISTS tbl_sales_per_customer', []);
+        txn.executeSql(
+          'CREATE TABLE IF NOT EXISTS tbl_sales_per_customer(user_id INTEGER PRIMARY KEY AUTOINCREMENT, invoice_date VARCHAR(255), account_customer_name VARCHAR(255), invoice_no VARCHAR(255), principal_name VARCHAR(255), sales INT(100))',
+          [],
+        );
+      }
+    },
+  );
+});
+
+dbSalesmanNet.transaction(function (txn) {
+  txn.executeSql(
+    "SELECT name FROM sqlite_master WHERE type='table' AND name='tbl_sales_net'",
+    [],
+    function (tx, res) {
+      console.log('item:', res.rows.length);
+      if (res.rows.length == 0) {
+        txn.executeSql('DROP TABLE IF EXISTS tbl_sales_net', []);
+        txn.executeSql(
+          'CREATE TABLE IF NOT EXISTS tbl_sales_net(user_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255), invoice_date VARCHAR(255), team VARCHAR(255), sales_position_name VARCHAR(255), salesman_name VARCHAR(255), total_gross_amount INT(100), total_net_amount INT(100), total_discount INT(100), total_cm INT(100), total_target INT(100), dateTimeUpdated VARCHAR(255))',
+          [],
+        );
+      }
+    },
+  );
+});
+
+dbSalesmanNet.transaction(function (txn) {
+  txn.executeSql(
+    "SELECT name FROM sqlite_master WHERE type='table' AND name='tbl_sales_per_vendor'",
+    [],
+    function (tx, res) {
+      console.log('item:', res.rows.length);
+      if (res.rows.length == 0) {
+        txn.executeSql('DROP TABLE IF EXISTS tbl_sales_per_vendor', []);
+        txn.executeSql(
+          'CREATE TABLE IF NOT EXISTS tbl_sales_per_vendor(user_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255), invoice_date VARCHAR(255), team VARCHAR(255), salesman_name VARCHAR(255), sales_position_name VARCHAR(255), principal_name VARCHAR(255), principal_acronym VARCHAR(255), sales INT(100), target INT(100), uba INT(100), dateTimeUpdated VARCHAR(255))',
+          [],
+        );
+      }
+    },
+  );
+});
+
+dbSalesmanNet.transaction(function (txn) {
+  txn.executeSql(
+    "SELECT name FROM sqlite_master WHERE type='table' AND name='tbl_sales_per_category'",
+    [],
+    function (tx, res) {
+      console.log('item:', res.rows.length);
+      if (res.rows.length == 0) {
+        txn.executeSql('DROP TABLE IF EXISTS tbl_sales_per_category', []);
+        txn.executeSql(
+          'CREATE TABLE IF NOT EXISTS tbl_sales_per_category(user_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255), invoice_date VARCHAR(255), team VARCHAR(255), sales_position_name VARCHAR(255), salesman_name VARCHAR(255), product_category VARCHAR(255), sales INT(100), target INT(100), dateTimeUpdated VARCHAR(255))',
+          [],
+        );
+      }
+    },
+  );
+});
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>.UPDATE DATABASE TBL FOR ADDITIONAL TBL
 export function Update1001() {
@@ -423,11 +496,9 @@ export function Update1004() {
   }
 }
 
-
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1005
 
 export function Update1005() {
-
   dbpromoitems.transaction(function (txn) {
     txn.executeSql(
       "SELECT name FROM sqlite_master WHERE type='table' AND name ='promo_items_tbl'",
@@ -450,7 +521,7 @@ export function Update1005() {
             //if not function below is a error part where it run a fucntion
             Alter_promoitems_promo_product,
           );
-        }  
+        }
       },
     );
   });
@@ -500,9 +571,6 @@ function Add1005UpdatetoLocal() {
     });
   }
 }
-
-
-
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1006
 
