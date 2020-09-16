@@ -159,6 +159,27 @@ export function DrawerContent(props) {
             />
             <DrawerItem
               icon={({color, size}) => (
+                <Icon name="to-to" color={color} size={size} />
+              )}
+              style={[
+                isDashboardAllowed
+                  ? styles.EnabledDrawer
+                  : styles.DisabledDrawer,
+              ]}
+              label="Activity"
+              onPress={() => {
+                {
+                  ModuleAccess.PerTeam === 'ALLOWED' ||
+                  ModuleAccess.PerSalesman === 'ALLOWED' ||
+                  ModuleAccess.PerPrincipal === 'ALLOWED' ||
+                  ModuleAccess.PerArea === 'ALLOWED'
+                    ? props.navigation.navigate('Dashboard')
+                    : alert('not allowed');
+                }
+              }}
+            />
+            <DrawerItem
+              icon={({color, size}) => (
                 <Icon name="account-outline" color={color} size={size} />
               )}
               label="Inventory"
