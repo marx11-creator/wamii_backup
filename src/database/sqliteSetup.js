@@ -171,7 +171,6 @@ dbSalesmanNet.transaction(function (txn) {
     "SELECT name FROM sqlite_master WHERE type='table' AND name='tbl_sales_per_customer'",
     [],
     function (tx, res) {
-      console.log('item:', res.rows.length);
       if (res.rows.length == 0) {
         txn.executeSql('DROP TABLE IF EXISTS tbl_sales_per_customer', []);
         txn.executeSql(
@@ -188,7 +187,6 @@ dbSalesmanNet.transaction(function (txn) {
     "SELECT name FROM sqlite_master WHERE type='table' AND name='tbl_sales_net'",
     [],
     function (tx, res) {
-      console.log('item:', res.rows.length);
       if (res.rows.length == 0) {
         txn.executeSql('DROP TABLE IF EXISTS tbl_sales_net', []);
         txn.executeSql(
@@ -205,7 +203,6 @@ dbSalesmanNet.transaction(function (txn) {
     "SELECT name FROM sqlite_master WHERE type='table' AND name='tbl_sales_per_vendor'",
     [],
     function (tx, res) {
-      console.log('item:', res.rows.length);
       if (res.rows.length == 0) {
         txn.executeSql('DROP TABLE IF EXISTS tbl_sales_per_vendor', []);
         txn.executeSql(
@@ -222,7 +219,6 @@ dbSalesmanNet.transaction(function (txn) {
     "SELECT name FROM sqlite_master WHERE type='table' AND name='tbl_sales_per_category'",
     [],
     function (tx, res) {
-      console.log('item:', res.rows.length);
       if (res.rows.length == 0) {
         txn.executeSql('DROP TABLE IF EXISTS tbl_sales_per_category', []);
         txn.executeSql(

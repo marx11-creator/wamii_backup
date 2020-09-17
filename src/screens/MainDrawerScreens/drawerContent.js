@@ -159,7 +159,7 @@ export function DrawerContent(props) {
             />
             <DrawerItem
               icon={({color, size}) => (
-                <Icon name="to-to" color={color} size={size} />
+                <Icon name="microsoft-onenote" color={color} size={size} />
               )}
               style={[
                 isDashboardAllowed

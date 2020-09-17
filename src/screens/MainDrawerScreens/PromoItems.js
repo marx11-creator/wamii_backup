@@ -468,6 +468,7 @@ export default function PromoItems() {
   // }
 
   function SavePromoItems() {
+    longStrinfg = '';
     var stocks = 0;
     var ProductType = '';
     var totalProduct = 0;
