@@ -22,6 +22,9 @@ var db = openDatabase({name: 'Sales_report.db'});
 export default function ViewScreen(props) {
 
  const [DateTimerefreshed, setDateTimerefreshed] = useState('none');
+ const [grosssales, setgrosssales] = useState('');
+ const [cmamount, setcmamount] = useState('');
+ const [discount, setdiscount] = useState('');
  const [netsales, setnetsales] = useState('');
  const [target, settarget] = useState('');
  const [percent, setpercent] = useState('');
@@ -116,6 +119,9 @@ export default function ViewScreen(props) {
         var get_percent = get_net / get_target * 100;
 
         setDateTimerefreshed(get_time_date_refreshed.toString());
+        setgrosssales(get_gross_sales);
+        setcmamount(get_cm);
+        setdiscount(get_discount);
         settarget(get_target);
         setnetsales(get_net);
         setpercent(get_percent.toFixed(2));
@@ -468,19 +474,19 @@ export default function ViewScreen(props) {
             <View style={{flex:1,flexDirection: 'column'}}>
               {/* gross sales */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'center', backgroundColor: 'yellow'}}>
-                <Text style={{fontSize: moderateScale(20, 0.5), color :'gray'}}>Gross Sales</Text>
+                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(grosssales)}</Text>
               </View>
               {/* cm return */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'center', backgroundColor: 'yellow'}}>
-                <Text style={{fontSize: moderateScale(20, 0.5), color :'gray'}}>CM Amount</Text>
+                <Text style={{fontSize: moderateScale(30, 0.5), color :'black'}}>{numFormatter(cmamount)}</Text>
               </View>
               {/* discount */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'center', backgroundColor: 'yellow'}}>
-                <Text style={{fontSize: moderateScale(20, 0.5), color :'gray'}}>Discount</Text>
+                <Text style={{fontSize: moderateScale(30, 0.5), color :'black'}}>{numFormatter(discount)}</Text>
               </View>
               {/* net sales */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'center', backgroundColor: 'yellow'}}>
-                <Text style={{fontSize: moderateScale(20, 0.5), color :'gray'}}>Net Sales</Text>
+                <Text style={{fontSize: moderateScale(30, 0.5), color :'black'}}>{numFormatter(netsales)}</Text>
               </View>
             </View>
             </View>
