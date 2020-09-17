@@ -16,6 +16,7 @@ import {
   DashboardYears,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import moment, { months } from 'moment';
+import {ProgressCircle} from 'react-native-svg-charts';
 var db = openDatabase({name: 'Sales_report.db'});
 
 export default function ViewScreen(props) {
@@ -381,6 +382,7 @@ export default function ViewScreen(props) {
   };
 
 
+  
 
   if (showTop === true && showPrincipal === true && showCustomer === true) {
 
@@ -391,8 +393,36 @@ export default function ViewScreen(props) {
       <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
 
         {/* percentage */}
-        <View style={{ flex: 1.5, paddingTop: 20, justifyContent: 'flex-start', alignItems: 'center' }}>
-          <CircularProgress percent={percent}/>
+        <View style={{ flex: 1.5, paddingVertical: 10, justifyContent: 'center', alignItems: 'center'}}>
+        <ProgressCircle
+          style={{height: scale(200), width: scale(200)}}
+          progress={percent / 100}
+          progressColor={'#24E4B5'}
+          backgroundColor="gray" //'#ECECEC'	PropTypes.any
+          startAngle="0" // 	0	PropTypes.number
+          // endAngle // Math.PI * 2	   PropTypes.number
+          strokeWidth="15" // 5	PropTypes.number
+          cornerRadius="45" // PropTypes.number
+        >
+        </ProgressCircle>
+        
+        <Text style={{
+              position: 'absolute',
+              color: 'black',
+              fontSize: moderateScale(30, 0.5),
+              fontWeight: 'bold',
+              paddingTop: 10,}}>
+          {percent}%
+          {'\n'}
+        </Text>
+        <Text style={{
+              position: 'absolute',
+              color: 'gray',
+              fontSize: moderateScale(20, 0.5),
+              fontWeight: 'bold',
+              paddingTop: 50,}}> 
+        Sales
+        </Text>
         </View>
 
         {/* sales and target */}
