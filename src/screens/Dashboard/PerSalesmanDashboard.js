@@ -584,7 +584,7 @@ export default function PerSalesmanDashboard(props) {
   return (
     // ===================================================================================================================
     <View style={styles.container}>
-      {/* <Video
+      <Video
         rate={0.9}
         repeat={true}
         resizeMode="cover"
@@ -593,7 +593,7 @@ export default function PerSalesmanDashboard(props) {
         // onBuffer={this.onBuffer} // Callback when remote video is buffering
         onError={(Error) => console.log(Error)} // Callback when video cannot be loaded
         style={styles.backgroundVideo}
-      /> */}
+      />
       <ScrollView>
         <View style={{flexDirection: 'row', height: scale(70)}}>
           {/* <Image
