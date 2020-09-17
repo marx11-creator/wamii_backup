@@ -338,48 +338,48 @@ export default function ViewScreen(props) {
     );
   };
 
-  let propStyle = (percent, base_degrees) => {
-    const rotateBy = base_degrees + (percent * 3.6);
-    return {
-      transform:[{rotateZ: `${rotateBy}deg`}],
-    };
-  };
+  // let propStyle = (percent, base_degrees) => {
+  //   const rotateBy = base_degrees + (percent * 3.6);
+  //   return {
+  //     transform:[{rotateZ: `${rotateBy}deg`}],
+  //   };
+  // };
 
-  let renderThirdLayer = (percent) => {
-    if (percent > 100) {
-      return (
-        <View style={[styles.offsetLayer, propStyle((percent - 100), 45)]} />
-      );
-    } else if (percent > 50){
-      return (
-        <View style={[styles.secondProgressLayer, propStyle((percent - 50), 45)]} />
-      );
-    } else {
-      return (
-        <View style={styles.offsetLayer} />
-      );
-    }
-  };
+  // let renderThirdLayer = (percent) => {
+  //   if (percent > 100) {
+  //     return (
+  //       <View style={[styles.offsetLayer, propStyle((percent - 100), 45)]} />
+  //     );
+  //   } else if (percent > 50){
+  //     return (
+  //       <View style={[styles.secondProgressLayer, propStyle((percent - 50), 45)]} />
+  //     );
+  //   } else {
+  //     return (
+  //       <View style={styles.offsetLayer} />
+  //     );
+  //   }
+  // };
 
-  const CircularProgress = ({percent}) => {
-    let firstProgressLayerStyle;
-    if (percent > 50){
-      firstProgressLayerStyle = propStyle(50, -135);
-    } else {
-      firstProgressLayerStyle = propStyle(percent, -135);
-    }
+  // const CircularProgress = ({percent}) => {
+  //   let firstProgressLayerStyle;
+  //   if (percent > 50){
+  //     firstProgressLayerStyle = propStyle(50, -135);
+  //   } else {
+  //     firstProgressLayerStyle = propStyle(percent, -135);
+  //   }
 
-    return (
-      <View style={styles.container}>
-        <View style={[styles.firstProgressLayer, firstProgressLayerStyle]} />
-        {renderThirdLayer(percent)}
-        <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={styles.display}>{percent}%</Text>
-          <Text style={styles.displaytext}>Actual Sales</Text>
-        </View>
-      </View>
-    );
-  };
+  //   return (
+  //     <View style={styles.container}>
+  //       <View style={[styles.firstProgressLayer, firstProgressLayerStyle]} />
+  //       {renderThirdLayer(percent)}
+  //       <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+  //         <Text style={styles.display}>{percent}%</Text>
+  //         <Text style={styles.displaytext}>Actual Sales</Text>
+  //       </View>
+  //     </View>
+  //   );
+  // };
 
 
   
@@ -393,6 +393,11 @@ export default function ViewScreen(props) {
       <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
 
         {/* percentage */}
+        <View style={{ justifyContent: 'flex-start', marginLeft: 20, marginTop: 20,}}>
+          <Text style={{ fontSize: 20, color: 'gray'}}>
+            {FilterList.DashboardFilterMonth} {FilterList.DashboardFilterYear} 
+          </Text>
+        </View>
         <View style={{ flex: 1.5, paddingVertical: 10, justifyContent: 'center', alignItems: 'center'}}>
         <ProgressCircle
           style={{height: scale(200), width: scale(200)}}
@@ -435,7 +440,7 @@ export default function ViewScreen(props) {
             <Image source={require('../../assets/pic/refresh.png')} style={{height:moderateScale(30, 0.5), width: moderateScale(30, 0.5)}} />
           </TouchableOpacity>
           <View style={{margin:5}} /> */}
-          <Text style={{fontSize: moderateScale(15, 0.5), color: 'gray', marginTop: 20}}>Updated: {DateTimerefreshed}</Text>
+          <Text style={{fontSize: moderateScale(15, 0.5), color: 'gray', }}>Updated: {DateTimerefreshed}</Text>
         </View>
         <View style={{flex:1, flexDirection: 'row', padding: 10 }}>
           <View style={{flex:1,flexDirection: 'column'}}>
