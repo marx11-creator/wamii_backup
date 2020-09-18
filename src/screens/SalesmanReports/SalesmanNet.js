@@ -219,7 +219,7 @@ export default function ViewScreen(props) {
       var DateTo = YearQuery + '-' + MonthQuery + '-' + '31';
 
 
-      tx.executeSql('SELECT invoice_date, account_customer_name, SUM(sales) AS sales FROM tbl_sales_per_customer WHERE invoice_date BETWEEN  ' + "'" + DateFrom + "'" + '  AND   ' + "'" + DateTo + "'" + '  GROUP BY invoice_date, account_customer_name ORDER BY invoice_date DESC', [], (tx, results) => {
+      tx.executeSql('SELECT invoice_date, account_customer_name, SUM(sales) AS sales, invoice_status_final FROM tbl_sales_per_customer WHERE invoice_date BETWEEN  ' + "'" + DateFrom + "'" + '  AND   ' + "'" + DateTo + "'" + '  GROUP BY invoice_date, account_customer_name ORDER BY invoice_date DESC', [], (tx, results) => {
         var temp = [];
         for (let i = 0; i < results.rows.length; ++i) {
           temp.push(results.rows.item(i));
@@ -555,7 +555,7 @@ export default function ViewScreen(props) {
                   <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
                   </View>
                   <View style={{flex: 1 }}>
-                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status}</Text>
+                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
                   </View>
                 </View>
                 </TouchableOpacity>
@@ -716,7 +716,7 @@ if (showCategory === true) {
                   <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
                   </View>
                   <View style={{flex: 1 }}>
-                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status}</Text>
+                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
                   </View>
                 </View>
                   </TouchableOpacity>

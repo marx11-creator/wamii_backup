@@ -1248,12 +1248,12 @@ export default function UpdateModal(props) {
         "','" +
         item.sales +
         "','" +
-        item.invoice_status +
+        item.invoice_status_final +
         "'),";
     }, []);
 
     combine_data_per_customer = combine_data_per_customer.slice(0, -1);
-    //console.log(combine_data_per_customer);
+    console.log(combine_data_per_customer);
     setc_customer_data(combine_data_per_customer);
     setload_pc(2);
   };
@@ -1371,7 +1371,7 @@ export default function UpdateModal(props) {
   let upload_data_per_customer = () => {
     dbSalesmanNet.transaction(function (tx) {
       tx.executeSql(
-        'INSERT INTO tbl_sales_per_customer (invoice_date, account_customer_name, invoice_no, principal_name, sales, invoice_status) VALUES ' +
+        'INSERT INTO tbl_sales_per_customer (invoice_date, account_customer_name, invoice_no, principal_name, sales, invoice_status_final) VALUES ' +
           c_customer_data,
         [],
         (tx, results) => {
