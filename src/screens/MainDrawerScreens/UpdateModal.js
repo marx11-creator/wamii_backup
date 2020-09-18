@@ -1253,7 +1253,7 @@ export default function UpdateModal(props) {
     }, []);
 
     combine_data_per_customer = combine_data_per_customer.slice(0, -1);
-    console.log(combine_data_per_customer);
+    // console.log(combine_data_per_customer);
     setc_customer_data(combine_data_per_customer);
     setload_pc(2);
   };
