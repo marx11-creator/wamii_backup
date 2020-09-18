@@ -245,7 +245,7 @@ export default function UpdateModal(props) {
 
   useEffect(() => {
     if (lineChartLocalData.length === lineChartAPIdatalength) {
-      updateProgress = Number(updateProgress) + Number(10);
+      updateProgress = Number(updateProgress) + Number(5);
       lineChartAPIdatalength = 0;
       DeletePerymtsatAPIData();
       console.log(
@@ -370,7 +370,7 @@ export default function UpdateModal(props) {
         'Delete from perymtsat_tbl ',
         [],
         (tx, results) => {
-          updateProgress = Number(updateProgress) + Number(10);
+          updateProgress = Number(updateProgress) + Number(5);
           console.log('deleted local perymtsat');
           SavePerymtsatAPIData();
         },
