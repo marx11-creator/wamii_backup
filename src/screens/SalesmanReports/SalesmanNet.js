@@ -542,7 +542,10 @@ export default function ViewScreen(props) {
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item}) =>
             {
-              return (
+
+              if (item.invoice_status_final === 'DISPATCH') {
+
+                return (
                 <TouchableOpacity onPress={() => console.log(item.user_id)}>
                 <View key={item.user_id} style={{ padding: 5, flexDirection: 'row'}}>
                   <View style={{flex: 2}}>
@@ -554,12 +557,58 @@ export default function ViewScreen(props) {
                   <View style={{flex: 1 }}>
                   <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
                   </View>
-                  <View style={{flex: 1 }}>
+                  <View style={{flex: 1, backgroundColor: 'green'}}>
                   <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
                   </View>
                 </View>
                 </TouchableOpacity>
-              );
+                );
+
+              } else if (item.invoice_status_final === 'PREPARED') {
+
+                return (
+                <TouchableOpacity onPress={() => console.log(item.user_id)}>
+                <View key={item.user_id} style={{ padding: 5, flexDirection: 'row'}}>
+                  <View style={{flex: 2}}>
+                  <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
+                  </View>
+                  <View style={{flex: 5}}>
+                  <Text style={{fontSize: moderateScale(15, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
+                  </View>
+                  <View style={{flex: 1 }}>
+                  <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
+                  </View>
+                  <View style={{flex: 1, backgroundColor: 'gray'}}>
+                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
+                  </View>
+                </View>
+                </TouchableOpacity>
+                );
+
+              }
+
+              // return (
+              //   <TouchableOpacity onPress={() => console.log(item.user_id)}>
+              //   <View key={item.user_id} style={{ padding: 5, flexDirection: 'row'}}>
+              //     <View style={{flex: 2}}>
+              //     <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
+              //     </View>
+              //     <View style={{flex: 5}}>
+              //     <Text style={{fontSize: moderateScale(15, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
+              //     </View>
+              //     <View style={{flex: 1 }}>
+              //     <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
+              //     </View>
+              //     <View style={{flex: 1 }}>
+              //     <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
+              //     </View>
+              //     <View style={{flex: 1 }}>
+
+              //     <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
+              //     </View>
+              //   </View>
+              //   </TouchableOpacity>
+              // );
             }
               }
           />
