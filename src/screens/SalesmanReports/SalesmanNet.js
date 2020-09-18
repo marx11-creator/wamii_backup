@@ -16,11 +16,15 @@ import {
   DashboardYears,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import moment, { months } from 'moment';
+import {ProgressCircle} from 'react-native-svg-charts';
 var db = openDatabase({name: 'Sales_report.db'});
 
 export default function ViewScreen(props) {
 
  const [DateTimerefreshed, setDateTimerefreshed] = useState('none');
+ const [grosssales, setgrosssales] = useState('');
+ const [cmamount, setcmamount] = useState('');
+ const [discount, setdiscount] = useState('');
  const [netsales, setnetsales] = useState('');
  const [target, settarget] = useState('');
  const [percent, setpercent] = useState('');
@@ -37,7 +41,7 @@ export default function ViewScreen(props) {
   //   // push_sales_per_customer();
   // });
 
- 
+
 
 
   useEffect(() => {
@@ -53,7 +57,7 @@ export default function ViewScreen(props) {
 
 
 
-  
+
 
   let [FlatListItems, setFlatListItems] = useState([]);
   let [FlatVendor, setFlatVendor] = useState([]);
@@ -101,7 +105,7 @@ export default function ViewScreen(props) {
         for (let i = 0; i < results.rows.length; ++i) {
           net.push(results.rows.item(i));
         }
-       
+
           // console.log(temp);
 
         var get_time_date_refreshed = net.map(item => item.dateTimeUpdated);
@@ -115,6 +119,9 @@ export default function ViewScreen(props) {
         var get_percent = get_net / get_target * 100;
 
         setDateTimerefreshed(get_time_date_refreshed.toString());
+        setgrosssales(get_gross_sales);
+        setcmamount(get_cm);
+        setdiscount(get_discount);
         settarget(get_target);
         setnetsales(get_net);
         setpercent(get_percent.toFixed(2));
@@ -187,44 +194,44 @@ export default function ViewScreen(props) {
       MonthQuery =
         ' and  business_month = ' + "'" + FilterList.DashboardFilterMonth + "'";
     }
-   
+
 
     db.transaction((tx) => {
-    
+
       var YearQuery = '';
       if (FilterList.DashboardFilterYear === '') {
         YearQuery =
           moment().utcOffset('+08:00').format('YYYY');
       } else {
         YearQuery =
-         FilterList.DashboardFilterYear 
+         FilterList.DashboardFilterYear;
       }
-  
+
       var MonthQuery = '';
       if (FilterList.DashboardFilterMonth === '') {
         MonthQuery = moment().utcOffset('+08:00').format('MM');
       } else {
         MonthQuery =
-           moment().month(FilterList.DashboardFilterMonth).format("MM");
+           moment().month(FilterList.DashboardFilterMonth).format('MM');
       }
-    
-      var DateFrom = YearQuery + "-" + MonthQuery + "-" + "01";
-      var DateTo = YearQuery + "-" + MonthQuery + "-" + "31";
-  
- 
-      tx.executeSql('SELECT invoice_date, account_customer_name, SUM(sales) AS sales FROM tbl_sales_per_customer WHERE invoice_date BETWEEN  ' + "'" + DateFrom + "'" + '  AND   ' + "'" + DateTo + "'" + '  GROUP BY invoice_date, account_customer_name ORDER BY invoice_date DESC', [], (tx, results) => {
+
+      var DateFrom = YearQuery + '-' + MonthQuery + '-' + '01';
+      var DateTo = YearQuery + '-' + MonthQuery + '-' + '31';
+
+
+      tx.executeSql('SELECT invoice_date, account_customer_name, SUM(sales) AS sales, invoice_status_final FROM tbl_sales_per_customer WHERE invoice_date BETWEEN  ' + "'" + DateFrom + "'" + '  AND   ' + "'" + DateTo + "'" + '  GROUP BY invoice_date, account_customer_name ORDER BY invoice_date DESC', [], (tx, results) => {
         var temp = [];
         for (let i = 0; i < results.rows.length; ++i) {
           temp.push(results.rows.item(i));
         }
-      
+
         setFlatListItems(temp);
       });
     });
   }
 
   function push_sales_per_category() {
-    
+
     var YearQuery = '';
     if (FilterList.DashboardFilterYear === '') {
       YearQuery =
@@ -248,7 +255,7 @@ export default function ViewScreen(props) {
       MonthQuery =
         ' and  business_month = ' + "'" + FilterList.DashboardFilterMonth + "'";
     }
-     
+
     db.transaction((tx) => {
       tx.executeSql('SELECT product_category, SUM(sales) AS total_amount, SUM(target) AS total_target, (SUM(sales) / SUM(target) * 100) as percent FROM tbl_sales_per_category WHERE      ' + YearQuery + MonthQuery + '  GROUP BY product_category ', [], (tx, results) => {
         var temp = [];
@@ -337,48 +344,49 @@ export default function ViewScreen(props) {
     );
   };
 
-  let propStyle = (percent, base_degrees) => {
-    const rotateBy = base_degrees + (percent * 3.6);
-    return {
-      transform:[{rotateZ: `${rotateBy}deg`}],
-    };
-  };
+  // let propStyle = (percent, base_degrees) => {
+  //   const rotateBy = base_degrees + (percent * 3.6);
+  //   return {
+  //     transform:[{rotateZ: `${rotateBy}deg`}],
+  //   };
+  // };
 
-  let renderThirdLayer = (percent) => {
-    if (percent > 100) {
-      return (
-        <View style={[styles.offsetLayer, propStyle((percent - 100), 45)]} />
-      );
-    } else if (percent > 50){
-      return (
-        <View style={[styles.secondProgressLayer, propStyle((percent - 50), 45)]} />
-      );
-    } else {
-      return (
-        <View style={styles.offsetLayer} />
-      );
-    }
-  };
+  // let renderThirdLayer = (percent) => {
+  //   if (percent > 100) {
+  //     return (
+  //       <View style={[styles.offsetLayer, propStyle((percent - 100), 45)]} />
+  //     );
+  //   } else if (percent > 50){
+  //     return (
+  //       <View style={[styles.secondProgressLayer, propStyle((percent - 50), 45)]} />
+  //     );
+  //   } else {
+  //     return (
+  //       <View style={styles.offsetLayer} />
+  //     );
+  //   }
+  // };
 
-  const CircularProgress = ({percent}) => {
-    let firstProgressLayerStyle;
-    if (percent > 50){
-      firstProgressLayerStyle = propStyle(50, -135);
-    } else {
-      firstProgressLayerStyle = propStyle(percent, -135);
-    }
+  // const CircularProgress = ({percent}) => {
+  //   let firstProgressLayerStyle;
+  //   if (percent > 50){
+  //     firstProgressLayerStyle = propStyle(50, -135);
+  //   } else {
+  //     firstProgressLayerStyle = propStyle(percent, -135);
+  //   }
 
-    return (
-      <View style={styles.container}>
-        <View style={[styles.firstProgressLayer, firstProgressLayerStyle]} />
-        {renderThirdLayer(percent)}
-        <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={styles.display}>{percent}%</Text>
-          <Text style={styles.displaytext}>Actual Sales</Text>
-        </View>
-      </View>
-    );
-  };
+  //   return (
+  //     <View style={styles.container}>
+  //       <View style={[styles.firstProgressLayer, firstProgressLayerStyle]} />
+  //       {renderThirdLayer(percent)}
+  //       <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+  //         <Text style={styles.display}>{percent}%</Text>
+  //         <Text style={styles.displaytext}>Actual Sales</Text>
+  //       </View>
+  //     </View>
+  //   );
+  // };
+
 
 
 
@@ -391,8 +399,40 @@ export default function ViewScreen(props) {
       <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
 
         {/* percentage */}
-        <View style={{ flex: 1.5, paddingTop: 20, justifyContent: 'flex-start', alignItems: 'center' }}>
-          <CircularProgress percent={percent}/>
+        <View style={{ justifyContent: 'flex-start', marginLeft: 20, marginTop: 20}}>
+          <Text style={{ fontSize: 20, color: 'gray'}}>
+            {FilterList.DashboardFilterMonth} {FilterList.DashboardFilterYear}
+          </Text>
+        </View>
+        <View style={{ flex: 1.5, paddingVertical: 10, justifyContent: 'center', alignItems: 'center'}}>
+        <ProgressCircle
+          style={{height: scale(200), width: scale(200)}}
+          progress={percent / 100}
+          progressColor={'#24E4B5'}
+          backgroundColor="gray" //'#ECECEC'	PropTypes.any
+          startAngle="0" // 	0	PropTypes.number
+          // endAngle // Math.PI * 2	   PropTypes.number
+          strokeWidth="15" // 5	PropTypes.number
+          cornerRadius="45" // PropTypes.number
+         />
+
+        <Text style={{
+              position: 'absolute',
+              color: 'black',
+              fontSize: moderateScale(30, 0.5),
+              fontWeight: 'bold',
+              paddingTop: 10}}>
+          {percent}%
+          {'\n'}
+        </Text>
+        <Text style={{
+              position: 'absolute',
+              color: 'gray',
+              fontSize: moderateScale(20, 0.5),
+              fontWeight: 'bold',
+              paddingTop: 50}}>
+        Sales
+        </Text>
         </View>
 
         {/* sales and target */}
@@ -405,19 +445,54 @@ export default function ViewScreen(props) {
             <Image source={require('../../assets/pic/refresh.png')} style={{height:moderateScale(30, 0.5), width: moderateScale(30, 0.5)}} />
           </TouchableOpacity>
           <View style={{margin:5}} /> */}
-          <Text style={{fontSize: moderateScale(15, 0.5), color: 'gray', marginTop: 20}}>Updated: {DateTimerefreshed}</Text>
+          <Text style={{fontSize: moderateScale(15, 0.5), color: 'gray' }}>Updated: {DateTimerefreshed}</Text>
         </View>
-        <View style={{flex:1, flexDirection: 'row', padding: 10 }}>
+        <View style={{flex:1.5, flexDirection: 'row', padding: 10 }}>
           <View style={{flex:1,flexDirection: 'column'}}>
-            <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
-              <Text style={{fontSize: moderateScale(20, 0.5), color :'gray'}}>Net Sales</Text>
+          <View style={{flex:1,flexDirection: 'row'}}>
+            {/* Field Name */}
+            <View style={{flex:1,flexDirection: 'column'}}>
+              {/* gross sales */}
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'flex-start', padding: 5}}>
+                <Text style={{fontSize: moderateScale(15, 0.5), color :'gray'}}>Gross Sales</Text>
+              </View>
+              {/* cm return */}
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'flex-start', padding: 5}}>
+                <Text style={{fontSize: moderateScale(15, 0.5), color :'gray'}}>CM Amount</Text>
+              </View>
+              {/* discount */}
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'flex-start', padding: 5}}>
+                <Text style={{fontSize: moderateScale(15, 0.5), color :'gray'}}>Discount</Text>
+              </View>
+              {/* net sales */}
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'flex-start', padding: 5}}>
+                <Text style={{fontSize: moderateScale(15, 0.5), color :'gray'}}>Net Sales</Text>
+              </View>
             </View>
-            <View style={{flex: 1.5, justifyContent: 'flex-start', alignItems:'center'}}>
-              <Text style={{fontSize: moderateScale(50, 0.5), fontFamily: 'sans-serif', color: 'black'}}>{numFormatter(netsales)}</Text>
+
+            {/* Field data */}
+            <View style={{flex:2,flexDirection: 'column'}}>
+              {/* gross sales */}
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#ADFF2F'}}>
+                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(grosssales)}</Text>
+              </View>
+              {/* cm return */}
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#7FFF00'}}>
+                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(cmamount)}</Text>
+              </View>
+              {/* discount */}
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#7CFC00'}}>
+                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(discount)}</Text>
+              </View>
+              {/* net sales */}
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#00FF00'}}>
+                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(netsales)}</Text>
+              </View>
+            </View>
             </View>
           </View>
           <View style={{flex:1}}>
-          <View style={{flex:1, flexDirection: 'column' , borderLeftWidth: 0.5, borderLeftColor: 'gray'}}>
+          <View style={{flex:1, flexDirection: 'column'  }}>
             <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
               <Text style={{fontSize: moderateScale(20, 0.5), color :'gray'}}>Monthly Target</Text>
             </View>
@@ -433,7 +508,7 @@ export default function ViewScreen(props) {
         <Button title="Principals - Category" onPress={() => Principals_shown()} />
         <View style={{height: scale(35), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070', alignItems: 'center'}}>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5)}}>PRINCIPAL</Text>
+          <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(16, 0.5), padding: 2}}>PRINCIPAL</Text>
           </View>
           <View style={{flex: 1}}>
           <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>TARGET</Text>
@@ -474,10 +549,13 @@ export default function ViewScreen(props) {
                   <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
                   </View>
                   <View style={{flex: 5}}>
-                  <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
+                  <Text style={{fontSize: moderateScale(15, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
                   </View>
                   <View style={{flex: 1 }}>
                   <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
+                  </View>
+                  <View style={{flex: 1 }}>
+                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
                   </View>
                 </View>
                 </TouchableOpacity>
@@ -506,7 +584,7 @@ if (showCategory === true) {
         <Button title="Minimize" onPress={() => All_shown()} />
         <View style={{height: scale(45), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070',alignItems: 'center'}}>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5)}}>PRINCIPAL</Text>
+          <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(16, 0.5), padding: 2}}>PRINCIPAL</Text>
           </View>
           <View style={{flex: 1}}>
           <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>TARGET</Text>
@@ -628,14 +706,17 @@ if (showCategory === true) {
                 return (
                   <TouchableOpacity onPress={() => console.log(item.user_id)}>
                 <View key={item.user_id} style={{ padding: 5, flexDirection: 'row'}}>
-                  <View style={{flex: 2}}>
-                  <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
+                  <View style={{flex: 1.5}}>
+                  <Text style={{fontSize: moderateScale(15, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
                   </View>
                   <View style={{flex: 4}}>
-                  <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
+                  <Text style={{fontSize: moderateScale(15, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
                   </View>
                   <View style={{flex: 1 }}>
                   <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
+                  </View>
+                  <View style={{flex: 1 }}>
+                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
                   </View>
                 </View>
                   </TouchableOpacity>

@@ -174,7 +174,7 @@ dbSalesmanNet.transaction(function (txn) {
       if (res.rows.length == 0) {
         txn.executeSql('DROP TABLE IF EXISTS tbl_sales_per_customer', []);
         txn.executeSql(
-          'CREATE TABLE IF NOT EXISTS tbl_sales_per_customer(user_id INTEGER PRIMARY KEY AUTOINCREMENT, invoice_date VARCHAR(255), account_customer_name VARCHAR(255), invoice_no VARCHAR(255), principal_name VARCHAR(255), sales INT(100))',
+          'CREATE TABLE IF NOT EXISTS tbl_sales_per_customer(user_id INTEGER PRIMARY KEY AUTOINCREMENT, invoice_date VARCHAR(255), account_customer_name VARCHAR(255), invoice_no VARCHAR(255), principal_name VARCHAR(255), sales INT(100), invoice_status_final VARCHAR(255))',
           [],
         );
       }

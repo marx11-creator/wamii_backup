@@ -286,13 +286,12 @@ export default function UpdateModal(props) {
     setq4Area(false); //update status of function to false
     setq5Marc(false); //update status of function to false
     console.log('all salesman1');
-    if (global.sales_position_name ==='ALLSALESMAN'){
+    if (global.sales_position_name === 'ALLSALESMAN') {
       setq5Marc(true);
       console.log('all salesman1');
     } else {
       initiate();
     }
-
 
     BusinessCalendarDownload();
     GetPerymtsatAPIData(); //GET API DATA
@@ -1248,11 +1247,13 @@ export default function UpdateModal(props) {
         item.principal_name +
         "','" +
         item.sales +
+        "','" +
+        item.invoice_status_final +
         "'),";
     }, []);
 
     combine_data_per_customer = combine_data_per_customer.slice(0, -1);
-    //console.log(combine_data_per_customer);
+    console.log(combine_data_per_customer);
     setc_customer_data(combine_data_per_customer);
     setload_pc(2);
   };
@@ -1370,7 +1371,7 @@ export default function UpdateModal(props) {
   let upload_data_per_customer = () => {
     dbSalesmanNet.transaction(function (tx) {
       tx.executeSql(
-        'INSERT INTO tbl_sales_per_customer (invoice_date, account_customer_name, invoice_no, principal_name, sales) VALUES ' +
+        'INSERT INTO tbl_sales_per_customer (invoice_date, account_customer_name, invoice_no, principal_name, sales, invoice_status_final) VALUES ' +
           c_customer_data,
         [],
         (tx, results) => {
