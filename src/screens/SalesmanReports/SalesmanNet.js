@@ -471,22 +471,22 @@ export default function ViewScreen(props) {
             </View>
 
             {/* Field data */}
-            <View style={{flex:1,flexDirection: 'column'}}>
+            <View style={{flex:2,flexDirection: 'column'}}>
               {/* gross sales */}
-              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', backgroundColor: 'yellow'}}>
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#ADFF2F'}}>
                 <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(grosssales)}</Text>
               </View>
               {/* cm return */}
-              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', backgroundColor: 'yellow'}}>
-                <Text style={{fontSize: moderateScale(30, 0.5), color :'black'}}>{numFormatter(cmamount)}</Text>
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#7FFF00'}}>
+                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(cmamount)}</Text>
               </View>
               {/* discount */}
-              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', backgroundColor: 'yellow'}}>
-                <Text style={{fontSize: moderateScale(30, 0.5), color :'black'}}>{numFormatter(discount)}</Text>
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#7CFC00'}}>
+                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(discount)}</Text>
               </View>
               {/* net sales */}
-              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', backgroundColor: 'yellow'}}>
-                <Text style={{fontSize: moderateScale(30, 0.5), color :'black'}}>{numFormatter(netsales)}</Text>
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#00FF00'}}>
+                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(netsales)}</Text>
               </View>
             </View>
             </View>
