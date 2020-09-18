@@ -1107,7 +1107,7 @@ export default function UpdateModal(props) {
         console.log('fetching fetch_per_customer_data DONE');
       })
       .catch(function (error) {
-        console.log('Customer: ' + error);
+        console.log('1Customer: ' + error);
       })
       .done();
   };
@@ -1253,7 +1253,7 @@ export default function UpdateModal(props) {
     }, []);
 
     combine_data_per_customer = combine_data_per_customer.slice(0, -1);
-    console.log(combine_data_per_customer);
+    // console.log(combine_data_per_customer);
     setc_customer_data(combine_data_per_customer);
     setload_pc(2);
   };
