@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {useFocusEffect} from '@react-navigation/native';
 import {
   View,
@@ -22,6 +22,7 @@ import {
   DashboardYears,
   FilterList,
   WorkingDays,
+  CurrentAppScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {UpdateYearMonthsFilter} from '../../sharedComponents/globalCommands/globalCommands';
 import DeviceInfo from 'react-native-device-info';
@@ -34,9 +35,15 @@ import {
   moderateScale,
   verticalScale,
 } from '../../sharedComponents/scaling';
+import BackgroundTimer from 'react-native-background-timer';
+import {PageContext} from './pagecontext';
 LogBox.ignoreAllLogs();
 
 export default function Home(props) {
+  const [globalState, setglobalState] = useContext(PageContext);
+  //  console.log(auth);
+
+  const [globalStateLocal, setglobalStateLocal] = useState(0);
   const WorkingDaysFields = {
     TotalDays: '0',
     RemainingDays: '0',
@@ -210,10 +217,55 @@ export default function Home(props) {
     }, []),
   );
 
+  
+  useEffect(()=> {
+var secs = 0;
+    // BackgroundTimer.clearInterval();
+    const intervalId = BackgroundTimer.setInterval(() => {
+secs = secs + 1;
+      
+      setglobalStateLocal(secs);
+
+    }, 1000);
+  },[])
+
+
+useEffect(()=>{
+
+  console.log(globalState);
+    
+  setglobalState(globalState + 1)
+
+  if (globalStateLocal === 3) {
+    CurrentAppScreen.Screen = 'UPDATEMDL';
+    props.navigation.navigate('UpdateModal');
+    props.navigation.navigate('Home');
+  
+console.log('3aaaa');
+    // BackgroundTimer.clearInterval(intervalId);
+
+   }  
+
+   
+//   if (globalStateLocal === 4) {
+//     props.navigation.navigate('Home');
+  
+// console.log('homeaaa');
+//     // BackgroundTimer.clearInterval(intervalId);
+
+//    }  
+
+
+
+
+},[globalStateLocal])
+
+
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       getWorkingDays();
       console.log('focus on per Home');
+
       if (APIUpdateVersion.APIUpdateVersionField !== 0) {
         if (
           Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField) ===
@@ -333,10 +385,10 @@ export default function Home(props) {
             {' '}
             Wing An Marketing Inc.
           </Text>
-          {/* <Button
+          <Button
             title="test"
-            onPress={() => console.log(WorkingDaysLocal.SalesvsTarget)}
-          /> */}
+            onPress={() => console.log(globalState)}
+          />
         </View>
 
         <View
@@ -370,7 +422,8 @@ export default function Home(props) {
             })} % {'\n\n'}   ACH
           </Text>
         </View>
-
+{/* <Text style={{color: 'green', fontSize:30}}>{globalState.currentSeconds}</Text>
+<Text style={{color: 'green', fontSize:30}}>{globalState.updateStatus}</Text> */}
 
 <View
           style={{

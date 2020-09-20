@@ -6,6 +6,7 @@ import React, {
   useDebugValue,
   useRef,
   useReducer,
+  useContext,
 } from 'react';
 import moment from 'moment';
 import {
@@ -40,6 +41,7 @@ import Modal from 'react-native-modal';
 import LinearGradient from 'react-native-linear-gradient';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {APIToken, globalCompany, server} from '../../sharedComponents/globalCommands/globalCommands';
+import {PageContext} from './pagecontext';
 
 var ApiRowsCount = 0;
 var count = 0;
@@ -51,7 +53,7 @@ var longStrinfg = '';
 
 // var arrVariantListfromPickerLocal = [];
 export default function PromoItems() {
-  
+const [globalState] = useContext(PageContext);
   const ApiFields = [
     {
       principal_name: '',
@@ -194,6 +196,7 @@ export default function PromoItems() {
     GetDateTime();
     GetPrincipalList();
     GetLocalPromoItems();
+    
   }, []);
 
   // useEffect(() => {
@@ -755,6 +758,9 @@ export default function PromoItems() {
               'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
           }}
         />
+        <Text style={{color: 'green', fontSize:30}}>{globalState.currentSeconds}</Text>
+<Text style={{color: 'green', fontSize:30}}>{globalState.updateStatus}</Text>
+
         <FlatButton
           gradientFrom="red"
           gradientTo="pink"
@@ -771,6 +777,7 @@ export default function PromoItems() {
             gradientFrom="red"
             gradientTo="pink"
             onPress={() => {
+       
               // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
               GetPrincipalList();
               setisModalVisible2(!isModalVisible2);
