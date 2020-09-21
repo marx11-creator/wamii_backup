@@ -28,6 +28,7 @@ import {
   APIToken,
   globalCompany,
   server,
+  CurrentAppScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
 var isMonthChanged = false;
 var BusinessCalendarField = {
@@ -61,6 +62,7 @@ export default function BusinessCalendar(props) {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on Business Calendar');
+      CurrentAppScreen.Screen = 'BusinessCalendar';
       GetSelectedDays(YearMonthToSearch);
     });
   }, []);

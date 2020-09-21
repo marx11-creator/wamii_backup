@@ -41,13 +41,14 @@ import {
 import BackgroundTimer from 'react-native-background-timer';
 import App1 from './test';
 import UpdateModal from './UpdateModal';
+import PageContext from './pagecontext';
 
 LogBox.ignoreAllLogs();
 
 export default function Home(props) {
   //  console.log(auth);
-
-  const [globalStateLocal, setglobalStateLocal] = useState(0);
+  const [globalState, setglobalState] = useContext(PageContext);
+  const [localSeconds, setlocalSeconds] = useState(0);
 
   const WorkingDaysFields = {
     TotalDays: '0',
@@ -228,45 +229,46 @@ export default function Home(props) {
     const intervalId = BackgroundTimer.setInterval(() => {
       secs = secs + 1;
 
-      setglobalStateLocal(secs);
+      setlocalSeconds(secs);
 
-      if (secs === 3 && globalStatus.StartUpdate === false) {
+      if (secs === 3 && globalStatus.StartUpUpdate === false) {
         // var screenname = CurrentAppScreen.Screen;
         console.log(CurrentAppScreen.Screen);
         globalStatus.updateStatus = 'Updating';
 
+      
+
+
         globalStatus.updateMode = 'auto';
-        globalStatus.StartUpdate = true;
+        globalStatus.StartUpUpdate = true;
         // props.navigation.navigate('UpdateModal');
         // props.navigation.navigate(screenname);
+   
+        BackgroundTimer.clearInterval(intervalId);
+
       }
 
-      if (secs === 2420) {
-        // var screennameauto = CurrentAppScreen.Screen;
-        console.log(screennameauto);
 
-        globalStatus.updateMode = 'auto';
-        globalStatus.updateStatus = 'Updating';
-        // props.navigation.navigate('UpdateModal');
-        // props.navigation.navigate(screennameauto);
-        secs = 0;
-        console.log('timer reset');
-      }
     }, 1000);
   }, []);
 
+
+
+
   useEffect(() => {
-   // console.log('timer' + globalStateLocal);
-    globalStatus.currentSeconds = globalStateLocal;
 
-    //   if (globalStateLocal === 4) {
-    //     props.navigation.navigate('Home');
+     
+    
+    if (localSeconds === 3) {
+     setglobalState({
+       ...globalState,
+       updateStatus: 'Updating'
+     })
+    }
 
-    // console.log('homeaaa');
-    //     // BackgroundTimer.clearInterval(intervalId);
 
-    //    }
-  }, [globalStateLocal]);
+    
+  }, [localSeconds]);
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
@@ -395,7 +397,7 @@ export default function Home(props) {
           <Button
             title="test"
             onPress={() => {
-              <App1 />;
+              console.log(globalState);
             }}
           />
         </View>
@@ -432,8 +434,8 @@ export default function Home(props) {
             % {'\n\n'} ACH
           </Text>
         </View>
-        {/* <Text style={{color: 'green', fontSize:30}}>{globalState.currentSeconds}</Text>
-<Text style={{color: 'green', fontSize:30}}>{globalState.updateStatus}</Text> */}
+        <Text style={{color: 'green', fontSize:30}}>{globalState.timerSeconds}</Text>
+<Text style={{color: 'green', fontSize:30}}>{globalState.updateStatus}</Text>
 
         <View
           style={{
@@ -511,7 +513,7 @@ export default function Home(props) {
           </Text>
         </View> */}
       </View>
-      {globalStateLocal === 3 ? <UpdateModal /> : null}
+      {localSeconds === 3 ? <UpdateModal /> : null}
     </ImageOverlay>
   );
 }

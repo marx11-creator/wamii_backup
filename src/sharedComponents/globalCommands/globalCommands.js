@@ -70,10 +70,9 @@ export var FilterListMirror = {
 };
 
 export var globalStatus = {
-  currentSeconds: 0,
   updateMode: '',
   updateStatus: '',
-  StartUpdate: false,
+  StartUpUpdate: false,
 };
 
 

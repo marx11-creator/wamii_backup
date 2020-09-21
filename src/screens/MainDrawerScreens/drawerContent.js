@@ -1,6 +1,6 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   StyleSheet,
@@ -41,8 +41,13 @@ import {
   globalStatus,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users} from '../../database/sqliteSetup';
+import PageContext from './pagecontext';
+
 
 export function DrawerContent(props) {
+
+  const [globalState, setglobalState] = useContext(PageContext);
+
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
@@ -222,11 +227,32 @@ export function DrawerContent(props) {
               }}>
               <View style={{alignItems: 'flex-start', marginLeft: scale(80)}}>
                 <FlatButton
-                  text="Update Now"
+                text=  {globalState.updateStatus === 'Idle'  ? 'Update Now' : 'Updating...'}
                   onPress={() => {
+                      if (globalStatus.StartUpUpdate === false || globalState.updateStatus === 'Updating'){
+                        
+                        Alert.alert(
+                          'Note',
+                          "Application already updating in background. Kindly wait",
+                          [
+                            {
+                              text: 'OK',
+                            },
+                          ],
+                          {cancelable: true},
+                        );
+
+                        
+                      } else {
+                        
+
+
+                    globalStatus.updateStatus = 'Updating';
                     globalStatus.updateMode = 'manual';
-                    CurrentAppScreen.Screen = 'PerTeam';
                     props.navigation.navigate('UpdateModal');
+
+                      }
+
                   }}
                   gradientFrom="#00961A"
                   gradientTo="#34F856"

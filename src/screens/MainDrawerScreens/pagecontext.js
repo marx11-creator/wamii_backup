@@ -1,2 +1,3 @@
-import React from 'react';
-export const PageContext = React.createContext();
+import React from 'react'; 
+const PageContext = React.createContext([{}, () => {}]); 
+export default PageContext;

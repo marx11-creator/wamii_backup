@@ -50,6 +50,7 @@ import {
   CurrentDashboardScreen,
   FilterList,
   DashboardYears,
+  CurrentAppScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import DashboardModal from '../Dashboard/DashboardModal';
 var lineChartAPIdatalength = 0;
@@ -301,6 +302,7 @@ export default function PerSalesmanDashboard(props) {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per salesman');
+      CurrentAppScreen.Screen = 'PerSalesman';
       SearchPerSalesman();
       GetDateTime();
     });

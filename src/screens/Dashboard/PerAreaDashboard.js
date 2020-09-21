@@ -46,6 +46,7 @@ import {
   CurrentDashboardScreen,
   FilterList,
   DashboardYears,
+  CurrentAppScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
@@ -215,9 +216,10 @@ export default function PerAreaDashboard(props) {
   //USE EFFECT PART
 
   useEffect(() => {
+    
     props.navigation.addListener('focus', () => {
       console.log('focus on per Area'); //
-
+      CurrentAppScreen.Screen = 'PerArea';
       // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
       SearchPrincipal();
 

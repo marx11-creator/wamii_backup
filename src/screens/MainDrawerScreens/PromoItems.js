@@ -40,7 +40,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import Modal from 'react-native-modal';
 import LinearGradient from 'react-native-linear-gradient';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {APIToken, globalCompany, server} from '../../sharedComponents/globalCommands/globalCommands';
+import {APIToken, globalCompany, server, CurrentAppScreen} from '../../sharedComponents/globalCommands/globalCommands';
 
 var ApiRowsCount = 0;
 var count = 0;
@@ -51,7 +51,7 @@ var TypeListfromPicker = '';
 var longStrinfg = '';
 
 // var arrVariantListfromPickerLocal = [];
-export default function PromoItems() {
+export default function PromoItems(props) {
   const ApiFields = [
     {
       principal_name: '',
@@ -190,12 +190,26 @@ export default function PromoItems() {
     }
   });
 
+ 
+
   useEffect(() => {
-    GetDateTime();
-    GetPrincipalList();
-    GetLocalPromoItems();
-    
+    props.navigation.addListener('focus', () => {
+      console.log('focus on per per item');
+      CurrentAppScreen.Screen = 'PromoItems';
+      GetDateTime();
+      GetPrincipalList();
+      GetLocalPromoItems();
+      
+
+
+    });
+
+
   }, []);
+
+
+
+
 
   // useEffect(() => {
   //   dateTimeSet();

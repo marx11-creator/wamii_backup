@@ -47,6 +47,7 @@ import {
   FilterList,
   DashboardYears,
   globalCompany,
+  CurrentAppScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
 
 export default function PerPrincipalDashboard(props) {
@@ -328,7 +329,7 @@ export default function PerPrincipalDashboard(props) {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per principal');
-
+      CurrentAppScreen.Screen = 'PerPrincipal';
       SearchPrincipal();
 
       if (perPrincipal.length > 1 && totalSales > 1) {
