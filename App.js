@@ -1,18 +1,41 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, {useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 
 import StartLandingScreen from './src/screens/loginscreens/StartLandingScreen';
-
+import {PageContext} from './src/screens/MainDrawerScreens/pagecontext';
 const Stack = createStackNavigator();
 
-const StartStackScreen = (props) => (
-  <NavigationContainer>
-    <Stack.Navigator headerMode="none">
-      <Stack.Screen name="StartLoginScreen" component={StartLandingScreen} />
-    </Stack.Navigator>
-  </NavigationContainer>
-);
+// export default function StartStackScreen(){
+//   StartStackScreen1();`
+//   const [auth, setAuth] = useState('');
 
-export default StartStackScreen;
+//   const StartStackScreen1 = (props) => (
+//     <PageContext.Provider value={[auth, setAuth]}>
+//       <NavigationContainer>
+//         <Stack.Navigator headerMode="none">
+//           <Stack.Screen name="StartLoginScreen" component={StartLandingScreen} />
+//         </Stack.Navigator>
+//       </NavigationContainer>
+//       </PageContext.Provider>
+//     );
+
+    
+// }
+
+const App = () => {
+
+  const [globalState, setglobalState] = useState(0);
+
+  return(
+    <PageContext.Provider value={[globalState, setglobalState]}>
+       <NavigationContainer>
+       <Stack.Navigator headerMode="none">
+           <Stack.Screen name="StartLoginScreen" component={StartLandingScreen} />
+         </Stack.Navigator>
+       </NavigationContainer>
+    </PageContext.Provider>)
+}
+
+export default App;

@@ -474,19 +474,19 @@ export default function ViewScreen(props) {
             <View style={{flex:2,flexDirection: 'column'}}>
               {/* gross sales */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#ADFF2F'}}>
-                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(grosssales)}</Text>
+                <Text style={{fontSize: moderateScale(18, 0.5), padding: 10, color :'black'}}>{numFormatter(grosssales)}</Text>
               </View>
               {/* cm return */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#7FFF00'}}>
-                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(cmamount)}</Text>
+                <Text style={{fontSize: moderateScale(18, 0.5), padding: 10, color :'black'}}>{numFormatter(cmamount)}</Text>
               </View>
               {/* discount */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#7CFC00'}}>
-                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(discount)}</Text>
+                <Text style={{fontSize: moderateScale(18, 0.5), padding: 10, color :'black'}}>{numFormatter(discount)}</Text>
               </View>
               {/* net sales */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#00FF00'}}>
-                <Text style={{fontSize: moderateScale(30, 0.5), padding: 10, color :'black'}}>{numFormatter(netsales)}</Text>
+                <Text style={{fontSize: moderateScale(25, 0.5), padding: 10, color :'black', fontWeight: 'bold'}}>{numFormatter(netsales)}</Text>
               </View>
             </View>
             </View>
@@ -508,19 +508,19 @@ export default function ViewScreen(props) {
         <Button title="Principals - Category" onPress={() => Principals_shown()} />
         <View style={{height: scale(35), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070', alignItems: 'center'}}>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(16, 0.5), padding: 2}}>PRINCIPAL</Text>
+          <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(13, 0.5), padding: 2}}>PRINCIPAL</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>TARGET</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(13, 0.5), padding: 2}}>TARGET</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>SALES</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(13, 0.5), padding: 2}}>SALES</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>ACHV</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(13, 0.5), padding: 2}}>ACHV</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>UBA</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(13, 0.5), padding: 2}}>UBA</Text>
           </View>
         </View>
         <View style={{flex: 3}}>
@@ -548,37 +548,16 @@ export default function ViewScreen(props) {
                 return (
                 <TouchableOpacity onPress={() => console.log(item.user_id)}>
                 <View key={item.user_id} style={{ padding: 5, flexDirection: 'row'}}>
-                  <View style={{flex: 2}}>
-                  <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
+                  <View style={{flex: 2.5}}>
+                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
                   </View>
-                  <View style={{flex: 5}}>
-                  <Text style={{fontSize: moderateScale(15, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
+                  <View style={{flex: 6}}>
+                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
                   </View>
-                  <View style={{flex: 1 }}>
-                  <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
+                  <View style={{flex: 2 }}>
+                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
                   </View>
-                  <View style={{flex: 1, backgroundColor: 'green'}}>
-                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
-                  </View>
-                </View>
-                </TouchableOpacity>
-                );
-
-              } else if (item.invoice_status_final === 'PREPARED') {
-
-                return (
-                <TouchableOpacity onPress={() => console.log(item.user_id)}>
-                <View key={item.user_id} style={{ padding: 5, flexDirection: 'row'}}>
-                  <View style={{flex: 2}}>
-                  <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
-                  </View>
-                  <View style={{flex: 5}}>
-                  <Text style={{fontSize: moderateScale(15, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
-                  </View>
-                  <View style={{flex: 1 }}>
-                  <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
-                  </View>
-                  <View style={{flex: 1, backgroundColor: 'gray'}}>
+                  <View style={{flex: 2 }}>
                   <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
                   </View>
                 </View>
@@ -701,7 +680,7 @@ if (showCategory === true) {
         {/* principal */}
         <View style={{flex:3, borderTopWidth: 0.5, borderTopColor: 'gray', padding: 5}}>
         <Button title="Minimize" onPress={() => All_shown()} />
-        <View style={{height: scale(35), flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: 'green',alignItems: 'center'}}>
+        <View style={{height: scale(35), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070',alignItems: 'center'}}>
           <View style={{flex: 1}}>
           <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5)}}>PRINCIPAL</Text>
           </View>
@@ -755,16 +734,16 @@ if (showCategory === true) {
                 return (
                   <TouchableOpacity onPress={() => console.log(item.user_id)}>
                 <View key={item.user_id} style={{ padding: 5, flexDirection: 'row'}}>
-                  <View style={{flex: 1.5}}>
-                  <Text style={{fontSize: moderateScale(15, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
+                  <View style={{flex: 2.5}}>
+                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
                   </View>
-                  <View style={{flex: 4}}>
-                  <Text style={{fontSize: moderateScale(15, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
+                  <View style={{flex: 6}}>
+                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
                   </View>
-                  <View style={{flex: 1 }}>
-                  <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
+                  <View style={{flex: 2 }}>
+                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
                   </View>
-                  <View style={{flex: 1 }}>
+                  <View style={{flex: 2 }}>
                   <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
                   </View>
                 </View>

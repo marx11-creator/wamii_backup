@@ -1,5 +1,5 @@
 /* eslint-disable no-lone-blocks */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   Button,
   Text,
@@ -35,6 +35,7 @@ import {
   globalCompany,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
+import {PageContext} from './pagecontext';
 
 //marc
 import {useFocusEffect} from '@react-navigation/native';
@@ -53,6 +54,7 @@ var year = new Date().getFullYear();
 //marc
 
 export default function UpdateModal(props) {
+  const [globalState, setglobalState] = useContext(PageContext);
   ////////////////MARC
   const [customer_data, setcustomer_data] = useState([]);
   const [net_data, setnet_data] = useState([]);
@@ -155,6 +157,10 @@ export default function UpdateModal(props) {
       setisLoadingActivityIndicator(false);
       props.navigation.navigate('Home');
       props.navigation.openDrawer();
+      
+      setglobalState(9);
+
+
     }
   }, [q1Principal]);
 
@@ -173,6 +179,10 @@ export default function UpdateModal(props) {
       setisLoadingActivityIndicator(false);
       props.navigation.navigate('Home');
       props.navigation.openDrawer();
+
+      setglobalState(9);
+
+
     }
   }, [q2Perymtsat]);
 
@@ -191,6 +201,10 @@ export default function UpdateModal(props) {
       setisLoadingActivityIndicator(false);
       props.navigation.navigate('Home');
       props.navigation.openDrawer();
+
+      setglobalState(9);
+
+
     }
   }, [q3UserUpdateLog]);
 
@@ -209,6 +223,9 @@ export default function UpdateModal(props) {
       setisLoadingActivityIndicator(false);
       props.navigation.navigate('Home');
       props.navigation.openDrawer();
+      
+      setglobalState(9);
+
     }
   }, [q4Area]);
 
@@ -227,6 +244,8 @@ export default function UpdateModal(props) {
       setisLoadingActivityIndicator(false);
       props.navigation.navigate('Home');
       props.navigation.openDrawer();
+
+      setglobalState(9);
     }
   }, [q5Marc]);
 
@@ -237,15 +256,18 @@ export default function UpdateModal(props) {
       if (CurrentAppScreen.Screen === 'UPDATEMDL') {
         updateProgress = 0;
         console.log('focus on update');
+        setglobalState(5);
         setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
         GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
+      } else {
+        console.log('asas');
       }
     });
   }, []);
 
   useEffect(() => {
     if (lineChartLocalData.length === lineChartAPIdatalength) {
-      updateProgress = Number(updateProgress) + Number(10);
+      updateProgress = Number(updateProgress) + Number(5);
       lineChartAPIdatalength = 0;
       DeletePerymtsatAPIData();
       console.log(
@@ -370,7 +392,7 @@ export default function UpdateModal(props) {
         'Delete from perymtsat_tbl ',
         [],
         (tx, results) => {
-          updateProgress = Number(updateProgress) + Number(10);
+          updateProgress = Number(updateProgress) + Number(5);
           console.log('deleted local perymtsat');
           SavePerymtsatAPIData();
         },
@@ -754,7 +776,7 @@ export default function UpdateModal(props) {
 
         Alert.alert(
           'Error',
-          'Application Error,  No data found \n err1004 \n \n Please Contact Support Team.',
+          'Error saving user update. \n \n Please Contact Support Team.',
           [
             {
               text: 'OK',
@@ -1065,14 +1087,6 @@ export default function UpdateModal(props) {
 
     console.log('fetching fetch_per_customer_data');
 
-    console.log(
-      'https://boiling-atoll-20376.herokuapp.com/sales_tbl/salesmanfilterddaterange/' +
-        global.sales_position_name +
-        '&' +
-        get_date_from +
-        '&' +
-        get_date_to,
-    );
     Promise.race([
       fetch(
         'https://boiling-atoll-20376.herokuapp.com/sales_tbl/salesmanfilterddaterange/' +
@@ -1108,6 +1122,10 @@ export default function UpdateModal(props) {
       })
       .catch(function (error) {
         console.log('1Customer: ' + error);
+
+        
+        setisModalConnectionError(true);
+        setisLoadingActivityIndicator(false);
       })
       .done();
   };
@@ -1146,17 +1164,15 @@ export default function UpdateModal(props) {
       })
       .catch(function (error) {
         console.log('Net: ' + error);
+        
+        setisModalConnectionError(true);
+        setisLoadingActivityIndicator(false);
       })
       .done();
   };
 
   let fetch_per_vendor_data = () => {
-    console.log(
-      'https://boiling-atoll-20376.herokuapp.com/perprincipalsalestargetuba/' +
-        global.TeamAccessListForAPI +
-        '&' +
-        global.sales_position_name,
-    );
+
     Promise.race([
       fetch(
         'https://boiling-atoll-20376.herokuapp.com/perprincipalsalestargetuba/' +
@@ -1189,6 +1205,9 @@ export default function UpdateModal(props) {
       })
       .catch(function (error) {
         console.log('Vendor1' + error);
+        
+        setisModalConnectionError(true);
+        setisLoadingActivityIndicator(false);
       })
       .done();
   };
@@ -1228,6 +1247,9 @@ export default function UpdateModal(props) {
       })
       .catch(function (error) {
         console.log('category' + error);
+        
+        setisModalConnectionError(true);
+        setisLoadingActivityIndicator(false);
       })
       .done();
   };
