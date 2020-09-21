@@ -251,6 +251,7 @@ export default function PerTeamDashboard(props) {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per team');
+      CurrentAppScreen.Screen = 'PerTeam';
       LoadPerTeam();
 
       if (DashboardYears.length > 0) {
@@ -263,7 +264,6 @@ export default function PerTeamDashboard(props) {
             {
               text: 'UPDATE NOW',
               onPress: () => {
-                CurrentAppScreen.Screen = 'UPDATEMDL';
                 props.navigation.navigate('UpdateModal');
      
               },

@@ -30,12 +30,12 @@ import moment from 'moment';
 import {
   APIToken,
   UpdateYearMonthsFilter,
-  CurrentAppScreen,
   server,
   globalCompany,
+  globalStatus,
+  CurrentAppScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
-import {PageContext} from './pagecontext';
 
 //marc
 import {useFocusEffect} from '@react-navigation/native';
@@ -54,7 +54,6 @@ var year = new Date().getFullYear();
 //marc
 
 export default function UpdateModal(props) {
-  const [globalState, setglobalState] = useContext(PageContext);
   ////////////////MARC
   const [customer_data, setcustomer_data] = useState([]);
   const [net_data, setnet_data] = useState([]);
@@ -143,6 +142,19 @@ export default function UpdateModal(props) {
     PerAreaLocalDataField,
   );
 
+  function afterUpdate() {
+    console.log('q2 and q2 and q3 and q4 and q5  is now true');
+
+    if (globalStatus.updateMode === 'manual') {
+      setisModalConnectionError(false);
+      setisLoadingActivityIndicator(false);
+      props.navigation.navigate(CurrentAppScreen.Screen);
+      props.navigation.openDrawer();
+      console.log('Drawer opening');
+    } else {
+      console.log(globalStatus.updateMode);
+    }
+  }
   useEffect(() => {
     if (
       q1Principal &&
@@ -150,17 +162,9 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
-      CurrentAppScreen.Screen === 'UPDATEMDL'
+      globalStatus.updateStatus === 'Updating'
     ) {
-      console.log('q2 and q2 and q3 and q4 and q5  is now true');
-      setisModalConnectionError(false);
-      setisLoadingActivityIndicator(false);
-      props.navigation.navigate('Home');
-      props.navigation.openDrawer();
-      
-      setglobalState(9);
-
-
+      afterUpdate();
     }
   }, [q1Principal]);
 
@@ -171,18 +175,9 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
-      CurrentAppScreen.Screen === 'UPDATEMDL'
+      globalStatus.updateStatus === 'Updating'
     ) {
-      CurrentAppScreen.Screen === 'HOME';
-      console.log('q2 and q2 and q3 and q4 and q5  is now true');
-      setisModalConnectionError(false);
-      setisLoadingActivityIndicator(false);
-      props.navigation.navigate('Home');
-      props.navigation.openDrawer();
-
-      setglobalState(9);
-
-
+      afterUpdate();
     }
   }, [q2Perymtsat]);
 
@@ -193,18 +188,9 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
-      CurrentAppScreen.Screen === 'UPDATEMDL'
+      globalStatus.updateStatus === 'Updating'
     ) {
-      CurrentAppScreen.Screen === 'HOME';
-      console.log('q2 and q2 and q3 and q4 and q5  is now true');
-      setisModalConnectionError(false);
-      setisLoadingActivityIndicator(false);
-      props.navigation.navigate('Home');
-      props.navigation.openDrawer();
-
-      setglobalState(9);
-
-
+      afterUpdate();
     }
   }, [q3UserUpdateLog]);
 
@@ -215,17 +201,9 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
-      CurrentAppScreen.Screen === 'UPDATEMDL'
+      globalStatus.updateStatus === 'Updating'
     ) {
-      CurrentAppScreen.Screen === 'HOME';
-      console.log('q2 and q2 and q3 and q4 and q5  is now true');
-      setisModalConnectionError(false);
-      setisLoadingActivityIndicator(false);
-      props.navigation.navigate('Home');
-      props.navigation.openDrawer();
-      
-      setglobalState(9);
-
+      afterUpdate();
     }
   }, [q4Area]);
 
@@ -236,36 +214,44 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
-      CurrentAppScreen.Screen === 'UPDATEMDL'
+      globalStatus.updateStatus === 'Updating'
     ) {
-      CurrentAppScreen.Screen === 'HOME';
-      console.log('q2 and q2 and q3 and q4 and q5  is now true');
-      setisModalConnectionError(false);
-      setisLoadingActivityIndicator(false);
-      props.navigation.navigate('Home');
-      props.navigation.openDrawer();
-
-      setglobalState(9);
+      afterUpdate();
     }
   }, [q5Marc]);
 
   //====================================================================> RUN UPDATE
 
+  // useEffect(() => {
+  //   props.navigation.addListener('focus', () => {
+  //     if (globalStatus.updateStatus === 'Updating') {
+  //       updateProgress = 0;
+  //       console.log('focus on update');
+  //       globalStatus.updateStatus = 'Updating';
+  //       setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
+  //       GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
+  //     } else {
+  //       console.log('errrrr');
+  //       console.log(globalStatus.updateStatus === 'Updating');
+  //     }
+  //   });
+  // }, []);
+
   useEffect(() => {
-    props.navigation.addListener('focus', () => {
-      if (CurrentAppScreen.Screen === 'UPDATEMDL') {
-        updateProgress = 0;
-        console.log('focus on update');
-        setglobalState(5);
-        setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
-        GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
-      } else {
-        console.log('asas');
-      }
-    });
+    if (globalStatus.updateStatus === 'Updating') {
+      updateProgress = 0;
+      console.log('focus on update');
+      globalStatus.updateStatus = 'Updating';
+      // setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
+      GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
+    } else {
+      console.log('errrrr');
+      console.log(globalStatus.updateStatus === 'Updating');
+    }
   }, []);
 
   useEffect(() => {
+    
     if (lineChartLocalData.length === lineChartAPIdatalength) {
       updateProgress = Number(updateProgress) + Number(5);
       lineChartAPIdatalength = 0;
@@ -273,6 +259,9 @@ export default function UpdateModal(props) {
       console.log(
         lineChartLocalData.length + 'effect delete line chart initialize',
       );
+    } else {
+      console.log(lineChartLocalData.length + ' LINECHART LOCAL DATA LENGTH');
+    console.log(lineChartAPIdatalength + ' lineChartAPIdatalength LENGTH');
     }
   }, [lineChartLocalData]);
 
@@ -354,11 +343,29 @@ export default function UpdateModal(props) {
         if (jsonData.length > 0) {
           lineChartAPIdatalength = jsonData.length;
           setlineChartLocalData(jsonData);
+          console.log('test');
           updateProgress = Number(updateProgress) + Number(6);
+
+
+
+
+
+
+          if (lineChartLocalData.length === lineChartAPIdatalength) {
+            updateProgress = Number(updateProgress) + Number(5);
+            lineChartAPIdatalength = 0;
+            DeletePerymtsatAPIData();
+            console.log(
+              lineChartLocalData.length + 'effect delete line chart initialize',
+            );
+          }
+
+
+
+
+          
         } else {
           console.log('Please check code, no lineChartAPIData found');
-
-          CurrentAppScreen.Screen === 'HOME';
 
           Alert.alert(
             'Error',
@@ -373,7 +380,7 @@ export default function UpdateModal(props) {
 
           setisModalConnectionError(false);
           setisLoadingActivityIndicator(false);
-          props.navigation.navigate('Home');
+          props.navigation.navigate(CurrentAppScreen.Screen);
         }
       })
       .catch(function (error) {
@@ -504,8 +511,6 @@ export default function UpdateModal(props) {
           setPerPrincipalLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(3);
         } else {
-          CurrentAppScreen.Screen === 'HOME';
-
           Alert.alert(
             'Error',
             'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
@@ -519,7 +524,7 @@ export default function UpdateModal(props) {
 
           setisModalConnectionError(false);
           setisLoadingActivityIndicator(false);
-          props.navigation.navigate('Home');
+          props.navigation.navigate(CurrentAppScreen.Screen);
         }
       })
       .catch(function (error) {
@@ -644,8 +649,6 @@ export default function UpdateModal(props) {
         } else {
           console.log('Please check code, no perarea found');
 
-          CurrentAppScreen.Screen === 'HOME';
-
           Alert.alert(
             'Error',
             'Application Error,  No data found \n err1003 \n \n Please Contact Support Team..',
@@ -659,7 +662,7 @@ export default function UpdateModal(props) {
 
           setisModalConnectionError(false);
           setisLoadingActivityIndicator(false);
-          props.navigation.navigate('Home');
+          props.navigation.navigate(CurrentAppScreen.Screen);
         }
       })
       .catch(function (error) {
@@ -772,8 +775,6 @@ export default function UpdateModal(props) {
       .catch(function (error) {
         console.log('error in APISaveUpdate :' + error.text);
 
-        CurrentAppScreen.Screen === 'HOME';
-
         Alert.alert(
           'Error',
           'Error saving user update. \n \n Please Contact Support Team.',
@@ -787,12 +788,13 @@ export default function UpdateModal(props) {
 
         setisModalConnectionError(false);
         setisLoadingActivityIndicator(false);
-        props.navigation.navigate('Home');
+        props.navigation.navigate(CurrentAppScreen.Screen);
       })
       .done();
   };
 
   const GETUpdateVersionAPI = () => {
+    console.log('run GETUpdateVersionAPI');
     var user_name = global.user_name;
     var dateTimeUpdated = moment()
       .utcOffset('+08:00')
@@ -842,11 +844,10 @@ export default function UpdateModal(props) {
           } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
             console.log(APIUpdateVersion.APIUpdateVersionStatus);
 
-            CurrentAppScreen.Screen === 'HOME';
             console.log('SERVER OFFLINE');
             setisModalConnectionError(false);
             setisLoadingActivityIndicator(false);
-            props.navigation.navigate('Home');
+            props.navigation.navigate(CurrentAppScreen.Screen);
           }
         }
       })
@@ -921,14 +922,7 @@ export default function UpdateModal(props) {
                       'INSERT INTO business_calendar_tbl (date, year, month, day, update_version) VALUES ' +
                         BusinessCalendarString.slice(0, -1),
                       [],
-                      (tx, results) => {
-                        // Alert.alert('Sucess', 'Calendar Updated', [{text: 'OK'}], {
-                        //   cancelable: false,
-                        // });
-                        // setisVisibleCaldendarModal(false);
-                        // setisEditing(true);
-                        // GetSelectedDays();
-                      },
+                      (tx, results) => {},
                       SQLerror,
                     );
                   });
@@ -1123,7 +1117,6 @@ export default function UpdateModal(props) {
       .catch(function (error) {
         console.log('1Customer: ' + error);
 
-        
         setisModalConnectionError(true);
         setisLoadingActivityIndicator(false);
       })
@@ -1164,7 +1157,7 @@ export default function UpdateModal(props) {
       })
       .catch(function (error) {
         console.log('Net: ' + error);
-        
+
         setisModalConnectionError(true);
         setisLoadingActivityIndicator(false);
       })
@@ -1172,7 +1165,6 @@ export default function UpdateModal(props) {
   };
 
   let fetch_per_vendor_data = () => {
-
     Promise.race([
       fetch(
         'https://boiling-atoll-20376.herokuapp.com/perprincipalsalestargetuba/' +
@@ -1205,7 +1197,7 @@ export default function UpdateModal(props) {
       })
       .catch(function (error) {
         console.log('Vendor1' + error);
-        
+
         setisModalConnectionError(true);
         setisLoadingActivityIndicator(false);
       })
@@ -1247,7 +1239,7 @@ export default function UpdateModal(props) {
       })
       .catch(function (error) {
         console.log('category' + error);
-        
+
         setisModalConnectionError(true);
         setisLoadingActivityIndicator(false);
       })
@@ -1476,8 +1468,8 @@ export default function UpdateModal(props) {
           onRequestClose={() => {
             setisModalConnectionError(false);
             setisLoadingActivityIndicator(false);
-            CurrentAppScreen.Screen === 'HOME';
-            props.navigation.navigate('Home');
+
+            props.navigation.navigate(CurrentAppScreen.Screen);
           }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
@@ -1497,8 +1489,7 @@ export default function UpdateModal(props) {
                 onPress={() => {
                   setisModalConnectionError(false);
                   setisLoadingActivityIndicator(false);
-                  props.navigation.navigate('Home');
-                  CurrentAppScreen.Screen === 'HOME';
+                  props.navigation.navigate(CurrentAppScreen.Screen);
                 }}
                 gradientFrom="red"
                 gradientTo="pink"

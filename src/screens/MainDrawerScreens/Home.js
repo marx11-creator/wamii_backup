@@ -24,7 +24,10 @@ import {
   WorkingDays,
   CurrentAppScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
-import {UpdateYearMonthsFilter} from '../../sharedComponents/globalCommands/globalCommands';
+import {
+  UpdateYearMonthsFilter,
+  globalStatus,
+} from '../../sharedComponents/globalCommands/globalCommands';
 import DeviceInfo from 'react-native-device-info';
 import moment from 'moment';
 import {dbBusinessCalendar, dbperymtsat} from '../../database/sqliteSetup';
@@ -36,14 +39,16 @@ import {
   verticalScale,
 } from '../../sharedComponents/scaling';
 import BackgroundTimer from 'react-native-background-timer';
-import {PageContext} from './pagecontext';
+import App1 from './test';
+import UpdateModal from './UpdateModal';
+
 LogBox.ignoreAllLogs();
 
 export default function Home(props) {
-  const [globalState, setglobalState] = useContext(PageContext);
   //  console.log(auth);
 
   const [globalStateLocal, setglobalStateLocal] = useState(0);
+
   const WorkingDaysFields = {
     TotalDays: '0',
     RemainingDays: '0',
@@ -217,55 +222,57 @@ export default function Home(props) {
     }, []),
   );
 
-  
-  useEffect(()=> {
-var secs = 0;
+  useEffect(() => {
+    var secs = 0;
     // BackgroundTimer.clearInterval();
     const intervalId = BackgroundTimer.setInterval(() => {
-secs = secs + 1;
-      
+      secs = secs + 1;
+
       setglobalStateLocal(secs);
 
+      if (secs === 3 && globalStatus.StartUpdate === false) {
+        // var screenname = CurrentAppScreen.Screen;
+        console.log(CurrentAppScreen.Screen);
+        globalStatus.updateStatus = 'Updating';
+
+        globalStatus.updateMode = 'auto';
+        globalStatus.StartUpdate = true;
+        // props.navigation.navigate('UpdateModal');
+        // props.navigation.navigate(screenname);
+      }
+
+      if (secs === 2420) {
+        // var screennameauto = CurrentAppScreen.Screen;
+        console.log(screennameauto);
+
+        globalStatus.updateMode = 'auto';
+        globalStatus.updateStatus = 'Updating';
+        // props.navigation.navigate('UpdateModal');
+        // props.navigation.navigate(screennameauto);
+        secs = 0;
+        console.log('timer reset');
+      }
     }, 1000);
-  },[])
+  }, []);
 
+  useEffect(() => {
+   // console.log('timer' + globalStateLocal);
+    globalStatus.currentSeconds = globalStateLocal;
 
-useEffect(()=>{
+    //   if (globalStateLocal === 4) {
+    //     props.navigation.navigate('Home');
 
-  console.log(globalState);
-    
-  setglobalState(globalState + 1)
+    // console.log('homeaaa');
+    //     // BackgroundTimer.clearInterval(intervalId);
 
-  if (globalStateLocal === 3) {
-    CurrentAppScreen.Screen = 'UPDATEMDL';
-    props.navigation.navigate('UpdateModal');
-    props.navigation.navigate('Home');
-  
-console.log('3aaaa');
-    // BackgroundTimer.clearInterval(intervalId);
-
-   }  
-
-   
-//   if (globalStateLocal === 4) {
-//     props.navigation.navigate('Home');
-  
-// console.log('homeaaa');
-//     // BackgroundTimer.clearInterval(intervalId);
-
-//    }  
-
-
-
-
-},[globalStateLocal])
-
+    //    }
+  }, [globalStateLocal]);
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       getWorkingDays();
       console.log('focus on per Home');
-
+      CurrentAppScreen.Screen = 'Home';
       if (APIUpdateVersion.APIUpdateVersionField !== 0) {
         if (
           Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField) ===
@@ -340,7 +347,7 @@ console.log('3aaaa');
 
   return (
     <ImageOverlay
-    // source={require('../../assets/homepagecoslor.jpg')}
+      // source={require('../../assets/homepagecoslor.jpg')}
       source={require('../../assets/building.jpg')}
       height={height}
       contentPosition="top">
@@ -387,7 +394,9 @@ console.log('3aaaa');
           </Text>
           <Button
             title="test"
-            onPress={() => console.log(globalState)}
+            onPress={() => {
+              <App1 />;
+            }}
           />
         </View>
 
@@ -419,13 +428,14 @@ console.log('3aaaa');
             {numbro(Target.SalesvsTarget * 100).format({
               thousandSeparated: true,
               mantissa: 2,
-            })} % {'\n\n'}   ACH
+            })}{' '}
+            % {'\n\n'} ACH
           </Text>
         </View>
-{/* <Text style={{color: 'green', fontSize:30}}>{globalState.currentSeconds}</Text>
+        {/* <Text style={{color: 'green', fontSize:30}}>{globalState.currentSeconds}</Text>
 <Text style={{color: 'green', fontSize:30}}>{globalState.updateStatus}</Text> */}
 
-<View
+        <View
           style={{
             marginTop: 80,
             width: scale(190),
@@ -455,10 +465,10 @@ console.log('3aaaa');
             ).format({
               thousandSeparated: true,
               mantissa: 2,
-            })} % {'\n\n'}   PAR
+            })}{' '}
+            % {'\n\n'} PAR
           </Text>
         </View>
-
 
         {/* <View
           style={{
@@ -501,6 +511,7 @@ console.log('3aaaa');
           </Text>
         </View> */}
       </View>
+      {globalStateLocal === 3 ? <UpdateModal /> : null}
     </ImageOverlay>
   );
 }

@@ -41,7 +41,6 @@ import Modal from 'react-native-modal';
 import LinearGradient from 'react-native-linear-gradient';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {APIToken, globalCompany, server} from '../../sharedComponents/globalCommands/globalCommands';
-import {PageContext} from './pagecontext';
 
 var ApiRowsCount = 0;
 var count = 0;
@@ -53,7 +52,6 @@ var longStrinfg = '';
 
 // var arrVariantListfromPickerLocal = [];
 export default function PromoItems() {
-const [globalState] = useContext(PageContext);
   const ApiFields = [
     {
       principal_name: '',
@@ -758,9 +756,6 @@ const [globalState] = useContext(PageContext);
               'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
           }}
         />
-        <Text style={{color: 'green', fontSize:30}}>{globalState.currentSeconds}</Text>
-<Text style={{color: 'green', fontSize:30}}>{globalState.updateStatus}</Text>
-
         <FlatButton
           gradientFrom="red"
           gradientTo="pink"

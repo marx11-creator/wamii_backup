@@ -4,7 +4,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 
 import StartLandingScreen from './src/screens/loginscreens/StartLandingScreen';
-import {PageContext} from './src/screens/MainDrawerScreens/pagecontext';
 const Stack = createStackNavigator();
 
 // export default function StartStackScreen(){
@@ -21,21 +20,16 @@ const Stack = createStackNavigator();
 //       </PageContext.Provider>
 //     );
 
-    
 // }
 
 const App = () => {
-
-  const [globalState, setglobalState] = useState(0);
-
-  return(
-    <PageContext.Provider value={[globalState, setglobalState]}>
-       <NavigationContainer>
-       <Stack.Navigator headerMode="none">
-           <Stack.Screen name="StartLoginScreen" component={StartLandingScreen} />
-         </Stack.Navigator>
-       </NavigationContainer>
-    </PageContext.Provider>)
-}
+  return (
+    <NavigationContainer>
+      <Stack.Navigator headerMode="none">
+        <Stack.Screen name="StartLoginScreen" component={StartLandingScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default App;

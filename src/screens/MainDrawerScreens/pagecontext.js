@@ -1,2 +1,2 @@
-import React, {useContext} from 'react';
-export const PageContext= React.createContext();
+import React from 'react';
+export const PageContext = React.createContext();

@@ -43,7 +43,7 @@ export var globalCompany = {
 };
 
 export var CurrentAppScreen = {
-  Screen: '',
+  Screen: 'Home',
 };
 export var LocalAppVersionUpdate = {
   LocalAppVersionUpdateField: 0,
@@ -68,6 +68,15 @@ export var FilterListMirror = {
   DashboardFilterYear: '',
   DashboardFilterTeam: '',
 };
+
+export var globalStatus = {
+  currentSeconds: 0,
+  updateMode: '',
+  updateStatus: '',
+  StartUpdate: false,
+};
+
+
 
 export var WorkingDays = {
   TotalDays: '0',

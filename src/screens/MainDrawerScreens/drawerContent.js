@@ -38,6 +38,7 @@ import {
   ClearDefaults,
   CurrentAppScreen,
   CurrentAppVersionUpdate,
+  globalStatus,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users} from '../../database/sqliteSetup';
 
@@ -223,7 +224,8 @@ export function DrawerContent(props) {
                 <FlatButton
                   text="Update Now"
                   onPress={() => {
-                    CurrentAppScreen.Screen = 'UPDATEMDL';
+                    globalStatus.updateMode = 'manual';
+                    CurrentAppScreen.Screen = 'PerTeam';
                     props.navigation.navigate('UpdateModal');
                   }}
                   gradientFrom="#00961A"
