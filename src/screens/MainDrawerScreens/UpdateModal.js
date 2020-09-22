@@ -40,7 +40,7 @@ import PageContext from './pagecontext';
 import BackgroundTimer from 'react-native-background-timer';
 //marc
 import {useFocusEffect} from '@react-navigation/native';
-import { sqrt } from 'react-native-reanimated';
+import {sqrt} from 'react-native-reanimated';
 //marc
 
 var lineChartAPIdatalength = 0;
@@ -57,9 +57,9 @@ var year = new Date().getFullYear();
 
 export default function UpdateModal(props) {
   const [globalState, setglobalState] = useContext(PageContext);
-const [localSeconds, setLocalSeconds] = useState(0);
+  const [localSeconds, setLocalSeconds] = useState(0);
 
-var GetPerymtsatAPIDataState = false;
+  var GetPerymtsatAPIDataState = false;
 
   // var secs = 0;
   // // BackgroundTimer.clearInterval();
@@ -69,30 +69,24 @@ var GetPerymtsatAPIDataState = false;
   //   console.log(auth);
   // }, 1000);
 
-
-  useEffect(()=> {
+  useEffect(() => {
     setglobalState({
       ...globalState,
       timerSeconds: localSeconds,
-    })
+    });
 
-    console.log('second timer running ' + ' ' + localSeconds);
-    if (localSeconds === 10) {
+    // console.log('second timer running ' + ' ' + localSeconds);
+    if (localSeconds === 900) {
       globalStatus.updateStatus = 'Updating';
 
       setglobalState({
         ...globalState,
         timerSeconds: 0,
         updateStatus: 'Updating',
-      })
-      
+      });
     }
+  }, [localSeconds]);
 
-
-},[localSeconds]);
-    
-
- 
   ////////////////MARC
   const [customer_data, setcustomer_data] = useState([]);
   const [net_data, setnet_data] = useState([]);
@@ -189,7 +183,6 @@ var GetPerymtsatAPIDataState = false;
       setisLoadingActivityIndicator(false);
       props.navigation.navigate(CurrentAppScreen.Screen);
 
-
       globalStatus.updateMode = 'auto';
 
       console.log(globalStatus.updateMode);
@@ -197,65 +190,70 @@ var GetPerymtsatAPIDataState = false;
 
       setglobalState({
         ...globalState,
-        updateStatus:  'Idle',
-      })
-
-
+        updateStatus: 'Idle',
+      });
 
       RunTimer();
-
-
-
     } else {
       console.log(globalStatus.updateMode);
       globalStatus.updateStatus = 'Idle';
 
       setglobalState({
         ...globalState,
-        updateStatus:  'Idle',
-      })
-
-
+        updateStatus: 'Idle',
+      });
 
       RunTimer();
     }
   }
 
-  function RunTimer(){
+  function RunTimer() {
     var secs = 0;
     const intervalId2 = BackgroundTimer.setInterval(() => {
       secs = secs + 1;
       setLocalSeconds(secs);
 
-
-
-      if (secs === 10) {
+      if (secs === 900) {
         BackgroundTimer.clearInterval(intervalId2);
-        GETUpdateVersionAPI(); 
+        GETUpdateVersionAPI();
       }
 
       if (globalStatus.updateMode === 'manual') {
         console.log('auto update stopped, manual update clicked');
         BackgroundTimer.clearInterval(intervalId2);
       }
-
-
     }, 1000);
   }
 
-  function onErrortimeout(){
-   if (globalStatus.updateMode === 'manual'){
-    setisModalConnectionError(true);
-    setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
-   } else {
-    setisModalConnectionError(false);
-    setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
-    console.log('error occured in background update');
-    RunTimer();
-   }
-    
-  }
+  function onErrortimeout() {
+    if (globalStatus.updateMode === 'manual') {
+      setisModalConnectionError(true);
+      setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
 
+      globalStatus.updateStatus = 'Idle';
+
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Idle',
+      });
+      console.log('error occured in background update manual');
+      // globalStatus.updateMode = 'auto';
+      // RunTimer();
+    } else {
+      setisModalConnectionError(false);
+      setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
+      console.log('error occured in background update');
+
+      globalStatus.updateStatus = 'Idle';
+
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Idle',
+      });
+
+      RunTimer();
+    }
+  }
 
   useEffect(() => {
     if (
@@ -324,31 +322,67 @@ var GetPerymtsatAPIDataState = false;
 
   //====================================================================> RUN UPDATE
 
-  // useEffect(() => {
-  //   props.navigation.addListener('focus', () => {
-  //     if (globalStatus.updateStatus === 'Updating') {
-  //       updateProgress = 0;
-  //       console.log('focus on update');
-  //       globalStatus.updateStatus = 'Updating';
-  //       setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
-  //       GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
-  //     } else {
-  //       console.log('errrrr');
-  //       console.log(globalStatus.updateStatus === 'Updating');
-  //     }
-  //   });
-  // }, []);
+  useEffect(() => {
+    {
+      globalStatus.updateMode === 'manual'
+        ? props.navigation.addListener('focus', () => {
+            ManualUpdate();
+            console.log('focused');
+          })
+        : AutoUpdate();
+    }
+  }, []);
 
+  function ManualUpdate() {
+    if (
+      globalStatus.updateStatus === 'Updating' &&
+      globalStatus.updateMode === 'manual'
+    ) {
+      updateProgress = 0;
+      console.log('focus on update');
+
+      if (globalStatus.updateMode === 'manual') {
+        setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
+      }
+
+      GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
+
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Updating',
+      });
+    }
+  }
+
+  function AutoUpdate() {
+    if (
+      globalStatus.updateStatus === 'Updating' &&
+      globalStatus.updateMode === 'auto'
+    ) {
+      updateProgress = 0;
+      console.log('focus on update');
+
+      // if (globalStatus.updateMode === 'manual') {
+      //   setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
+      // }
+
+      GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
+
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Updating',
+      });
+    }
+  }
   // useEffect(() => {
   //   if (globalStatus.updateStatus === 'Updating') {
   //     updateProgress = 0;
   //     console.log('focus on update');
- 
+
   //   if (globalStatus.updateMode === 'manual') {
   //         setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
 
   //   }
-
 
   //     GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
 
@@ -362,48 +396,36 @@ var GetPerymtsatAPIDataState = false;
   //   }
   // }, []);
 
+  // useEffect(() => {
+  //   if (globalStatus.updateStatus === 'Updating') {
+  //     updateProgress = 0;
+  //     console.log('focus on update');
 
+  //     if (globalStatus.updateMode === 'manual') {
+  //       setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
+  //     }
 
-  useEffect(() => {
-    {globalState.updateMode === 'manual' ? 
-    props.navigation.addListener('focus', () => {
-      if (globalStatus.updateStatus === 'Updating') {
-        updateProgress = 0;
-        console.log('focus on update');
-   
-      if (globalStatus.updateMode === 'manual') {
-            setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
-  
-      }
-  
-  
-        GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
-  
-        setglobalState({
-          ...globalState,
-          updateStatus:  'Updating',
-        })
-      } else {
-        console.log('errrrr');
-        console.log(globalStatus.updateStatus);
-      }
-    })
-    : null }
-  }, []);
+  //     GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
 
-
-
-
-
-
+  //     setglobalState({
+  //       ...globalState,
+  //       updateStatus: 'Updating',
+  //     });
+  //   } else {
+  //     console.log('errrrr');
+  //     console.log(globalStatus.updateStatus);
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (lineChartLocalData.length === lineChartAPIdatalength) {
       updateProgress = Number(updateProgress) + Number(5);
       lineChartAPIdatalength = 0;
       DeletePerymtsatAPIData();
-      console.log('28 ' + 
-        lineChartLocalData.length + 'effect delete line chart initialize',
+      console.log(
+        '28 ' +
+          lineChartLocalData.length +
+          'effect delete line chart initialize',
       );
     } else {
     }
@@ -424,8 +446,8 @@ var GetPerymtsatAPIDataState = false;
       updateProgress = Number(updateProgress) + Number(8);
       PerAreaAPIdatalength = 0;
       DeletePerAreaAPIData();
-      console.log('2 ' + 
-        PerAreaLocalData.length + 'effect delete  perarea initialize',
+      console.log(
+        '2 ' + PerAreaLocalData.length + 'effect delete  perarea initialize',
       );
     }
   }, [PerAreaLocalData]);
@@ -488,12 +510,8 @@ var GetPerymtsatAPIDataState = false;
           lineChartAPIdatalength = jsonData.length;
           setlineChartLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(6);
-
- 
-
-          
         } else {
-          if(globalStatus.updateMode === 'manual'){
+          if (globalStatus.updateMode === 'manual') {
             Alert.alert(
               'Error',
               'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
@@ -504,7 +522,7 @@ var GetPerymtsatAPIDataState = false;
               ],
               {cancelable: true},
             );
-  
+
             setisModalConnectionError(false);
             setisLoadingActivityIndicator(false);
             props.navigation.navigate('Home');
@@ -513,7 +531,7 @@ var GetPerymtsatAPIDataState = false;
       })
       .catch(function (error) {
         console.log('error in GetperymtsatAPIData123 :' + error.message);
-        onErrortimeout()
+        onErrortimeout();
       })
       .done();
   };
@@ -584,7 +602,9 @@ var GetPerymtsatAPIDataState = false;
       if (currIndex === lineChartLocalData.length) {
         ///console.log(perymtsatString);
 
-        console.log('5 ' + 'SavePerymtsatAPIData done concatenating, saving...');
+        console.log(
+          '5 ' + 'SavePerymtsatAPIData done concatenating, saving...',
+        );
         updateProgress = Number(updateProgress) + Number(10);
 
         dbperymtsat.transaction(function (tx) {
@@ -595,7 +615,7 @@ var GetPerymtsatAPIDataState = false;
             (tx, results) => {
               UpdateYearMonthsFilter();
               setq1Principal(true);
-              console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ')
+              console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
             },
             SQLerror,
           );
@@ -638,8 +658,7 @@ var GetPerymtsatAPIDataState = false;
           setPerPrincipalLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(3);
         } else {
-
-          if(globalStatus.updateMode === 'manual'){
+          if (globalStatus.updateMode === 'manual') {
             Alert.alert(
               'Error',
               'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
@@ -650,17 +669,16 @@ var GetPerymtsatAPIDataState = false;
               ],
               {cancelable: true},
             );
-  
+
             setisModalConnectionError(false);
             setisLoadingActivityIndicator(false);
             props.navigation.navigate('Home');
           }
-          
         }
       })
       .catch(function (error) {
         console.log('error in GetPerPrincipalAPIData :' + error.message);
-        onErrortimeout()
+        onErrortimeout();
       })
       .done();
   };
@@ -774,10 +792,9 @@ var GetPerymtsatAPIDataState = false;
           PerAreaAPIdatalength = jsonData.length;
           setPerAreaLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(2);
-      
         } else {
           console.log('Please check code, no perarea found');
-          if(globalStatus.updateMode === 'manual'){
+          if (globalStatus.updateMode === 'manual') {
             Alert.alert(
               'Error',
               'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
@@ -788,7 +805,7 @@ var GetPerymtsatAPIDataState = false;
               ],
               {cancelable: true},
             );
-  
+
             setisModalConnectionError(false);
             setisLoadingActivityIndicator(false);
             props.navigation.navigate('Home');
@@ -797,7 +814,7 @@ var GetPerymtsatAPIDataState = false;
       })
       .catch(function (error) {
         console.log('error in GetPerAreaAPIData :' + error.message);
-        onErrortimeout()
+        onErrortimeout();
       })
       .done();
   };
@@ -903,7 +920,7 @@ var GetPerymtsatAPIDataState = false;
       .catch(function (error) {
         console.log('error in APISaveUpdate :' + error.text);
 
-        if(globalStatus.updateMode === 'manual'){
+        if (globalStatus.updateMode === 'manual') {
           Alert.alert(
             'Error',
             'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
@@ -972,7 +989,7 @@ var GetPerymtsatAPIDataState = false;
             console.log('11 ' + 'user update log saved in API');
             setq3UserUpdateLog(true);
           } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
-            if(globalStatus.updateMode === 'manual'){    
+            if (globalStatus.updateMode === 'manual') {
               setisModalConnectionError(false);
               setisLoadingActivityIndicator(false);
               props.navigation.navigate('Home');
@@ -982,7 +999,7 @@ var GetPerymtsatAPIDataState = false;
       })
       .catch(function (error) {
         console.log('error in GETUpdateVersionAPI :' + error.message);
-        onErrortimeout()
+        onErrortimeout();
       })
       .done();
   };
@@ -1082,7 +1099,6 @@ var GetPerymtsatAPIDataState = false;
       upload_data_per_vendor();
       upload_data_net();
 
-
       if (count_c_json === 0) {
         bypass_scj();
       } else {
@@ -1105,9 +1121,6 @@ var GetPerymtsatAPIDataState = false;
   //   }
   // });
 
-
-
-  
   let bypass_scj = () => {
     setload_c(3);
   };
@@ -1161,25 +1174,24 @@ var GetPerymtsatAPIDataState = false;
       tx.executeSql(
         'DELETE FROM tbl_sales_per_customer ',
         [],
-        (tx, results) => {
-         
-        },
+        (tx, results) => {},
       );
     });
   };
 
   let delete_net_tbl = () => {
     dbSalesmanNet.transaction(function (tx) {
-      tx.executeSql('DELETE FROM tbl_sales_net ', [], (tx, results) => {
-      
-      });
+      tx.executeSql('DELETE FROM tbl_sales_net ', [], (tx, results) => {});
     });
   };
 
   let delete_per_vendor_tbl = () => {
     dbSalesmanNet.transaction(function (tx) {
-      tx.executeSql('DELETE FROM tbl_sales_per_vendor ', [], (tx, results) => {
-             });
+      tx.executeSql(
+        'DELETE FROM tbl_sales_per_vendor ',
+        [],
+        (tx, results) => {},
+      );
     });
   };
 
@@ -1188,9 +1200,7 @@ var GetPerymtsatAPIDataState = false;
       tx.executeSql(
         'DELETE FROM tbl_sales_per_category ',
         [],
-        (tx, results) => {
-         
-        },
+        (tx, results) => {},
       );
     });
   };
@@ -1245,7 +1255,7 @@ var GetPerymtsatAPIDataState = false;
       })
       .catch(function (error) {
         console.log('1Customer: ' + error);
-        onErrortimeout()
+        onErrortimeout();
       })
       .done();
   };
@@ -1284,7 +1294,7 @@ var GetPerymtsatAPIDataState = false;
       })
       .catch(function (error) {
         console.log('Net: ' + error);
-        onErrortimeout()
+        onErrortimeout();
       })
       .done();
   };
@@ -1322,7 +1332,7 @@ var GetPerymtsatAPIDataState = false;
       })
       .catch(function (error) {
         console.log('Vendor1' + error);
-        onErrortimeout()
+        onErrortimeout();
       })
       .done();
   };
@@ -1362,7 +1372,7 @@ var GetPerymtsatAPIDataState = false;
       })
       .catch(function (error) {
         console.log('category' + error);
-        onErrortimeout()
+        onErrortimeout();
       })
       .done();
   };
@@ -1514,7 +1524,7 @@ var GetPerymtsatAPIDataState = false;
           setmodalvisible(true);
           //setload_pc(i++);
           setload_pc(3);
-          console.log('23.0' +' upload upload_data_per_customer');
+          console.log('23.0' + ' upload upload_data_per_customer');
         },
       );
     });
@@ -1531,7 +1541,7 @@ var GetPerymtsatAPIDataState = false;
           setmodalvisible(true);
           setload_n(3);
           // setload_n(i++);
-           console.log('23 ' + 'DONE upload_data_net');
+          console.log('23 ' + 'DONE upload_data_net');
         },
       );
     });
@@ -1608,6 +1618,8 @@ var GetPerymtsatAPIDataState = false;
                 // }}
 
                 onPress={() => {
+                  globalStatus.updateMode = 'auto';
+                  RunTimer();
                   setisModalConnectionError(false);
                   setisLoadingActivityIndicator(false);
                   props.navigation.navigate('Home');

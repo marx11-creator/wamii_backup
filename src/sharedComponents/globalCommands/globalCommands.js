@@ -7,6 +7,12 @@ import {
   dbpromoitems,
   dbSalesmanNet,
 } from '../../database/sqliteSetup';
+import PageContext from '../../screens/MainDrawerScreens/pagecontext';
+var MonthDiff = '';
+var DaysDiff = '';
+var HoursDiff = '';
+var MinutesDiff = '';
+
 export var ModuleAccess = {
   PerTeam: 'NOT ALLOWED',
   PerSalesman: 'NOT ALLOWED',
@@ -15,7 +21,7 @@ export var ModuleAccess = {
 };
 
 function SQLerror(err) {
-  console.log('SQL Error: ' + err);
+  console.log('SQL Error: ' + err.message);
 }
 export var APIToken = {
   access_token: '',
@@ -73,9 +79,12 @@ export var globalStatus = {
   updateMode: '',
   updateStatus: '',
   StartUpUpdate: false,
+  dateTimeUpdated24hr: '',
 };
 
-
+export var LastDateTimeUpdated = {
+  value: '',
+};
 
 export var WorkingDays = {
   TotalDays: '0',
@@ -229,6 +238,7 @@ export function UpdateYearMonthsFilter() {
   GetTeamsforFilter();
   GetYearforFilter();
   GetMonthsforFilter();
+  GetDateTime();
   // console.log('GLOBAL YEARS MONTHS TEAM  LOADED');
 }
 
@@ -313,4 +323,82 @@ function GetYearforFilter() {
       },
     );
   });
+}
+
+function GetDateTime() {
+  dbperymtsat.transaction((tx) => {
+    tx.executeSql(
+      'select dateTimeUpdated, dateTimeUpdated24hr from (select DISTINCT(dateTimeUpdated) ,substr(dateTimeUpdated,1,10) as datecut,case when dateTimeUpdated like ' +
+        "'%PM%'" +
+        ' THEN (substr(dateTimeUpdated,12,2)) + 12 else (substr(dateTimeUpdated,12,2))  end as timecut, ' +
+        'CASE WHEN dateTimeUpdated LIKE  ' +
+        "'%PM%'" +
+        'THEN  ((SUBSTR(dateTimeUpdated,1,11)) || ((SUBSTR(dateTimeUpdated,12,2)) + 12)   ||  (SUBSTR(dateTimeUpdated,14,6)) ) ELSE  ' +
+        '  ((SUBSTR(dateTimeUpdated,1,11))   ||  ((SUBSTR(dateTimeUpdated,12,2)))   ||  (SUBSTR(dateTimeUpdated,14,6)) )  END AS dateTimeUpdated24hr ' +
+        ' from perymtsat_tbl) as q1 order by datecut desc,   CAST((timecut) AS UNSIGNED)  desc limit 1',
+      [],
+      (tx, results) => {
+        var len = results.rows.length;
+        if (len > 0) {
+          globalStatus.dateTimeUpdated24hr = results.rows.item(
+            0,
+          ).dateTimeUpdated24hr;
+          GetLastDateTimeUpdate();
+       
+        } else {
+          //   console.log('No date and time in local db found');
+        }
+      },
+      SQLerror,
+    );
+  });
+}
+
+function GetLastDateTimeUpdate() {
+  var now = moment().format('DD/MM/YYYY HH:mm:ss');
+  var then = moment(globalStatus.dateTimeUpdated24hr).format(
+    'DD/MM/YYYY HH:mm:ss',
+  );
+  //04/09/2013 15:00:00
+
+  var ms = moment(now, 'DD/MM/YYYY HH:mm:ss').diff(
+    moment(then, 'DD/MM/YYYY HH:mm:ss'),
+  );
+  var d = moment.duration(ms);
+  MonthDiff = '';
+  DaysDiff = '';
+  HoursDiff = '';
+  MinutesDiff = '';
+
+  if (d.months() > 0) {
+    MonthDiff = d.months() + ' Months ';
+  } else {
+    MonthDiff = '';
+  }
+
+  if (d.days() === 1) {
+    DaysDiff = d.days() + ' Days ';
+  } else if (d.days() > 1) {
+    DaysDiff = d.days() + ' Days ';
+  } else if (d.days() < 1) {
+    DaysDiff = '';
+  }
+
+  if (d.hours() === 1) {
+    HoursDiff = d.hours() + ' Hour ';
+  } else if (d.hours() > 1) {
+    HoursDiff = d.hours() + ' Hours ';
+  } else if (d.hours() < 1) {
+    HoursDiff = '';
+  }
+
+  if (d.minutes() === 1) {
+    MinutesDiff = d.minutes() + ' Minute ';
+  } else if (d.minutes() > 1) {
+    MinutesDiff = d.minutes() + ' Minutes ';
+  } else if (d.minutes() < 1) {
+    MinutesDiff = '';
+  }
+  console.log(MonthDiff + DaysDiff + HoursDiff + MinutesDiff);
+  LastDateTimeUpdated.value = MonthDiff + DaysDiff + HoursDiff + MinutesDiff;
 }
