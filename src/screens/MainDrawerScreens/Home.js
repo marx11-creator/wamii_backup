@@ -26,6 +26,7 @@ import {
   CurrentAppScreen,
   LastDateTimeUpdated,
   hhmmss,
+  APIToken,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {
   UpdateYearMonthsFilter,
@@ -50,7 +51,7 @@ LogBox.ignoreAllLogs();
 
 export default function Home(props) {
   //  console.log(auth);
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState] = useContext(PageContext);
   const [localSeconds, setlocalSeconds] = useState(0);
 
   const WorkingDaysFields = {
@@ -229,17 +230,25 @@ export default function Home(props) {
     }, []),
   );
 
+  useEffect(()=> {
+    console.log('test');
+    getWorkingDays();
+  },[globalState.dateTimeUpdated24hr])
+
   useEffect(() => {
+
+    console.log('3seonds HERE run');
     var secs = 0;
     // BackgroundTimer.clearInterval();
     const intervalId = BackgroundTimer.setInterval(() => {
       secs = secs + 1;
-
+      console.log(secs);
+console.log( globalStatus.StartUpUpdate);
       setlocalSeconds(secs);
 
       if (secs === 3 && globalStatus.StartUpUpdate === false) {
         // var screenname = CurrentAppScreen.Screen;
-        console.log(CurrentAppScreen.Screen);
+        console.log('3seonds was run');
         globalStatus.updateStatus = 'Updating';
 
         globalStatus.updateMode = 'auto';
@@ -252,18 +261,18 @@ export default function Home(props) {
     }, 1000);
   }, []);
 
-  useEffect(() => {
-    if (localSeconds === 3) {
-      setglobalState({
-        ...globalState,
-        updateStatus: 'Updating',
-      });
-    }
-  }, [localSeconds]);
+  // useEffect(() => {
+  //   if (localSeconds === 3) {
+  //     setglobalState({
+  //       ...globalState,
+  //       updateStatus: 'Updating',
+  //     });
+  //   }
+  // }, [localSeconds]);
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
-      getWorkingDays();
+
       console.log('focus on per Home');
       CurrentAppScreen.Screen = 'Home';
       if (APIUpdateVersion.APIUpdateVersionField !== 0) {
@@ -473,12 +482,16 @@ export default function Home(props) {
               {' '}
               Wing An Marketing Inc.
             </Text>
-            {/* <Button
+            <Button
               title="test"
               onPress={() => {
-                console.log('as');
+                
+                
+               console.log(APIToken.access_token);
+
+
               }}
-            /> */}
+            />
           </View>
 
           <View

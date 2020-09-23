@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState,useContext} from 'react';
 import {
   View,
   Text,
@@ -60,6 +60,7 @@ export default function SplashScreen(props) {
   const [LogoAnimation, setLogoAnimation] = useState(false);
   const [ShowGettingStarted, setShowGettingStarted] = useState(false);
 
+  
   // useEffect(() => {
   //   if (loading === true) {
   //     CheckUserifLogin();
@@ -393,6 +394,7 @@ export default function SplashScreen(props) {
                 props.navigation.navigate('LoginScreen');
                 setShowGettingStarted(false);
                 setLogoAnimation(false);
+                
               }}>
               <LinearGradient
                 colors={['#08d464', '#01ab9d']}

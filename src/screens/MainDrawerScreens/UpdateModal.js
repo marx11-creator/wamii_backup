@@ -85,7 +85,7 @@ export default function UpdateModal(props) {
     }
 
     console.log('second timer running ' + ' ' + localSeconds);
-    if (localSeconds === 900) {
+    if (localSeconds === 30) {
       globalStatus.updateStatus = 'Updating';
 
       setglobalState({
@@ -192,18 +192,19 @@ export default function UpdateModal(props) {
       updateProgress = 0;
       setisModalConnectionError(false);
       setisLoadingActivityIndicator(false);
-      props.navigation.navigate(CurrentAppScreen.Screen);
-
+      console.log(globalStatus.updateMode);
       globalStatus.updateMode = 'auto';
 
-      console.log(globalStatus.updateMode);
+
       globalStatus.updateStatus = 'Idle';
 
       setglobalState({
         ...globalState,
         updateStatus: 'Idle',
         updatePercentage: updateProgress,
+        dateTimeUpdated24hr:  moment().format('DD/MM/YYYY HH:mm:ss') ,
       });
+      props.navigation.navigate(CurrentAppScreen.Screen);
 
       RunTimer();
     } else {
@@ -215,6 +216,7 @@ export default function UpdateModal(props) {
         ...globalState,
         updateStatus: 'Idle',
         updatePercentage: updateProgress,
+        dateTimeUpdated24hr:  moment().format('DD/MM/YYYY HH:mm:ss') ,
       });
 
       RunTimer();
@@ -229,6 +231,10 @@ export default function UpdateModal(props) {
           currdt,
         [],
         (tx, results) => {
+          // setglobalState({
+          //   ...globalState,
+          //   dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss')
+          // })
           GetDateTime(); // call get last date time updated to update global last date time
         },
         SQLerror,
@@ -242,7 +248,7 @@ export default function UpdateModal(props) {
       secs = secs + 1;
       setLocalSeconds(secs);
 
-      if (secs === 900) {
+      if (secs === 30) {
         BackgroundTimer.clearInterval(intervalId2);
         GETUpdateVersionAPI();
       }
@@ -865,9 +871,14 @@ export default function UpdateModal(props) {
 
   //PER AREA
   const GetPerAreaAPIData = () => {
+
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr2 = teams + '&' + sales_position_name;
+    console.log(server.server_address +
+      globalCompany.company +
+      'perareasalesuba/' +
+      tempstr2)
     Promise.race([
       fetch(
         server.server_address +

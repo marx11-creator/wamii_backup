@@ -121,6 +121,7 @@ export const ClearTeamAccess = () => {
 export function ClearDefaults() {
   global.name = '';
   global.account_type = '';
+  globalStatus.StartUpUpdate = false;
   DeletePerAreaAPIData();
   DeletePerymtsatAPIData();
   DeletePerPrincipalAPIData();

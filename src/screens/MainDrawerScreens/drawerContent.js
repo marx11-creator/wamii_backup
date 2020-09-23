@@ -245,7 +245,12 @@ export function DrawerContent(props) {
                         
                       } else {
                         
-
+                     
+                        setglobalState({
+                          ...globalState,
+                          timerSeconds: 0,
+                          updateStatus: 'Updating',
+                        });
 
                     globalStatus.updateStatus = 'Updating';
                     globalStatus.updateMode = 'manual';
@@ -306,6 +311,15 @@ export function DrawerContent(props) {
                 ClearTeamAccess();
                 ClearDefaults();
                 UpdateUserActiveStatus();
+
+                setglobalState({
+                  timerSeconds: 0,
+                  timerMinute: 0,
+                  updateStatus: 'Start',
+                  dateTimeUpdated24hr: '',
+                  updatePercentage: '',
+                });
+                // console.log(globalState);
                 props.navigation.navigate('SplashScreen');
               }}
             />
