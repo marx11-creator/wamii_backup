@@ -168,7 +168,7 @@ const SignScreen = (props) => {
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 20000),
+        setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
     ])
       .then((responseData) => {
@@ -212,7 +212,7 @@ const SignScreen = (props) => {
           '{"client_id":"u8W376tWPYnZCGhpI8tI5WCDxL6MNOmi","client_secret":"bE2llWn4gl9xQ1-eHXHzkQ5eWoXQkkuWZ7KWXsMN-5WHtbyotQmUXvFwNKjnOJjk","audience":"https://wamii_api","grant_type":"client_credentials"}',
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 20000),
+        setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
     ])
       .then((responseData) => {
@@ -285,7 +285,7 @@ const SignScreen = (props) => {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 20000),
+        setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
     ])
       .then((responseData) => {

@@ -17,6 +17,7 @@ import {
   dbperarea,
   dbBusinessCalendar,
   dbSalesmanNet,
+  dblastdatetimeupdated,
 } from '../../database/sqliteSetup';
 import {
   scale,
@@ -34,6 +35,8 @@ import {
   globalCompany,
   globalStatus,
   CurrentAppScreen,
+  GetDateTime,
+  ComputeLastDateTimeUpdate,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
 import PageContext from './pagecontext';
@@ -43,6 +46,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {sqrt} from 'react-native-reanimated';
 //marc
 
+var FiveSecondsDelay = 0;
 var lineChartAPIdatalength = 0;
 
 var PerPrincipalAPIdatalength = 0;
@@ -74,8 +78,13 @@ export default function UpdateModal(props) {
       ...globalState,
       timerSeconds: localSeconds,
     });
+    FiveSecondsDelay = FiveSecondsDelay + 1;
+    if (FiveSecondsDelay === 60) {
+      FiveSecondsDelay = 0;
+      ComputeLastDateTimeUpdate();
+    }
 
-    // console.log('second timer running ' + ' ' + localSeconds);
+    console.log('second timer running ' + ' ' + localSeconds);
     if (localSeconds === 900) {
       globalStatus.updateStatus = 'Updating';
 
@@ -176,9 +185,11 @@ export default function UpdateModal(props) {
   );
 
   function afterUpdate() {
+    SaveLastDatetimeUpdated();
     console.log('27 ' + 'UPDATE DONE!!!!!!!!');
 
     if (globalStatus.updateMode === 'manual') {
+      updateProgress = 0;
       setisModalConnectionError(false);
       setisLoadingActivityIndicator(false);
       props.navigation.navigate(CurrentAppScreen.Screen);
@@ -191,20 +202,38 @@ export default function UpdateModal(props) {
       setglobalState({
         ...globalState,
         updateStatus: 'Idle',
+        updatePercentage: updateProgress,
       });
 
       RunTimer();
     } else {
+      updateProgress = 0;
       console.log(globalStatus.updateMode);
       globalStatus.updateStatus = 'Idle';
 
       setglobalState({
         ...globalState,
         updateStatus: 'Idle',
+        updatePercentage: updateProgress,
       });
 
       RunTimer();
     }
+  }
+
+  function SaveLastDatetimeUpdated() {
+    var currdt = "('" + moment().format('DD/MM/YYYY HH:mm:ss') + "')";
+    dblastdatetimeupdated.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  lastdatetimeupdated_tbl (lastdatetimeupdated24hr) VALUES ' +
+          currdt,
+        [],
+        (tx, results) => {
+          GetDateTime(); // call get last date time updated to update global last date time
+        },
+        SQLerror,
+      );
+    });
   }
 
   function RunTimer() {
@@ -227,6 +256,12 @@ export default function UpdateModal(props) {
 
   function onErrortimeout() {
     if (globalStatus.updateMode === 'manual') {
+      updateProgress = 0;
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Updating',
+        updatePercentage: updateProgress,
+      });
       setisModalConnectionError(true);
       setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
 
@@ -240,6 +275,12 @@ export default function UpdateModal(props) {
       // globalStatus.updateMode = 'auto';
       // RunTimer();
     } else {
+      updateProgress = 0;
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Updating',
+        updatePercentage: updateProgress,
+      });
       setisModalConnectionError(false);
       setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
       console.log('error occured in background update');
@@ -339,6 +380,7 @@ export default function UpdateModal(props) {
       globalStatus.updateMode === 'manual'
     ) {
       updateProgress = 0;
+      
       console.log('focus on update');
 
       if (globalStatus.updateMode === 'manual') {
@@ -350,6 +392,7 @@ export default function UpdateModal(props) {
       setglobalState({
         ...globalState,
         updateStatus: 'Updating',
+        updatePercentage: updateProgress,
       });
     }
   }
@@ -371,6 +414,7 @@ export default function UpdateModal(props) {
       setglobalState({
         ...globalState,
         updateStatus: 'Updating',
+        updatePercentage: updateProgress,
       });
     }
   }
@@ -420,6 +464,13 @@ export default function UpdateModal(props) {
   useEffect(() => {
     if (lineChartLocalData.length === lineChartAPIdatalength) {
       updateProgress = Number(updateProgress) + Number(5);
+
+      setglobalState({
+        ...globalState,
+        updatePercentage: updateProgress,
+      });
+
+
       lineChartAPIdatalength = 0;
       DeletePerymtsatAPIData();
       console.log(
@@ -435,6 +486,13 @@ export default function UpdateModal(props) {
   useEffect(() => {
     if (PerPrincipalLocalData.length === PerPrincipalAPIdatalength) {
       updateProgress = Number(updateProgress) + Number(5);
+
+      setglobalState({
+        ...globalState,
+        updatePercentage: updateProgress,
+      });
+
+
       PerPrincipalAPIdatalength = 0;
       DeletePerPrincipalAPIData();
     }
@@ -444,6 +502,11 @@ export default function UpdateModal(props) {
   useEffect(() => {
     if (PerAreaLocalData.length === PerAreaAPIdatalength) {
       updateProgress = Number(updateProgress) + Number(8);
+      setglobalState({
+        ...globalState,
+        updatePercentage: updateProgress,
+      });
+
       PerAreaAPIdatalength = 0;
       DeletePerAreaAPIData();
       console.log(
@@ -479,6 +542,11 @@ export default function UpdateModal(props) {
 
   const GetPerymtsatAPIData = () => {
     updateProgress = Number(updateProgress) + Number(9);
+    setglobalState({
+      ...globalState,
+      updatePercentage: updateProgress,
+    });
+
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr1 = teams + '&' + sales_position_name;
@@ -510,6 +578,11 @@ export default function UpdateModal(props) {
           lineChartAPIdatalength = jsonData.length;
           setlineChartLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(6);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+    
         } else {
           if (globalStatus.updateMode === 'manual') {
             Alert.alert(
@@ -538,12 +611,22 @@ export default function UpdateModal(props) {
 
   function DeletePerymtsatAPIData() {
     updateProgress = Number(updateProgress) + Number(10);
+    setglobalState({
+      ...globalState,
+      updatePercentage: updateProgress,
+    });
+
     dbperymtsat.transaction(function (tx) {
       tx.executeSql(
         'Delete from perymtsat_tbl ',
         [],
         (tx, results) => {
           updateProgress = Number(updateProgress) + Number(5);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+    
           console.log('4 ' + 'deleted local perymtsat');
           SavePerymtsatAPIData();
         },
@@ -606,6 +689,11 @@ export default function UpdateModal(props) {
           '5 ' + 'SavePerymtsatAPIData done concatenating, saving...',
         );
         updateProgress = Number(updateProgress) + Number(10);
+        setglobalState({
+          ...globalState,
+          updatePercentage: updateProgress,
+        });
+  
 
         dbperymtsat.transaction(function (tx) {
           tx.executeSql(
@@ -657,6 +745,11 @@ export default function UpdateModal(props) {
           PerPrincipalAPIdatalength = jsonData.length;
           setPerPrincipalLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(3);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+    
         } else {
           if (globalStatus.updateMode === 'manual') {
             Alert.alert(
@@ -690,6 +783,11 @@ export default function UpdateModal(props) {
         [],
         (tx, results) => {
           updateProgress = Number(updateProgress) + Number(10);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+    
           SavePerPrincipalAPIData();
         },
         SQLerror,
@@ -751,6 +849,11 @@ export default function UpdateModal(props) {
           (tx, results) => {
             if (currIndex === PerPrincipalLocalData.length) {
               updateProgress = Number(updateProgress) + Number(7);
+              setglobalState({
+                ...globalState,
+                updatePercentage: updateProgress,
+              });
+        
               setq2Perymtsat(true);
             }
           },
@@ -792,6 +895,11 @@ export default function UpdateModal(props) {
           PerAreaAPIdatalength = jsonData.length;
           setPerAreaLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(2);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+    
         } else {
           console.log('Please check code, no perarea found');
           if (globalStatus.updateMode === 'manual') {
@@ -879,6 +987,11 @@ export default function UpdateModal(props) {
           (tx, results) => {
             if (currIndex === PerAreaLocalData.length) {
               updateProgress = Number(updateProgress) + Number(6);
+              setglobalState({
+                ...globalState,
+                updatePercentage: updateProgress,
+              });
+        
               console.log('7 ' + 'Query completed SavePerAreaAPIData');
               setq4Area(true);
             }
@@ -914,6 +1027,11 @@ export default function UpdateModal(props) {
       })
       .then((jsonData) => {
         updateProgress = Number(updateProgress) + Number(7);
+        setglobalState({
+          ...globalState,
+          updatePercentage: updateProgress,
+        });
+  
         console.log('8 ' + 'user update log saved in API');
         setq3UserUpdateLog(true);
       })
@@ -986,6 +1104,11 @@ export default function UpdateModal(props) {
             StartUpdate();
 
             updateProgress = Number(updateProgress) + Number(4);
+            setglobalState({
+              ...globalState,
+              updatePercentage: updateProgress,
+            });
+      
             console.log('11 ' + 'user update log saved in API');
             setq3UserUpdateLog(true);
           } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
@@ -1134,6 +1257,11 @@ export default function UpdateModal(props) {
     setload_c(0);
     setq5Marc(true);
     updateProgress = Number(updateProgress) + Number(10);
+    setglobalState({
+      ...globalState,
+      updatePercentage: updateProgress,
+    });
+
   };
 
   // let getcurrentDate = () => {
@@ -1597,6 +1725,8 @@ export default function UpdateModal(props) {
           transparent={false}
           visible={isModalConnectionError}
           onRequestClose={() => {
+            globalStatus.updateMode = 'auto';
+            RunTimer();
             setisModalConnectionError(false);
             setisLoadingActivityIndicator(false);
 

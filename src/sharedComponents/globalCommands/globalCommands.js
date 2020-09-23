@@ -6,6 +6,7 @@ import {
   dbBusinessCalendar,
   dbpromoitems,
   dbSalesmanNet,
+  dblastdatetimeupdated,
 } from '../../database/sqliteSetup';
 import PageContext from '../../screens/MainDrawerScreens/pagecontext';
 var MonthDiff = '';
@@ -325,17 +326,10 @@ function GetYearforFilter() {
   });
 }
 
-function GetDateTime() {
-  dbperymtsat.transaction((tx) => {
+export function GetDateTime() {
+  dblastdatetimeupdated.transaction((tx) => {
     tx.executeSql(
-      'select dateTimeUpdated, dateTimeUpdated24hr from (select DISTINCT(dateTimeUpdated) ,substr(dateTimeUpdated,1,10) as datecut,case when dateTimeUpdated like ' +
-        "'%PM%'" +
-        ' THEN (substr(dateTimeUpdated,12,2)) + 12 else (substr(dateTimeUpdated,12,2))  end as timecut, ' +
-        'CASE WHEN dateTimeUpdated LIKE  ' +
-        "'%PM%'" +
-        'THEN  ((SUBSTR(dateTimeUpdated,1,11)) || ((SUBSTR(dateTimeUpdated,12,2)) + 12)   ||  (SUBSTR(dateTimeUpdated,14,6)) ) ELSE  ' +
-        '  ((SUBSTR(dateTimeUpdated,1,11))   ||  ((SUBSTR(dateTimeUpdated,12,2)))   ||  (SUBSTR(dateTimeUpdated,14,6)) )  END AS dateTimeUpdated24hr ' +
-        ' from perymtsat_tbl) as q1 order by datecut desc,   CAST((timecut) AS UNSIGNED)  desc limit 1',
+      'select max(lastdatetimeupdated24hr) as dateTimeUpdated24hr from lastdatetimeupdated_tbl  limit 1',
       [],
       (tx, results) => {
         var len = results.rows.length;
@@ -343,8 +337,10 @@ function GetDateTime() {
           globalStatus.dateTimeUpdated24hr = results.rows.item(
             0,
           ).dateTimeUpdated24hr;
-          GetLastDateTimeUpdate();
-       
+          ComputeLastDateTimeUpdate();
+          console.log('called');
+          console.log(results.rows.item(0).dateTimeUpdated24hr);
+          //  console.log(results.rows.item(0).dateTimeUpdated24hr);
         } else {
           //   console.log('No date and time in local db found');
         }
@@ -354,12 +350,25 @@ function GetDateTime() {
   });
 }
 
-function GetLastDateTimeUpdate() {
+function pad(num) {
+  return ('0' + num).slice(-2);
+}
+
+export function hhmmss(secs) {
+  var minutes = Math.floor(secs / 60);
+  secs = secs % 60;
+  var hours = Math.floor(minutes / 60);
+  minutes = minutes % 60;
+  return `${pad(minutes)}:${pad(secs)}`;
+  // return pad(hours)+":"+pad(minutes)+":"+pad(secs); for old browsers
+}
+
+
+export function ComputeLastDateTimeUpdate() {
   var now = moment().format('DD/MM/YYYY HH:mm:ss');
-  var then = moment(globalStatus.dateTimeUpdated24hr).format(
-    'DD/MM/YYYY HH:mm:ss',
-  );
-  //04/09/2013 15:00:00
+  var then = globalStatus.dateTimeUpdated24hr;
+  // console.log(moment().format('DD/MM/YYYY HH:mm:ss'));
+  // console.log(globalStatus.dateTimeUpdated24hr + '  aaa');
 
   var ms = moment(now, 'DD/MM/YYYY HH:mm:ss').diff(
     moment(then, 'DD/MM/YYYY HH:mm:ss'),
@@ -371,34 +380,43 @@ function GetLastDateTimeUpdate() {
   MinutesDiff = '';
 
   if (d.months() > 0) {
-    MonthDiff = d.months() + ' Months ';
+    MonthDiff = d.months() + ' month ';
   } else {
     MonthDiff = '';
   }
 
   if (d.days() === 1) {
-    DaysDiff = d.days() + ' Days ';
+    DaysDiff = d.days() + ' day ';
   } else if (d.days() > 1) {
-    DaysDiff = d.days() + ' Days ';
+    DaysDiff = d.days() + ' days ';
   } else if (d.days() < 1) {
     DaysDiff = '';
   }
 
   if (d.hours() === 1) {
-    HoursDiff = d.hours() + ' Hour ';
+    HoursDiff = d.hours() + ' hour ';
   } else if (d.hours() > 1) {
-    HoursDiff = d.hours() + ' Hours ';
+    HoursDiff = d.hours() + ' hours ';
   } else if (d.hours() < 1) {
     HoursDiff = '';
   }
 
   if (d.minutes() === 1) {
-    MinutesDiff = d.minutes() + ' Minute ';
+    MinutesDiff = d.minutes() + ' minute ';
   } else if (d.minutes() > 1) {
-    MinutesDiff = d.minutes() + ' Minutes ';
+    MinutesDiff = d.minutes() + ' minutes ';
   } else if (d.minutes() < 1) {
     MinutesDiff = '';
   }
-  console.log(MonthDiff + DaysDiff + HoursDiff + MinutesDiff);
-  LastDateTimeUpdated.value = MonthDiff + DaysDiff + HoursDiff + MinutesDiff;
+  if (MonthDiff !== '') {
+    LastDateTimeUpdated.value = MonthDiff + 'ago';
+  } else if (DaysDiff !== '') {
+    LastDateTimeUpdated.value = DaysDiff + 'ago';
+  } else if (HoursDiff !== '') {
+    LastDateTimeUpdated.value = HoursDiff + 'ago';
+  } else if (MinutesDiff !== '') {
+    LastDateTimeUpdated.value = MinutesDiff + 'ago';
+  } else {
+    LastDateTimeUpdated.value = '0' + ' minutes ago';
+  }
 }

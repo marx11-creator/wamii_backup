@@ -396,7 +396,7 @@ export default function PromoItems(props) {
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 20000),
+        setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
     ])
       .then((responseData) => {

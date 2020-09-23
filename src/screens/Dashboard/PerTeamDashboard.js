@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-lone-blocks */
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -52,10 +52,12 @@ import {
   DashboardYears,
   DashboardMonths,
   CurrentAppScreen,
+  LastDateTimeUpdated,
+  hhmmss,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
-
+import PageContext from '../MainDrawerScreens/pagecontext';
 var lineChartAPIdatalength = 0;
 var BottomPerTeamAPIdatalength = 0;
 LogBox.ignoreAllLogs();
@@ -152,14 +154,12 @@ export default function PerTeamDashboard(props) {
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
-
+  const [globalState, setglobalState] = useContext(PageContext);
   const [isVisibleModalFilter, setisVisibleModalFilter] = useState(false);
   const [isModalConnectionError, setisModalConnectionError] = useState(false);
   const [isLoadingActivityIndicator, setisLoadingActivityIndicator] = useState(
     false,
   );
-  const [dateTime, setDateTime] = useState('');
-
   const [barPercentageWidth, setbarPercentageWidth] = useState(0);
 
   const [isVisibleFilterModal, setisVisibleFilterModal] = useState(false);
@@ -265,14 +265,13 @@ export default function PerTeamDashboard(props) {
               text: 'UPDATE NOW',
               onPress: () => {
                 props.navigation.navigate('UpdateModal');
-     
               },
             },
             {
               text: 'CANCEL',
-              onPress: () => {
-                props.navigation.navigate('Home');
-              },
+              // onPress: () => {
+              //   props.navigation.navigate('Home');
+              // },
             },
           ],
           {cancelable: true},
@@ -294,7 +293,7 @@ export default function PerTeamDashboard(props) {
     GetSummary();
     GetBottomPerTeam4LocalData();
     setTotalTeamANimation(true);
-    GetDateTime();
+
   }
 
   function LoadPerTeamFiltered() {
@@ -427,25 +426,7 @@ export default function PerTeamDashboard(props) {
       );
     });
   }
-
-  function GetDateTime() {
-    dbperymtsat.transaction((tx) => {
-      tx.executeSql(
-        'select dateTimeUpdated from (select DISTINCT(dateTimeUpdated) ,substr(dateTimeUpdated,1,10) as datecut,case when dateTimeUpdated like ' +
-          "'%PM%'" +
-          ' THEN (substr(dateTimeUpdated,12,2)) + 12 else (substr(dateTimeUpdated,12,2))  end as timecut from perymtsat_tbl) as q1 order by datecut desc,   CAST((timecut) AS UNSIGNED)  desc limit 1',
-        [],
-        (tx, results) => {
-          var len = results.rows.length;
-          if (len > 0) {
-            setDateTime(results.rows.item(0).dateTimeUpdated);
-          }
-        },
-        SQLerror,
-      );
-    });
-  }
-
+ 
   function GetBottomPerTeam4LocalData() {
     // console.log(FilterList.DashboardFilterMonth);
     // console.log(FilterList.DashboardFilterYear);
@@ -500,8 +481,8 @@ export default function PerTeamDashboard(props) {
 
   return (
     // ===================================================================================================================
-    <View style={{flex: 1}}>
-      <Video
+    <View style={{flex: 1, backgroundColor: 'black'}}>
+      {/* <Video
         rate={0.9}
         repeat={true}
         resizeMode="cover"
@@ -510,7 +491,7 @@ export default function PerTeamDashboard(props) {
         // onBuffer={this.onBuffer} // Callback when remote video is buffering
         onError={(Error) => console.log(Error)} // Callback when video cannot be loaded
         style={styles.backgroundVideo}
-      />
+      /> */}
       <ScrollView>
         <View style={{flexDirection: 'column'}}>
           <View style={{margin: moderateScale(5), flex: 1}}>
@@ -524,7 +505,7 @@ export default function PerTeamDashboard(props) {
               /> */}
               <View style={{width: 50}}>
                 <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-                  <Icon name="list-outline" color={'#ffffff'} size={34} />
+                  <Icon name="md-filter" color={'#ffffff'} size={34} />
                 </TouchableOpacity>
               </View>
 
@@ -549,7 +530,84 @@ export default function PerTeamDashboard(props) {
                   Per Team
                 </Text>
               </TouchableOpacity>
-              <View style={styles.textLastUpdateView}>
+              <View
+                style={{
+                  flex: 1,
+                  width: scale(150),
+                  marginRight: 10,
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: moderateScale(12, 0.5),
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
+                  }}>
+                  Last Update
+                </Text>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: moderateScale(12, 0.5),
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
+                  }}>
+                  {LastDateTimeUpdated.value}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                    <Icon name="refresh" color={'#ffffff'} size={10} />
+                  </View>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {globalState.updateStatus === 'Updating' ||
+                    globalState.updateStatus === 'Start' ? (
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {'Updating...'}{' '}
+                        {globalState.updatePercentage > 0
+                          ? globalState.updatePercentage + ' %'
+                          : ''}
+                      </Text>
+                    ) : (
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {hhmmss(900 - globalState.timerSeconds)}
+                      </Text>
+                    )}
+                  </Text>
+                </View>
+              </View>
+              {/* <View style={styles.textLastUpdateView}>
                 <Text style={styles.textLastUpdate}>Last Update</Text>
                 <Text style={styles.textLastUpdate}>
                   {dateTime.substring(0, 10)}
@@ -557,7 +615,7 @@ export default function PerTeamDashboard(props) {
                 <Text style={styles.textLastUpdate}>
                   {dateTime.substring(11, 50)}
                 </Text>
-              </View>
+              </View> */}
             </View>
             <Animatable.View
               useNativeDriver={true}

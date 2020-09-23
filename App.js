@@ -29,6 +29,7 @@ const App = () => {
     timerMinute: 0,
     updateStatus: 'Start',
     dateTimeUpdated24hr: '',
+    updatePercentage: '',
   });
   return (
     <PageContext.Provider value={[globalState, setglobalState]}>

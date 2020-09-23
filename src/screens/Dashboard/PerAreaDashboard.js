@@ -1,7 +1,7 @@
 /* eslint-disable no-sparse-arrays */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-lone-blocks */
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -47,10 +47,12 @@ import {
   FilterList,
   DashboardYears,
   CurrentAppScreen,
+  hhmmss,
+  LastDateTimeUpdated,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
-
+import PageContext from '../MainDrawerScreens/pagecontext';
 export default function PerAreaDashboard(props) {
   LogBox.ignoreAllLogs();
   YellowBox.ignoreWarnings(['']);
@@ -60,36 +62,56 @@ export default function PerAreaDashboard(props) {
   const renderData = ({item}) => {
     return (
       <View style={styles.DetailView}>
-        <Text style={[styles.DetailtText, {marginLeft: 3, width: scale(140)}]}>
-          {item.team}
-        </Text>
-        <Text style={[styles.DetailtText, {marginLeft: moderateScale(25)}]}>
-          {item.sales}
-        </Text>
-        <Text style={[styles.DetailtText, {marginLeft: moderateScale(25)}]}>
-          {item.target}
-        </Text>
-        <Text
-          style={[
-            styles.DetailtText,
-            {
-              width: scale(115),
-              marginLeft: scale(10),
-              fontSize: moderateScale(14, 0.5),
-            },
-          ]}>
-          {item.achievement}
-        </Text>
+        <View style={{flex: 2.9}}>
+          <Text
+            style={[styles.DetailtText, {marginLeft: 3, width: scale(140)}]}>
+            {item.team}
+          </Text>
+        </View>
+
+        <View style={{flex:1.8 }}>
+          <Text style={[styles.DetailtText, {marginLeft: moderateScale(25)}]}>
+            {item.sales}
+          </Text>
+        </View>
+
+        <View style={{flex: 1.2, marginLeft: 10}}>
+          <Text style={[styles.DetailtText, {marginLeft: moderateScale(25)}]}>
+            {item.target}
+          </Text>
+        </View>
+
+        <View style={{flex:1.8 }}>
+          <Text
+            style={[
+              styles.DetailtText,
+              {
+                width: scale(115),
+                marginLeft: scale(10),
+                fontSize: moderateScale(14, 0.5),
+              },
+            ]}>
+            {item.achievement}
+          </Text>
+        </View>
       </View>
     );
   };
 
   const renderDataDetails = ({item, index}) => {
     return (
-      <View style={styles.DetailViewDetails}>
+      <View style={[styles.DetailViewDetails]}>
         <View
-          style={{flexDirection: 'column', marginBottom: moderateScale(10)}}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          style={{
+            flex: 3,
+            flexDirection: 'column',
+            marginBottom: moderateScale(10),
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
             <View
               style={{
                 backgroundColor: colors[index],
@@ -97,9 +119,7 @@ export default function PerAreaDashboard(props) {
                 borderRadius: 60,
                 width: moderateScale(18),
                 height: moderateScale(18),
-              }}>
-              <Text> </Text>
-            </View>
+              }}></View>
             <Text
               style={[
                 styles.DetailtTextDetails,
@@ -114,35 +134,32 @@ export default function PerAreaDashboard(props) {
             </Text>
           </View>
         </View>
+        <View style={{flex: 1.8}}>
+          <Text style={[styles.DetailtTextDetails, {marginLeft: 2}]}>
+            P {numFormatter(item.sales1)}
+          </Text>
+        </View>
 
-        <Text style={[styles.DetailtTextDetails, {marginLeft: 2}]}>
-          P {numFormatter(item.sales1)}
-        </Text>
-        <Text
-          style={[styles.DetailtTextDetails, {marginLeft: moderateScale(25)}]}>
-          {item.uba}
-        </Text>
+        <View style={{flex: 1.5}}>
+          <Text
+            style={[
+              styles.DetailtTextDetails,
+              {marginLeft: moderateScale(25)},
+            ]}>
+            {item.uba}
+          </Text>
+        </View>
 
-        {/* {item.sales > 0 && item.target > 0 ? (
-          <Text style={[styles.DetailtTextDetails, {marginLeft: moderateScale(55)}]}>
-            {numbro((item.sales / item.target) * 100).format({
+        <View style={{flex: 1.2}}>
+          <Text
+            style={[styles.DetailtTextDetails, {marginLeft: moderateScale(5)}]}>
+            {numbro((item.sales1 / totalSales) * 100).format({
               thousandSeparated: true,
               mantissa: 2,
             })}{' '}
             %
           </Text>
-        ) : (
-          <Text style={styles.DetailtTextDetails}>0 %</Text>
-        )} */}
-
-        <Text
-          style={[styles.DetailtTextDetails, {marginLeft: moderateScale(5)}]}>
-          {numbro((item.sales1 / totalSales) * 100).format({
-            thousandSeparated: true,
-            mantissa: 2,
-          })}{' '}
-          %
-        </Text>
+        </View>
       </View>
     );
   };
@@ -166,7 +183,7 @@ export default function PerAreaDashboard(props) {
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
-
+  const [globalState, setglobalState] = useContext(PageContext);
   const [dateTime, setDateTime] = useState('');
   const [isVisibleFilterModal, setisVisibleFilterModal] = useState(false);
   const [filterMainView, setfilterMainView] = useState(scale(360));
@@ -216,7 +233,6 @@ export default function PerAreaDashboard(props) {
   //USE EFFECT PART
 
   useEffect(() => {
-    
     props.navigation.addListener('focus', () => {
       console.log('focus on per Area'); //
       CurrentAppScreen.Screen = 'PerArea';
@@ -251,7 +267,6 @@ export default function PerAreaDashboard(props) {
         }
       }
     });
-    GetDateTime();
   }, []);
 
   useEffect(() => {
@@ -445,29 +460,6 @@ export default function PerAreaDashboard(props) {
 
   //CENTER 4 SUMMARY                     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-  function GetDateTime() {
-    dbperarea.transaction((tx) => {
-      tx.executeSql(
-        'select dateTimeUpdated from (select DISTINCT(dateTimeUpdated) ,substr(dateTimeUpdated,1,10) as datecut,case when dateTimeUpdated like ' +
-          "'%PM%'" +
-          ' THEN (substr(dateTimeUpdated,12,2)) + 12 else (substr(dateTimeUpdated,12,2))  end as timecut from perareapermonth_tbl) as q1 order by datecut desc,   CAST((timecut) AS UNSIGNED)  desc limit 1',
-        [],
-        (tx, results) => {
-          var len = results.rows.length;
-
-          if (len > 0) {
-            // console.log(results.rows.item(0).DateandTimeUpdated);
-            setDateTime(results.rows.item(0).dateTimeUpdated);
-            // console.log('TIME ' + results.rows.item(0).dateTimeUpdated);
-          } else {
-            // console.log('No date and time in local db found');
-          }
-        },
-        SQLerror,
-      );
-    });
-  }
-
   function GetBottomPerAreaLocalData() {
     var YearQuery = '';
     if (FilterList.DashboardFilterYear === '') {
@@ -557,7 +549,7 @@ export default function PerAreaDashboard(props) {
 
             <View style={{width: 50}}>
               <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-                <Icon name="list-outline" color={'#ffffff'} size={34} />
+                <Icon name="md-filter" color={'#ffffff'} size={34} />
               </TouchableOpacity>
             </View>
 
@@ -582,7 +574,7 @@ export default function PerAreaDashboard(props) {
                 Sales Per Area
               </Text>
             </TouchableOpacity>
-            <View style={styles.textLastUpdateView}>
+            {/* <View style={styles.textLastUpdateView}>
               <Text style={styles.textLastUpdate}>Last Update</Text>
               <Text style={styles.textLastUpdate}>
                 {dateTime.substring(0, 10)}
@@ -590,6 +582,83 @@ export default function PerAreaDashboard(props) {
               <Text style={styles.textLastUpdate}>
                 {dateTime.substring(11, 50)}
               </Text>
+            </View> */}
+            <View
+              style={{
+                flex: 1,
+                width: scale(150),
+                marginRight: 10,
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: moderateScale(12, 0.5),
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                Last Update
+              </Text>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: moderateScale(12, 0.5),
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                {LastDateTimeUpdated.value}
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                  <Icon name="refresh" color={'#ffffff'} size={10} />
+                </View>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: moderateScale(12, 0.5),
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
+                  }}>
+                  {globalState.updateStatus === 'Updating' ||
+                  globalState.updateStatus === 'Start' ? (
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: moderateScale(12, 0.5),
+                        alignContent: 'flex-end',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                      }}>
+                      {'Updating...'}{' '}
+                      {globalState.updatePercentage > 0
+                        ? globalState.updatePercentage + ' %'
+                        : ''}
+                    </Text>
+                  ) : (
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: moderateScale(12, 0.5),
+                        alignContent: 'flex-end',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                      }}>
+                      {hhmmss(900 - globalState.timerSeconds)}
+                    </Text>
+                  )}
+                </Text>
+              </View>
             </View>
           </View>
           <View style={{margin: moderateScale(5)}}>

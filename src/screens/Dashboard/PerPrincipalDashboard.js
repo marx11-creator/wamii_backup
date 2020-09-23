@@ -1,7 +1,7 @@
 /* eslint-disable no-sparse-arrays */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-lone-blocks */
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -48,8 +48,10 @@ import {
   DashboardYears,
   globalCompany,
   CurrentAppScreen,
+  LastDateTimeUpdated,
+  hhmmss,
 } from '../../sharedComponents/globalCommands/globalCommands';
-
+import PageContext from '../MainDrawerScreens/pagecontext';
 export default function PerPrincipalDashboard(props) {
   // LogBox.ignoreAllLogs();
 
@@ -259,6 +261,7 @@ export default function PerPrincipalDashboard(props) {
     console.log('SQL Error: ' + err);
   }
 
+  const [globalState, setglobalState] = useContext(PageContext);
   const [dateTime, setDateTime] = useState('');
 
   const [isVisibleModalFilter, setisVisibleModalFilter] = useState(false);
@@ -360,7 +363,6 @@ export default function PerPrincipalDashboard(props) {
       }
     });
 
-    GetDateTime();
   }, []);
 
   useEffect(() => {
@@ -558,29 +560,7 @@ export default function PerPrincipalDashboard(props) {
   }
 
   //CENTER 4 SUMMARY                     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-  function GetDateTime() {
-    dbperprincipal.transaction((tx) => {
-      tx.executeSql(
-        'select dateTimeUpdated from (select DISTINCT(dateTimeUpdated) ,substr(dateTimeUpdated,1,10) as datecut,case when dateTimeUpdated like ' +
-          "'%PM%'" +
-          ' THEN (substr(dateTimeUpdated,12,2)) + 12 else (substr(dateTimeUpdated,12,2))  end as timecut from perprincipalpermonth_tbl) as q1 order by datecut desc,   CAST((timecut) AS UNSIGNED)  desc limit 1',
-        [],
-        (tx, results) => {
-          var len = results.rows.length;
-
-          if (len > 0) {
-            // console.log(results.rows.item(0).DateandTimeUpdated);
-            setDateTime(results.rows.item(0).dateTimeUpdated);
-            // console.log('TIME ' + results.rows.item(0).dateTimeUpdated);
-          } else {
-            //   console.log('No date and time in local db found');
-          }
-        },
-        SQLerror,
-      );
-    });
-  }
+ 
 
   function GetBottomPerPrincipalLocalData() {
     var YearQuery = '';
@@ -681,7 +661,7 @@ export default function PerPrincipalDashboard(props) {
               /> */}
               <View style={{width: 50}}>
                 <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-                  <Icon name="list-outline" color={'#ffffff'} size={34} />
+                  <Icon name="md-filter" color={'#ffffff'} size={34} />
                 </TouchableOpacity>
               </View>
               <TouchableOpacity
@@ -705,7 +685,84 @@ export default function PerPrincipalDashboard(props) {
                   Sales Per Vendor
                 </Text>
               </TouchableOpacity>
-              <View style={styles.textLastUpdateView}>
+              <View
+                style={{
+                  flex: 1,
+                  width: scale(150),
+                  marginRight: 10,
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: moderateScale(12, 0.5),
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
+                  }}>
+                  Last Update
+                </Text>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: moderateScale(12, 0.5),
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
+                  }}>
+                  {LastDateTimeUpdated.value}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                    <Icon name="refresh" color={'#ffffff'} size={10} />
+                  </View>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {globalState.updateStatus === 'Updating' ||
+                    globalState.updateStatus === 'Start' ? (
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {'Updating...'}{' '}
+                        {globalState.updatePercentage > 0
+                          ? globalState.updatePercentage + ' %'
+                          : ''}
+                      </Text>
+                    ) : (
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {hhmmss(900 - globalState.timerSeconds)}
+                      </Text>
+                    )}
+                  </Text>
+                </View>
+              </View>
+              {/* <View style={styles.textLastUpdateView}>
                 <Text style={styles.textLastUpdate}>Last Update</Text>
                 <Text style={styles.textLastUpdate}>
                   {dateTime.substring(0, 10)}
@@ -713,7 +770,7 @@ export default function PerPrincipalDashboard(props) {
                 <Text style={styles.textLastUpdate}>
                   {dateTime.substring(11, 50)}
                 </Text>
-              </View>
+              </View> */}
             </View>
             <View>
               <Text

@@ -25,6 +25,7 @@ import {
   WorkingDays,
   CurrentAppScreen,
   LastDateTimeUpdated,
+  hhmmss,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {
   UpdateYearMonthsFilter,
@@ -71,18 +72,7 @@ export default function Home(props) {
     // console.log(DeviceInfo.getUniqueId());
   });
 
-  function pad(num) {
-    return ('0' + num).slice(-2);
-  }
 
-  function hhmmss(secs) {
-    var minutes = Math.floor(secs / 60);
-    secs = secs % 60;
-    var hours = Math.floor(minutes / 60);
-    minutes = minutes % 60;
-    return `${pad(minutes)}:${pad(secs)}`;
-    // return pad(hours)+":"+pad(minutes)+":"+pad(secs); for old browsers
-  }
 
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
@@ -360,11 +350,10 @@ export default function Home(props) {
             flexDirection: 'row',
             height: scale(70),
             width: width,
-            backgroundColor: 'red',
           }}>
           <View style={{width: 50, marginLeft: 10}}>
             <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-              <Icon name="list-outline" color={'#ffffff'} size={34} />
+              <Icon name="md-filter" color={'#ffffff'} size={34} />
             </TouchableOpacity>
           </View>
           <View
@@ -375,7 +364,6 @@ export default function Home(props) {
               alignContent: 'flex-end',
               alignItems: 'flex-end',
               justifyContent: 'flex-end',
-              backgroundColor: 'blue',
             }}>
             <Text
               style={{
@@ -395,18 +383,53 @@ export default function Home(props) {
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
               }}>
-              TEST
+              {LastDateTimeUpdated.value}
             </Text>
-            <Text
+            <View
               style={{
-                color: 'white',
-                fontSize: moderateScale(12, 0.5),
-                alignContent: 'flex-end',
-                alignItems: 'flex-end',
-                justifyContent: 'flex-end',
+                flexDirection: 'row',
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
               }}>
-   {LastDateTimeUpdated.value}
-            </Text>
+              <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                <Icon name="refresh" color={'#ffffff'} size={10} />
+              </View>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: moderateScale(12, 0.5),
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                {globalState.updateStatus === 'Updating' ||
+                globalState.updateStatus === 'Start' ? (
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {'Updating...'}  {globalState.updatePercentage > 0? (globalState.updatePercentage + ' %'): ''}
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {hhmmss(900 - globalState.timerSeconds)}
+                    
+                  </Text>
+                )}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -424,7 +447,6 @@ export default function Home(props) {
               width: 120,
               height: 120,
               alignItems: 'center',
-              marginTop: 20,
               marginBottom: 10,
             }}>
             <Image
@@ -451,12 +473,12 @@ export default function Home(props) {
               {' '}
               Wing An Marketing Inc.
             </Text>
-            <Button
+            {/* <Button
               title="test"
               onPress={() => {
                 console.log('as');
               }}
-            />
+            /> */}
           </View>
 
           <View
@@ -492,17 +514,9 @@ export default function Home(props) {
             </Text>
           </View>
 
-          {globalState.updateStatus === 'Updating' ||
-          globalState.updateStatus === 'Start' ? (
-            <Text style={{color: 'green', fontSize: 20}}>{'Updating...'}</Text>
-          ) : (
-            <Text style={{color: 'green', fontSize: 20}}>
-              {hhmmss(900 - globalState.timerSeconds)}
-            </Text>
-          )}
-          <Text style={{color: 'green', fontSize: 20}}>
+          {/* <Text style={{color: 'green', fontSize: 20}}>
             {LastDateTimeUpdated.value}
-          </Text>
+          </Text> */}
           <View
             style={{
               marginTop: 80,
