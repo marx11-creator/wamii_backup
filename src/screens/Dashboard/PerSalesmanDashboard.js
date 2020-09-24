@@ -54,6 +54,7 @@ import {
   LastDateTimeUpdated,
   hhmmss,
   globalStatus,
+  PageVisited,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import DashboardModal from '../Dashboard/DashboardModal';
 import PageContext from '../MainDrawerScreens/pagecontext';
@@ -294,10 +295,38 @@ export default function PerSalesmanDashboard(props) {
 
 
   useEffect(() => {
-    console.log('focus on per SALEMAN GLOBAL STATE CHANGES');
-      CurrentAppScreen.Screen = 'PerSalesman';
+    console.log('focus on per team from update'); //
+
+
       SearchPerSalesman();
+ 
   }, [globalState.dateTimeUpdated24hr]);
+
+
+
+  useEffect(() => {
+    props.navigation.addListener('focus', () => {
+      console.log('focus on per salesman focus');
+     
+      CurrentAppScreen.Screen = 'PerSalesman';
+
+      if (PageVisited.PerSalesmanPAGE === 'NO') {
+        PageVisited.PerSalesmanPAGE = 'YES';
+         console.log('focus on per salesman with changes')
+         SearchPerSalesman();
+    
+       }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (CurrentDashboardScreen.Screen === 'PERSALESMAN') {
+      console.log('focus on per team from dashboard global'); //
+      PageVisited.PerSalesmanPAGE = 'YES';
+      SearchPerSalesman();
+    }
+  }, [FilterList.DashboardFilterYearNMonthTeam]);
+
 
 
 
@@ -308,6 +337,7 @@ export default function PerSalesmanDashboard(props) {
     //  console.log(ProgressPercentage);
   }, [totalSales]);
 
+  
   useEffect(() => {
     settotalAchivementAnimation(true);
     setProgressPercentage(summaryPercentage / 100);
@@ -317,21 +347,8 @@ export default function PerSalesmanDashboard(props) {
     settotalTargetsAnimation(true);
   }, [totalTarget]);
 
-  useEffect(() => {
-    props.navigation.addListener('focus', () => {
-      console.log('focus on per salesman');
-      CurrentAppScreen.Screen = 'PerSalesman';
-      SearchPerSalesman();
-    });
-  }, []);
-
-  useEffect(() => {
-    if (CurrentDashboardScreen.Screen === 'PERSALESMAN') {
-      SearchPerSalesman();
-    }
-  }, [FilterList.DashboardFilterYearNMonthTeam]);
-
   const SearchPerSalesman = () => {
+
     setisLoadingActivityIndicator(true);
     GetlineChartColLocalData();
     GetlineChartBottomLocalData();

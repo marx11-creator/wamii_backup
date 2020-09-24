@@ -5,6 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import StartLandingScreen from './src/screens/loginscreens/StartLandingScreen';
 import PageContext from './src/screens/MainDrawerScreens/pagecontext';
+import moment from 'moment';
 const Stack = createStackNavigator();
 
 // export default function StartStackScreen(){
@@ -30,6 +31,7 @@ const App = () => {
     updateStatus: 'Start',
     dateTimeUpdated24hr: '',
     updatePercentage: '',
+    DashboardFilterYearNMonthTeam: moment().utcOffset('+08:00').format('YYYY') + moment().utcOffset('+08:00').format('MMMM') + '',
   });
   return (
     <PageContext.Provider value={[globalState, setglobalState]}>

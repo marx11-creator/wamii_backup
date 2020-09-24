@@ -84,7 +84,7 @@ export default function UpdateModal(props) {
       ComputeLastDateTimeUpdate();
     }
 
-    console.log('second timer running ' + ' ' + localSeconds);
+  //  console.log('second timer running ' + ' ' + localSeconds);
     if (localSeconds === 900) {
       globalStatus.updateStatus = 'Updating';
 

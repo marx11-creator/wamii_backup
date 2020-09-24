@@ -1,6 +1,6 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import React, {useState } from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import {
   DashboardMonths,
   DashboardYears,
   DashboardTeams,
+  PageVisited,
 } from '../../sharedComponents/globalCommands/globalCommands';
 
 import {
@@ -32,10 +33,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import FlatButton from '../../sharedComponents/custombutton';
 import moment from 'moment';
 import {dbperymtsat} from '../../database/sqliteSetup';
-
 export default function DashboardModal(props) {
-  console.log('you are on dashboard');
-
+  
   const [isVisibleYear, setisVisibleYear] = useState(false);
   const [isVisibleMonth, setisVisibleMonth] = useState(false);
   const [isVisibleTeam, setisVisibleTeam] = useState(false);
@@ -310,6 +309,18 @@ export default function DashboardModal(props) {
                           FilterList.DashboardFilterTeam;
                       }
 
+                      // setglobalState({
+                      //   ...globalState,
+                      //   DashboardFilterYearNMonthTeam: FilterListMirror.DashboardFilterYear +
+                      //   FilterListMirror.DashboardFilterMonth +
+                      //   FilterListMirror.DashboardFilterTeam,
+                      // })
+
+                      PageVisited.PerTeamPAGE = 'NO';
+                      PageVisited.PerAreaPAGE = 'NO';
+                      PageVisited.PerSalesmanPAGE = 'NO';
+                      PageVisited.PerPrincipalPAGE = 'NO';
+
                       FilterList.DashboardFilterYearNMonthTeam =
                         FilterListMirror.DashboardFilterYear +
                         FilterListMirror.DashboardFilterMonth +
@@ -319,6 +330,8 @@ export default function DashboardModal(props) {
                         FilterListMirror.DashboardFilterYear;
                       FilterList.DashboardFilterMonth =
                         FilterListMirror.DashboardFilterMonth;
+
+
 
                       FilterList.DashboardFilterTeam =
                         FilterListMirror.DashboardFilterTeam;

@@ -55,6 +55,7 @@ import {
   LastDateTimeUpdated,
   hhmmss,
   globalStatus,
+  PageVisited,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
@@ -240,11 +241,39 @@ export default function PerTeamDashboard(props) {
 
   //USE EFFECT PART
 
+
+
+
   useEffect(() => {
-    console.log('focus on per team GLOBAL STATE CHANGES ');
-    CurrentAppScreen.Screen = 'PerTeam';
-    LoadPerTeam();
+    props.navigation.addListener('focus', () => {
+      console.log('focus on per team focus');
+      CurrentAppScreen.Screen = 'PerTeam';
+
+     if (PageVisited.PerTeamPAGE === 'NO') {
+      PageVisited.PerTeamPAGE = 'YES';
+       console.log('focus on per team with changes')
+       LoadPerTeamFiltered();
+  
+     }
+      // LoadPerTeam();
+    });
+  }, []);
+
+  useEffect(() => {
+      console.log('focus on per team from update'); //
+      LoadPerTeam();
+
   }, [globalState.dateTimeUpdated24hr]);
+
+
+  useEffect(() => {
+    if (CurrentDashboardScreen.Screen === 'PERTEAM') {
+      console.log('focus on per team from dashboard global'); //
+      PageVisited.PerTeamPAGE = 'YES';
+      LoadPerTeamFiltered();
+    }
+  }, [FilterList.DashboardFilterYearNMonthTeam]);
+
 
   useEffect(() => {
     settotalSalesAnimation(true);
@@ -255,43 +284,6 @@ export default function PerTeamDashboard(props) {
     settotalBalanceAnimation(true);
   }, [totalSales]);
 
-  useEffect(() => {
-    props.navigation.addListener('focus', () => {
-      console.log('focus on per team');
-      CurrentAppScreen.Screen = 'PerTeam';
-      LoadPerTeam();
-
-      // if (DashboardYears.length > 0) {
-      //   console.log('With data');
-      // } else {
-      //   Alert.alert(
-      //     'NOTE:',
-      //     'Please update application data first. ',
-      //     [
-      //       {
-      //         text: 'UPDATE NOW',
-      //         onPress: () => {
-      //           props.navigation.navigate('UpdateModal');
-      //         },
-      //       },
-      //       {
-      //         text: 'CANCEL',
-      //         // onPress: () => {
-      //         //   props.navigation.navigate('Home');
-      //         // },
-      //       },
-      //     ],
-      //     {cancelable: true},
-      //   );
-      // }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (CurrentDashboardScreen.Screen === 'PERTEAM') {
-      LoadPerTeamFiltered();
-    }
-  }, [FilterList.DashboardFilterYearNMonthTeam]);
 
   function LoadPerTeam() {
     GetlineChartColLocalData();
@@ -1133,3 +1125,28 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
 });
+
+
+      // if (DashboardYears.length > 0) {
+      //   console.log('With data');
+      // } else {
+      //   Alert.alert(
+      //     'NOTE:',
+      //     'Please update application data first. ',
+      //     [
+      //       {
+      //         text: 'UPDATE NOW',
+      //         onPress: () => {
+      //           props.navigation.navigate('UpdateModal');
+      //         },
+      //       },
+      //       {
+      //         text: 'CANCEL',
+      //         // onPress: () => {
+      //         //   props.navigation.navigate('Home');
+      //         // },
+      //       },
+      //     ],
+      //     {cancelable: true},
+      //   );
+      // }
