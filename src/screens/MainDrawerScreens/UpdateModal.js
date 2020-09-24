@@ -85,7 +85,7 @@ export default function UpdateModal(props) {
     }
 
     console.log('second timer running ' + ' ' + localSeconds);
-    if (localSeconds === 30) {
+    if (localSeconds === 900) {
       globalStatus.updateStatus = 'Updating';
 
       setglobalState({
@@ -248,7 +248,7 @@ export default function UpdateModal(props) {
       secs = secs + 1;
       setLocalSeconds(secs);
 
-      if (secs === 30) {
+      if (secs === 900) {
         BackgroundTimer.clearInterval(intervalId2);
         GETUpdateVersionAPI();
       }

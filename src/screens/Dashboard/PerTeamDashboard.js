@@ -54,6 +54,7 @@ import {
   CurrentAppScreen,
   LastDateTimeUpdated,
   hhmmss,
+  globalStatus,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
@@ -240,6 +241,12 @@ export default function PerTeamDashboard(props) {
   //USE EFFECT PART
 
   useEffect(() => {
+    console.log('focus on per team GLOBAL STATE CHANGES ');
+    CurrentAppScreen.Screen = 'PerTeam';
+    LoadPerTeam();
+  }, [globalState.dateTimeUpdated24hr]);
+
+  useEffect(() => {
     settotalSalesAnimation(true);
     setsummaryPercentage((totalSales / totalTarget) * 100);
     setsummaryBaltoSell(totalSales - totalTarget);
@@ -254,29 +261,29 @@ export default function PerTeamDashboard(props) {
       CurrentAppScreen.Screen = 'PerTeam';
       LoadPerTeam();
 
-      if (DashboardYears.length > 0) {
-        console.log('With data');
-      } else {
-        Alert.alert(
-          'NOTE:',
-          'Please update application data first. ',
-          [
-            {
-              text: 'UPDATE NOW',
-              onPress: () => {
-                props.navigation.navigate('UpdateModal');
-              },
-            },
-            {
-              text: 'CANCEL',
-              // onPress: () => {
-              //   props.navigation.navigate('Home');
-              // },
-            },
-          ],
-          {cancelable: true},
-        );
-      }
+      // if (DashboardYears.length > 0) {
+      //   console.log('With data');
+      // } else {
+      //   Alert.alert(
+      //     'NOTE:',
+      //     'Please update application data first. ',
+      //     [
+      //       {
+      //         text: 'UPDATE NOW',
+      //         onPress: () => {
+      //           props.navigation.navigate('UpdateModal');
+      //         },
+      //       },
+      //       {
+      //         text: 'CANCEL',
+      //         // onPress: () => {
+      //         //   props.navigation.navigate('Home');
+      //         // },
+      //       },
+      //     ],
+      //     {cancelable: true},
+      //   );
+      // }
     });
   }, []);
 
@@ -293,7 +300,6 @@ export default function PerTeamDashboard(props) {
     GetSummary();
     GetBottomPerTeam4LocalData();
     setTotalTeamANimation(true);
-
   }
 
   function LoadPerTeamFiltered() {
@@ -426,7 +432,7 @@ export default function PerTeamDashboard(props) {
       );
     });
   }
- 
+
   function GetBottomPerTeam4LocalData() {
     // console.log(FilterList.DashboardFilterMonth);
     // console.log(FilterList.DashboardFilterYear);
@@ -481,8 +487,8 @@ export default function PerTeamDashboard(props) {
 
   return (
     // ===================================================================================================================
-    <View style={{flex: 1, backgroundColor: 'black'}}>
-      {/* <Video
+    <View style={{flex: 1}}>
+      <Video
         rate={0.9}
         repeat={true}
         resizeMode="cover"
@@ -491,7 +497,7 @@ export default function PerTeamDashboard(props) {
         // onBuffer={this.onBuffer} // Callback when remote video is buffering
         onError={(Error) => console.log(Error)} // Callback when video cannot be loaded
         style={styles.backgroundVideo}
-      /> */}
+      />
       <ScrollView>
         <View style={{flexDirection: 'column'}}>
           <View style={{margin: moderateScale(5), flex: 1}}>

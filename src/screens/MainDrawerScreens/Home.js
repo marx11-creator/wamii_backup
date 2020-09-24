@@ -482,7 +482,7 @@ console.log( globalStatus.StartUpUpdate);
               {' '}
               Wing An Marketing Inc.
             </Text>
-            <Button
+            {/* <Button
               title="test"
               onPress={() => {
                 
@@ -491,7 +491,7 @@ console.log( globalStatus.StartUpUpdate);
 
 
               }}
-            />
+            /> */}
           </View>
 
           <View

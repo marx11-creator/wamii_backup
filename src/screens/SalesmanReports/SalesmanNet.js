@@ -1,5 +1,6 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {FlatList, Text, View, SafeAreaView, Image, StyleSheet, TouchableOpacity, Button} from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -14,13 +15,18 @@ import {
   CurrentDashboardScreen,
   FilterList,
   DashboardYears,
+  LastDateTimeUpdated,
+  hhmmss,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import moment, { months } from 'moment';
 import {ProgressCircle} from 'react-native-svg-charts';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Video from 'react-native-video';
+import PageContext from '../MainDrawerScreens/pagecontext';
 var db = openDatabase({name: 'Sales_report.db'});
 
 export default function ViewScreen(props) {
-
+  const [globalState, setglobalState] = useContext(PageContext);
  const [DateTimerefreshed, setDateTimerefreshed] = useState('none');
  const [grosssales, setgrosssales] = useState('');
  const [cmamount, setcmamount] = useState('');
@@ -54,6 +60,19 @@ export default function ViewScreen(props) {
       setfocus_int(1);
     });
   }, []);
+
+
+
+  useEffect(() => {
+ 
+      console.log('focus on per MARC'); //
+      push_sales_net();
+      push_sales_per_vendor();
+      push_sales_per_customer();
+      push_sales_per_category();
+      setfocus_int(1);
+ 
+  }, [globalState.dateTimeUpdated24hr]);
 
 
 
@@ -396,14 +415,39 @@ export default function ViewScreen(props) {
 
     <SafeAreaView style={{flex: 1 }}>
 
-      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
-
+ 
+      <View style={{ flex: 1, flexDirection: 'column' }}>
+      <Video
+        rate={0.9}
+        repeat={true}
+        resizeMode="cover"
+        source={require('../../assets/night.mp4')} // Can be a URL or a local file.
+        // ref={ref_video} // Store reference
+        // onBuffer={this.onBuffer} // Callback when remote video is buffering
+        onError={(Error) => console.log(Error)} // Callback when video cannot be loaded
+        style={styles.backgroundVideo}
+      />
         {/* percentage */}
-        <View style={{ justifyContent: 'flex-start', marginLeft: 20, marginTop: 20}}>
+        <View style={{flexDirection: 'column',   alignContent: 'center' }}>
+
+        <View style={{width: 50}}>
+            <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+              <Icon name="md-filter" color={'#ffffff'} size={34} />
+            </TouchableOpacity>
+          </View>
+    
+
+
+        <View style={{alignItems: 'center'}}>
           <Text style={{ fontSize: 20, color: 'gray'}}>
             {FilterList.DashboardFilterMonth} {FilterList.DashboardFilterYear}
           </Text>
         </View>
+
+        </View>
+
+
+
         <View style={{ flex: 1.5, paddingVertical: 10, justifyContent: 'center', alignItems: 'center'}}>
         <ProgressCircle
           style={{height: scale(200), width: scale(200)}}
@@ -445,7 +489,66 @@ export default function ViewScreen(props) {
             <Image source={require('../../assets/pic/refresh.png')} style={{height:moderateScale(30, 0.5), width: moderateScale(30, 0.5)}} />
           </TouchableOpacity>
           <View style={{margin:5}} /> */}
-          <Text style={{fontSize: moderateScale(15, 0.5), color: 'gray' }}>Updated: {DateTimerefreshed}</Text>
+          {/* <Text style={{fontSize: moderateScale(15, 0.5), color: 'gray' }}>Updated: {DateTimerefreshed}</Text> */}
+
+          <Text
+              style={{
+                color: 'white',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              Last Update {LastDateTimeUpdated.value} {' ||   '}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                <Icon name="refresh" color={'#ffffff'} size={10} />
+              </View>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: moderateScale(12, 0.5),
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                {globalState.updateStatus === 'Updating' ||
+                globalState.updateStatus === 'Start' ? (
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {'Updating...'}{' '}
+                    {globalState.updatePercentage > 0
+                      ? globalState.updatePercentage + ' %'
+                      : ''}
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {hhmmss(900 - globalState.timerSeconds)}
+                  </Text>
+                )}
+              </Text>
+            </View>
+          
         </View>
         <View style={{flex:1.5, flexDirection: 'row', padding: 10 }}>
           <View style={{flex:1,flexDirection: 'column'}}>
@@ -786,5 +889,12 @@ const styles = StyleSheet.create({
   displaytext: {
     fontSize: moderateScale(14, 0.5),
     color: 'red',
+  },
+  backgroundVideo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
 });

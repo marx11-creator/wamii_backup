@@ -49,6 +49,7 @@ import {
   CurrentAppScreen,
   hhmmss,
   LastDateTimeUpdated,
+  globalStatus,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
@@ -69,7 +70,7 @@ export default function PerAreaDashboard(props) {
           </Text>
         </View>
 
-        <View style={{flex:1.8 }}>
+        <View style={{flex: 1.8}}>
           <Text style={[styles.DetailtText, {marginLeft: moderateScale(25)}]}>
             {item.sales}
           </Text>
@@ -81,7 +82,7 @@ export default function PerAreaDashboard(props) {
           </Text>
         </View>
 
-        <View style={{flex:1.8 }}>
+        <View style={{flex: 1.8}}>
           <Text
             style={[
               styles.DetailtText,
@@ -231,6 +232,41 @@ export default function PerAreaDashboard(props) {
   const [DynamicPrincipalSales, setDynamicPrincipalSales] = useState([1]);
 
   //USE EFFECT PART
+
+  useEffect(() => {
+    console.log('focus on per area GLOBAL STATE CHANGES ');
+    CurrentAppScreen.Screen = 'PerArea';
+    // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
+    SearchPrincipal();
+
+    if (perArea.length > 1 && totalSales > 1) {
+      // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
+      var temp = [];
+      perArea.map((item, index) => {
+        //BUILD PRINCIPAL ACONYM
+        temp.push(item.principal_acronym);
+      });
+
+      var tempSales = [];
+      var firstContribution = 1;
+      perArea.map((item, index) => {
+        // BUILD PRINCIPAL SALES
+        tempSales.push(((item.sales1 / totalSales) * 100).toFixed(2) * 1);
+        if (firstContribution === 1) {
+          setCurrentContribution(
+            ((item.sales1 / totalSales) * 100).toFixed(2) * 1,
+          );
+          firstContribution = 0;
+        }
+      });
+
+      if (temp.length === tempSales.length) {
+        //  POPULATE NEEDED DATA
+        setDynamicPrincipalList(temp);
+        setDynamicPrincipalSales(tempSales);
+      }
+    }
+  }, [globalState.dateTimeUpdated24hr]);
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {

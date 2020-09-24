@@ -1,7 +1,7 @@
 /* eslint-disable no-sparse-arrays */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-lone-blocks */
-import React, {useState, useRef, useEffect,useContext} from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -53,6 +53,7 @@ import {
   CurrentAppScreen,
   LastDateTimeUpdated,
   hhmmss,
+  globalStatus,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import DashboardModal from '../Dashboard/DashboardModal';
 import PageContext from '../MainDrawerScreens/pagecontext';
@@ -143,8 +144,7 @@ export default function PerSalesmanDashboard(props) {
           P {numFormatter(item.sales)}
         </Text>
         <Text style={[styles.DetailtTextDetails]}>
-         P {item.target > 0 ?  numFormatter(item.target) : 0}
-        
+          P {item.target > 0 ? numFormatter(item.target) : 0}
         </Text>
 
         {item.sales > 0 && item.target > 0 ? (
@@ -169,11 +169,14 @@ export default function PerSalesmanDashboard(props) {
 
   const ref_video = useRef(null);
   function numFormatter(num) {
-    if (num > 999 && num < 1000000) {    // 1000 to 999,999.00
+    if (num > 999 && num < 1000000) {
+      // 1000 to 999,999.00
       return (num / 1000).toFixed(2) + 'K';
-    } else if (num > 999999) {     //    1M up
+    } else if (num > 999999) {
+      //    1M up
       return (num / 1000000).toFixed(2) + 'M';
-    } else if (num < 1000) {         //   999 below
+    } else if (num < 1000) {
+      //   999 below
       return num; // if value < 1000, nothing to do
     }
   }
@@ -289,6 +292,15 @@ export default function PerSalesmanDashboard(props) {
 
   //USE EFFECT PART
 
+
+  useEffect(() => {
+    console.log('focus on per SALEMAN GLOBAL STATE CHANGES');
+      CurrentAppScreen.Screen = 'PerSalesman';
+      SearchPerSalesman();
+  }, [globalState.dateTimeUpdated24hr]);
+
+
+
   useEffect(() => {
     setsummaryPercentage((totalSales / totalTarget) * 100);
     setsummaryBaltoSell(totalSales - totalTarget);
@@ -310,7 +322,6 @@ export default function PerSalesmanDashboard(props) {
       console.log('focus on per salesman');
       CurrentAppScreen.Screen = 'PerSalesman';
       SearchPerSalesman();
-
     });
   }, []);
 
@@ -372,8 +383,6 @@ export default function PerSalesmanDashboard(props) {
             setbarPercentageWidth(1 - lengthcal);
             //  console.log(barPercentageWidth);
           }
-
-
         },
         SQLerror,
       );
@@ -495,7 +504,6 @@ export default function PerSalesmanDashboard(props) {
       );
     });
   }
- 
 
   function GetBottomPerTeam4LocalData() {
     var YearQuery = '';
@@ -619,44 +627,54 @@ export default function PerSalesmanDashboard(props) {
             </Text>
           </TouchableOpacity>
           <View
+            style={{
+              flex: 1,
+              width: scale(150),
+              marginRight: 10,
+              alignContent: 'flex-end',
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              Last Update
+            </Text>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              {LastDateTimeUpdated.value}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                <Icon name="refresh" color={'#ffffff'} size={10} />
+              </View>
+              <Text
                 style={{
-                  flex: 1,
-                  width: scale(150),
-                  marginRight: 10,
+                  color: 'white',
+                  fontSize: moderateScale(12, 0.5),
                   alignContent: 'flex-end',
                   alignItems: 'flex-end',
                   justifyContent: 'flex-end',
                 }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                  }}>
-                  Last Update
-                </Text>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                  }}>
-                  {LastDateTimeUpdated.value}
-                </Text>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                    <Icon name="refresh" color={'#ffffff'} size={10} />
-                  </View>
+                {globalState.updateStatus === 'Updating' ||
+                globalState.updateStatus === 'Start' ? (
                   <Text
                     style={{
                       color: 'white',
@@ -665,36 +683,26 @@ export default function PerSalesmanDashboard(props) {
                       alignItems: 'flex-end',
                       justifyContent: 'flex-end',
                     }}>
-                    {globalState.updateStatus === 'Updating' ||
-                    globalState.updateStatus === 'Start' ? (
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: moderateScale(12, 0.5),
-                          alignContent: 'flex-end',
-                          alignItems: 'flex-end',
-                          justifyContent: 'flex-end',
-                        }}>
-                        {'Updating...'}{' '}
-                        {globalState.updatePercentage > 0
-                          ? globalState.updatePercentage + ' %'
-                          : ''}
-                      </Text>
-                    ) : (
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: moderateScale(12, 0.5),
-                          alignContent: 'flex-end',
-                          alignItems: 'flex-end',
-                          justifyContent: 'flex-end',
-                        }}>
-                        {hhmmss(900 - globalState.timerSeconds)}
-                      </Text>
-                    )}
+                    {'Updating...'}{' '}
+                    {globalState.updatePercentage > 0
+                      ? globalState.updatePercentage + ' %'
+                      : ''}
                   </Text>
-                </View>
-              </View>
+                ) : (
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {hhmmss(900 - globalState.timerSeconds)}
+                  </Text>
+                )}
+              </Text>
+            </View>
+          </View>
           {/* <View style={styles.textLastUpdateView}>
             <Text style={styles.textLastUpdate}>Last Update</Text>
             <Text style={styles.textLastUpdate}>
