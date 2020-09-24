@@ -12,4 +12,10 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "WAMii";
   }
+
+  @Override
+public void invokeDefaultOnBackPressed() {
+    moveTaskToBack(true);
+}
+
 }

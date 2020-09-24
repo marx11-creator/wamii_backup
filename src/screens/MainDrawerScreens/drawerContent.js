@@ -1,6 +1,6 @@
 /* eslint-disable no-lone-blocks */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   StyleSheet,
@@ -38,10 +38,16 @@ import {
   ClearDefaults,
   CurrentAppScreen,
   CurrentAppVersionUpdate,
+  globalStatus,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users} from '../../database/sqliteSetup';
+import PageContext from './pagecontext';
+
 
 export function DrawerContent(props) {
+
+  const [globalState, setglobalState] = useContext(PageContext);
+
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
@@ -221,10 +227,37 @@ export function DrawerContent(props) {
               }}>
               <View style={{alignItems: 'flex-start', marginLeft: scale(80)}}>
                 <FlatButton
-                  text="Update Now"
+                text=  {globalState.updateStatus === 'Idle'  ? 'Update Now' : 'Updating...'}
                   onPress={() => {
-                    CurrentAppScreen.Screen = 'UPDATEMDL';
+                      if (globalStatus.StartUpUpdate === false || globalState.updateStatus === 'Updating'){
+                        
+                        Alert.alert(
+                          'Note',
+                          "Application already updating in background. Kindly wait",
+                          [
+                            {
+                              text: 'OK',
+                            },
+                          ],
+                          {cancelable: true},
+                        );
+
+                        
+                      } else {
+                        
+                     
+                        setglobalState({
+                          ...globalState,
+                          timerSeconds: 0,
+                          updateStatus: 'Updating',
+                        });
+
+                    globalStatus.updateStatus = 'Updating';
+                    globalStatus.updateMode = 'manual';
                     props.navigation.navigate('UpdateModal');
+
+                      }
+
                   }}
                   gradientFrom="#00961A"
                   gradientTo="#34F856"
@@ -278,6 +311,15 @@ export function DrawerContent(props) {
                 ClearTeamAccess();
                 ClearDefaults();
                 UpdateUserActiveStatus();
+
+                setglobalState({
+                  timerSeconds: 0,
+                  timerMinute: 0,
+                  updateStatus: 'Start',
+                  dateTimeUpdated24hr: '',
+                  updatePercentage: '',
+                });
+                // console.log(globalState);
                 props.navigation.navigate('SplashScreen');
               }}
             />

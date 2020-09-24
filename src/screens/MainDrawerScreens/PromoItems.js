@@ -40,8 +40,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import Modal from 'react-native-modal';
 import LinearGradient from 'react-native-linear-gradient';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {APIToken, globalCompany, server} from '../../sharedComponents/globalCommands/globalCommands';
-import {PageContext} from './pagecontext';
+import {APIToken, globalCompany, server, CurrentAppScreen} from '../../sharedComponents/globalCommands/globalCommands';
 
 var ApiRowsCount = 0;
 var count = 0;
@@ -52,8 +51,7 @@ var TypeListfromPicker = '';
 var longStrinfg = '';
 
 // var arrVariantListfromPickerLocal = [];
-export default function PromoItems() {
-const [globalState] = useContext(PageContext);
+export default function PromoItems(props) {
   const ApiFields = [
     {
       principal_name: '',
@@ -192,12 +190,26 @@ const [globalState] = useContext(PageContext);
     }
   });
 
+ 
+
   useEffect(() => {
-    GetDateTime();
-    GetPrincipalList();
-    GetLocalPromoItems();
-    
+    props.navigation.addListener('focus', () => {
+      console.log('focus on per per item');
+      CurrentAppScreen.Screen = 'PromoItems';
+      GetDateTime();
+      GetPrincipalList();
+      GetLocalPromoItems();
+      
+
+
+    });
+
+
   }, []);
+
+
+
+
 
   // useEffect(() => {
   //   dateTimeSet();
@@ -384,7 +396,7 @@ const [globalState] = useContext(PageContext);
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 20000),
+        setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
     ])
       .then((responseData) => {
@@ -758,9 +770,6 @@ const [globalState] = useContext(PageContext);
               'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
           }}
         />
-        <Text style={{color: 'green', fontSize:30}}>{globalState.currentSeconds}</Text>
-<Text style={{color: 'green', fontSize:30}}>{globalState.updateStatus}</Text>
-
         <FlatButton
           gradientFrom="red"
           gradientTo="pink"

@@ -17,6 +17,7 @@ import {
   dbperarea,
   dbBusinessCalendar,
   dbSalesmanNet,
+  dblastdatetimeupdated,
 } from '../../database/sqliteSetup';
 import {
   scale,
@@ -30,17 +31,22 @@ import moment from 'moment';
 import {
   APIToken,
   UpdateYearMonthsFilter,
-  CurrentAppScreen,
   server,
   globalCompany,
+  globalStatus,
+  CurrentAppScreen,
+  GetDateTime,
+  ComputeLastDateTimeUpdate,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
-import {PageContext} from './pagecontext';
-
+import PageContext from './pagecontext';
+import BackgroundTimer from 'react-native-background-timer';
 //marc
 import {useFocusEffect} from '@react-navigation/native';
+import {sqrt} from 'react-native-reanimated';
 //marc
 
+var FiveSecondsDelay = 0;
 var lineChartAPIdatalength = 0;
 
 var PerPrincipalAPIdatalength = 0;
@@ -55,6 +61,41 @@ var year = new Date().getFullYear();
 
 export default function UpdateModal(props) {
   const [globalState, setglobalState] = useContext(PageContext);
+  const [localSeconds, setLocalSeconds] = useState(0);
+
+  var GetPerymtsatAPIDataState = false;
+
+  // var secs = 0;
+  // // BackgroundTimer.clearInterval();
+  // const intervalId = BackgroundTimer.setInterval(() => {
+  //   secs = secs + 1;
+  //   setLocalSeconds(secs);
+  //   console.log(auth);
+  // }, 1000);
+
+  useEffect(() => {
+    setglobalState({
+      ...globalState,
+      timerSeconds: localSeconds,
+    });
+    FiveSecondsDelay = FiveSecondsDelay + 1;
+    if (FiveSecondsDelay === 60) {
+      FiveSecondsDelay = 0;
+      ComputeLastDateTimeUpdate();
+    }
+
+    console.log('second timer running ' + ' ' + localSeconds);
+    if (localSeconds === 900) {
+      globalStatus.updateStatus = 'Updating';
+
+      setglobalState({
+        ...globalState,
+        timerSeconds: 0,
+        updateStatus: 'Updating',
+      });
+    }
+  }, [localSeconds]);
+
   ////////////////MARC
   const [customer_data, setcustomer_data] = useState([]);
   const [net_data, setnet_data] = useState([]);
@@ -143,6 +184,124 @@ export default function UpdateModal(props) {
     PerAreaLocalDataField,
   );
 
+  function afterUpdate() {
+    SaveLastDatetimeUpdated();
+    console.log('27 ' + 'UPDATE DONE!!!!!!!!');
+
+    if (globalStatus.updateMode === 'manual') {
+      updateProgress = 0;
+      setisModalConnectionError(false);
+      setisLoadingActivityIndicator(false);
+      console.log(globalStatus.updateMode);
+      globalStatus.updateMode = 'auto';
+
+
+      globalStatus.updateStatus = 'Idle';
+
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Idle',
+        updatePercentage: updateProgress,
+        dateTimeUpdated24hr:  moment().format('DD/MM/YYYY HH:mm:ss') ,
+      });
+      props.navigation.navigate(CurrentAppScreen.Screen);
+
+      RunTimer();
+    } else {
+      updateProgress = 0;
+      console.log(globalStatus.updateMode);
+      globalStatus.updateStatus = 'Idle';
+
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Idle',
+        updatePercentage: updateProgress,
+        dateTimeUpdated24hr:  moment().format('DD/MM/YYYY HH:mm:ss') ,
+      });
+
+      RunTimer();
+    }
+  }
+
+  function SaveLastDatetimeUpdated() {
+    var currdt = "('" + moment().format('DD/MM/YYYY HH:mm:ss') + "')";
+    dblastdatetimeupdated.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  lastdatetimeupdated_tbl (lastdatetimeupdated24hr) VALUES ' +
+          currdt,
+        [],
+        (tx, results) => {
+          // setglobalState({
+          //   ...globalState,
+          //   dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss')
+          // })
+          GetDateTime(); // call get last date time updated to update global last date time
+        },
+        SQLerror,
+      );
+    });
+  }
+
+  function RunTimer() {
+    var secs = 0;
+    const intervalId2 = BackgroundTimer.setInterval(() => {
+      secs = secs + 1;
+      setLocalSeconds(secs);
+
+      if (secs === 900) {
+        BackgroundTimer.clearInterval(intervalId2);
+        GETUpdateVersionAPI();
+      }
+
+      if (globalStatus.updateMode === 'manual') {
+        console.log('auto update stopped, manual update clicked');
+        BackgroundTimer.clearInterval(intervalId2);
+      }
+    }, 1000);
+  }
+
+  function onErrortimeout() {
+    if (globalStatus.updateMode === 'manual') {
+      updateProgress = 0;
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Updating',
+        updatePercentage: updateProgress,
+      });
+      setisModalConnectionError(true);
+      setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
+
+      globalStatus.updateStatus = 'Idle';
+
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Idle',
+      });
+      console.log('error occured in background update manual');
+      // globalStatus.updateMode = 'auto';
+      // RunTimer();
+    } else {
+      updateProgress = 0;
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Updating',
+        updatePercentage: updateProgress,
+      });
+      setisModalConnectionError(false);
+      setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
+      console.log('error occured in background update');
+
+      globalStatus.updateStatus = 'Idle';
+
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Idle',
+      });
+
+      RunTimer();
+    }
+  }
+
   useEffect(() => {
     if (
       q1Principal &&
@@ -150,17 +309,9 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
-      CurrentAppScreen.Screen === 'UPDATEMDL'
+      globalStatus.updateStatus === 'Updating'
     ) {
-      console.log('q2 and q2 and q3 and q4 and q5  is now true');
-      setisModalConnectionError(false);
-      setisLoadingActivityIndicator(false);
-      props.navigation.navigate('Home');
-      props.navigation.openDrawer();
-      
-      setglobalState(9);
-
-
+      afterUpdate();
     }
   }, [q1Principal]);
 
@@ -171,18 +322,9 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
-      CurrentAppScreen.Screen === 'UPDATEMDL'
+      globalStatus.updateStatus === 'Updating'
     ) {
-      CurrentAppScreen.Screen === 'HOME';
-      console.log('q2 and q2 and q3 and q4 and q5  is now true');
-      setisModalConnectionError(false);
-      setisLoadingActivityIndicator(false);
-      props.navigation.navigate('Home');
-      props.navigation.openDrawer();
-
-      setglobalState(9);
-
-
+      afterUpdate();
     }
   }, [q2Perymtsat]);
 
@@ -193,18 +335,9 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
-      CurrentAppScreen.Screen === 'UPDATEMDL'
+      globalStatus.updateStatus === 'Updating'
     ) {
-      CurrentAppScreen.Screen === 'HOME';
-      console.log('q2 and q2 and q3 and q4 and q5  is now true');
-      setisModalConnectionError(false);
-      setisLoadingActivityIndicator(false);
-      props.navigation.navigate('Home');
-      props.navigation.openDrawer();
-
-      setglobalState(9);
-
-
+      afterUpdate();
     }
   }, [q3UserUpdateLog]);
 
@@ -215,17 +348,9 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
-      CurrentAppScreen.Screen === 'UPDATEMDL'
+      globalStatus.updateStatus === 'Updating'
     ) {
-      CurrentAppScreen.Screen === 'HOME';
-      console.log('q2 and q2 and q3 and q4 and q5  is now true');
-      setisModalConnectionError(false);
-      setisLoadingActivityIndicator(false);
-      props.navigation.navigate('Home');
-      props.navigation.openDrawer();
-      
-      setglobalState(9);
-
+      afterUpdate();
     }
   }, [q4Area]);
 
@@ -236,43 +361,130 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
-      CurrentAppScreen.Screen === 'UPDATEMDL'
+      globalStatus.updateStatus === 'Updating'
     ) {
-      CurrentAppScreen.Screen === 'HOME';
-      console.log('q2 and q2 and q3 and q4 and q5  is now true');
-      setisModalConnectionError(false);
-      setisLoadingActivityIndicator(false);
-      props.navigation.navigate('Home');
-      props.navigation.openDrawer();
-
-      setglobalState(9);
+      afterUpdate();
     }
   }, [q5Marc]);
 
   //====================================================================> RUN UPDATE
 
   useEffect(() => {
-    props.navigation.addListener('focus', () => {
-      if (CurrentAppScreen.Screen === 'UPDATEMDL') {
-        updateProgress = 0;
-        console.log('focus on update');
-        setglobalState(5);
-        setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
-        GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
-      } else {
-        console.log('asas');
-      }
-    });
+    {
+      globalStatus.updateMode === 'manual'
+        ? props.navigation.addListener('focus', () => {
+            ManualUpdate();
+            console.log('focused');
+          })
+        : AutoUpdate();
+    }
   }, []);
+
+  function ManualUpdate() {
+    if (
+      globalStatus.updateStatus === 'Updating' &&
+      globalStatus.updateMode === 'manual'
+    ) {
+      updateProgress = 0;
+      
+      console.log('focus on update');
+
+      if (globalStatus.updateMode === 'manual') {
+        setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
+      }
+
+      GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
+
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Updating',
+        updatePercentage: updateProgress,
+      });
+    }
+  }
+
+  function AutoUpdate() {
+    if (
+      globalStatus.updateStatus === 'Updating' &&
+      globalStatus.updateMode === 'auto'
+    ) {
+      updateProgress = 0;
+      console.log('focus on update');
+
+      // if (globalStatus.updateMode === 'manual') {
+      //   setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
+      // }
+
+      GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
+
+      setglobalState({
+        ...globalState,
+        updateStatus: 'Updating',
+        updatePercentage: updateProgress,
+      });
+    }
+  }
+  // useEffect(() => {
+  //   if (globalStatus.updateStatus === 'Updating') {
+  //     updateProgress = 0;
+  //     console.log('focus on update');
+
+  //   if (globalStatus.updateMode === 'manual') {
+  //         setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
+
+  //   }
+
+  //     GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
+
+  //     setglobalState({
+  //       ...globalState,
+  //       updateStatus:  'Updating',
+  //     })
+  //   } else {
+  //     console.log('errrrr');
+  //     console.log(globalStatus.updateStatus);
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   if (globalStatus.updateStatus === 'Updating') {
+  //     updateProgress = 0;
+  //     console.log('focus on update');
+
+  //     if (globalStatus.updateMode === 'manual') {
+  //       setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
+  //     }
+
+  //     GETUpdateVersionAPI(); // GET UPDATED VERSION TO CHECK
+
+  //     setglobalState({
+  //       ...globalState,
+  //       updateStatus: 'Updating',
+  //     });
+  //   } else {
+  //     console.log('errrrr');
+  //     console.log(globalStatus.updateStatus);
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (lineChartLocalData.length === lineChartAPIdatalength) {
       updateProgress = Number(updateProgress) + Number(5);
+
+      setglobalState({
+        ...globalState,
+        updatePercentage: updateProgress,
+      });
+
+
       lineChartAPIdatalength = 0;
       DeletePerymtsatAPIData();
       console.log(
-        lineChartLocalData.length + 'effect delete line chart initialize',
+        '28 ' +
+          lineChartLocalData.length +
+          'effect delete line chart initialize',
       );
+    } else {
     }
   }, [lineChartLocalData]);
 
@@ -280,6 +492,13 @@ export default function UpdateModal(props) {
   useEffect(() => {
     if (PerPrincipalLocalData.length === PerPrincipalAPIdatalength) {
       updateProgress = Number(updateProgress) + Number(5);
+
+      setglobalState({
+        ...globalState,
+        updatePercentage: updateProgress,
+      });
+
+
       PerPrincipalAPIdatalength = 0;
       DeletePerPrincipalAPIData();
     }
@@ -289,16 +508,21 @@ export default function UpdateModal(props) {
   useEffect(() => {
     if (PerAreaLocalData.length === PerAreaAPIdatalength) {
       updateProgress = Number(updateProgress) + Number(8);
+      setglobalState({
+        ...globalState,
+        updatePercentage: updateProgress,
+      });
+
       PerAreaAPIdatalength = 0;
       DeletePerAreaAPIData();
       console.log(
-        PerAreaLocalData.length + 'effect delete  perarea initialize',
+        '2 ' + PerAreaLocalData.length + 'effect delete  perarea initialize',
       );
     }
   }, [PerAreaLocalData]);
 
   function SQLerror(err) {
-    console.log('SQL Error: ' + err);
+    console.log('SQL Error1 : ' + err);
   }
 
   function StartUpdate() {
@@ -307,11 +531,11 @@ export default function UpdateModal(props) {
     setq3UserUpdateLog(false); //update status of function to false
     setq4Area(false); //update status of function to false
     setq5Marc(false); //update status of function to false
-    console.log('all salesman1');
     if (global.sales_position_name === 'ALLSALESMAN') {
       setq5Marc(true);
-      console.log('all salesman1');
+      console.log('3 ' + 'ALL SALSMAN 123');
     } else {
+      console.log('3 ' + 'SINGLE SALSMAN 123');
       initiate();
     }
 
@@ -324,6 +548,11 @@ export default function UpdateModal(props) {
 
   const GetPerymtsatAPIData = () => {
     updateProgress = Number(updateProgress) + Number(9);
+    setglobalState({
+      ...globalState,
+      updatePercentage: updateProgress,
+    });
+
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr1 = teams + '&' + sales_position_name;
@@ -355,45 +584,56 @@ export default function UpdateModal(props) {
           lineChartAPIdatalength = jsonData.length;
           setlineChartLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(6);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+    
         } else {
-          console.log('Please check code, no lineChartAPIData found');
+          if (globalStatus.updateMode === 'manual') {
+            Alert.alert(
+              'Error',
+              'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
+              [
+                {
+                  text: 'OK',
+                },
+              ],
+              {cancelable: true},
+            );
 
-          CurrentAppScreen.Screen === 'HOME';
-
-          Alert.alert(
-            'Error',
-            'Application Error,  No data found \n err1002 \n \n Please Contact Support Team.',
-            [
-              {
-                text: 'OK',
-              },
-            ],
-            {cancelable: true},
-          );
-
-          setisModalConnectionError(false);
-          setisLoadingActivityIndicator(false);
-          props.navigation.navigate('Home');
+            setisModalConnectionError(false);
+            setisLoadingActivityIndicator(false);
+            props.navigation.navigate('Home');
+          }
         }
       })
       .catch(function (error) {
         console.log('error in GetperymtsatAPIData123 :' + error.message);
-
-        setisModalConnectionError(true);
-        setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
+        onErrortimeout();
       })
       .done();
   };
 
   function DeletePerymtsatAPIData() {
     updateProgress = Number(updateProgress) + Number(10);
+    setglobalState({
+      ...globalState,
+      updatePercentage: updateProgress,
+    });
+
     dbperymtsat.transaction(function (tx) {
       tx.executeSql(
         'Delete from perymtsat_tbl ',
         [],
         (tx, results) => {
           updateProgress = Number(updateProgress) + Number(5);
-          console.log('deleted local perymtsat');
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+    
+          console.log('4 ' + 'deleted local perymtsat');
           SavePerymtsatAPIData();
         },
         SQLerror,
@@ -451,8 +691,15 @@ export default function UpdateModal(props) {
       if (currIndex === lineChartLocalData.length) {
         ///console.log(perymtsatString);
 
-        console.log('SavePerymtsatAPIData done concatenating, saving...');
+        console.log(
+          '5 ' + 'SavePerymtsatAPIData done concatenating, saving...',
+        );
         updateProgress = Number(updateProgress) + Number(10);
+        setglobalState({
+          ...globalState,
+          updatePercentage: updateProgress,
+        });
+  
 
         dbperymtsat.transaction(function (tx) {
           tx.executeSql(
@@ -462,6 +709,7 @@ export default function UpdateModal(props) {
             (tx, results) => {
               UpdateYearMonthsFilter();
               setq1Principal(true);
+              console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
             },
             SQLerror,
           );
@@ -503,30 +751,33 @@ export default function UpdateModal(props) {
           PerPrincipalAPIdatalength = jsonData.length;
           setPerPrincipalLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(3);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+    
         } else {
-          CurrentAppScreen.Screen === 'HOME';
+          if (globalStatus.updateMode === 'manual') {
+            Alert.alert(
+              'Error',
+              'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
+              [
+                {
+                  text: 'OK',
+                },
+              ],
+              {cancelable: true},
+            );
 
-          Alert.alert(
-            'Error',
-            'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
-            [
-              {
-                text: 'OK',
-              },
-            ],
-            {cancelable: true},
-          );
-
-          setisModalConnectionError(false);
-          setisLoadingActivityIndicator(false);
-          props.navigation.navigate('Home');
+            setisModalConnectionError(false);
+            setisLoadingActivityIndicator(false);
+            props.navigation.navigate('Home');
+          }
         }
       })
       .catch(function (error) {
         console.log('error in GetPerPrincipalAPIData :' + error.message);
-
-        setisModalConnectionError(true);
-        setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
+        onErrortimeout();
       })
       .done();
   };
@@ -538,6 +789,11 @@ export default function UpdateModal(props) {
         [],
         (tx, results) => {
           updateProgress = Number(updateProgress) + Number(10);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+    
           SavePerPrincipalAPIData();
         },
         SQLerror,
@@ -599,6 +855,11 @@ export default function UpdateModal(props) {
           (tx, results) => {
             if (currIndex === PerPrincipalLocalData.length) {
               updateProgress = Number(updateProgress) + Number(7);
+              setglobalState({
+                ...globalState,
+                updatePercentage: updateProgress,
+              });
+        
               setq2Perymtsat(true);
             }
           },
@@ -610,9 +871,14 @@ export default function UpdateModal(props) {
 
   //PER AREA
   const GetPerAreaAPIData = () => {
+
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr2 = teams + '&' + sales_position_name;
+    console.log(server.server_address +
+      globalCompany.company +
+      'perareasalesuba/' +
+      tempstr2)
     Promise.race([
       fetch(
         server.server_address +
@@ -640,33 +906,34 @@ export default function UpdateModal(props) {
           PerAreaAPIdatalength = jsonData.length;
           setPerAreaLocalData(jsonData);
           updateProgress = Number(updateProgress) + Number(2);
-          console.log(jsonData.length);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+    
         } else {
           console.log('Please check code, no perarea found');
+          if (globalStatus.updateMode === 'manual') {
+            Alert.alert(
+              'Error',
+              'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
+              [
+                {
+                  text: 'OK',
+                },
+              ],
+              {cancelable: true},
+            );
 
-          CurrentAppScreen.Screen === 'HOME';
-
-          Alert.alert(
-            'Error',
-            'Application Error,  No data found \n err1003 \n \n Please Contact Support Team..',
-            [
-              {
-                text: 'OK',
-              },
-            ],
-            {cancelable: true},
-          );
-
-          setisModalConnectionError(false);
-          setisLoadingActivityIndicator(false);
-          props.navigation.navigate('Home');
+            setisModalConnectionError(false);
+            setisLoadingActivityIndicator(false);
+            props.navigation.navigate('Home');
+          }
         }
       })
       .catch(function (error) {
         console.log('error in GetPerAreaAPIData :' + error.message);
-
-        setisModalConnectionError(true);
-        setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
+        onErrortimeout();
       })
       .done();
   };
@@ -677,7 +944,7 @@ export default function UpdateModal(props) {
         'Delete from perareapermonth_tbl ',
         [],
         (tx, results) => {
-          console.log('deleted local perareapermonth_tbl');
+          console.log('4.1' + ' deleted local perareapermonth_tbl');
           SavePerAreaAPIData();
         },
         SQLerror,
@@ -731,7 +998,12 @@ export default function UpdateModal(props) {
           (tx, results) => {
             if (currIndex === PerAreaLocalData.length) {
               updateProgress = Number(updateProgress) + Number(6);
-              console.log('Query completed SavePerAreaAPIData');
+              setglobalState({
+                ...globalState,
+                updatePercentage: updateProgress,
+              });
+        
+              console.log('7 ' + 'Query completed SavePerAreaAPIData');
               setq4Area(true);
             }
           },
@@ -766,33 +1038,39 @@ export default function UpdateModal(props) {
       })
       .then((jsonData) => {
         updateProgress = Number(updateProgress) + Number(7);
-        console.log('user update log saved in API');
+        setglobalState({
+          ...globalState,
+          updatePercentage: updateProgress,
+        });
+  
+        console.log('8 ' + 'user update log saved in API');
         setq3UserUpdateLog(true);
       })
       .catch(function (error) {
         console.log('error in APISaveUpdate :' + error.text);
 
-        CurrentAppScreen.Screen === 'HOME';
+        if (globalStatus.updateMode === 'manual') {
+          Alert.alert(
+            'Error',
+            'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
+            [
+              {
+                text: 'OK',
+              },
+            ],
+            {cancelable: true},
+          );
 
-        Alert.alert(
-          'Error',
-          'Error saving user update. \n \n Please Contact Support Team.',
-          [
-            {
-              text: 'OK',
-            },
-          ],
-          {cancelable: true},
-        );
-
-        setisModalConnectionError(false);
-        setisLoadingActivityIndicator(false);
-        props.navigation.navigate('Home');
+          setisModalConnectionError(false);
+          setisLoadingActivityIndicator(false);
+          props.navigation.navigate('Home');
+        }
       })
       .done();
   };
 
   const GETUpdateVersionAPI = () => {
+    console.log('9 ' + 'run GETUpdateVersionAPI');
     var user_name = global.user_name;
     var dateTimeUpdated = moment()
       .utcOffset('+08:00')
@@ -824,7 +1102,7 @@ export default function UpdateModal(props) {
       })
       .then((jsonData) => {
         if (jsonData.length > 0) {
-          console.log('successfully get updateversion test');
+          console.log('10 ' + 'successfully get updateversion test');
           jsonData.map((key, index) => {
             APIUpdateVersion.APIUpdateVersionField = key.version;
             APIUpdateVersion.APIUpdateVersionDateTimeRelease =
@@ -837,23 +1115,25 @@ export default function UpdateModal(props) {
             StartUpdate();
 
             updateProgress = Number(updateProgress) + Number(4);
-            console.log('user update log saved in API');
+            setglobalState({
+              ...globalState,
+              updatePercentage: updateProgress,
+            });
+      
+            console.log('11 ' + 'user update log saved in API');
             setq3UserUpdateLog(true);
           } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
-            console.log(APIUpdateVersion.APIUpdateVersionStatus);
-
-            CurrentAppScreen.Screen === 'HOME';
-            console.log('SERVER OFFLINE');
-            setisModalConnectionError(false);
-            setisLoadingActivityIndicator(false);
-            props.navigation.navigate('Home');
+            if (globalStatus.updateMode === 'manual') {
+              setisModalConnectionError(false);
+              setisLoadingActivityIndicator(false);
+              props.navigation.navigate('Home');
+            }
           }
         }
       })
       .catch(function (error) {
         console.log('error in GETUpdateVersionAPI :' + error.message);
-        setisModalConnectionError(true);
-        setisLoadingActivityIndicator(false); //DISABLE ActivityIndicator
+        onErrortimeout();
       })
       .done();
   };
@@ -915,20 +1195,13 @@ export default function UpdateModal(props) {
                 [],
                 (tx, results) => {
                   // if (results.rowsAffected > 0) {}
-                  console.log('deleted local business_calendar_tbl');
+                  console.log('13 ' + 'deleted local business_calendar_tbl');
                   dbBusinessCalendar.transaction(function (tx) {
                     tx.executeSql(
                       'INSERT INTO business_calendar_tbl (date, year, month, day, update_version) VALUES ' +
                         BusinessCalendarString.slice(0, -1),
                       [],
-                      (tx, results) => {
-                        // Alert.alert('Sucess', 'Calendar Updated', [{text: 'OK'}], {
-                        //   cancelable: false,
-                        // });
-                        // setisVisibleCaldendarModal(false);
-                        // setisEditing(true);
-                        // GetSelectedDays();
-                      },
+                      (tx, results) => {},
                       SQLerror,
                     );
                   });
@@ -947,7 +1220,7 @@ export default function UpdateModal(props) {
 
   useEffect(() => {
     if (load_pc === 1 && load_v === 1 && load_n === 1 && load_c === 1) {
-      console.log('concat run');
+      console.log('14 ' + 'concat run');
       concat_data_per_customer();
       concat_data_per_vendor();
       concat_data_net();
@@ -955,14 +1228,15 @@ export default function UpdateModal(props) {
     }
 
     if (load_pc === 2 && load_v === 2 && load_n === 2 && load_c === 2) {
-      console.log('upload to local run');
+      console.log('15 ' + 'upload to local run');
       upload_data_per_customer();
       upload_data_per_vendor();
       upload_data_net();
-      upload_data_per_category();
 
       if (count_c_json === 0) {
         bypass_scj();
+      } else {
+        upload_data_per_category();
       }
     }
 
@@ -994,9 +1268,11 @@ export default function UpdateModal(props) {
     setload_c(0);
     setq5Marc(true);
     updateProgress = Number(updateProgress) + Number(10);
-    console.log(
-      'DONE...........................................................',
-    );
+    setglobalState({
+      ...globalState,
+      updatePercentage: updateProgress,
+    });
+
   };
 
   // let getcurrentDate = () => {
@@ -1037,26 +1313,24 @@ export default function UpdateModal(props) {
       tx.executeSql(
         'DELETE FROM tbl_sales_per_customer ',
         [],
-        (tx, results) => {
-          console.log('Deleted customer result :', results.rowsAffected);
-        },
+        (tx, results) => {},
       );
     });
   };
 
   let delete_net_tbl = () => {
     dbSalesmanNet.transaction(function (tx) {
-      tx.executeSql('DELETE FROM tbl_sales_net ', [], (tx, results) => {
-        console.log('Deleted net result :', results.rowsAffected);
-      });
+      tx.executeSql('DELETE FROM tbl_sales_net ', [], (tx, results) => {});
     });
   };
 
   let delete_per_vendor_tbl = () => {
     dbSalesmanNet.transaction(function (tx) {
-      tx.executeSql('DELETE FROM tbl_sales_per_vendor ', [], (tx, results) => {
-        console.log('Deleted vendor result :', results.rowsAffected);
-      });
+      tx.executeSql(
+        'DELETE FROM tbl_sales_per_vendor ',
+        [],
+        (tx, results) => {},
+      );
     });
   };
 
@@ -1065,9 +1339,7 @@ export default function UpdateModal(props) {
       tx.executeSql(
         'DELETE FROM tbl_sales_per_category ',
         [],
-        (tx, results) => {
-          console.log('Deleted category result :', results.rowsAffected);
-        },
+        (tx, results) => {},
       );
     });
   };
@@ -1085,7 +1357,7 @@ export default function UpdateModal(props) {
       var get_date_to = year + '-' + cur_month + '-' + '31';
     }
 
-    console.log('fetching fetch_per_customer_data');
+    console.log('16 ' + 'fetching fetch_per_customer_data');
 
     Promise.race([
       fetch(
@@ -1105,7 +1377,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 20000),
+        setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
     ])
       .then((responseData) => {
@@ -1118,20 +1390,17 @@ export default function UpdateModal(props) {
         setload_pc(1);
 
         setloadname('Downloading ' + 'Customers');
-        console.log('fetching fetch_per_customer_data DONE');
+        console.log('17 ' + 'fetching fetch_per_customer_data DONE');
       })
       .catch(function (error) {
         console.log('1Customer: ' + error);
-
-        
-        setisModalConnectionError(true);
-        setisLoadingActivityIndicator(false);
+        onErrortimeout();
       })
       .done();
   };
 
   let fetch_net_data = () => {
-    console.log('fetching fetch_net_data');
+    console.log('18 ' + 'fetching fetch_net_data');
     Promise.race([
       fetch(
         'https://boiling-atoll-20376.herokuapp.com/sales_net_tbl/salesmanfilter/' +
@@ -1146,7 +1415,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 20000),
+        setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
     ])
       .then((responseData) => {
@@ -1160,19 +1429,16 @@ export default function UpdateModal(props) {
 
         setloadname('Downloading ' + 'Net Sales');
 
-        console.log('fetching fetch_net_data DONE');
+        console.log('19 ' + 'fetching fetch_net_data DONE');
       })
       .catch(function (error) {
         console.log('Net: ' + error);
-        
-        setisModalConnectionError(true);
-        setisLoadingActivityIndicator(false);
+        onErrortimeout();
       })
       .done();
   };
 
   let fetch_per_vendor_data = () => {
-
     Promise.race([
       fetch(
         'https://boiling-atoll-20376.herokuapp.com/perprincipalsalestargetuba/' +
@@ -1189,7 +1455,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 20000),
+        setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
     ])
       .then((responseData) => {
@@ -1201,19 +1467,17 @@ export default function UpdateModal(props) {
         setload_v(1);
 
         setloadname('Downloading ' + 'Vendors');
-        console.log('fetching fetch_per_vendor_data DONE');
+        console.log('20 ' + 'fetching fetch_per_vendor_data DONE');
       })
       .catch(function (error) {
         console.log('Vendor1' + error);
-        
-        setisModalConnectionError(true);
-        setisLoadingActivityIndicator(false);
+        onErrortimeout();
       })
       .done();
   };
 
   let fetch_per_category_data = () => {
-    console.log('fetching fetch_per_category_data');
+    console.log('21 ' + 'fetching fetch_per_category_data');
     Promise.race([
       fetch(
         'https://boiling-atoll-20376.herokuapp.com/sales_category_tbl/salesmanfilter/' +
@@ -1228,7 +1492,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 20000),
+        setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
     ])
       .then((responseData) => {
@@ -1243,13 +1507,11 @@ export default function UpdateModal(props) {
         setload_c(1);
 
         setloadname('Downloading ' + 'Categories');
-        console.log('fetching fetch_per_category_data DONE');
+        console.log('22 ' + 'fetching fetch_per_category_data DONE');
       })
       .catch(function (error) {
         console.log('category' + error);
-        
-        setisModalConnectionError(true);
-        setisLoadingActivityIndicator(false);
+        onErrortimeout();
       })
       .done();
   };
@@ -1401,7 +1663,7 @@ export default function UpdateModal(props) {
           setmodalvisible(true);
           //setload_pc(i++);
           setload_pc(3);
-          console.log('upload upload_data_per_customer');
+          console.log('23.0' + ' upload upload_data_per_customer');
         },
       );
     });
@@ -1418,14 +1680,14 @@ export default function UpdateModal(props) {
           setmodalvisible(true);
           setload_n(3);
           // setload_n(i++);
-          // console.log(i);
+          console.log('23 ' + 'DONE upload_data_net');
         },
       );
     });
   };
 
   let upload_data_per_vendor = () => {
-    console.log('initial upload_data_per_vendor');
+    console.log('24 ' + 'initial upload_data_per_vendor');
     // console.log(c_vendor_data);
     dbSalesmanNet.transaction(function (tx) {
       tx.executeSql(
@@ -1437,7 +1699,7 @@ export default function UpdateModal(props) {
           setmodalvisible(true);
           // setload_v(i++);
           setload_v(3);
-          console.log(' upload_data_per_vendor');
+          console.log('25 ' + 'DONE upload_data_per_vendor');
         },
         SQLerror,
       );
@@ -1459,7 +1721,7 @@ export default function UpdateModal(props) {
           setmodalvisible(true);
           // setload_v(i++);
           setload_c(3);
-          console.log('done3');
+          console.log('26 ' + 'DONE upload_data_per_category');
         },
         SQLerror,
       );
@@ -1474,9 +1736,11 @@ export default function UpdateModal(props) {
           transparent={false}
           visible={isModalConnectionError}
           onRequestClose={() => {
+            globalStatus.updateMode = 'auto';
+            RunTimer();
             setisModalConnectionError(false);
             setisLoadingActivityIndicator(false);
-            CurrentAppScreen.Screen === 'HOME';
+
             props.navigation.navigate('Home');
           }}>
           <View style={styles.centeredView}>
@@ -1495,10 +1759,11 @@ export default function UpdateModal(props) {
                 // }}
 
                 onPress={() => {
+                  globalStatus.updateMode = 'auto';
+                  RunTimer();
                   setisModalConnectionError(false);
                   setisLoadingActivityIndicator(false);
                   props.navigation.navigate('Home');
-                  CurrentAppScreen.Screen === 'HOME';
                 }}
                 gradientFrom="red"
                 gradientTo="pink"

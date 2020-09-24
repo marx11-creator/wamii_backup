@@ -12,6 +12,7 @@ import {
   Alert,
   Button,
   Linking,
+  TouchableOpacity,
 } from 'react-native';
 
 import ImageOverlay from 'react-native-image-overlay';
@@ -23,8 +24,14 @@ import {
   FilterList,
   WorkingDays,
   CurrentAppScreen,
+  LastDateTimeUpdated,
+  hhmmss,
+  APIToken,
 } from '../../sharedComponents/globalCommands/globalCommands';
-import {UpdateYearMonthsFilter} from '../../sharedComponents/globalCommands/globalCommands';
+import {
+  UpdateYearMonthsFilter,
+  globalStatus,
+} from '../../sharedComponents/globalCommands/globalCommands';
 import DeviceInfo from 'react-native-device-info';
 import moment from 'moment';
 import {dbBusinessCalendar, dbperymtsat} from '../../database/sqliteSetup';
@@ -36,14 +43,17 @@ import {
   verticalScale,
 } from '../../sharedComponents/scaling';
 import BackgroundTimer from 'react-native-background-timer';
-import {PageContext} from './pagecontext';
+import App1 from './test';
+import UpdateModal from './UpdateModal';
+import PageContext from './pagecontext';
+import Icon from 'react-native-vector-icons/Ionicons';
 LogBox.ignoreAllLogs();
 
 export default function Home(props) {
-  const [globalState, setglobalState] = useContext(PageContext);
   //  console.log(auth);
+  const [globalState] = useContext(PageContext);
+  const [localSeconds, setlocalSeconds] = useState(0);
 
-  const [globalStateLocal, setglobalStateLocal] = useState(0);
   const WorkingDaysFields = {
     TotalDays: '0',
     RemainingDays: '0',
@@ -62,6 +72,8 @@ export default function Home(props) {
     // console.log(deviceName);
     // console.log(DeviceInfo.getUniqueId());
   });
+
+
 
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
@@ -195,6 +207,7 @@ export default function Home(props) {
               text: 'YES',
               onPress: () => {
                 BackHandler.exitApp();
+                return true;
               },
             },
             {
@@ -217,55 +230,51 @@ export default function Home(props) {
     }, []),
   );
 
-  
   useEffect(()=> {
-var secs = 0;
+    console.log('test');
+    getWorkingDays();
+  },[globalState.dateTimeUpdated24hr])
+
+  useEffect(() => {
+
+    console.log('3seonds HERE run');
+    var secs = 0;
     // BackgroundTimer.clearInterval();
     const intervalId = BackgroundTimer.setInterval(() => {
-secs = secs + 1;
-      
-      setglobalStateLocal(secs);
+      secs = secs + 1;
+      console.log(secs);
+console.log( globalStatus.StartUpUpdate);
+      setlocalSeconds(secs);
 
+      if (secs === 3 && globalStatus.StartUpUpdate === false) {
+        // var screenname = CurrentAppScreen.Screen;
+        console.log('3seonds was run');
+        globalStatus.updateStatus = 'Updating';
+
+        globalStatus.updateMode = 'auto';
+        globalStatus.StartUpUpdate = true;
+        // props.navigation.navigate('UpdateModal');
+        // props.navigation.navigate(screenname);
+
+        BackgroundTimer.clearInterval(intervalId);
+      }
     }, 1000);
-  },[])
+  }, []);
 
-
-useEffect(()=>{
-
-  console.log(globalState);
-    
-  setglobalState(globalState + 1)
-
-  if (globalStateLocal === 3) {
-    CurrentAppScreen.Screen = 'UPDATEMDL';
-    props.navigation.navigate('UpdateModal');
-    props.navigation.navigate('Home');
-  
-console.log('3aaaa');
-    // BackgroundTimer.clearInterval(intervalId);
-
-   }  
-
-   
-//   if (globalStateLocal === 4) {
-//     props.navigation.navigate('Home');
-  
-// console.log('homeaaa');
-//     // BackgroundTimer.clearInterval(intervalId);
-
-//    }  
-
-
-
-
-},[globalStateLocal])
-
+  // useEffect(() => {
+  //   if (localSeconds === 3) {
+  //     setglobalState({
+  //       ...globalState,
+  //       updateStatus: 'Updating',
+  //     });
+  //   }
+  // }, [localSeconds]);
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
-      getWorkingDays();
-      console.log('focus on per Home');
 
+      console.log('focus on per Home');
+      CurrentAppScreen.Screen = 'Home';
       if (APIUpdateVersion.APIUpdateVersionField !== 0) {
         if (
           Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField) ===
@@ -340,127 +349,223 @@ console.log('3aaaa');
 
   return (
     <ImageOverlay
-    // source={require('../../assets/homepagecoslor.jpg')}
+      // source={require('../../assets/homepagecoslor.jpg')}
       source={require('../../assets/building.jpg')}
       height={height}
       contentPosition="top">
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'column',
-          height: height,
-          width: width,
-          alignItems: 'center',
-        }}>
+      <View style={{flexDirection: 'column', flex: 1}}>
         <View
           style={{
-            // backgroundColor: 'red',
-            width: 120,
-            height: 120,
-            alignItems: 'center',
-            marginTop: 20,
-            marginBottom: 10,
+            flexDirection: 'row',
+            height: scale(70),
+            width: width,
           }}>
-          <Image
-            style={{width: 120, height: 120, resizeMode: 'center'}}
-            source={require('../../assets/wamilogo.png')}
-            // source={require('../../assets/coslorlogo.png')}
-          />
+          <View style={{width: 50, marginLeft: 10}}>
+            <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+              <Icon name="md-filter" color={'#ffffff'} size={34} />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              width: scale(150),
+              marginRight: 10,
+              alignContent: 'flex-end',
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              Last Update
+            </Text>
+            <Text
+              style={{
+                color: 'white',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              {LastDateTimeUpdated.value}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                <Icon name="refresh" color={'#ffffff'} size={10} />
+              </View>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: moderateScale(12, 0.5),
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                {globalState.updateStatus === 'Updating' ||
+                globalState.updateStatus === 'Start' ? (
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {'Updating...'}  {globalState.updatePercentage > 0? (globalState.updatePercentage + ' %'): ''}
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {hhmmss(900 - globalState.timerSeconds)}
+                    
+                  </Text>
+                )}
+              </Text>
+            </View>
+          </View>
         </View>
 
         <View
           style={{
-            borderWidth: 1,
-            padding: 10,
-            borderRadius: 20,
-            borderColor: 'white',
-          }}>
-          <Text
-            style={{
-              color: 'white',
-              fontWeight: 'bold',
-              fontSize: 20,
-              marginHorizontal: 10,
-            }}>
-            {' '}
-            Wing An Marketing Inc.
-          </Text>
-          <Button
-            title="test"
-            onPress={() => console.log(globalState)}
-          />
-        </View>
-
-        <View
-          style={{
-            marginTop: 80,
-            width: scale(190),
-            justifyContent: 'center',
+            flex: 1,
+            flexDirection: 'column',
+            height: height,
+            width: width,
             alignItems: 'center',
           }}>
-          <ProgressCircle
-            style={{height: scale(180), width: scale(230)}}
-            progress={Target.SalesvsTarget}
-            progressColor={'#24E4B5'}
-            backgroundColor="#8E8E8E" //'#ECECEC'	PropTypes.any
-            startAngle="0" // 	0	PropTypes.number
-            // endAngle // Math.PI * 2	   PropTypes.number
-            strokeWidth="3" // 5	PropTypes.number
-            cornerRadius="25" // PropTypes.number
-          />
-
-          <Text
+          <View
             style={{
-              position: 'absolute',
-              color: 'white',
-              fontSize: moderateScale(20),
-              fontWeight: 'bold',
+              // backgroundColor: 'red',
+              width: 120,
+              height: 120,
+              alignItems: 'center',
+              marginBottom: 10,
             }}>
-            {numbro(Target.SalesvsTarget * 100).format({
-              thousandSeparated: true,
-              mantissa: 2,
-            })} % {'\n\n'}   ACH
-          </Text>
-        </View>
-{/* <Text style={{color: 'green', fontSize:30}}>{globalState.currentSeconds}</Text>
-<Text style={{color: 'green', fontSize:30}}>{globalState.updateStatus}</Text> */}
+            <Image
+              style={{width: 120, height: 120, resizeMode: 'center'}}
+              source={require('../../assets/wamilogo.png')}
+              // source={require('../../assets/coslorlogo.png')}
+            />
+          </View>
 
-<View
-          style={{
-            marginTop: 80,
-            width: scale(190),
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <ProgressCircle
-            style={{height: scale(180), width: scale(230)}}
-            progress={Target.SalesvsTarget}
-            progressColor={'#24E4B5'}
-            backgroundColor="#8E8E8E" //'#ECECEC'	PropTypes.any
-            startAngle="0" // 	0	PropTypes.number
-            // endAngle // Math.PI * 2	   PropTypes.number
-            strokeWidth="3" // 5	PropTypes.number
-            cornerRadius="25" // PropTypes.number
-          />
-
-          <Text
+          <View
             style={{
-              position: 'absolute',
-              color: 'white',
-              fontSize: moderateScale(20),
-              fontWeight: 'bold',
+              borderWidth: 1,
+              padding: 10,
+              borderRadius: 20,
+              borderColor: 'white',
             }}>
-            {numbro(
-              (100 / WorkingDaysLocal.TotalDays) * WorkingDaysLocal.DaysGone,
-            ).format({
-              thousandSeparated: true,
-              mantissa: 2,
-            })} % {'\n\n'}   PAR
-          </Text>
-        </View>
+            <Text
+              style={{
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: 20,
+                marginHorizontal: 10,
+              }}>
+              {' '}
+              Wing An Marketing Inc.
+            </Text>
+            {/* <Button
+              title="test"
+              onPress={() => {
+                
+                
+               console.log(APIToken.access_token);
 
 
-        {/* <View
+              }}
+            /> */}
+          </View>
+
+          <View
+            style={{
+              marginTop: 80,
+              width: scale(190),
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <ProgressCircle
+              style={{height: scale(180), width: scale(230)}}
+              progress={Target.SalesvsTarget}
+              progressColor={'#24E4B5'}
+              backgroundColor="#8E8E8E" //'#ECECEC'	PropTypes.any
+              startAngle="0" // 	0	PropTypes.number
+              // endAngle // Math.PI * 2	   PropTypes.number
+              strokeWidth="3" // 5	PropTypes.number
+              cornerRadius="25" // PropTypes.number
+            />
+
+            <Text
+              style={{
+                position: 'absolute',
+                color: 'white',
+                fontSize: moderateScale(20),
+                fontWeight: 'bold',
+              }}>
+              {numbro(Target.SalesvsTarget * 100).format({
+                thousandSeparated: true,
+                mantissa: 2,
+              })}{' '}
+              % {'\n\n'} ACH
+            </Text>
+          </View>
+
+          {/* <Text style={{color: 'green', fontSize: 20}}>
+            {LastDateTimeUpdated.value}
+          </Text> */}
+          <View
+            style={{
+              marginTop: 80,
+              width: scale(190),
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <ProgressCircle
+              style={{height: scale(180), width: scale(230)}}
+              progress={Target.SalesvsTarget}
+              progressColor={'#24E4B5'}
+              backgroundColor="#8E8E8E" //'#ECECEC'	PropTypes.any
+              startAngle="0" // 	0	PropTypes.number
+              // endAngle // Math.PI * 2	   PropTypes.number
+              strokeWidth="3" // 5	PropTypes.number
+              cornerRadius="25" // PropTypes.number
+            />
+
+            <Text
+              style={{
+                position: 'absolute',
+                color: 'white',
+                fontSize: moderateScale(20),
+                fontWeight: 'bold',
+              }}>
+              {numbro(
+                (100 / WorkingDaysLocal.TotalDays) * WorkingDaysLocal.DaysGone,
+              ).format({
+                thousandSeparated: true,
+                mantissa: 2,
+              })}{' '}
+              % {'\n\n'} PAR
+            </Text>
+          </View>
+
+          {/* <View
           style={{
             borderWidth: 1,
             padding: 10,
@@ -500,7 +605,10 @@ console.log('3aaaa');
             {'%'}
           </Text>
         </View> */}
+        </View>
       </View>
+
+      {localSeconds === 3 ? <UpdateModal /> : null}
     </ImageOverlay>
   );
 }

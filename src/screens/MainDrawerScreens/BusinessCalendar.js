@@ -28,6 +28,7 @@ import {
   APIToken,
   globalCompany,
   server,
+  CurrentAppScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
 var isMonthChanged = false;
 var BusinessCalendarField = {
@@ -61,6 +62,7 @@ export default function BusinessCalendar(props) {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on Business Calendar');
+      CurrentAppScreen.Screen = 'BusinessCalendar';
       GetSelectedDays(YearMonthToSearch);
     });
   }, []);
@@ -467,7 +469,7 @@ export default function BusinessCalendar(props) {
             }}>
             <View style={{marginLeft: 5, justifyContent: 'center'}}>
               <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-                <Ionicons name="list-outline" color={'#ffffff'} size={36} />
+                <Ionicons name="md-filter" color={'#ffffff'} size={36} />
               </TouchableOpacity>
             </View>
 
