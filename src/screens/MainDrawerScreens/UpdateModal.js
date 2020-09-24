@@ -195,14 +195,13 @@ export default function UpdateModal(props) {
       console.log(globalStatus.updateMode);
       globalStatus.updateMode = 'auto';
 
-
       globalStatus.updateStatus = 'Idle';
 
       setglobalState({
         ...globalState,
         updateStatus: 'Idle',
         updatePercentage: updateProgress,
-        dateTimeUpdated24hr:  moment().format('DD/MM/YYYY HH:mm:ss') ,
+        dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss'),
       });
       props.navigation.navigate(CurrentAppScreen.Screen);
 
@@ -216,7 +215,7 @@ export default function UpdateModal(props) {
         ...globalState,
         updateStatus: 'Idle',
         updatePercentage: updateProgress,
-        dateTimeUpdated24hr:  moment().format('DD/MM/YYYY HH:mm:ss') ,
+        dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss'),
       });
 
       RunTimer();
@@ -225,7 +224,17 @@ export default function UpdateModal(props) {
 
   function SaveLastDatetimeUpdated() {
     var currdt = "('" + moment().format('DD/MM/YYYY HH:mm:ss') + "')";
+
     dblastdatetimeupdated.transaction(function (tx) {
+      tx.executeSql(
+        'Delete from lastdatetimeupdated_tbl ',
+        [],
+        (tx, results) => {
+          console.log('last datetimeupdatedtbl cleared');
+        },
+        SQLerror,
+      );
+
       tx.executeSql(
         'INSERT INTO  lastdatetimeupdated_tbl (lastdatetimeupdated24hr) VALUES ' +
           currdt,
@@ -386,7 +395,7 @@ export default function UpdateModal(props) {
       globalStatus.updateMode === 'manual'
     ) {
       updateProgress = 0;
-      
+
       console.log('focus on update');
 
       if (globalStatus.updateMode === 'manual') {
@@ -476,7 +485,6 @@ export default function UpdateModal(props) {
         updatePercentage: updateProgress,
       });
 
-
       lineChartAPIdatalength = 0;
       DeletePerymtsatAPIData();
       console.log(
@@ -497,7 +505,6 @@ export default function UpdateModal(props) {
         ...globalState,
         updatePercentage: updateProgress,
       });
-
 
       PerPrincipalAPIdatalength = 0;
       DeletePerPrincipalAPIData();
@@ -588,7 +595,6 @@ export default function UpdateModal(props) {
             ...globalState,
             updatePercentage: updateProgress,
           });
-    
         } else {
           if (globalStatus.updateMode === 'manual') {
             Alert.alert(
@@ -632,7 +638,7 @@ export default function UpdateModal(props) {
             ...globalState,
             updatePercentage: updateProgress,
           });
-    
+
           console.log('4 ' + 'deleted local perymtsat');
           SavePerymtsatAPIData();
         },
@@ -699,7 +705,6 @@ export default function UpdateModal(props) {
           ...globalState,
           updatePercentage: updateProgress,
         });
-  
 
         dbperymtsat.transaction(function (tx) {
           tx.executeSql(
@@ -755,7 +760,6 @@ export default function UpdateModal(props) {
             ...globalState,
             updatePercentage: updateProgress,
           });
-    
         } else {
           if (globalStatus.updateMode === 'manual') {
             Alert.alert(
@@ -793,7 +797,7 @@ export default function UpdateModal(props) {
             ...globalState,
             updatePercentage: updateProgress,
           });
-    
+
           SavePerPrincipalAPIData();
         },
         SQLerror,
@@ -859,7 +863,7 @@ export default function UpdateModal(props) {
                 ...globalState,
                 updatePercentage: updateProgress,
               });
-        
+
               setq2Perymtsat(true);
             }
           },
@@ -871,14 +875,15 @@ export default function UpdateModal(props) {
 
   //PER AREA
   const GetPerAreaAPIData = () => {
-
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr2 = teams + '&' + sales_position_name;
-    console.log(server.server_address +
-      globalCompany.company +
-      'perareasalesuba/' +
-      tempstr2)
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'perareasalesuba/' +
+        tempstr2,
+    );
     Promise.race([
       fetch(
         server.server_address +
@@ -910,7 +915,6 @@ export default function UpdateModal(props) {
             ...globalState,
             updatePercentage: updateProgress,
           });
-    
         } else {
           console.log('Please check code, no perarea found');
           if (globalStatus.updateMode === 'manual') {
@@ -1002,7 +1006,7 @@ export default function UpdateModal(props) {
                 ...globalState,
                 updatePercentage: updateProgress,
               });
-        
+
               console.log('7 ' + 'Query completed SavePerAreaAPIData');
               setq4Area(true);
             }
@@ -1042,7 +1046,7 @@ export default function UpdateModal(props) {
           ...globalState,
           updatePercentage: updateProgress,
         });
-  
+
         console.log('8 ' + 'user update log saved in API');
         setq3UserUpdateLog(true);
       })
@@ -1119,7 +1123,7 @@ export default function UpdateModal(props) {
               ...globalState,
               updatePercentage: updateProgress,
             });
-      
+
             console.log('11 ' + 'user update log saved in API');
             setq3UserUpdateLog(true);
           } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
@@ -1272,7 +1276,6 @@ export default function UpdateModal(props) {
       ...globalState,
       updatePercentage: updateProgress,
     });
-
   };
 
   // let getcurrentDate = () => {

@@ -69,11 +69,9 @@ export default function Home(props) {
   const [Target, setTarget] = useState(TargetFields);
 
   DeviceInfo.getDeviceName().then((deviceName) => {
-    // console.log(deviceName);
-    // console.log(DeviceInfo.getUniqueId());
+    global.deviceName = deviceName;
+    global.UniqueId = DeviceInfo.getUniqueId();
   });
-
-
 
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
@@ -199,27 +197,29 @@ export default function Home(props) {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        Alert.alert(
-          'System',
-          'Are you sure you want to close application?',
-          [
-            {
-              text: 'YES',
-              onPress: () => {
-                BackHandler.exitApp();
-                return true;
-              },
-            },
-            {
-              text: 'NO',
-              // onPress: () => {
-              //   BackHandler.exitApp();
-              //   return true;
-              // },
-            },
-          ],
-          {cancelable: true},
-        );
+        BackHandler.exitApp();
+        //         return true;
+        // Alert.alert(
+        //   'System',
+        //   'Are you sure you want to close application?',
+        //   [
+        //     {
+        //       text: 'YES',
+        //       onPress: () => {
+        //         BackHandler.exitApp();
+        //         return true;
+        //       },
+        //     },
+        //     {
+        //       text: 'NO',
+        //       // onPress: () => {
+        //       //   BackHandler.exitApp();
+        //       //   return true;
+        //       // },
+        //     },
+        //   ],
+        //   {cancelable: true},
+        // );
         return true;
       };
 
@@ -230,20 +230,19 @@ export default function Home(props) {
     }, []),
   );
 
-  useEffect(()=> {
+  useEffect(() => {
     console.log('test');
     getWorkingDays();
-  },[globalState.dateTimeUpdated24hr])
+  }, [globalState.dateTimeUpdated24hr]);
 
   useEffect(() => {
-
     console.log('3seonds HERE run');
     var secs = 0;
     // BackgroundTimer.clearInterval();
     const intervalId = BackgroundTimer.setInterval(() => {
       secs = secs + 1;
       console.log(secs);
-console.log( globalStatus.StartUpUpdate);
+      console.log(globalStatus.StartUpUpdate);
       setlocalSeconds(secs);
 
       if (secs === 3 && globalStatus.StartUpUpdate === false) {
@@ -272,7 +271,6 @@ console.log( globalStatus.StartUpUpdate);
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
-
       console.log('focus on per Home');
       CurrentAppScreen.Screen = 'Home';
       if (APIUpdateVersion.APIUpdateVersionField !== 0) {
@@ -422,7 +420,10 @@ console.log( globalStatus.StartUpUpdate);
                       alignItems: 'flex-end',
                       justifyContent: 'flex-end',
                     }}>
-                    {'Updating...'}  {globalState.updatePercentage > 0? (globalState.updatePercentage + ' %'): ''}
+                    {'Updating...'}{' '}
+                    {globalState.updatePercentage > 0
+                      ? globalState.updatePercentage + ' %'
+                      : ''}
                   </Text>
                 ) : (
                   <Text
@@ -434,7 +435,6 @@ console.log( globalStatus.StartUpUpdate);
                       justifyContent: 'flex-end',
                     }}>
                     {hhmmss(900 - globalState.timerSeconds)}
-                    
                   </Text>
                 )}
               </Text>
@@ -485,11 +485,8 @@ console.log( globalStatus.StartUpUpdate);
             {/* <Button
               title="test"
               onPress={() => {
-                
-                
-               console.log(APIToken.access_token);
-
-
+                console.log(global.deviceName);
+                console.log(global.UniqueId);
               }}
             /> */}
           </View>
