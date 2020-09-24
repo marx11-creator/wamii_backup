@@ -64,19 +64,15 @@ export default function ViewScreen(props) {
 
 
   useEffect(() => {
- 
+
       console.log('focus on per MARC'); //
       push_sales_net();
       push_sales_per_vendor();
       push_sales_per_customer();
       push_sales_per_category();
       setfocus_int(1);
- 
+
   }, [globalState.dateTimeUpdated24hr]);
-
-
-
-
 
   let [FlatListItems, setFlatListItems] = useState([]);
   let [FlatVendor, setFlatVendor] = useState([]);
@@ -415,7 +411,7 @@ export default function ViewScreen(props) {
 
     <SafeAreaView style={{flex: 1 }}>
 
- 
+
       <View style={{ flex: 1, flexDirection: 'column' }}>
       <Video
         rate={0.9}
@@ -435,11 +431,11 @@ export default function ViewScreen(props) {
               <Icon name="md-filter" color={'#ffffff'} size={34} />
             </TouchableOpacity>
           </View>
-    
+
 
 
         <View style={{alignItems: 'center'}}>
-          <Text style={{ fontSize: 20, color: 'gray'}}>
+          <Text style={{ fontSize: 20, color: '#FAF0E6'}}>
             {FilterList.DashboardFilterMonth} {FilterList.DashboardFilterYear}
           </Text>
         </View>
@@ -462,7 +458,7 @@ export default function ViewScreen(props) {
 
         <Text style={{
               position: 'absolute',
-              color: 'black',
+              color: 'white',
               fontSize: moderateScale(30, 0.5),
               fontWeight: 'bold',
               paddingTop: 10}}>
@@ -471,11 +467,11 @@ export default function ViewScreen(props) {
         </Text>
         <Text style={{
               position: 'absolute',
-              color: 'gray',
+              color: '#FAEBD7',
               fontSize: moderateScale(20, 0.5),
               fontWeight: 'bold',
               paddingTop: 50}}>
-        Sales
+        Net
         </Text>
         </View>
 
@@ -548,7 +544,7 @@ export default function ViewScreen(props) {
                 )}
               </Text>
             </View>
-          
+
         </View>
         <View style={{flex:1.5, flexDirection: 'row', padding: 10 }}>
           <View style={{flex:1,flexDirection: 'column'}}>
@@ -557,38 +553,38 @@ export default function ViewScreen(props) {
             <View style={{flex:1,flexDirection: 'column'}}>
               {/* gross sales */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'flex-start', padding: 5}}>
-                <Text style={{fontSize: moderateScale(15, 0.5), color :'gray'}}>Gross Sales</Text>
+                <Text style={{fontSize: moderateScale(15, 0.5), color :'#FAF0E6'}}>Gross Sales</Text>
               </View>
               {/* cm return */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'flex-start', padding: 5}}>
-                <Text style={{fontSize: moderateScale(15, 0.5), color :'gray'}}>CM Amount</Text>
+                <Text style={{fontSize: moderateScale(15, 0.5), color :'#FAF0E6'}}>CM Amount</Text>
               </View>
               {/* discount */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'flex-start', padding: 5}}>
-                <Text style={{fontSize: moderateScale(15, 0.5), color :'gray'}}>Discount</Text>
+                <Text style={{fontSize: moderateScale(15, 0.5), color :'#FAF0E6'}}>Discount</Text>
               </View>
               {/* net sales */}
               <View style={{flex: 1, justifyContent:'center', alignItems: 'flex-start', padding: 5}}>
-                <Text style={{fontSize: moderateScale(15, 0.5), color :'gray'}}>Net Sales</Text>
+                <Text style={{fontSize: moderateScale(15, 0.5), color :'#FAF0E6'}}>Net Sales</Text>
               </View>
             </View>
 
             {/* Field data */}
             <View style={{flex:2,flexDirection: 'column'}}>
               {/* gross sales */}
-              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#ADFF2F'}}>
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#ADFF2F', opacity: 0.90}}>
                 <Text style={{fontSize: moderateScale(18, 0.5), padding: 10, color :'black'}}>{numFormatter(grosssales)}</Text>
               </View>
               {/* cm return */}
-              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#7FFF00'}}>
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#7FFF00', opacity: 0.90}}>
                 <Text style={{fontSize: moderateScale(18, 0.5), padding: 10, color :'black'}}>{numFormatter(cmamount)}</Text>
               </View>
               {/* discount */}
-              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#7CFC00'}}>
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#7CFC00', opacity: 0.90}}>
                 <Text style={{fontSize: moderateScale(18, 0.5), padding: 10, color :'black'}}>{numFormatter(discount)}</Text>
               </View>
               {/* net sales */}
-              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#00FF00'}}>
+              <View style={{flex: 1, justifyContent:'center', alignItems: 'center', margin: 2, borderRadius: 10, backgroundColor: '#00FF00', opacity: 0.90}}>
                 <Text style={{fontSize: moderateScale(25, 0.5), padding: 10, color :'black', fontWeight: 'bold'}}>{numFormatter(netsales)}</Text>
               </View>
             </View>
@@ -597,10 +593,10 @@ export default function ViewScreen(props) {
           <View style={{flex:1}}>
           <View style={{flex:1, flexDirection: 'column'  }}>
             <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
-              <Text style={{fontSize: moderateScale(20, 0.5), color :'gray'}}>Monthly Target</Text>
+              <Text style={{fontSize: moderateScale(20, 0.5), color :'#FAF0E6'}}>Monthly Target</Text>
             </View>
             <View style={{flex: 1.5, justifyContent: 'flex-start', alignItems:'center'}}>
-              <Text style={{fontSize: moderateScale(50, 0.5), fontFamily: 'sans-serif', color: 'black'}}>{numFormatter(target)}</Text>
+              <Text style={{fontSize: moderateScale(50, 0.5), fontFamily: 'sans-serif', color: 'white'}}>{numFormatter(target)}</Text>
             </View>
           </View>
           </View>
@@ -608,8 +604,17 @@ export default function ViewScreen(props) {
 
         {/* principal */}
         <View style={{flex:1.5, borderTopWidth: 0.5, borderTopColor: 'gray', padding: 5}}>
-        <Button title="Principals - Category" onPress={() => Principals_shown()} />
-        <View style={{height: scale(35), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070', alignItems: 'center'}}>
+        <TouchableOpacity activeOpacity={0.2} style={{flex:1, padding: 3, justifyContent: 'center', alignContent: 'center'}} onPress={() => Principals_shown()}>
+          <View style={{flex: 1, backgroundColor: '#1E90FF', justifyContent: 'center', borderRadius: 5}}>
+            <Text style={{color:'white', fontSize: moderateScale(15, 0.5), alignSelf: 'center'}}>
+              PRINCIPALS - CATEGORY
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* <Button title="Principals - Category" onPress={() => Principals_shown()} /> */}
+
+        <View style={{height: scale(35), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070', alignItems: 'center', opacity: 0.80}}>
           <View style={{flex: 1}}>
           <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(13, 0.5), padding: 2}}>PRINCIPAL</Text>
           </View>
@@ -626,7 +631,7 @@ export default function ViewScreen(props) {
           <Text style={{alignSelf: 'center', fontSize: moderateScale(13, 0.5), padding: 2}}>UBA</Text>
           </View>
         </View>
-        <View style={{flex: 3}}>
+        <View style={{flex: 3, opacity: 0.90}}>
           <FlatList
               data={FlatVendor}
               // ItemSeparatorComponent={listViewItemSeparator}
@@ -638,7 +643,15 @@ export default function ViewScreen(props) {
 
         {/* per customer */}
         <View style={{flex:1.5, paddingVertical: 3, paddingHorizontal: 10}}>
-        <Button title="Customers" onPress={() => Customer_shown()} />
+        <TouchableOpacity activeOpacity={0.2} style={{height: moderateScale(40, 0.5), padding: 1, justifyContent: 'center', alignContent: 'center'}} onPress={() => Customer_shown()}>
+          <View style={{ flex: 1, backgroundColor: '#1E90FF', justifyContent: 'center', borderRadius: 5}}>
+            <Text style={{color:'white', fontSize: moderateScale(15, 0.5), alignSelf: 'center'}}>
+              CUSTOMERS
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* <Button title="Customers" onPress={() => Customer_shown()} /> */}
         <FlatList
             data={FlatListItems}
             ItemSeparatorComponent={listViewItemSeparator}
@@ -646,28 +659,25 @@ export default function ViewScreen(props) {
             renderItem={({item}) =>
             {
 
-              if (item.invoice_status_final === 'DISPATCH') {
-
                 return (
                 <TouchableOpacity onPress={() => console.log(item.user_id)}>
                 <View key={item.user_id} style={{ padding: 5, flexDirection: 'row'}}>
                   <View style={{flex: 2.5}}>
-                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
+                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start', color: 'white'}}>{item.invoice_date}  </Text>
                   </View>
                   <View style={{flex: 6}}>
-                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
+                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start', color: 'white'}}>{item.account_customer_name}</Text>
                   </View>
                   <View style={{flex: 2 }}>
-                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
+                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'center', color: '#7CFC00'}}>{numFormatter(item.sales)}  </Text>
                   </View>
                   <View style={{flex: 2 }}>
-                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
+                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'white'}}>{item.invoice_status_final}</Text>
                   </View>
                 </View>
                 </TouchableOpacity>
                 );
 
-              }
 
               // return (
               //   <TouchableOpacity onPress={() => console.log(item.user_id)}>
@@ -712,7 +722,17 @@ if (showCategory === true) {
 
         {/* principal */}
         <View style={{flex:3, borderTopWidth: 0.5, borderTopColor: 'gray', padding: 5}}>
-        <Button title="Minimize" onPress={() => All_shown()} />
+
+        <TouchableOpacity activeOpacity={0.2} style={{height: moderateScale(50, 0.5), padding: 3, justifyContent: 'center', alignContent: 'center'}} onPress={() => All_shown()}>
+          <View style={{flex: 1, backgroundColor: '#1E90FF', justifyContent: 'center', borderRadius: 5}}>
+            <Text style={{color:'white', fontSize: moderateScale(15, 0.5), alignSelf: 'center'}}>
+              MINIMIZE
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* <Button title="Minimize" onPress={() => All_shown()} /> */}
+
         <View style={{height: scale(45), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070',alignItems: 'center'}}>
           <View style={{flex: 1}}>
           <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(16, 0.5), padding: 2}}>PRINCIPAL</Text>
@@ -782,7 +802,17 @@ if (showCategory === true) {
 
         {/* principal */}
         <View style={{flex:3, borderTopWidth: 0.5, borderTopColor: 'gray', padding: 5}}>
-        <Button title="Minimize" onPress={() => All_shown()} />
+
+        <TouchableOpacity activeOpacity={0.2} style={{height: moderateScale(50, 0.5), padding: 3, justifyContent: 'center', alignContent: 'center'}} onPress={() => All_shown()}>
+          <View style={{flex: 1, backgroundColor: '#1E90FF', justifyContent: 'center', borderRadius: 5}}>
+            <Text style={{color:'white', fontSize: moderateScale(15, 0.5), alignSelf: 'center'}}>
+              MINIMIZE
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        {/* <Button title="Minimize" onPress={() => All_shown()} /> */}
+
         <View style={{height: scale(35), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070',alignItems: 'center'}}>
           <View style={{flex: 1}}>
           <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5)}}>PRINCIPAL</Text>
