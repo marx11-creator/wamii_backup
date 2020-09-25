@@ -50,6 +50,7 @@ import {
   CurrentAppScreen,
   LastDateTimeUpdated,
   hhmmss,
+  PageVisited,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import PageContext from '../MainDrawerScreens/pagecontext';
 export default function PerPrincipalDashboard(props) {
@@ -330,45 +331,8 @@ export default function PerPrincipalDashboard(props) {
   //USE EFFECT PART
 
   useEffect(() => {
-    console.log('focus on per principal GLOBAL STATE CHANGES');
-    CurrentAppScreen.Screen = 'PerPrincipal';
-    SearchPrincipal();
+    console.log('focus on per principal from update'); //
 
-    if (perPrincipal.length > 1 && totalSales > 1) {
-      var temp = [];
-      perPrincipal.map((item, index) => {
-        temp.push(item.principal_acronym);
-      });
-
-      var tempSales = [];
-      var firstContribution = 1;
-      perPrincipal.map((item, index) => {
-        tempSales.push(((item.sales / totalSales) * 100).toFixed(2) * 1);
-        if (firstContribution === 1) {
-          setCurrentContribution(
-            ((item.sales / totalSales) * 100).toFixed(2) * 1,
-          );
-          firstContribution = 0;
-        }
-      });
-
-      if (temp.length === tempSales.length) {
-        setDynamicPrincipalList(temp);
-        setDynamicPrincipalSales(tempSales);
-        // console.log('matched!');
-      }
-    }
-}, [globalState.dateTimeUpdated24hr]);
-
-
-
-
-
-
-  useEffect(() => {
-    props.navigation.addListener('focus', () => {
-      console.log('focus on per principal');
-      CurrentAppScreen.Screen = 'PerPrincipal';
       SearchPrincipal();
 
       if (perPrincipal.length > 1 && totalSales > 1) {
@@ -376,7 +340,7 @@ export default function PerPrincipalDashboard(props) {
         perPrincipal.map((item, index) => {
           temp.push(item.principal_acronym);
         });
-
+  
         var tempSales = [];
         var firstContribution = 1;
         perPrincipal.map((item, index) => {
@@ -388,22 +352,63 @@ export default function PerPrincipalDashboard(props) {
             firstContribution = 0;
           }
         });
-
+  
         if (temp.length === tempSales.length) {
           setDynamicPrincipalList(temp);
           setDynamicPrincipalSales(tempSales);
           // console.log('matched!');
         }
-      } else {
-        // console.log(perPrincipal.length + ' zzz  ' + totalSales.length);
       }
+    
+    
+}, [globalState.dateTimeUpdated24hr]);
+
+
+
+  useEffect(() => {
+    props.navigation.addListener('focus', () => {
+
+      console.log('focus on per principal focus');
+     
+      
+      CurrentAppScreen.Screen = 'PerPrincipal';
+      if (PageVisited.PerPrincipalPAGE === 'NO') {
+        PageVisited.PerPrincipalPAGE = 'YES';
+         console.log('focus on per principal with changes')
+         
+         if (perPrincipal.length > 1 && totalSales > 1) {
+          var temp = [];
+          perPrincipal.map((item, index) => {
+            temp.push(item.principal_acronym);
+          });
+    
+          var tempSales = [];
+          var firstContribution = 1;
+          perPrincipal.map((item, index) => {
+            tempSales.push(((item.sales / totalSales) * 100).toFixed(2) * 1);
+            if (firstContribution === 1) {
+              setCurrentContribution(
+                ((item.sales / totalSales) * 100).toFixed(2) * 1,
+              );
+              firstContribution = 0;
+            }
+          });
+    
+          if (temp.length === tempSales.length) {
+            setDynamicPrincipalList(temp);
+            setDynamicPrincipalSales(tempSales);
+            // console.log('matched!');
+          }
+        }
+    
+       }
     });
 
   }, []);
 
   useEffect(() => {
     if (CurrentDashboardScreen.Screen === 'PERVENDOR') {
-      console.log('running from  per principal');
+      console.log('focus on per principal from dashboard global'); //
       SearchPrincipal();
 
       if (perPrincipal.length > 1 && totalSales > 1) {
@@ -432,6 +437,7 @@ export default function PerPrincipalDashboard(props) {
       } else {
         // console.log(perPrincipal.length + ' zzz  ' + totalSales.length);
       }
+      PageVisited.PerPrincipalPAGE = 'YES';
     }
   }, [FilterList.DashboardFilterYearNMonthTeam]);
 

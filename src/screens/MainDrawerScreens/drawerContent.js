@@ -39,10 +39,11 @@ import {
   CurrentAppScreen,
   CurrentAppVersionUpdate,
   globalStatus,
+  FilterList,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users} from '../../database/sqliteSetup';
 import PageContext from './pagecontext';
-
+import moment from 'moment';
 
 export function DrawerContent(props) {
 
@@ -154,6 +155,10 @@ export function DrawerContent(props) {
               label="Dashboard"
               onPress={() => {
                 {
+
+                  // FilterList.DashboardFilterYearNMonthTeam =   moment().utcOffset('+08:00').format('YYYY') +  moment().utcOffset('+08:00').format('MMMM') +  '';
+
+
                   ModuleAccess.PerTeam === 'ALLOWED' ||
                   ModuleAccess.PerSalesman === 'ALLOWED' ||
                   ModuleAccess.PerPrincipal === 'ALLOWED' ||

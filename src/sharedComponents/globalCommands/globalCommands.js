@@ -56,6 +56,16 @@ export var LocalAppVersionUpdate = {
   LocalAppVersionUpdateField: 0,
 };
 
+
+export var PageVisited = {
+  PerTeamPAGE: 'YES',
+  PerSalesmanPAGE: 'YES',
+  PerPrincipalPAGE: 'YES',
+  PerAreaPAGE: 'YES',
+};
+
+
+
 export var DashboardMonths = [];
 export var DashboardYears = [];
 export var DashboardTeams = [];
@@ -67,7 +77,7 @@ export var FilterList = {
   DashboardFilterYearNMonthTeam:
     moment().utcOffset('+08:00').format('YYYY') +
     moment().utcOffset('+08:00').format('MMMM') +
-    '',
+    ' ',
 };
 
 export var FilterListMirror = {
