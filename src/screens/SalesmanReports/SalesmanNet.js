@@ -857,7 +857,16 @@ if (showCategory === true) {
 
           {/* per customer */}
           <View style={{flex:1.5, padding: 10, paddingHorizontal: 15}}>
-          <Button title="Minimize" onPress={() => All_shown()} />
+
+          <TouchableOpacity activeOpacity={0.2} style={{height: moderateScale(50, 0.5), padding: 3, justifyContent: 'center', alignContent: 'center'}} onPress={() => All_shown()}>
+          <View style={{flex: 1, backgroundColor: '#1E90FF', justifyContent: 'center', borderRadius: 5}}>
+            <Text style={{color:'white', fontSize: moderateScale(15, 0.5), alignSelf: 'center'}}>
+              MINIMIZE
+            </Text>
+          </View>
+          </TouchableOpacity>
+
+          {/* <Button title="Minimize" onPress={() => All_shown()} /> */}
           <FlatList
               data={FlatListItems}
               ItemSeparatorComponent={listViewItemSeparator}
