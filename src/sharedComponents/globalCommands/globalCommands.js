@@ -4,7 +4,7 @@ import {
   dbperarea,
   dbperymtsat,
   dbBusinessCalendar,
-  dbpromoitems,
+  dbinventory,
   dbSalesmanNet,
   dblastdatetimeupdated,
 } from '../../database/sqliteSetup';
@@ -176,7 +176,7 @@ let delete_per_category_tbl = () => {
 };
 
 function DeleteItems() {
-  dbpromoitems.transaction(function (tx) {
+  dbinventory.transaction(function (tx) {
     tx.executeSql(
       'Delete from promo_items_tbl ',
       [],

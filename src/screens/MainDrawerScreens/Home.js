@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState, useContext} from 'react';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, CommonActions} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -47,6 +47,7 @@ import App1 from './test';
 import UpdateModal from './UpdateModal';
 import PageContext from './pagecontext';
 import Icon from 'react-native-vector-icons/Ionicons';
+
 LogBox.ignoreAllLogs();
 
 export default function Home(props) {
@@ -349,6 +350,15 @@ export default function Home(props) {
     });
   }, []);
 
+  function testReset() {
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({routeName: 'Home'})],
+      key: null,
+    });
+    props.navigation.dispatch(resetAction);
+  }
+
   return (
     <ImageOverlay
       // source={require('../../assets/homepagecoslor.jpg')}
@@ -489,8 +499,10 @@ export default function Home(props) {
             {/* <Button
               title="test"
               onPress={() => {
-                console.log(global.deviceName);
-                console.log(global.UniqueId);
+                console.log('on Home');
+
+  
+              
               }}
             /> */}
           </View>
@@ -628,3 +640,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.2,
   },
 });
+
+// props.navigation.dispatch(
+//   CommonActions.reset({
+//     index: 1,
+//     routes: [{name: 'Home'}],
+//   }),
+// );

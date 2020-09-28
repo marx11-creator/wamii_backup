@@ -27,7 +27,7 @@ import {
   Alert,
   Button,
 } from 'react-native';
-import {dbpromoitems} from '../../database/sqliteSetup';
+import {dbinventory} from '../../database/sqliteSetup';
 import FlatButton from '../../sharedComponents/custombutton';
 import {
   scale,
@@ -40,8 +40,16 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import Modal from 'react-native-modal';
 import LinearGradient from 'react-native-linear-gradient';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {APIToken, globalCompany, server, CurrentAppScreen} from '../../sharedComponents/globalCommands/globalCommands';
-
+import {
+  APIToken,
+  globalCompany,
+  server,
+  CurrentAppScreen,
+  LastDateTimeUpdated,
+  hhmmss,
+} from '../../sharedComponents/globalCommands/globalCommands';
+import PageContext from '../MainDrawerScreens/pagecontext';
+import Icon from 'react-native-vector-icons/Ionicons';
 var ApiRowsCount = 0;
 var count = 0;
 var localItemcount = 0;
@@ -51,7 +59,9 @@ var TypeListfromPicker = '';
 var longStrinfg = '';
 
 // var arrVariantListfromPickerLocal = [];
-export default function PromoItems(props) {
+export default function Inventory(props) {
+  const [globalState, setglobalState] = useContext(PageContext);
+
   const ApiFields = [
     {
       principal_name: '',
@@ -190,26 +200,14 @@ export default function PromoItems(props) {
     }
   });
 
- 
-
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per per item');
-      CurrentAppScreen.Screen = 'PromoItems';
-      GetDateTime();
+      CurrentAppScreen.Screen = 'Inventory';
       GetPrincipalList();
       GetLocalPromoItems();
-      
-
-
     });
-
-
   }, []);
-
-
-
-
 
   // useEffect(() => {
   //   dateTimeSet();
@@ -226,7 +224,7 @@ export default function PromoItems(props) {
   // [],
 
   function GetLocalPromoItems() {
-    dbpromoitems.transaction((tx) => {
+    dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM promo_items_tbl ' +
           ' order by product_variant, product_name limit 100 ',
@@ -258,14 +256,13 @@ export default function PromoItems(props) {
     if (VariantListfromPicker === '' || VariantListfromPicker === 'ALL') {
       VariantQuery = '  and product_variant like ' + "'%%' ";
     } else {
- 
       VariantQuery =
         ' and  product_variant in ' +
         '(' +
         VariantListfromPicker.slice(0, -1) +
         ')';
     }
- 
+
     var PromoProductQuery = '';
     if (TypeListfromPicker === '') {
       PromoProductQuery = '  ';
@@ -284,7 +281,7 @@ export default function PromoItems(props) {
         PromoProductQuery +
         ' order by product_variant, product_name',
     );
-    dbpromoitems.transaction((tx) => {
+    dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM promo_items_tbl where ' +
           PrincipalQuery +
@@ -307,7 +304,7 @@ export default function PromoItems(props) {
   }
 
   function GetDateTime() {
-    dbpromoitems.transaction((tx) => {
+    dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT DateandTimeUpdated FROM promo_items_tbl limit 1',
         [],
@@ -330,7 +327,7 @@ export default function PromoItems(props) {
       value: 'ALL',
     };
 
-    dbpromoitems.transaction((tx) => {
+    dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct principal_name as label, principal_name as value FROM promo_items_tbl order by principal_name asc',
         [],
@@ -338,7 +335,7 @@ export default function PromoItems(props) {
           var len = results.rows.length;
           if (len > 0) {
             var temp = [];
-         temp.push(AllPrincipal);
+            temp.push(AllPrincipal);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
             }
@@ -362,7 +359,7 @@ export default function PromoItems(props) {
         ' principal_name = ' + "'" + PrincipalPickerCatcher + "'";
     }
 
-    dbpromoitems.transaction((tx) => {
+    dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct product_variant as label, product_variant as value FROM promo_items_tbl where ' +
           PrincipalQuery +
@@ -421,67 +418,6 @@ export default function PromoItems(props) {
     console.log('SQL Error: ' + err);
   }
 
-  // function SavePromoItems() {
-  //   var stocks = 0;
-  //   var ProductType = '';
-  //   {
-  //     ApiPromoItemData.map(function (item, i) {
-  //       if (item.promo_product === '1') {
-  //         ProductType = 'Promo';
-  //       } else {
-  //         ProductType = 'Regular';
-  //       }
-
-  //       dbpromoitems.transaction(function (tx) {
-  //         if (parseInt(item.total_case) < 1) {
-  //           stocks = item.total_pieces + ' PCS';
-  //         } else {
-  //           stocks = (item.total_case * 1).toFixed(2) + ' CS';
-  //         }
-  //         tx.executeSql(
-  //           'INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) VALUES (?,?,?,?,?,?,?,?)',
-  //           [
-  //             item.principal_name,
-  //             item.product_id,
-  //             item.product_variant,
-  //             item.product_name,
-  //             ProductType,
-  //             stocks,
-  //             item.img_url,
-  //             item.DateandTimeUpdated,
-  //           ],
-  //           (tx, results) => {
-  //             // console.log('Results', results.rowsAffected);
-  //             if (results.rowsAffected > 0) {
-  //               count = count + 1;
-  //               setupdateMessage(
-  //                 count + '/' + ApiPromoItemData.length + ' products updated.',
-  //               );
-  //               if (count === ApiPromoItemData.length) {
-  //                 setLoading(false);
-  //                 GetLocalPromoItems();
-  //                 GetDateTime();
-  //                 // GetPrincipalList();
-  //                 count = 0;
-  //                 setPromoSKURefreshing(false);
-  //                 Alert.alert(
-  //                   'Success!',
-  //                   ApiPromoItemData.length + ' Products updated.',
-  //                   [{text: 'Ok'}],
-  //                 );
-  //               }
-  //             } else {
-  //               console.log('error');
-  //             }
-  //           },
-  //           SQLerror,
-  //         );
-  //       });
-  //     });
-  //   }
-  //   ApiRowsCount = 0;
-  // }
-
   function SavePromoItems() {
     longStrinfg = '';
     var stocks = 0;
@@ -538,10 +474,8 @@ export default function PromoItems(props) {
       });
     }
 
-    
-
     if (totalProduct === ApiPromoItemData.length) {
-      dbpromoitems.transaction(function (tx) {
+      dbinventory.transaction(function (tx) {
         tx.executeSql(
           ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
             longStrinfg.slice(0, -1),
@@ -580,7 +514,7 @@ export default function PromoItems(props) {
   //         ProductType = 'Regular';
   //       }
 
-  //       dbpromoitems.transaction(function (tx) {
+  //       dbinventory.transaction(function (tx) {
   //         if (parseInt(item.total_case) < 1) {
   //           stocks = item.total_pieces + ' PCS';
   //         } else {
@@ -631,7 +565,7 @@ export default function PromoItems(props) {
   // }
 
   function DeleteItems() {
-    dbpromoitems.transaction(function (tx) {
+    dbinventory.transaction(function (tx) {
       tx.executeSql(
         'Delete from promo_items_tbl ',
         [],
@@ -677,7 +611,7 @@ export default function PromoItems(props) {
 
   const renderItem = ({item}) =>
     item.product_variant === '' ? null : (
-      <LinearGradient style={{margin: 2}} colors={['#F57F61', '#F3181C']}>
+      <LinearGradient style={{margin: 2}} colors={['#F96E71', '#C70E11']}>
         <View style={styles.promoItemDetailsNImage}>
           <View style={styles.promoitemImageContainer}>
             <TouchableOpacity
@@ -763,6 +697,7 @@ export default function PromoItems(props) {
   return (
     <View style={styles.container}>
       <View style={styles.HeaderView}>
+        <View style={{flex: 1}}>
         <Image
           style={styles.CompanyLogo}
           source={{
@@ -770,7 +705,9 @@ export default function PromoItems(props) {
               'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
           }}
         />
-        <FlatButton
+        </View>
+
+        {/* <FlatButton
           gradientFrom="red"
           gradientTo="pink"
           text="Update"
@@ -779,14 +716,21 @@ export default function PromoItems(props) {
             setLoading(!loading);
             DownloadPromoItems();
           }}
-        />
-        <View style={{marginRight: moderateScale(20, 0.5)}}>
+        /> */}
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'center',
+
+          }}>
           <FlatButton // MAIN
             text="Filter"
-            gradientFrom="red"
-            gradientTo="pink"
+            gradientFrom="#14BF15"
+            gradientTo="#43EA44"
             onPress={() => {
-       
               // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
               GetPrincipalList();
               setisModalVisible2(!isModalVisible2);
@@ -794,8 +738,86 @@ export default function PromoItems(props) {
           />
         </View>
 
-        <View style={styles.textLastUpdateView}>
+        {/* <View style={styles.textLastUpdateView}>
           <Text style={styles.textLastUpdate}>Last Update : {dateTime}</Text>
+        </View> */}
+
+        <View
+          style={{
+            flex: 0.6,
+            width: scale(150),
+            marginRight: 10,
+            alignContent: 'flex-end',
+            alignItems: 'flex-end',
+            justifyContent: 'flex-end',
+          }}>
+          <Text
+            style={{
+              color: '#333333',
+              fontSize: moderateScale(12, 0.5),
+              alignContent: 'flex-end',
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+            }}>
+            Last Update
+          </Text>
+          <Text
+            style={{
+              color: '#333333',
+              fontSize: moderateScale(12, 0.5),
+              alignContent: 'flex-end',
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+            }}>
+            {LastDateTimeUpdated.value}
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignContent: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+              <Icon name="refresh" color={'#333333'} size={10} />
+            </View>
+            <Text
+              style={{
+                color: '#333333',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              {globalState.updateStatus === 'Updating' ||
+              globalState.updateStatus === 'Start' ? (
+                <Text
+                  style={{
+                    color: '#333333',
+                    fontSize: moderateScale(12, 0.5),
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
+                  }}>
+                  {'Updating...'}{' '}
+                  {globalState.updatePercentage > 0
+                    ? globalState.updatePercentage + ' %'
+                    : ''}
+                </Text>
+              ) : (
+                <Text
+                  style={{
+                    color: '#333333',
+                    fontSize: moderateScale(12, 0.5),
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
+                  }}>
+                  {hhmmss(900 - globalState.timerSeconds)}
+                </Text>
+              )}
+            </Text>
+          </View>
         </View>
       </View>
       <SafeAreaView style={styles.container}>
@@ -1106,7 +1128,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: moderateScale(10, 0.5),
-    backgroundColor: '#D5DFDA',
+    backgroundColor: '#ffffff',
   },
   promoitemDetails: {
     // backgroundColor: '#F0515E',

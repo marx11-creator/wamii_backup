@@ -165,7 +165,7 @@ export function DrawerContent(props) {
                 }
               }}
             />
-            <DrawerItem
+            {/* <DrawerItem
               icon={({color, size}) => (
                 <Icon name="microsoft-onenote" color={color} size={size} />
               )}
@@ -185,14 +185,14 @@ export function DrawerContent(props) {
                     : alert('not allowed');
                 }
               }}
-            />
+            /> */}
             <DrawerItem
               icon={({color, size}) => (
                 <Icon name="account-outline" color={color} size={size} />
               )}
               label="Inventory"
               onPress={() => {
-                props.navigation.navigate('PromoItems');
+                props.navigation.navigate('Inventory');
               }}
             />
             <DrawerItem

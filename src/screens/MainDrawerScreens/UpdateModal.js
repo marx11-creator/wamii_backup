@@ -18,6 +18,7 @@ import {
   dbBusinessCalendar,
   dbSalesmanNet,
   dblastdatetimeupdated,
+  dbinventory,
 } from '../../database/sqliteSetup';
 import {
   scale,
@@ -45,6 +46,8 @@ import BackgroundTimer from 'react-native-background-timer';
 import {useFocusEffect} from '@react-navigation/native';
 import {sqrt} from 'react-native-reanimated';
 //marc
+var ApiRowsCount = 0;
+var longStrinfg = '';
 
 var FiveSecondsDelay = 0;
 var lineChartAPIdatalength = 0;
@@ -552,6 +555,7 @@ export default function UpdateModal(props) {
     GetPerPrincipalAPIData(); //GET API DATA
     GetPerAreaAPIData(); //GET API DATA
     //APISaveUpdate(); //SAVE UPDATE LOG TO API
+    DownloadPromoItems();
   }
 
   const GetPerymtsatAPIData = () => {
@@ -1754,6 +1758,175 @@ export default function UpdateModal(props) {
     });
   };
 
+  // PROMO ITEMS  > START
+
+  const ApiFields = [
+    {
+      principal_name: '',
+      product_id: '',
+      product_variant: '',
+      product_name: '',
+      promo_product: '',
+      inventory: '',
+      img_url: '',
+      DateandTimeUpdated: '',
+    },
+  ];
+  const LocalDBFields = [
+    {
+      ref_id: '',
+      product_id: '',
+      product_variant: '',
+      product_name: '',
+      inventory: '',
+      img_url: ' ',
+      DateandTimeUpdated: '',
+    },
+  ];
+  const [ApiPromoItemData, setApiPromoItemData] = useState(ApiFields);
+  const [ItemsDeleted, setItemsDeleted] = useState(false);
+  const [LocalPromoItemData, setLocalPromoItemData] = useState(LocalDBFields);
+  const DownloadPromoItems = () => {
+    Promise.race([
+      fetch(server.server_address + globalCompany.company + 'promo_item', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + APIToken.access_token,
+        },
+      }),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), 40000),
+      ),
+    ])
+      .then((responseData) => {
+        return responseData.json();
+      })
+      .then((jsonData) => {
+        setApiPromoItemData(jsonData);
+        ApiRowsCount = jsonData.length;
+      })
+      .catch(function (error) {
+        console.log('Error 1:' + error.message);
+      })
+      .done();
+  };
+
+  useEffect(() => {
+    if (ApiPromoItemData.length === ApiRowsCount) {
+      console.log('PROMO RUN');
+      DeleteItems();
+    }
+  });
+
+  function DeleteItems() {
+    ApiRowsCount = 0;
+    dbinventory.transaction(function (tx) {
+      tx.executeSql(
+        'Delete from promo_items_tbl ',
+        [],
+        (tx, results) => {
+          // console.log('Results', results.rowsAffected);
+          if (results.rowsAffected > 0) {
+            setItemsDeleted(true);
+          } else {
+            if (LocalPromoItemData.length > 1) {
+              console.log('error deleting');
+            } else {
+              console.log('nothing to delete, set true to save fetch sku');
+              setItemsDeleted(true);
+            }
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+
+  useEffect(() => {
+    if (ItemsDeleted === true) {
+      [SavePromoItems(), setItemsDeleted(false)];
+    }
+  });
+
+  function SavePromoItems() {
+    longStrinfg = '';
+    var stocks = 0;
+    var ProductType = '';
+    var totalProduct = 0;
+    {
+      ApiPromoItemData.map(function (item, i) {
+        totalProduct = totalProduct + 1;
+        if (item.promo_product === '1') {
+          ProductType = 'Promo';
+        } else {
+          ProductType = 'Regular';
+        }
+
+        if (parseInt(item.total_case) < 1) {
+          stocks = item.total_pieces + ' PCS';
+        } else {
+          stocks = (item.total_case * 1).toFixed(2) + ' CS';
+        }
+        longStrinfg =
+          longStrinfg +
+          "('" +
+          item.principal_name +
+          "'" +
+          ',' +
+          "'" +
+          item.product_id +
+          "'" +
+          ',' +
+          "'" +
+          item.product_variant +
+          "'" +
+          ',' +
+          "'" +
+          item.product_name +
+          "'" +
+          ',' +
+          "'" +
+          ProductType +
+          "'" +
+          ',' +
+          "'" +
+          stocks +
+          "'" +
+          ',' +
+          "'" +
+          item.img_url +
+          "'" +
+          ',' +
+          "'" +
+          item.DateandTimeUpdated +
+          "'" +
+          '),';
+      });
+    }
+
+    if (totalProduct === ApiPromoItemData.length) {
+      dbinventory.transaction(function (tx) {
+        tx.executeSql(
+          ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
+            longStrinfg.slice(0, -1),
+          [],
+          (tx, results) => {
+            if (results.rowsAffected > 0) {
+              console.log('SUCCESS SAVING ITEMS');
+            } else {
+              console.log('error');
+            }
+          },
+          SQLerror,
+        );
+      });
+    }
+  }
+
+  // PROMO ITEMS  > END
+
   return (
     <View style={{flex: 1}}>
       <View>
@@ -1801,7 +1974,13 @@ export default function UpdateModal(props) {
 
       {isLoadingActivityIndicator && (
         <View style={styles.loading}>
-          {/* <Button title="Test" onPress={() => console.log(updateCount)} /> */}
+          <Button
+            title="Test"
+            onPress={() => {
+              console.log(ApiPromoItemData.length);
+              console.log(ApiRowsCount);
+            }}
+          />
           <Text style={{color: 'black', fontSize: moderateScale(17)}}>
             Updating... {updateProgress} %{' '}
           </Text>

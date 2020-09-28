@@ -15,7 +15,7 @@ export var dbsystem_users = openDatabase({name: 'system_users_tbl.db'});
 export var dbperymtsat = openDatabase({name: 'perymtsat_tbl.db'});
 export var dbperarea = openDatabase({name: 'perareapermonth_tbl.db'});
 export var dbperprincipal = openDatabase({name: 'perprincipalpermonth_tbl.db'});
-export var dbpromoitems = openDatabase({name: 'promo_items_tbl.db'});
+export var dbinventory = openDatabase({name: 'promo_items_tbl.db'});
 export var dbBusinessCalendar = openDatabase({
   name: 'business_calendar_tbl.db',
 });
@@ -145,7 +145,7 @@ export default function CreateDatabase() {
   });
 
   // // console.log('SQLite database initialize');
-  dbpromoitems.transaction(function (txn) {
+  dbinventory.transaction(function (txn) {
     txn.executeSql(
       "SELECT name FROM sqlite_master WHERE type='table' AND name='promo_items_tbl'",
       [],
@@ -514,7 +514,7 @@ export function Update1004() {
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1005
 
 export function Update1005() {
-  dbpromoitems.transaction(function (txn) {
+  dbinventory.transaction(function (txn) {
     txn.executeSql(
       "SELECT name FROM sqlite_master WHERE type='table' AND name ='promo_items_tbl'",
       [],
@@ -534,7 +534,7 @@ export function Update1005() {
               Add1005UpdatetoLocal();
             },
             //if not function below is a error part where it run a fucntion
-            Alter_promoitems_promo_product,
+            Alter_inventory_product,
           );
         }
       },
@@ -542,11 +542,11 @@ export function Update1005() {
   });
 }
 
-function Alter_promoitems_promo_product() {
+function Alter_inventory_product() {
   console.log(
     '1005 query error finding new field, it means field is missing. run alter or udpdate now',
   );
-  dbpromoitems.transaction(function (txn) {
+  dbinventory.transaction(function (txn) {
     txn.executeSql(
       'ALTER TABLE promo_items_tbl ADD COLUMN promo_product VARCHAR(255)',
       [],
