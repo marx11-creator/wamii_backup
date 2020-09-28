@@ -32,7 +32,7 @@ import {
   UpdateYearMonthsFilter,
   globalStatus,
 } from '../../sharedComponents/globalCommands/globalCommands';
-import DeviceInfo from 'react-native-device-info';
+
 import moment from 'moment';
 import {dbBusinessCalendar, dbperymtsat} from '../../database/sqliteSetup';
 import numbro from 'numbro';
@@ -68,10 +68,6 @@ export default function Home(props) {
 
   const [Target, setTarget] = useState(TargetFields);
 
-  DeviceInfo.getDeviceName().then((deviceName) => {
-    global.deviceName = deviceName;
-    global.UniqueId = DeviceInfo.getUniqueId();
-  });
 
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
@@ -489,8 +485,8 @@ export default function Home(props) {
             {/* <Button
               title="test"
               onPress={() => {
-                console.log(global.deviceName);
-                console.log(global.UniqueId);
+                console.log(global.device_name);
+                console.log(global.device_id);
               }}
             /> */}
           </View>

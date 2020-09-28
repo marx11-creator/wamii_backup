@@ -175,18 +175,36 @@ const SignScreen = (props) => {
         return responseData.json();
       })
       .then((jsonData) => {
-        // console.log(jsonData);
+        console.log(jsonData);
+
+      jsonData.map((key, index) => {
+        console.log(key.device_name);
+        console.log(global.device_name);
+        if(global.device_name === key.device_id){
+          console.log('Device match')
+          GetToken();
+        } else if (key.device_id === ''){
+            console.log('fresh login')
+            InsertLoginInfo();
+            GetToken();
+        } else {
+          console.log('New Device Detected')
+          setModalErrorMessage('New login from another device detected. You may only login on one device. \n \n Please contact support team.\n \n');
+          setisModalConnectionError(true);
+        }
+      })
+
+
+    
+
+
+
         //IF USER FOUND
         if (jsonData.length < 1) {
           console.log('user not found');
           setModalErrorMessage('Account does not exist.');
           setisModalConnectionError(true);
-        } else {
-          console.log('User found, Getting Token');
-          GetToken();
-          // setModalErrorMessage('user found');
-          // setisModalConnectionError(true);
-        }
+        } 
       })
       .catch(function (error) {
         console.log(
@@ -200,6 +218,53 @@ const SignScreen = (props) => {
       })
       .done();
   };
+
+  function InsertLoginInfo(){
+    
+    console.log(data.user_name);
+    console.log(global.device_name);
+    console.log(global.device_id);
+    console.log(moment().format('DD/MM/YYYY HH:mm:ss'));
+    fetch(server.server_address + globalCompany.company + '/InsertLoginInfo', {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + APIToken.access_token,
+      },
+      body: JSON.stringify({
+        user_name:  data.user_name,
+        device_name: global.device_name,
+        device_id: global.device_id,
+        last_login: moment().format('DD/MM/YYYY HH:mm:ss'),
+      }),
+    })
+      .then((responseData) => {
+        return responseData.json();
+      })
+      .then((jsonData) => {
+
+        if (jsonData.affectedRows > 0) {
+          Alert.alert(
+            'Success',
+            'Account succesfully updated.',
+            [
+              {
+                text: 'Continue',
+                // onPress: () => {
+                //   UpdateUserActiveStatus();
+                // },
+              },
+            ],
+            {cancelable: false},
+          );
+        }
+      })
+      .catch(function (error) {
+        console.log('error in   UpdateAccount :' + error.text);
+      })
+      .done();
+  }
 
   const GetToken = () => {
     Promise.race([
@@ -689,7 +754,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   modalView: {
-    height: 150,
+    height: 200,
     margin: 20,
     backgroundColor: '#ffffff',
     borderRadius: 20,
@@ -705,7 +770,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalText: {
-    marginBottom: scale(15),
+    marginBottom: scale(25),
     textAlign: 'center',
   },
 });
