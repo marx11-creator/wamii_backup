@@ -346,16 +346,16 @@ console.log('push run')
     return (
       <View key={item.user_id} style={{flexDirection: 'row', paddingVertical: 5}}>
         <View style={{flex: 1.5, borderWidth: 0,justifyContent: 'center', marginLeft: 10 }}>
-          <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(12, 0.5)}}>{item.product_category}</Text>
+          <Text style={{alignSelf: 'flex-start', color: '#ffffff', fontSize: moderateScale(12, 0.5)}}>{item.product_category}</Text>
           </View>
           <View style={{flex: 1, borderWidth: 0}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>{numFormatter(item.total_target)}</Text>
+          <Text style={{alignSelf: 'center',  color: '#ffffff',fontSize: moderateScale(15, 0.5), padding: 2}}>{numFormatter(item.total_target)}</Text>
           </View>
           <View style={{flex: 1, borderWidth: 0}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>{numFormatter(item.total_amount)}</Text>
+          <Text style={{alignSelf: 'center', color: '#ffffff', fontSize: moderateScale(15, 0.5), padding: 2}}>{numFormatter(item.total_amount)}</Text>
           </View>
           <View style={{flex: 1, borderWidth: 0}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>{percent}%</Text>
+          <Text style={{alignSelf: 'center',  color: '#ffffff',fontSize: moderateScale(15, 0.5), padding: 2}}>{percent}%</Text>
         </View>
       </View>
     );
@@ -745,7 +745,7 @@ if (showCategory === true) {
 
     <SafeAreaView style={{flex: 1}}>
 
-      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
+      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: 'gray'}}>
 
         {/* principal */}
         <View style={{flex:3, borderTopWidth: 0.5, borderTopColor: 'gray', padding: 5}}>
