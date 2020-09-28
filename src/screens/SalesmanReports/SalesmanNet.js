@@ -89,7 +89,7 @@ export default function ViewScreen(props) {
   }
 
   function push_sales_net() {
-console.log('push run')
+console.log('push run');
     var YearQuery = '';
     if (FilterList.DashboardFilterYear === '') {
       YearQuery =
@@ -116,7 +116,7 @@ console.log('push run')
 
     db.transaction((tx) => {
         tx.executeSql('SELECT * from tbl_sales_net WHERE ' +  YearQuery +  MonthQuery, [], (tx, results) => {
-     
+
         var net = [];
         for (let i = 0; i < results.rows.length; ++i) {
           net.push(results.rows.item(i));
@@ -176,7 +176,7 @@ console.log('push run')
 
 
     db.transaction((tx) => {
-      tx.executeSql('SELECT principal_acronym, principal_name, SUM(sales) AS total_amount, SUM(target) AS total_target, uba, (SUM(sales) / SUM(target) * 100) as percent FROM tbl_sales_per_vendor WHERE ' + YearQuery + MonthQuery + '  GROUP BY principal_name ', [], (tx, results) => {
+      tx.executeSql('SELECT principal_acronym, principal_name, SUM(sales) AS total_amount, SUM(target) AS total_target, uba, (ROUND(SUM(sales),2) / SUM(target) * 100) as percent FROM tbl_sales_per_vendor WHERE ' + YearQuery + MonthQuery + '  GROUP BY principal_name ', [], (tx, results) => {
         var temp = [];
         for (let i = 0; i < results.rows.length; ++i) {
           temp.push(results.rows.item(i));
@@ -274,7 +274,7 @@ console.log('push run')
     }
 
     db.transaction((tx) => {
-      tx.executeSql('SELECT product_category, SUM(sales) AS total_amount, SUM(target) AS total_target, (SUM(sales) / SUM(target) * 100) as percent FROM tbl_sales_per_category WHERE      ' + YearQuery + MonthQuery + '  GROUP BY product_category ', [], (tx, results) => {
+      tx.executeSql('SELECT product_category, SUM(sales) AS total_amount, SUM(target) AS total_target, (ROUND(SUM(sales),2) / SUM(target) * 100) as percent FROM tbl_sales_per_category WHERE      ' + YearQuery + MonthQuery + '  GROUP BY product_category ', [], (tx, results) => {
         var temp = [];
         if (results.rows.length === 0) {
           setshowCategory(false);
@@ -285,6 +285,7 @@ console.log('push run')
           temp.push(results.rows.item(i));
         }
         setFlatCategory(temp);
+        //console.log(temp);
       });
     });
   }
@@ -343,6 +344,7 @@ console.log('push run')
   let listCategoryView = (item) => {
     var percent = item.percent + 0;
     percent = (percent).toFixed(2);
+    //console.log(percent);
     return (
       <View key={item.user_id} style={{flexDirection: 'row', paddingVertical: 5}}>
         <View style={{flex: 1.5, borderWidth: 0,justifyContent: 'center', marginLeft: 10 }}>
@@ -745,7 +747,9 @@ if (showCategory === true) {
 
     <SafeAreaView style={{flex: 1}}>
 
-      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: 'gray'}}>
+      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#C0C0C0'}}>
+
+      {/* <Image source={require('../../assets/pic/green.png')} style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%'}}/> */}
 
         {/* principal */}
         <View style={{flex:3, borderTopWidth: 0.5, borderTopColor: 'gray', padding: 5}}>
@@ -760,21 +764,23 @@ if (showCategory === true) {
 
         {/* <Button title="Minimize" onPress={() => All_shown()} /> */}
 
+
+
         <View style={{height: scale(45), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070',alignItems: 'center'}}>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(16, 0.5), padding: 2}}>PRINCIPAL</Text>
+          <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(15, 0.5), padding: 2}}>PRINCIPAL</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>TARGET</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>TARGET</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>SALES</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>SALES</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>ACHV</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>ACHV</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>UBA</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>UBA</Text>
           </View>
         </View>
         <View style={{flex: 3}}>
@@ -790,16 +796,16 @@ if (showCategory === true) {
         <View style={{flex: 1, padding: 10}}>
         <View style={{height: scale(45) , borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5, backgroundColor: '#10D070', justifyContent: 'center'}}>
           <View style={{flex: 1.5,justifyContent: 'center'}}>
-          <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(16, 0.5), marginLeft: 5}}>CATEGORY</Text>
+          <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(15, 0.5), marginLeft: 5}}>CATEGORY</Text>
           </View>
           <View style={{flex: 1,justifyContent: 'center'}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>TARGET</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>TARGET</Text>
           </View>
           <View style={{flex: 1,justifyContent: 'center'}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>SALES</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>SALES</Text>
           </View>
           <View style={{flex: 1,justifyContent: 'center'}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>ACHV</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>ACHV</Text>
           </View>
         </View>
 
@@ -825,7 +831,9 @@ if (showCategory === true) {
 
     <SafeAreaView style={{flex: 1}}>
 
-      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
+      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: 'gray'}}>
+
+      {/* <Image source={require('../../assets/pic/green.png')} style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%'}}/> */}
 
         {/* principal */}
         <View style={{flex:3, borderTopWidth: 0.5, borderTopColor: 'gray', padding: 5}}>
@@ -842,19 +850,19 @@ if (showCategory === true) {
 
         <View style={{height: scale(35), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070',alignItems: 'center'}}>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5)}}>PRINCIPAL</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5)}}>PRINCIPAL</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>TARGET</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>TARGET</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>SALES</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>SALES</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>ACHV</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>ACHV</Text>
           </View>
           <View style={{flex: 1}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(16, 0.5), padding: 2}}>UBA</Text>
+          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>UBA</Text>
           </View>
         </View>
         <View style={{flex: 3}}>
@@ -880,7 +888,9 @@ if (showCategory === true) {
 
       <SafeAreaView style={{flex: 1 }}>
 
-        <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
+        <View style={{ flex: 1, flexDirection: 'column', backgroundColor: 'gray'}}>
+
+        {/* <Image source={require('../../assets/pic/green.png')} style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%'}}/> */}
 
           {/* per customer */}
           <View style={{flex:1.5, padding: 10, paddingHorizontal: 15}}>
@@ -904,13 +914,13 @@ if (showCategory === true) {
                   <TouchableOpacity onPress={() => console.log(item.user_id)}>
                 <View key={item.user_id} style={{ padding: 5, flexDirection: 'row'}}>
                   <View style={{flex: 2.5}}>
-                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
+                  <Text style={{fontSize: moderateScale(13, 0.5), color: 'white', fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
                   </View>
                   <View style={{flex: 6}}>
-                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
+                  <Text style={{fontSize: moderateScale(13, 0.5), color: 'white', fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
                   </View>
                   <View style={{flex: 2 }}>
-                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
+                  <Text style={{fontSize: moderateScale(13, 0.5), color: '#00FF7F', fontFamily: 'serif', alignSelf: 'center'}}>{numFormatter(item.sales)}  </Text>
                   </View>
                   <View style={{flex: 2, justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
                   {/* <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text> */}
