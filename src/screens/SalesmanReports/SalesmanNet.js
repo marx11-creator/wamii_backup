@@ -720,6 +720,8 @@ if (showCategory === true) {
 
       <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
 
+      <Image source={require('../../assets/pic/green.png')} style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%'}}/>
+
         {/* principal */}
         <View style={{flex:3, borderTopWidth: 0.5, borderTopColor: 'gray', padding: 5}}>
 
@@ -732,6 +734,8 @@ if (showCategory === true) {
         </TouchableOpacity>
 
         {/* <Button title="Minimize" onPress={() => All_shown()} /> */}
+
+
 
         <View style={{height: scale(45), borderWidth: 1, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#10D070',alignItems: 'center'}}>
           <View style={{flex: 1}}>
@@ -800,6 +804,8 @@ if (showCategory === true) {
 
       <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
 
+      <Image source={require('../../assets/pic/green.png')} style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%'}}/>
+
         {/* principal */}
         <View style={{flex:3, borderTopWidth: 0.5, borderTopColor: 'gray', padding: 5}}>
 
@@ -854,6 +860,8 @@ if (showCategory === true) {
       <SafeAreaView style={{flex: 1 }}>
 
         <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
+
+        <Image source={require('../../assets/pic/green.png')} style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%'}}/>
 
           {/* per customer */}
           <View style={{flex:1.5, padding: 10, paddingHorizontal: 15}}>
