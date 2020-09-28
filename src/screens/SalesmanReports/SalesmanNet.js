@@ -673,7 +673,7 @@ console.log('push run');
                   <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'flex-start', color: 'white'}}>{item.account_customer_name}</Text>
                   </View>
                   <View style={{flex: 2 }}>
-                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'center', color: '#7CFC00'}}>{numFormatter(item.sales)}  </Text>
+                  <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'white'}}>{numFormatter(item.sales)}  </Text>
                   </View>
                   <View style={{flex: 2, justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
                   {/* <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text> */}
@@ -747,7 +747,7 @@ if (showCategory === true) {
 
     <SafeAreaView style={{flex: 1}}>
 
-      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#C0C0C0'}}>
+      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#7D7A7B'}}>
 
       {/* <Image source={require('../../assets/pic/green.png')} style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%'}}/> */}
 
@@ -920,7 +920,7 @@ if (showCategory === true) {
                   <Text style={{fontSize: moderateScale(13, 0.5), color: 'white', fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
                   </View>
                   <View style={{flex: 2 }}>
-                  <Text style={{fontSize: moderateScale(13, 0.5), color: '#00FF7F', fontFamily: 'serif', alignSelf: 'center'}}>{numFormatter(item.sales)}  </Text>
+                  <Text style={{fontSize: moderateScale(13, 0.5), color: 'white', fontFamily: 'serif', alignSelf: 'center'}}>{numFormatter(item.sales)}  </Text>
                   </View>
                   <View style={{flex: 2, justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
                   {/* <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text> */}

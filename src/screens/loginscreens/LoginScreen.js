@@ -182,6 +182,7 @@ const SignScreen = (props) => {
           setModalErrorMessage('Account does not exist.');
           setisModalConnectionError(true);
         } else {
+          console.log(jsonData);
           console.log('User found, Getting Token');
           GetToken();
           // setModalErrorMessage('user found');

@@ -195,15 +195,29 @@ export function DrawerContent(props) {
                 props.navigation.navigate('Inventory');
               }}
             />
-            <DrawerItem
-              icon={({color, size}) => (
-                <Icon name="bookmark-outline" color={color} size={size} />
-              )}
-              label="Salesman Reports"
-              onPress={() => {
-                props.navigation.navigate('SalesmanNet');
-              }}
-            />
+            {global.sales_position_name === 'TEST' ? (
+              <DrawerItem
+                icon={({color, size}) => (
+                  <Icon name="microsoft-onenote" color={color} size={size} />
+                )}
+                label="Schedule"
+                onPress={() => {
+                  props.navigation.navigate('SalesmanNet');
+                }}
+              />
+            ) : null}
+            {global.sales_position_name !== 'ALLSALESMAN' ? (
+              <DrawerItem
+                icon={({color, size}) => (
+                  <Icon name="bookmark-outline" color={color} size={size} />
+                )}
+                label="Salesman Reports"
+                onPress={() => {
+                  props.navigation.navigate('SalesmanNet');
+                }}
+              />
+            ) : null}
+
             {/* <DrawerItem
               icon={({color, size}) => (
                 <Icon name="clock" color={color} size={size} />

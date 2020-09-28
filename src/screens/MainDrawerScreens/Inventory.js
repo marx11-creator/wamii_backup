@@ -728,8 +728,8 @@ export default function Inventory(props) {
           }}>
           <FlatButton // MAIN
             text="Filter"
-            gradientFrom="#14BF15"
-            gradientTo="#43EA44"
+            gradientFrom="#F08E90"
+            gradientTo="#D6171A"
             onPress={() => {
               // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
               GetPrincipalList();
