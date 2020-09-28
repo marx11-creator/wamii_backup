@@ -57,6 +57,7 @@ var updateProgress = 0;
 var cur_month = new Date().getMonth() + 1;
 var prev_month = new Date().getMonth();
 var year = new Date().getFullYear();
+var MarcStatus = '0';
 //marc
 
 export default function UpdateModal(props) {
@@ -84,7 +85,7 @@ export default function UpdateModal(props) {
       ComputeLastDateTimeUpdate();
     }
 
-  //  console.log('second timer running ' + ' ' + localSeconds);
+    //  console.log('second timer running ' + ' ' + localSeconds);
     if (localSeconds === 900) {
       globalStatus.updateStatus = 'Updating';
 
@@ -1223,7 +1224,14 @@ export default function UpdateModal(props) {
   };
 
   useEffect(() => {
-    if (load_pc === 1 && load_v === 1 && load_n === 1 && load_c === 1) {
+    if (
+      load_pc === 1 &&
+      load_v === 1 &&
+      load_n === 1 &&
+      load_c === 1 &&
+      MarcStatus === '0'
+    ) {
+      MarcStatus = '1';
       console.log('14 ' + 'concat run');
       concat_data_per_customer();
       concat_data_per_vendor();
@@ -1231,7 +1239,14 @@ export default function UpdateModal(props) {
       concat_data_per_category();
     }
 
-    if (load_pc === 2 && load_v === 2 && load_n === 2 && load_c === 2) {
+    if (
+      load_pc === 2 &&
+      load_v === 2 &&
+      load_n === 2 &&
+      load_c === 2 &&
+      MarcStatus === '1'
+    ) {
+      MarcStatus = '2';
       console.log('15 ' + 'upload to local run');
       upload_data_per_customer();
       upload_data_per_vendor();
@@ -1244,7 +1259,14 @@ export default function UpdateModal(props) {
       }
     }
 
-    if (load_pc === 3 && load_v === 3 && load_n === 3 && load_c === 3) {
+    if (
+      load_pc === 3 &&
+      load_v === 3 &&
+      load_n === 3 &&
+      load_c === 3 &&
+      MarcStatus === '2'
+    ) {
+      MarcStatus = '3';
       prompt();
     }
   });
@@ -1270,6 +1292,7 @@ export default function UpdateModal(props) {
     setload_n(0);
     setload_v(0);
     setload_c(0);
+    MarcStatus = '0';
     setq5Marc(true);
     updateProgress = Number(updateProgress) + Number(10);
     setglobalState({

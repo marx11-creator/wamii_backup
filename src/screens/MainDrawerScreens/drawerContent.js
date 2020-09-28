@@ -46,7 +46,6 @@ import PageContext from './pagecontext';
 import moment from 'moment';
 
 export function DrawerContent(props) {
-
   const [globalState, setglobalState] = useContext(PageContext);
 
   function SQLerror(err) {
@@ -155,9 +154,7 @@ export function DrawerContent(props) {
               label="Dashboard"
               onPress={() => {
                 {
-
                   // FilterList.DashboardFilterYearNMonthTeam =   moment().utcOffset('+08:00').format('YYYY') +  moment().utcOffset('+08:00').format('MMMM') +  '';
-
 
                   ModuleAccess.PerTeam === 'ALLOWED' ||
                   ModuleAccess.PerSalesman === 'ALLOWED' ||
@@ -232,37 +229,34 @@ export function DrawerContent(props) {
               }}>
               <View style={{alignItems: 'flex-start', marginLeft: scale(80)}}>
                 <FlatButton
-                text=  {globalState.updateStatus === 'Idle'  ? 'Update Now' : 'Updating...'}
+                  text={
+                    globalState.updateStatus === 'Idle'
+                      ? 'Update Now'
+                      : 'Updating...'
+                  }
                   onPress={() => {
-                      if (globalStatus.StartUpUpdate === false || globalState.updateStatus === 'Updating'){
-                        
-                        Alert.alert(
-                          'Note',
-                          "Application already updating in background. Kindly wait",
-                          [
-                            {
-                              text: 'OK',
-                            },
-                          ],
-                          {cancelable: true},
-                        );
+                    if (globalStatus.updateStatus === 'Updating') {
+                      Alert.alert(
+                        'Note',
+                        'Application already updating in background. Kindly wait',
+                        [
+                          {
+                            text: 'OK',
+                          },
+                        ],
+                        {cancelable: true},
+                      );
+                    } else {
+                      setglobalState({
+                        ...globalState,
+                        timerSeconds: 0,
+                        updateStatus: 'Updating',
+                      });
 
-                        
-                      } else {
-                        
-                     
-                        setglobalState({
-                          ...globalState,
-                          timerSeconds: 0,
-                          updateStatus: 'Updating',
-                        });
-
-                    globalStatus.updateStatus = 'Updating';
-                    globalStatus.updateMode = 'manual';
-                    props.navigation.navigate('UpdateModal');
-
-                      }
-
+                      globalStatus.updateStatus = 'Updating';
+                      globalStatus.updateMode = 'manual';
+                      props.navigation.navigate('UpdateModal');
+                    }
                   }}
                   gradientFrom="#00961A"
                   gradientTo="#34F856"
@@ -355,8 +349,6 @@ export function DrawerContent(props) {
               }}
             />
           </Drawer.Section>
-
-
 
           <Drawer.Section style={styles.bottomDrawerSection}>
             <DrawerItem

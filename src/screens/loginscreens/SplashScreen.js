@@ -24,6 +24,7 @@ import {
   Update1004,
   Update1005,
   Update1006,
+  Update1007,
 } from '../../database/sqliteSetup';
 
 import {
@@ -79,7 +80,7 @@ export default function SplashScreen(props) {
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
-      // console.log('focus on Splash');
+
       setLogoAnimation(true);
       var currSecc = 0;
       const intervalId = BackgroundTimer.setInterval(() => {
@@ -91,7 +92,7 @@ export default function SplashScreen(props) {
         if (currSecc === 1) {
           // CheckUserifLogin();
           GetAppVersionInLocalDB();
-
+      
           BackgroundTimer.clearInterval(intervalId);
         }
       }, 1000);
@@ -99,6 +100,7 @@ export default function SplashScreen(props) {
   }, []);
 
   function GetAppVersionInLocalDB() {
+  
     dbUpdateDbVersion.transaction((tx) => {
       tx.executeSql(
         'SELECT max(updateversion) as updateversion, dateTimeUpdated FROM updateversion_tbl',
@@ -111,6 +113,7 @@ export default function SplashScreen(props) {
               0,
             ).updateversion;
             RunDBUpdate();
+
           } else {
             //console.log('no update version found');
             LocalAppVersionUpdate.LocalAppVersionUpdateField = 1000;
@@ -121,19 +124,22 @@ export default function SplashScreen(props) {
       );
     });
   }
-
+ 
   function RunDBUpdate() {
+
     //if local and current have initialized
     if (
       LocalAppVersionUpdate.LocalAppVersionUpdateField > 0 &&
       CurrentAppVersionUpdate.CurrentAppVersionUpdateField > 0
     ) {
+    
       //console.log('local and current have initialized');
       //if local is less than current app update or local is not updated
       if (
         LocalAppVersionUpdate.LocalAppVersionUpdateField <
         CurrentAppVersionUpdate.CurrentAppVersionUpdateField
       ) {
+
         const intervalUpdateChecker = BackgroundTimer.setInterval(() => {
           if (
             LocalAppVersionUpdate.LocalAppVersionUpdateField ===
@@ -189,10 +195,22 @@ export default function SplashScreen(props) {
           // );
           Update1006();
         }
+
+        if (LocalAppVersionUpdate.LocalAppVersionUpdateField < 1007) {
+          //console.log('update 005 initialized');
+          //console.log(
+          //   'before update' + LocalAppVersionUpdate.LocalAppVersionUpdateField,
+          // );
+          console.log('focus on Splash123');
+          Update1007();
+          CheckUserifLogin();
+        }
+
       } else {
         //console.log('local is updated, nothing to update.');
         // console.log('6');
         // console.log(LocalAppVersionUpdate.LocalAppVersionUpdateField);
+
         CheckUserifLogin();
       }
     }

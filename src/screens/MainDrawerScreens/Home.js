@@ -245,13 +245,17 @@ export default function Home(props) {
       console.log(globalStatus.StartUpUpdate);
       setlocalSeconds(secs);
 
+      if (secs === 1 && globalStatus.StartUpUpdate === false) {
+        globalStatus.updateStatus = 'Updating';
+      }
+
       if (secs === 3 && globalStatus.StartUpUpdate === false) {
         // var screenname = CurrentAppScreen.Screen;
         console.log('3seonds was run');
         globalStatus.updateStatus = 'Updating';
 
         globalStatus.updateMode = 'auto';
-        globalStatus.StartUpUpdate = true;
+
         // props.navigation.navigate('UpdateModal');
         // props.navigation.navigate(screenname);
 

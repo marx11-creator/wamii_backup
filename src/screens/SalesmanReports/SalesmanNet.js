@@ -89,7 +89,7 @@ export default function ViewScreen(props) {
   }
 
   function push_sales_net() {
-
+console.log('push run')
     var YearQuery = '';
     if (FilterList.DashboardFilterYear === '') {
       YearQuery =
@@ -115,10 +115,12 @@ export default function ViewScreen(props) {
     }
 
     db.transaction((tx) => {
-      tx.executeSql('SELECT * from tbl_sales_net WHERE ' +  YearQuery +  MonthQuery, [], (tx, results) => {
+        tx.executeSql('SELECT * from tbl_sales_net WHERE ' +  YearQuery +  MonthQuery, [], (tx, results) => {
+     
         var net = [];
         for (let i = 0; i < results.rows.length; ++i) {
           net.push(results.rows.item(i));
+          console.log(results.rows.length);
         }
 
           // console.log(temp);
@@ -317,21 +319,21 @@ export default function ViewScreen(props) {
     percent = (percent).toFixed(2);
     return (
 
-<View style={{height: 35, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5,backgroundColor: '#ffffff',alignItems: 'center'}}>
+<View style={{height: 35, flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 5 ,alignItems: 'center'}}>
           <View style={{flex: 1,borderWidth: 0}}>
-          <Text style={{fontSize: moderateScale(15, 0.5), marginLeft: 10, fontWeight:'normal', alignSelf: 'flex-start'}}>{item.principal_acronym}</Text>
+          <Text style={{fontSize: moderateScale(15, 0.5), color: '#FFFFFF', marginLeft: 10, fontWeight:'normal', alignSelf: 'flex-start'}}>{item.principal_acronym}</Text>
           </View>
           <View style={{flex: 1,borderWidth: 0}}>
-          <Text style={{fontSize: moderateScale(15, 0.5),  fontWeight:'normal', alignSelf: 'center'}}>{numFormatter(item.total_target)}</Text>
+          <Text style={{fontSize: moderateScale(15, 0.5), color: '#FFFFFF', fontWeight:'normal', alignSelf: 'center'}}>{numFormatter(item.total_target)}</Text>
           </View>
           <View style={{flex: 1,borderWidth: 0}}>
-          <Text style={{fontSize: moderateScale(15, 0.5), fontWeight:'normal', alignSelf: 'center'}}>{numFormatter(item.total_amount)}</Text>
+          <Text style={{fontSize: moderateScale(15, 0.5),color: '#FFFFFF', fontWeight:'normal', alignSelf: 'center'}}>{numFormatter(item.total_amount)}</Text>
           </View>
           <View style={{flex: 1,borderWidth: 0}}>
-          <Text style={{fontSize: moderateScale(15, 0.5),  fontWeight:'normal', alignSelf: 'center'}}>{percent}%</Text>
+          <Text style={{fontSize: moderateScale(15, 0.5),color: '#FFFFFF',  fontWeight:'normal', alignSelf: 'center'}}>{percent}%</Text>
           </View>
           <View style={{flex: 1,borderWidth: 0}}>
-          <Text style={{fontSize: moderateScale(15, 0.5),   fontWeight:'normal', alignSelf: 'center'}}>{numFormatter(item.uba)}</Text>
+          <Text style={{fontSize: moderateScale(15, 0.5), color: '#FFFFFF',  fontWeight:'normal', alignSelf: 'center'}}>{numFormatter(item.uba)}</Text>
           </View>
         </View>
 
@@ -344,16 +346,16 @@ export default function ViewScreen(props) {
     return (
       <View key={item.user_id} style={{flexDirection: 'row', paddingVertical: 5}}>
         <View style={{flex: 1.5, borderWidth: 0,justifyContent: 'center', marginLeft: 10 }}>
-          <Text style={{alignSelf: 'flex-start', fontSize: moderateScale(12, 0.5)}}>{item.product_category}</Text>
+          <Text style={{alignSelf: 'flex-start', color: '#ffffff', fontSize: moderateScale(12, 0.5)}}>{item.product_category}</Text>
           </View>
           <View style={{flex: 1, borderWidth: 0}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>{numFormatter(item.total_target)}</Text>
+          <Text style={{alignSelf: 'center',  color: '#ffffff',fontSize: moderateScale(15, 0.5), padding: 2}}>{numFormatter(item.total_target)}</Text>
           </View>
           <View style={{flex: 1, borderWidth: 0}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>{numFormatter(item.total_amount)}</Text>
+          <Text style={{alignSelf: 'center', color: '#ffffff', fontSize: moderateScale(15, 0.5), padding: 2}}>{numFormatter(item.total_amount)}</Text>
           </View>
           <View style={{flex: 1, borderWidth: 0}}>
-          <Text style={{alignSelf: 'center', fontSize: moderateScale(15, 0.5), padding: 2}}>{percent}%</Text>
+          <Text style={{alignSelf: 'center',  color: '#ffffff',fontSize: moderateScale(15, 0.5), padding: 2}}>{percent}%</Text>
         </View>
       </View>
     );
@@ -671,8 +673,33 @@ export default function ViewScreen(props) {
                   <View style={{flex: 2 }}>
                   <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'center', color: '#7CFC00'}}>{numFormatter(item.sales)}  </Text>
                   </View>
-                  <View style={{flex: 2 }}>
-                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'white'}}>{item.invoice_status_final}</Text>
+                  <View style={{flex: 2, justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
+                  {/* <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text> */}
+                   {item.invoice_status_final === 'SAVED' ? (
+                  <View style={{backgroundColor: '#F8A4AF',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'PREPARING' ? (
+                  <View style={{backgroundColor: '#F8A4AF',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'PREPARED' ? (
+                  <View style={{backgroundColor: '#F8A4AF',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'CONFIRMED' ? (
+                  <View style={{backgroundColor: '#09F67F',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'LOADING' ? (
+                  <View style={{backgroundColor: '#09F67F',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'LOADED' ? (
+                  <View style={{backgroundColor: '#09F67F',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'DISPATCH' ? (
+                  <View style={{backgroundColor: '#09F67F',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'DELIVERED' ? (
+                  <View style={{backgroundColor: '#09F67F',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+
                   </View>
                 </View>
                 </TouchableOpacity>
@@ -718,7 +745,7 @@ if (showCategory === true) {
 
     <SafeAreaView style={{flex: 1}}>
 
-      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFAFA'}}>
+      <View style={{ flex: 1, flexDirection: 'column', backgroundColor: 'gray'}}>
 
       <Image source={require('../../assets/pic/green.png')} style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%'}}/>
 
@@ -893,8 +920,33 @@ if (showCategory === true) {
                   <View style={{flex: 2 }}>
                   <Text style={{fontSize: moderateScale(13, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
                   </View>
-                  <View style={{flex: 2 }}>
-                  <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
+                  <View style={{flex: 2, justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
+                  {/* <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text> */}
+                   {item.invoice_status_final === 'SAVED' ? (
+                  <View style={{backgroundColor: '#F8A4AF',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'PREPARING' ? (
+                  <View style={{backgroundColor: '#F8A4AF',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'PREPARED' ? (
+                  <View style={{backgroundColor: '#F8A4AF',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'CONFIRMED' ? (
+                  <View style={{backgroundColor: '#09F67F',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'LOADING' ? (
+                  <View style={{backgroundColor: '#09F67F',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'LOADED' ? (
+                  <View style={{backgroundColor: '#09F67F',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'DISPATCH' ? (
+                  <View style={{backgroundColor: '#09F67F',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+                  {item.invoice_status_final === 'DELIVERED' ? (
+                  <View style={{backgroundColor: '#09F67F',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
+
                   </View>
                 </View>
                   </TouchableOpacity>

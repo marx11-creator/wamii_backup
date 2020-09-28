@@ -490,19 +490,19 @@ export function Update1004() {
           if (results.rowsAffected > 0) {
             console.log('1004 updated added to local test');
 
-            Alert.alert(
-              'System Message',
-              'System updated Automatically, Please restart application.',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => {
-                    BackHandler.exitApp();
-                  },
-                },
-              ],
-              {cancelable: true},
-            );
+            // Alert.alert(
+            //   'System Message',
+            //   'System updated Automatically, Please restart application.',
+            //   [
+            //     {
+            //       text: 'OK',
+            //       onPress: () => {
+            //         BackHandler.exitApp();
+            //       },
+            //     },
+            //   ],
+            //   {cancelable: true},
+            // );
           }
         },
         SQLerror,
@@ -599,19 +599,52 @@ export function Update1006() {
           if (results.rowsAffected > 0) {
             console.log('1006 updated added to local test');
 
-            Alert.alert(
-              'System Message',
-              'System updated Automatically, Please restart application.',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => {
-                    BackHandler.exitApp();
-                  },
-                },
-              ],
-              {cancelable: true},
-            );
+            // Alert.alert(
+            //   'System Message',
+            //   'System updated Automatically, Please restart application.',
+            //   [
+            //     {
+            //       text: 'OK',
+            //       onPress: () => {
+            //         BackHandler.exitApp();
+            //       },
+            //     },
+            //   ],
+            //   {cancelable: true},
+            // );
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+}
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1006
+
+export function Update1007() {
+  {
+    dbUpdateDbVersion.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  updateversion_tbl (updateversion, dateTimeUpdated) VALUES (?,?)',
+        [1007, moment().utcOffset('+08:00').format('YYYY-MM-DD hh:mm:ss a')],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('1007 updated added to local test');
+
+            // Alert.alert(
+            //   'System Message',
+            //   'System updated Automatically, Please restart application.',
+            //   [
+            //     {
+            //       text: 'OK',
+            //       onPress: () => {
+            //         BackHandler.exitApp();
+            //       },
+            //     },
+            //   ],
+            //   {cancelable: true},
+            // );
           }
         },
         SQLerror,
