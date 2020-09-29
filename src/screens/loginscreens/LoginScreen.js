@@ -29,10 +29,16 @@ import {
 } from '../../sharedComponents/scaling';
 import FlatButton from '../../sharedComponents/custombutton';
 
-import {globalCompany, ModuleAccess, server} from '../../sharedComponents/globalCommands/globalCommands';
+import {
+  globalCompany,
+  ModuleAccess,
+  server,
+} from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users, dbAppToken} from '../../database/sqliteSetup';
 import moment from 'moment';
 import {APIToken} from '../../sharedComponents/globalCommands/globalCommands';
+
+var freshLogin = false;
 
 const SignScreen = (props) => {
   function SQLerror(err) {
@@ -152,21 +158,22 @@ const SignScreen = (props) => {
   }
 
   const CheckUser = () => {
-    console.log(data.user_name + ' un');
-    console.log(data.password + ' pw');
     ClearUserLogin();
     ClearAppToken();
     setisLoadingActivityIndicator(true);
     const unpw = data.user_name + '&' + data.password;
     // console.log(unpw);
     Promise.race([
-      fetch(server.server_address + globalCompany.company + 'users/search/' + unpw, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      fetch(
+        server.server_address + globalCompany.company + 'users/search/' + unpw,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
         },
-      }),
+      ),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout')), 40000),
       ),
@@ -175,18 +182,31 @@ const SignScreen = (props) => {
         return responseData.json();
       })
       .then((jsonData) => {
-        // console.log(jsonData);
+        console.log(jsonData);
+
+        jsonData.map((key, index) => {
+          if (global.device_id === key.device_id) {
+            freshLogin = false;
+            console.log('Device ID match');
+            GetToken();
+          } else if (key.device_id === '') {
+            freshLogin = true;
+            console.log('fresh login');
+            GetToken();
+          } else {
+            console.log('New Device Detected');
+            setModalErrorMessage(
+              'New login from another device detected. You may only login on one device. \n \n Please contact support team.\n \n',
+            );
+            setisModalConnectionError(true);
+          }
+        });
+
         //IF USER FOUND
         if (jsonData.length < 1) {
           console.log('user not found');
           setModalErrorMessage('Account does not exist.');
           setisModalConnectionError(true);
-        } else {
-          console.log(jsonData);
-          console.log('User found, Getting Token');
-          GetToken();
-          // setModalErrorMessage('user found');
-          // setisModalConnectionError(true);
         }
       })
       .catch(function (error) {
@@ -201,6 +221,36 @@ const SignScreen = (props) => {
       })
       .done();
   };
+
+  function InsertLoginInfo(props) {
+ ;
+    fetch(server.server_address + globalCompany.company + 'InsertLoginInfo', {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + props.access_token,
+      },
+      body: JSON.stringify({
+        user_name: data.user_name,
+        device_name: global.device_name,
+        device_id: global.device_id,
+        last_login: moment().format('YYYY-MM-DD HH:mm:ss'),
+      }),
+    })
+      .then((responseData) => {
+        return responseData.json();
+      })
+      .then((jsonData) => {
+        if (jsonData.affectedRows > 0) {
+          console.log('login device info assigned');
+        }
+      })
+      .catch(function (error) {
+        console.log('error in   UpdateAccount :' + error.text);
+      })
+      .done();
+  }
 
   const GetToken = () => {
     Promise.race([
@@ -222,8 +272,15 @@ const SignScreen = (props) => {
       .then((jsonData) => {
         console.log('token obtained, saving to local');
         APIToken.access_token = jsonData.access_token;
-        // console.log(jsonData.access_token);
-        SaveAppToken(jsonData);
+
+        if (freshLogin === false) {
+          //USER IS CURRENTLY USING ASSIGNED
+          SaveAppToken(jsonData);
+        } else {
+          //USER LOGIN IS FRESH, ASSIGNING DEVICE
+          InsertLoginInfo(jsonData);
+          SaveAppToken(jsonData);
+        }
       })
       .catch(function (error) {
         setModalErrorMessage('Error Signing in.');
@@ -275,7 +332,10 @@ const SignScreen = (props) => {
     // console.log(unpw);
     Promise.race([
       fetch(
-        server.server_address + globalCompany.company + 'users/getuseraccess/' + unpw,
+        server.server_address +
+          globalCompany.company +
+          'users/getuseraccess/' +
+          unpw,
         {
           method: 'GET',
           headers: {
@@ -305,6 +365,7 @@ const SignScreen = (props) => {
           global.TeamAccessList = '';
           global.TeamAccessListForAPI = '';
           global.sales_position_name = '';
+
           jsonData.map((key, index) => {
             if (
               key.constant_type === 'MODULE_ACCESS' &&
@@ -340,14 +401,12 @@ const SignScreen = (props) => {
 
             //GET ACCESS TEAM
             if (key.constant_type === 'TEAM_ACCESS') {
-              console.log(key.constant_value);
               global.TeamAccessList =
                 global.TeamAccessList + "'" + key.constant_value + "',";
             }
 
             //GET SALES_POSITION_NAME
             if (key.constant_type === 'SALES_POSITION_NAME') {
-              console.log(key.constant_value + ' aaas');
               global.sales_position_name = key.constant_value;
             }
 
@@ -690,7 +749,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   modalView: {
-    height: 150,
+    height: 250,
     margin: 20,
     backgroundColor: '#ffffff',
     borderRadius: 20,
@@ -706,7 +765,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalText: {
-    marginBottom: scale(15),
+    marginBottom: scale(25),
     textAlign: 'center',
   },
 });

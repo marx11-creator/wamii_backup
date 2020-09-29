@@ -677,6 +677,9 @@ console.log('push run');
                   </View>
                   <View style={{flex: 2, justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
                   {/* <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text> */}
+                  {item.invoice_status_final === 'null' ? (
+                  <View style={{backgroundColor: '#F8A4AF',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
                    {item.invoice_status_final === 'SAVED' ? (
                   <View style={{backgroundColor: '#F8A4AF',    width: scale(30), height: scale(30),    borderRadius: 50}} />
                     ) : null}
@@ -924,6 +927,9 @@ if (showCategory === true) {
                   </View>
                   <View style={{flex: 2, justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
                   {/* <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text> */}
+                  {item.invoice_status_final === 'null' ? (
+                  <View style={{backgroundColor: '#F8A4AF',    width: scale(30), height: scale(30),    borderRadius: 50}} />
+                    ) : null}
                    {item.invoice_status_final === 'SAVED' ? (
                   <View style={{backgroundColor: '#F8A4AF',    width: scale(30), height: scale(30),    borderRadius: 50}} />
                     ) : null}

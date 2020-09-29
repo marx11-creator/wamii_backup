@@ -40,7 +40,7 @@ import {
 
 import BackgroundTimer from 'react-native-background-timer';
 import {cos} from 'react-native-reanimated';
-
+import DeviceInfo from 'react-native-device-info';
 // LogBox.ignoreAllLogs();
 
 
@@ -53,6 +53,13 @@ import {cos} from 'react-native-reanimated';
 
 export default function SplashScreen(props) {
   CreateDatabase();
+
+
+  
+  DeviceInfo.getDeviceName().then((deviceName) => {
+    global.device_name = deviceName;
+    global.device_id = DeviceInfo.getUniqueId();
+  });
 
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
