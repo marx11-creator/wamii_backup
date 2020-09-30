@@ -237,13 +237,19 @@ export default function UpdateModal(props) {
   }
 
   function CheckSystemStatus() {
+    var updateDifference = 0;
+    updateDifference =  Number(APIUpdateVersion.APIUpdateVersionField) - Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField);
     if (APIUpdateVersion.APIUpdateVersionField !== 0) {
+      
       if (
         Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField) ===
         Number(APIUpdateVersion.APIUpdateVersionField)
       ) {
         console.log('app is updated');
       } else {
+       if (updateDifference > 1 ){
+         console.log(updateDifference + ' is the difference on update. kill')
+       } else {
         Alert.alert(
           'Update',
           'A new version of the app is now available! \nPlease download and install on our Viber Group Chat \n\n(App Version wamii_v' +
@@ -275,6 +281,8 @@ export default function UpdateModal(props) {
           ],
           {cancelable: true},
         );
+       }
+       
       }
     }
 
