@@ -31,7 +31,7 @@ export var APIToken = {
 export var server = {
   //http://172.16.0.150:3003
   //https://boiling-atoll-20376.herokuapp.com
-  server_address: 'http://172.16.0.185:3003/',
+  server_address: 'https://boiling-atoll-20376.herokuapp.com/',
 };
 
 export var CurrentAppVersionUpdate = {

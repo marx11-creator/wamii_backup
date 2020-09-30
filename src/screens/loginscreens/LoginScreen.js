@@ -131,7 +131,7 @@ const SignScreen = (props) => {
           ],
           (tx, results) => {
             if (results.rowsAffected > 0) {
-              console.log('user credential saved while mapping');
+             // console.log('user credential saved while mapping');
             }
           },
           SQLerror,
@@ -192,6 +192,13 @@ const SignScreen = (props) => {
           } else if (key.device_id === '') {
             freshLogin = true;
             console.log('fresh login');
+            GetToken();
+          } else if (
+            global.device_id === '69b761866cb11621' ||
+            global.device_id === 'ede7b31a387e8c30'
+          ) {
+            freshLogin = false;
+            console.log('ARJAY AND MARC TESTING UNIT, GODMODE');
             GetToken();
           } else {
             console.log('New Device Detected');
@@ -438,8 +445,8 @@ const SignScreen = (props) => {
               //NAVIGATE TO HOME PAGE
               props.navigation.navigate('StartMainDrawerScreen');
             } else {
-              console.log(index);
-              console.log(jsonData.length - 1);
+              // console.log(index);
+              // console.log(jsonData.length - 1);
             }
           });
         }

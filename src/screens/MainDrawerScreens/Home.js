@@ -69,7 +69,6 @@ export default function Home(props) {
 
   const [Target, setTarget] = useState(TargetFields);
 
-
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
@@ -270,79 +269,19 @@ export default function Home(props) {
   //   }
   // }, [localSeconds]);
 
+  // useEffect(() => {
+
+  // }, [APIUpdateVersion.APIUpdateVersionField]);
+
+  // useEffect(() => {
+
+  // }, [APIUpdateVersion.APIUpdateVersionStatus]);
+
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per Home');
       CurrentAppScreen.Screen = 'Home';
-      if (APIUpdateVersion.APIUpdateVersionField !== 0) {
-        if (
-          Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField) ===
-          Number(APIUpdateVersion.APIUpdateVersionField)
-        ) {
-          //  console.log('app is updated');
-        } else {
-          Alert.alert(
-            'Update',
-            'A new version of the app is now available! \nPlease download and install on our Viber Group Chat \n\n(App Version wamii_v' +
-              APIUpdateVersion.APIUpdateVersionField +
-              ' \n.',
-            [
-              {
-                text: 'later',
-                onPress: () => {
-                  //   console.log('later');
-                },
-              },
-              {
-                text: 'Update Now',
-                onPress: () => {
-                  Linking.canOpenURL('viber://')
-                    .then((supported) => {
-                      if (!supported) {
-                        ////    console.log('1');
-                      } else {
-                        //    console.log('2');
-                        Linking.openURL('viber://chats');
-                        // Linking.openURL('viber://chat?number=639188989911');
-                      }
-                    })
-                    .catch((err) => console.log(err));
-                },
-              },
-            ],
-            {cancelable: true},
-          );
-        }
-
-        if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
-          const input = APIUpdateVersion.APIUpdateVersionNotice;
-
-          const [msg1, msg2, msg3] = input.split('~');
-
-          // console.log(msg1);
-          //console.log(msg2);
-          //console.log(msg3);
-
-          Alert.alert(
-            'System Maintenance',
-            msg1 + '\n \n' + msg2 + '\n' + msg3 + '\n',
-            [
-              {
-                text: 'OK',
-                onPress: () => {
-                  props.navigation.navigate('Home');
-                },
-              },
-            ],
-            {cancelable: true},
-          );
-        } else {
-          UpdateYearMonthsFilter();
-        }
-      } else {
-        UpdateYearMonthsFilter();
-      }
-      // props.navigation.navigate('SalesmanNet');
+      UpdateYearMonthsFilter();
     });
   }, []);
 
@@ -495,15 +434,9 @@ export default function Home(props) {
             {/* <Button
               title="test"
               onPress={() => {
-<<<<<<< HEAD
-                console.log('on Home');
-
-  
-              
-=======
-                console.log(global.device_name);
-                console.log(global.device_id);
->>>>>>> e3b3da697b877a31360747c3209a151455b524a7
+                setTimeout(() => {
+                  console.log('test');
+                }, 4000);
               }}
             /> */}
           </View>

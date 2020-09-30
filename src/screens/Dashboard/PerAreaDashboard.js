@@ -234,97 +234,87 @@ export default function PerAreaDashboard(props) {
 
   //USE EFFECT PART
 
-   
-  
-
-
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per area focus'); //
       CurrentAppScreen.Screen = 'PerArea';
       if (PageVisited.PerAreaPAGE === 'NO') {
         PageVisited.PerAreaPAGE = 'YES';
-        console.log('focus on per area with changes')
-        
-          // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
-          SearchPrincipal();
+        console.log('focus on per area with changes');
 
-          if (perArea.length > 1 && totalSales > 1) {
-            // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
-            var temp = [];
-            perArea.map((item, index) => {
-              //BUILD PRINCIPAL ACONYM
-              temp.push(item.principal_acronym);
-            });
-    
-            var tempSales = [];
-            var firstContribution = 1;
-            perArea.map((item, index) => {
-              // BUILD PRINCIPAL SALES
-              tempSales.push(((item.sales1 / totalSales) * 100).toFixed(2) * 1);
-              if (firstContribution === 1) {
-                setCurrentContribution(
-                  ((item.sales1 / totalSales) * 100).toFixed(2) * 1,
-                );
-                firstContribution = 0;
-              }
-            });
-    
-            if (temp.length === tempSales.length) {
-              //  POPULATE NEEDED DATA
-              setDynamicPrincipalList(temp);
-              setDynamicPrincipalSales(tempSales);
+        // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
+        SearchPrincipal();
+
+        if (perArea.length > 1 && totalSales > 1) {
+          // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
+          var temp = [];
+          perArea.map((item, index) => {
+            //BUILD PRINCIPAL ACONYM
+            temp.push(item.principal_acronym);
+          });
+
+          var tempSales = [];
+          var firstContribution = 1;
+          perArea.map((item, index) => {
+            // BUILD PRINCIPAL SALES
+            tempSales.push(((item.sales1 / totalSales) * 100).toFixed(2) * 1);
+            if (firstContribution === 1) {
+              setCurrentContribution(
+                ((item.sales1 / totalSales) * 100).toFixed(2) * 1,
+              );
+              firstContribution = 0;
             }
+          });
+
+          if (temp.length === tempSales.length) {
+            //  POPULATE NEEDED DATA
+            setDynamicPrincipalList(temp);
+            setDynamicPrincipalSales(tempSales);
           }
+        }
       }
     });
   }, []);
 
-
-  
   useEffect(() => {
     console.log('focus on per area from update'); //
- 
 
-// LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
-SearchPrincipal();
+    // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
+    SearchPrincipal();
 
-if (perArea.length > 1 && totalSales > 1) {
-  // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
-  var temp = [];
-  perArea.map((item, index) => {
-    //BUILD PRINCIPAL ACONYM
-    temp.push(item.principal_acronym);
-  });
+    if (perArea.length > 1 && totalSales > 1) {
+      // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
+      var temp = [];
+      perArea.map((item, index) => {
+        //BUILD PRINCIPAL ACONYM
+        temp.push(item.principal_acronym);
+      });
 
-  var tempSales = [];
-  var firstContribution = 1;
-  perArea.map((item, index) => {
-    // BUILD PRINCIPAL SALES
-    tempSales.push(((item.sales1 / totalSales) * 100).toFixed(2) * 1);
-    if (firstContribution === 1) {
-      setCurrentContribution(
-        ((item.sales1 / totalSales) * 100).toFixed(2) * 1,
-      );
-      firstContribution = 0;
+      var tempSales = [];
+      var firstContribution = 1;
+      perArea.map((item, index) => {
+        // BUILD PRINCIPAL SALES
+        tempSales.push(((item.sales1 / totalSales) * 100).toFixed(2) * 1);
+        if (firstContribution === 1) {
+          setCurrentContribution(
+            ((item.sales1 / totalSales) * 100).toFixed(2) * 1,
+          );
+          firstContribution = 0;
+        }
+      });
+
+      if (temp.length === tempSales.length) {
+        //  POPULATE NEEDED DATA
+        setDynamicPrincipalList(temp);
+        setDynamicPrincipalSales(tempSales);
+      }
     }
-  });
-
-  if (temp.length === tempSales.length) {
-    //  POPULATE NEEDED DATA
-    setDynamicPrincipalList(temp);
-    setDynamicPrincipalSales(tempSales);
-  }
-}
-  
-    
   }, [globalState.dateTimeUpdated24hr]);
-
 
   useEffect(() => {
     if (CurrentDashboardScreen.Screen === 'PERAREA') {
       console.log('focus on per area from dashboard global'); //
-PageVisited.PerAreaPAGE = 'YES';
+      PageVisited.PerAreaPAGE = 'YES';
       // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
       SearchPrincipal();
 

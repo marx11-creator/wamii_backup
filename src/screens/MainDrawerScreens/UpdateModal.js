@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Alert,
+  Linking,
 } from 'react-native';
 import FlatButton from '../../sharedComponents/custombutton';
 import {dbperymtsat} from '../../database/sqliteSetup';
@@ -38,6 +39,7 @@ import {
   CurrentAppScreen,
   GetDateTime,
   ComputeLastDateTimeUpdate,
+  CurrentAppVersionUpdate,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
 import PageContext from './pagecontext';
@@ -88,7 +90,7 @@ export default function UpdateModal(props) {
       ComputeLastDateTimeUpdate();
     }
 
-    //  console.log('second timer running ' + ' ' + localSeconds);
+    // console.log('second timer running ' + ' ' + localSeconds);
     if (localSeconds === 900) {
       globalStatus.updateStatus = 'Updating';
 
@@ -210,6 +212,7 @@ export default function UpdateModal(props) {
       props.navigation.navigate(CurrentAppScreen.Screen);
 
       RunTimer();
+      //5
     } else {
       updateProgress = 0;
       console.log(globalStatus.updateMode);
@@ -223,6 +226,76 @@ export default function UpdateModal(props) {
       });
 
       RunTimer();
+      //6
+
+
+    }
+
+    CheckSystemStatus();
+
+    
+  }
+
+  function CheckSystemStatus() {
+    if (APIUpdateVersion.APIUpdateVersionField !== 0) {
+      if (
+        Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField) ===
+        Number(APIUpdateVersion.APIUpdateVersionField)
+      ) {
+        console.log('app is updated');
+      } else {
+        Alert.alert(
+          'Update',
+          'A new version of the app is now available! \nPlease download and install on our Viber Group Chat \n\n(App Version wamii_v' +
+            APIUpdateVersion.APIUpdateVersionField +
+            ' \n.',
+          [
+            {
+              text: 'later',
+              onPress: () => {
+                //   console.log('later');
+              },
+            },
+            {
+              text: 'Update Now',
+              onPress: () => {
+                Linking.canOpenURL('viber://')
+                  .then((supported) => {
+                    if (!supported) {
+                      ////    console.log('1');
+                    } else {
+                      //    console.log('2');
+                      Linking.openURL('viber://chats');
+                      // Linking.openURL('viber://chat?number=639188989911');
+                    }
+                  })
+                  .catch((err) => console.log(err));
+              },
+            },
+          ],
+          {cancelable: true},
+        );
+      }
+    }
+
+    if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
+      const input = APIUpdateVersion.APIUpdateVersionNotice;
+      const [msg1, msg2, msg3] = input.split('~');
+      Alert.alert(
+        'System Maintenance',
+        msg1 + '\n \n' + msg2 + '\n' + msg3 + '\n',
+        [
+          {
+            text: 'OK',
+            // onPress: () => {
+            //   props.navigation.navigate('Home');
+            // },
+          },
+        ],
+        {cancelable: true},
+      );
+    } else {
+      console.log('asd');
     }
   }
 
@@ -256,11 +329,13 @@ export default function UpdateModal(props) {
   }
 
   function RunTimer() {
+    console.log('timer triggered');
     var secs = 0;
     const intervalId2 = BackgroundTimer.setInterval(() => {
       secs = secs + 1;
       setLocalSeconds(secs);
-
+// console.log(secs);
+// console.log(globalStatus.updateMode)
       if (secs === 900) {
         BackgroundTimer.clearInterval(intervalId2);
         GETUpdateVersionAPI();
@@ -278,7 +353,6 @@ export default function UpdateModal(props) {
       updateProgress = 0;
       setglobalState({
         ...globalState,
-        updateStatus: 'Updating',
         updatePercentage: updateProgress,
       });
       setisModalConnectionError(true);
@@ -291,13 +365,13 @@ export default function UpdateModal(props) {
         updateStatus: 'Idle',
       });
       console.log('error occured in background update manual');
-      // globalStatus.updateMode = 'auto';
-      // RunTimer();
+      globalStatus.updateMode = 'auto';
+      RunTimer();
+      //7
     } else {
       updateProgress = 0;
       setglobalState({
         ...globalState,
-        updateStatus: 'Updating',
         updatePercentage: updateProgress,
       });
       setisModalConnectionError(false);
@@ -312,6 +386,7 @@ export default function UpdateModal(props) {
       });
 
       RunTimer();
+      //8
     }
   }
 
@@ -1133,9 +1208,39 @@ export default function UpdateModal(props) {
             setq3UserUpdateLog(true);
           } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
             if (globalStatus.updateMode === 'manual') {
+              console.log('MANUAL');
+              globalStatus.updateMode = 'auto';
+              updateProgress = 0;
+              setglobalState({
+                ...globalState,
+                updatePercentage: updateProgress,
+                updateStatus: 'Idle',
+              });
+
+              globalStatus.updateStatus = 'Idle';
+
+              RunTimer();
+
+              //1
+
               setisModalConnectionError(false);
               setisLoadingActivityIndicator(false);
               props.navigation.navigate('Home');
+              CheckSystemStatus();
+            } else {
+              console.log(APIUpdateVersion.APIUpdateVersionStatus);
+              updateProgress = 0;
+              setglobalState({
+                ...globalState,
+                updatePercentage: updateProgress,
+                updateStatus: 'Idle',
+              });
+
+              globalStatus.updateStatus = 'Idle';
+
+              RunTimer();
+              //2
+              CheckSystemStatus();
             }
           }
         }
@@ -1937,6 +2042,7 @@ export default function UpdateModal(props) {
           onRequestClose={() => {
             globalStatus.updateMode = 'auto';
             RunTimer();
+            //3
             setisModalConnectionError(false);
             setisLoadingActivityIndicator(false);
 
@@ -1960,6 +2066,7 @@ export default function UpdateModal(props) {
                 onPress={() => {
                   globalStatus.updateMode = 'auto';
                   RunTimer();
+                  //4
                   setisModalConnectionError(false);
                   setisLoadingActivityIndicator(false);
                   props.navigation.navigate('Home');
@@ -1974,13 +2081,13 @@ export default function UpdateModal(props) {
 
       {isLoadingActivityIndicator && (
         <View style={styles.loading}>
-          <Button
+          {/* <Button
             title="Test"
             onPress={() => {
               console.log(ApiPromoItemData.length);
               console.log(ApiRowsCount);
             }}
-          />
+          /> */}
           <Text style={{color: 'black', fontSize: moderateScale(17)}}>
             Updating... {updateProgress} %{' '}
           </Text>

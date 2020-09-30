@@ -31,7 +31,7 @@ const Dashboards = (props) => {
         inactiveTintColor: '#ffffff',
       }}>
       <Tab.Screen
-        name="PerArea"
+        name="PerTeam"
         component={PerTeamDashBoard}
         options={{
           tabBarLabel: 'Team',
@@ -45,13 +45,13 @@ const Dashboards = (props) => {
         }}
       />
       <Tab.Screen
-        name="PerTeam"
+        name="PerArea"
         component={PerAreaDashboard}
         options={{
           tabBarLabel: 'Area',
           tabBarIcon: (tabInfo) => (
             <Icon
-              name="people"
+              name="md-map"
               size={moderateScale(29, 0.5)}
               color={'#ffffff'}
             />

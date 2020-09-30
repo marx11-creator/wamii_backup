@@ -251,8 +251,8 @@ export function DrawerContent(props) {
                   onPress={() => {
                     if (globalStatus.updateStatus === 'Updating') {
                       Alert.alert(
-                        'Note',
-                        'Application already updating in background. Kindly wait',
+                        'Oops!',
+                        'Update is already running. \nPlease wait.',
                         [
                           {
                             text: 'OK',
@@ -269,7 +269,10 @@ export function DrawerContent(props) {
 
                       globalStatus.updateStatus = 'Updating';
                       globalStatus.updateMode = 'manual';
-                      props.navigation.navigate('UpdateModal');
+
+                      setTimeout(() => {
+                        props.navigation.navigate('UpdateModal');
+                      }, 1000);
                     }
                   }}
                   gradientFrom="#00961A"
