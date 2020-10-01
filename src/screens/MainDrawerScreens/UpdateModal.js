@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Alert,
   Linking,
+  BackHandler,
 } from 'react-native';
 import FlatButton from '../../sharedComponents/custombutton';
 import {dbperymtsat} from '../../database/sqliteSetup';
@@ -47,6 +48,7 @@ import BackgroundTimer from 'react-native-background-timer';
 //marc
 import {useFocusEffect} from '@react-navigation/native';
 import {sqrt} from 'react-native-reanimated';
+import {SQLErrors} from 'react-native-sqlite-storage';
 //marc
 var ApiRowsCount = 0;
 var longStrinfg = '';
@@ -227,62 +229,72 @@ export default function UpdateModal(props) {
 
       RunTimer();
       //6
-
-
     }
 
     CheckSystemStatus();
-
-    
   }
 
   function CheckSystemStatus() {
     var updateDifference = 0;
-    updateDifference =  Number(APIUpdateVersion.APIUpdateVersionField) - Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField);
+    updateDifference =
+      Number(APIUpdateVersion.APIUpdateVersionField) -
+      Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField);
     if (APIUpdateVersion.APIUpdateVersionField !== 0) {
-      
       if (
         Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField) ===
         Number(APIUpdateVersion.APIUpdateVersionField)
       ) {
         console.log('app is updated');
       } else {
-       if (updateDifference > 1 ){
-         console.log(updateDifference + ' is the difference on update. kill')
-       } else {
-        Alert.alert(
-          'Update',
-          'A new version of the app is now available! \nPlease download and install on our Viber Group Chat \n\n(App Version wamii_v' +
-            APIUpdateVersion.APIUpdateVersionField +
-            ' \n.',
-          [
-            {
-              text: 'later',
-              onPress: () => {
-                //   console.log('later');
+        if (updateDifference > 1) {
+          Alert.alert(
+            'Notice',
+            'You are using outdated version off the app. Please update to the latest version wamii_v' +
+              APIUpdateVersion.APIUpdateVersionField +
+              ' \n.',
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  BackHandler.exitApp();
+                },
               },
-            },
-            {
-              text: 'Update Now',
-              onPress: () => {
-                Linking.canOpenURL('viber://')
-                  .then((supported) => {
-                    if (!supported) {
-                      ////    console.log('1');
-                    } else {
-                      //    console.log('2');
-                      Linking.openURL('viber://chats');
-                      // Linking.openURL('viber://chat?number=639188989911');
-                    }
-                  })
-                  .catch((err) => console.log(err));
+            ],
+            {cancelable: true},
+          );
+        } else {
+          Alert.alert(
+            'Update',
+            'A new version of the app is now available! \nPlease download and install on our Viber Group Chat \n\n(App Version wamii_v' +
+              APIUpdateVersion.APIUpdateVersionField +
+              ' \n.',
+            [
+              {
+                text: 'later',
+                onPress: () => {
+                  //   console.log('later');
+                },
               },
-            },
-          ],
-          {cancelable: true},
-        );
-       }
-       
+              {
+                text: 'Update Now',
+                onPress: () => {
+                  Linking.canOpenURL('viber://')
+                    .then((supported) => {
+                      if (!supported) {
+                        ////    console.log('1');
+                      } else {
+                        //    console.log('2');
+                        Linking.openURL('viber://chats');
+                        // Linking.openURL('viber://chat?number=639188989911');
+                      }
+                    })
+                    .catch((err) => console.log(err));
+                },
+              },
+            ],
+            {cancelable: true},
+          );
+        }
       }
     }
 
@@ -317,7 +329,9 @@ export default function UpdateModal(props) {
         (tx, results) => {
           console.log('last datetimeupdatedtbl cleared');
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE6' + err);
+        },
       );
 
       tx.executeSql(
@@ -331,7 +345,9 @@ export default function UpdateModal(props) {
           // })
           GetDateTime(); // call get last date time updated to update global last date time
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE7' + err);
+        },
       );
     });
   }
@@ -342,8 +358,8 @@ export default function UpdateModal(props) {
     const intervalId2 = BackgroundTimer.setInterval(() => {
       secs = secs + 1;
       setLocalSeconds(secs);
-// console.log(secs);
-// console.log(globalStatus.updateMode)
+      // console.log(secs);
+      // console.log(globalStatus.updateMode)
       if (secs === 900) {
         BackgroundTimer.clearInterval(intervalId2);
         GETUpdateVersionAPI();
@@ -616,7 +632,7 @@ export default function UpdateModal(props) {
   }, [PerAreaLocalData]);
 
   function SQLerror(err) {
-    console.log('SQL Error1 : ' + err);
+    console.log('SPECIAL Error  : ' + err);
   }
 
   function StartUpdate() {
@@ -730,63 +746,114 @@ export default function UpdateModal(props) {
           console.log('4 ' + 'deleted local perymtsat');
           SavePerymtsatAPIData();
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE8' + err);
+        },
       );
     });
   }
 
   function SavePerymtsatAPIData() {
+    console.log(
+      lineChartLocalData.length + ' is the length of lineChartLocalData',
+    );
     var perymtsatString = '';
     var currIndex = 0;
+    var runningIndexCount = 0;
+
     //const LengthlineChartLocalData = lineChartLocalData.length - 1;
     {
       lineChartLocalData.map(function (item, index) {
         currIndex = currIndex + 1;
-        perymtsatString =
-          perymtsatString +
-          "('" +
-          item.business_year +
-          "'" +
-          ',' +
-          "'" +
-          item.business_month +
-          "'" +
-          ',' +
-          "'" +
-          item.invoice_date +
-          "'" +
-          ',' +
-          "'" +
-          item.team +
-          "'" +
-          ',' +
-          "'" +
-          item.salesman_name +
-          "'" +
-          ',' +
-          "'" +
-          item.position_name +
-          "'" +
-          ',' +
-          "'" +
-          item.amount +
-          "'" +
-          ',' +
-          "'" +
-          item.target +
-          "'" +
-          ',' +
-          "'" +
-          item.dateTimeUpdated +
-          "'" +
-          '),';
+        runningIndexCount = runningIndexCount + 1;
+
+        if (runningIndexCount < 501) {
+          // console.log('saved on ' + currIndex + ' indexxxxxx');
+          perymtsatString =
+            perymtsatString +
+            "('" +
+            item.business_year +
+            "'" +
+            ',' +
+            "'" +
+            item.business_month +
+            "'" +
+            ',' +
+            "'" +
+            item.invoice_date +
+            "'" +
+            ',' +
+            "'" +
+            item.team +
+            "'" +
+            ',' +
+            "'" +
+            item.salesman_name +
+            "'" +
+            ',' +
+            "'" +
+            item.position_name +
+            "'" +
+            ',' +
+            "'" +
+            item.amount +
+            "'" +
+            ',' +
+            "'" +
+            item.target +
+            "'" +
+            ',' +
+            "'" +
+            item.dateTimeUpdated +
+            "'" +
+            '),';
+
+          if (runningIndexCount === 500) {
+            var stringnow = perymtsatString;
+            perymtsatString = '';
+            runningIndexCount = 0;
+            dbperymtsat.transaction(function (tx) {
+              tx.executeSql(
+                'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log('SAVED 500X500');
+                },
+                SQLerror,
+              );
+            });
+          }
+
+          if (
+            runningIndexCount < 500 &&
+            currIndex === lineChartLocalData.length
+          ) {
+            var stringnow = perymtsatString;
+            perymtsatString = '';
+
+            dbperymtsat.transaction(function (tx) {
+              tx.executeSql(
+                'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+      
+                  console.log(
+                    'SAVED 500X500 from less than 500 ' + runningIndexCount,
+                  );
+                  runningIndexCount = 0;
+                },
+                SQLerror,
+              );
+            });
+          }
+        }
       });
 
       if (currIndex === lineChartLocalData.length) {
-        ///console.log(perymtsatString);
-
         console.log(
-          '5 ' + 'SavePerymtsatAPIData done concatenating, saving...',
+          '5 ' + '3 SavePerymtsatAPIData done concatenating, saved..',
         );
         updateProgress = Number(updateProgress) + Number(10);
         setglobalState({
@@ -794,19 +861,9 @@ export default function UpdateModal(props) {
           updatePercentage: updateProgress,
         });
 
-        dbperymtsat.transaction(function (tx) {
-          tx.executeSql(
-            'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
-              perymtsatString.slice(0, -1),
-            [],
-            (tx, results) => {
-              UpdateYearMonthsFilter();
-              setq1Principal(true);
-              console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
-            },
-            SQLerror,
-          );
-        });
+        UpdateYearMonthsFilter();
+        setq1Principal(true);
+        console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
       }
     }
   }
@@ -888,7 +945,9 @@ export default function UpdateModal(props) {
 
           SavePerPrincipalAPIData();
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE10' + err);
+        },
       );
     });
   }
@@ -955,7 +1014,9 @@ export default function UpdateModal(props) {
               setq2Perymtsat(true);
             }
           },
-          SQLerror,
+          (tx, err) => {
+            console.log('ADDED HERE11' + err);
+          },
         );
       });
     }
@@ -1039,7 +1100,9 @@ export default function UpdateModal(props) {
           console.log('4.1' + ' deleted local perareapermonth_tbl');
           SavePerAreaAPIData();
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE12' + err);
+        },
       );
     });
   }
@@ -1099,7 +1162,9 @@ export default function UpdateModal(props) {
               setq4Area(true);
             }
           },
-          SQLerror,
+          (tx, err) => {
+            console.log('ADDED HERE13' + err);
+          },
         );
       });
     }
@@ -1324,11 +1389,15 @@ export default function UpdateModal(props) {
                         BusinessCalendarString.slice(0, -1),
                       [],
                       (tx, results) => {},
-                      SQLerror,
+                      (tx, err) => {
+                        console.log('ADDED HERE14' + err);
+                      },
                     );
                   });
                 },
-                SQLerror,
+                (tx, err) => {
+                  console.log('ADDED HERE15' + err);
+                },
               );
             });
           }
@@ -1844,7 +1913,9 @@ export default function UpdateModal(props) {
           setload_v(3);
           console.log('25 ' + 'DONE upload_data_per_vendor');
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE1' + err);
+        },
       );
     });
   };
@@ -1866,7 +1937,9 @@ export default function UpdateModal(props) {
           setload_c(3);
           console.log('26 ' + 'DONE upload_data_per_category');
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE2' + err);
+        },
       );
     });
   };
@@ -1952,7 +2025,9 @@ export default function UpdateModal(props) {
             }
           }
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE3' + err);
+        },
       );
     });
   }
@@ -2032,7 +2107,9 @@ export default function UpdateModal(props) {
               console.log('error');
             }
           },
-          SQLerror,
+          (tx, err) => {
+            console.log('ADDED HERE5' + err);
+          },
         );
       });
     }

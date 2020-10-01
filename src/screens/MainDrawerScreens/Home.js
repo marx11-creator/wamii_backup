@@ -2,6 +2,7 @@
 import React, {useEffect, useState, useContext} from 'react';
 import {useFocusEffect, CommonActions} from '@react-navigation/native';
 import {
+  ScrollView,
   View,
   Text,
   StyleSheet,
@@ -170,18 +171,17 @@ export default function Home(props) {
         (tx, results) => {
           var len = results.rows.length;
           if (len > 0) {
-            //setTotalSales();
-            // console.log(
-            //   (parseInt(results.rows.item(0).amount) /
-            //     parseInt(results.rows.item(0).target)) *
-            //     100,
-            // );
-
+            console.log(results.rows.item(0).amount);
+            console.log(results.rows.item(0).target);
+            console.log('ACH HERE');
             setTarget({
               ...Target,
               SalesvsTarget:
-                parseInt(results.rows.item(0).amount) /
-                parseInt(results.rows.item(0).target),
+                results.rows.item(0).target < 1 ||
+                results.rows.item(0).amount < 1
+                  ? 0
+                  : parseInt(results.rows.item(0).amount) /
+                    parseInt(results.rows.item(0).target),
             });
           }
         },
@@ -300,7 +300,7 @@ export default function Home(props) {
       source={require('../../assets/building.jpg')}
       height={height}
       contentPosition="top">
-      <View style={{flexDirection: 'column', flex: 1}}>
+      <ScrollView style={{flexDirection: 'column', flex: 1}}>
         <View
           style={{
             flexDirection: 'row',
@@ -434,9 +434,7 @@ export default function Home(props) {
             {/* <Button
               title="test"
               onPress={() => {
-                setTimeout(() => {
-                  console.log('test');
-                }, 4000);
+                console.log(Target.SalesvsTarget);
               }}
             /> */}
           </View>
@@ -553,7 +551,7 @@ export default function Home(props) {
           </Text>
         </View> */}
         </View>
-      </View>
+      </ScrollView>
 
       {localSeconds === 3 ? <UpdateModal /> : null}
     </ImageOverlay>
