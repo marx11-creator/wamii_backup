@@ -761,7 +761,7 @@ export default function UpdateModal(props) {
     var currIndex = 0;
     var runningIndexCount = 0;
 
-    //const LengthlineChartLocalData = lineChartLocalData.length - 1;
+    //basis
     {
       lineChartLocalData.map(function (item, index) {
         currIndex = currIndex + 1;
@@ -818,7 +818,7 @@ export default function UpdateModal(props) {
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
-                  console.log('SAVED 500X500');
+                  console.log('SAVED 500X500 SavePerymtsatAPIData');
                 },
                 SQLerror,
               );
@@ -838,9 +838,9 @@ export default function UpdateModal(props) {
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
-      
                   console.log(
-                    'SAVED 500X500 from less than 500 ' + runningIndexCount,
+                    'SAVED 500X500 SavePerymtsatAPIData < 500 ' +
+                      runningIndexCount,
                   );
                   runningIndexCount = 0;
                 },
@@ -852,9 +852,7 @@ export default function UpdateModal(props) {
       });
 
       if (currIndex === lineChartLocalData.length) {
-        console.log(
-          '5 ' + '3 SavePerymtsatAPIData done concatenating, saved..',
-        );
+        console.log('5 ' + 'SavePerymtsatAPIData done concatenating, saved..');
         updateProgress = Number(updateProgress) + Number(10);
         setglobalState({
           ...globalState,
@@ -954,70 +952,109 @@ export default function UpdateModal(props) {
   function SavePerPrincipalAPIData() {
     var currIndex = 0;
     var perprincipalpermonthString = '';
-    // const LengthPerPrincipalLocalData = PerPrincipalLocalData.length - 1;
+    var runningIndexCount = 0;
+    // done concat
     {
       PerPrincipalLocalData.map(function (item, index) {
         currIndex = currIndex + 1;
-        perprincipalpermonthString =
-          perprincipalpermonthString +
-          "('" +
-          item.business_year +
-          "'" +
-          ',' +
-          "'" +
-          item.business_month +
-          "'" +
-          ',' +
-          "'" +
-          item.invoice_date +
-          "'" +
-          ',' +
-          "'" +
-          item.principal_name +
-          "'" +
-          ',' +
-          "'" +
-          item.principal_acronym +
-          "'" +
-          ',' +
-          "'" +
-          item.sales +
-          "'" +
-          ',' +
-          "'" +
-          item.target +
-          "'" +
-          ',' +
-          "'" +
-          item.uba +
-          "'" +
-          ',' +
-          "'" +
-          item.dateTimeUpdated +
-          "'" +
-          '),';
-      });
 
-      dbperprincipal.transaction(function (tx) {
-        tx.executeSql(
-          'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, sales, target, uba, dateTimeUpdated) VALUES   ' +
-            perprincipalpermonthString.slice(0, -1),
-          [],
-          (tx, results) => {
-            if (currIndex === PerPrincipalLocalData.length) {
-              updateProgress = Number(updateProgress) + Number(7);
-              setglobalState({
-                ...globalState,
-                updatePercentage: updateProgress,
-              });
+        runningIndexCount = runningIndexCount + 1;
+        if (runningIndexCount < 501) {
+          perprincipalpermonthString =
+            perprincipalpermonthString +
+            "('" +
+            item.business_year +
+            "'" +
+            ',' +
+            "'" +
+            item.business_month +
+            "'" +
+            ',' +
+            "'" +
+            item.invoice_date +
+            "'" +
+            ',' +
+            "'" +
+            item.team +
+            "'" +
+            ',' +
+            "'" +
+            item.salesman_name +
+            "'" +
+            ',' +
+            "'" +
+            item.position_name +
+            "'" +
+            ',' +
+            "'" +
+            item.amount +
+            "'" +
+            ',' +
+            "'" +
+            item.target +
+            "'" +
+            ',' +
+            "'" +
+            item.dateTimeUpdated +
+            "'" +
+            '),';
 
-              setq2Perymtsat(true);
-            }
-          },
-          (tx, err) => {
-            console.log('ADDED HERE11' + err);
-          },
-        );
+          if (runningIndexCount === 500) {
+            var stringnow = perprincipalpermonthString;
+            perprincipalpermonthString = '';
+            runningIndexCount = 0;
+
+            dbperprincipal.transaction(function (tx) {
+              tx.executeSql(
+                'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, sales, target, uba, dateTimeUpdated) VALUES   ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log('SAVED 500X500 SavePerPrincipalAPIData');
+                },
+                SQLerror,
+              );
+            });
+          }
+
+          if (
+            runningIndexCount < 500 &&
+            currIndex === PerPrincipalLocalData.length
+          ) {
+            var stringnow = perprincipalpermonthString;
+            perprincipalpermonthString = '';
+
+            dbperprincipal.transaction(function (tx) {
+              tx.executeSql(
+                'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, sales, target, uba, dateTimeUpdated) VALUES   ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log(
+                    'SAVED 500X500  SavePerPrincipalAPIData < 500 ' +
+                      runningIndexCount,
+                  );
+                  runningIndexCount = 0;
+                },
+                SQLerror,
+              );
+            });
+          }
+        }
+
+        if (currIndex === PerPrincipalLocalData.length) {
+          console.log(
+            '5.1 ' + ' SavePerPrincipalAPIData done concatenating, saved..',
+          );
+          updateProgress = Number(updateProgress) + Number(7);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+
+          setq2Perymtsat(true);
+          console.log('6.1 ' + 'DONE SAVING SavePerPrincipalAPIData ');
+        }
       });
     }
   }
@@ -1109,66 +1146,129 @@ export default function UpdateModal(props) {
   function SavePerAreaAPIData() {
     var currIndex = 0;
     var perareapermonthString = '';
+    var runningIndexCount = 0;
     // const LengthPerAreaLocalData = PerAreaLocalData.length - 1;
     {
       PerAreaLocalData.map(function (item, index) {
         currIndex = currIndex + 1;
-        perareapermonthString =
-          perareapermonthString +
-          "('" +
-          item.business_year +
-          "'" +
-          ',' +
-          "'" +
-          item.business_month +
-          "'" +
-          ',' +
-          "'" +
-          item.invoice_date +
-          "'" +
-          ',' +
-          "'" +
-          item.province +
-          "'" +
-          ',' +
-          "'" +
-          item.sales +
-          "'" +
-          ',' +
-          "'" +
-          item.uba +
-          "'" +
-          ',' +
-          "'" +
-          item.dateTimeUpdated +
-          "'" +
-          '),';
+        runningIndexCount = runningIndexCount + 1;
+
+        if (runningIndexCount < 501) {
+          // console.log('saved on ' + currIndex + ' indexxxxxx');
+
+          perareapermonthString =
+            perareapermonthString +
+            "('" +
+            item.business_year +
+            "'" +
+            ',' +
+            "'" +
+            item.business_month +
+            "'" +
+            ',' +
+            "'" +
+            item.invoice_date +
+            "'" +
+            ',' +
+            "'" +
+            item.province +
+            "'" +
+            ',' +
+            "'" +
+            item.sales +
+            "'" +
+            ',' +
+            "'" +
+            item.uba +
+            "'" +
+            ',' +
+            "'" +
+            item.dateTimeUpdated +
+            "'" +
+            '),';
+
+          if (runningIndexCount === 500) {
+            var stringnow = perareapermonthString;
+            perareapermonthString = '';
+            runningIndexCount = 0;
+            dbperarea.transaction(function (tx) {
+              tx.executeSql(
+                'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log('SAVED 500X500 SavePerAreaAPIData');
+                },
+                SQLerror,
+              );
+            });
+          }
+
+          if (
+            runningIndexCount < 500 &&
+            currIndex === lineChartLocalData.length
+          ) {
+            var stringnow = perareapermonthString;
+            perareapermonthString = '';
+
+            dbperarea.transaction(function (tx) {
+              tx.executeSql(
+                'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log(
+                    'SAVED 500X500 SavePerAreaAPIData < 500 ' +
+                      runningIndexCount,
+                  );
+                  runningIndexCount = 0;
+                },
+                SQLerror,
+              );
+            });
+          }
+        }
       });
 
-      dbperarea.transaction(function (tx) {
-        tx.executeSql(
-          'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
-            perareapermonthString.slice(0, -1),
-          [],
-          (tx, results) => {
-            if (currIndex === PerAreaLocalData.length) {
-              updateProgress = Number(updateProgress) + Number(6);
-              setglobalState({
-                ...globalState,
-                updatePercentage: updateProgress,
-              });
+      if (currIndex === lineChartLocalData.length) {
+        console.log('5.2 ' + 'SavePerAreaAPIData done concatenating, saved..');
+        updateProgress = Number(updateProgress) + Number(10);
+        setglobalState({
+          ...globalState,
+          updatePercentage: updateProgress,
+        });
 
-              console.log('7 ' + 'Query completed SavePerAreaAPIData');
-              setq4Area(true);
-            }
-          },
-          (tx, err) => {
-            console.log('ADDED HERE13' + err);
-          },
-        );
-      });
+        UpdateYearMonthsFilter();
+        setq1Principal(true);
+        console.log('6.2 ' + 'DONE SAVING SavePerAreaAPIData ');
+      }
     }
   }
+ 
+  //     dbperarea.transaction(function (tx) {
+  //       tx.executeSql(
+  //         'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
+  //           perareapermonthString.slice(0, -1),
+  //         [],
+  //         (tx, results) => {
+  //           if (currIndex === PerAreaLocalData.length) {
+  //             updateProgress = Number(updateProgress) + Number(6);
+  //             setglobalState({
+  //               ...globalState,
+  //               updatePercentage: updateProgress,
+  //             });
+
+  //             console.log('7 ' + 'Query completed SavePerAreaAPIData');
+  //             setq4Area(true);
+  //           }
+  //         },
+  //         (tx, err) => {
+  //           console.log('ADDED HERE13' + err);
+  //         },
+  //       );
+  //     });
+  //   }
+  // }
 
   const APISaveUpdate = () => {
     Promise.race([
