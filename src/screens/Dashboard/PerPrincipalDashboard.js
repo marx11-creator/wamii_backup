@@ -333,55 +333,49 @@ export default function PerPrincipalDashboard(props) {
   useEffect(() => {
     console.log('focus on per principal from update'); //
 
-      SearchPrincipal();
+    SearchPrincipal();
 
-      if (perPrincipal.length > 1 && totalSales > 1) {
-        var temp = [];
-        perPrincipal.map((item, index) => {
-          temp.push(item.principal_acronym);
-        });
-  
-        var tempSales = [];
-        var firstContribution = 1;
-        perPrincipal.map((item, index) => {
-          tempSales.push(((item.sales / totalSales) * 100).toFixed(2) * 1);
-          if (firstContribution === 1) {
-            setCurrentContribution(
-              ((item.sales / totalSales) * 100).toFixed(2) * 1,
-            );
-            firstContribution = 0;
-          }
-        });
-  
-        if (temp.length === tempSales.length) {
-          setDynamicPrincipalList(temp);
-          setDynamicPrincipalSales(tempSales);
-          // console.log('matched!');
+    if (perPrincipal.length > 1 && totalSales > 1) {
+      var temp = [];
+      perPrincipal.map((item, index) => {
+        temp.push(item.principal_acronym);
+      });
+
+      var tempSales = [];
+      var firstContribution = 1;
+      perPrincipal.map((item, index) => {
+        tempSales.push(((item.sales / totalSales) * 100).toFixed(2) * 1);
+        if (firstContribution === 1) {
+          setCurrentContribution(
+            ((item.sales / totalSales) * 100).toFixed(2) * 1,
+          );
+          firstContribution = 0;
         }
+      });
+
+      if (temp.length === tempSales.length) {
+        setDynamicPrincipalList(temp);
+        setDynamicPrincipalSales(tempSales);
+        // console.log('matched!');
       }
-    
-    
-}, [globalState.dateTimeUpdated24hr]);
-
-
+    }
+  }, [globalState.dateTimeUpdated24hr]);
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
-
       console.log('focus on per principal focus');
-     
-      
+
       CurrentAppScreen.Screen = 'PerPrincipal';
       if (PageVisited.PerPrincipalPAGE === 'NO') {
         PageVisited.PerPrincipalPAGE = 'YES';
-         console.log('focus on per principal with changes')
-         
-         if (perPrincipal.length > 1 && totalSales > 1) {
+        console.log('focus on per principal with changes');
+
+        if (perPrincipal.length > 1 && totalSales > 1) {
           var temp = [];
           perPrincipal.map((item, index) => {
             temp.push(item.principal_acronym);
           });
-    
+
           var tempSales = [];
           var firstContribution = 1;
           perPrincipal.map((item, index) => {
@@ -393,17 +387,15 @@ export default function PerPrincipalDashboard(props) {
               firstContribution = 0;
             }
           });
-    
+
           if (temp.length === tempSales.length) {
             setDynamicPrincipalList(temp);
             setDynamicPrincipalSales(tempSales);
             // console.log('matched!');
           }
         }
-    
-       }
+      }
     });
-
   }, []);
 
   useEffect(() => {
@@ -602,7 +594,6 @@ export default function PerPrincipalDashboard(props) {
   }
 
   //CENTER 4 SUMMARY                     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
- 
 
   function GetBottomPerPrincipalLocalData() {
     var YearQuery = '';
@@ -661,7 +652,14 @@ export default function PerPrincipalDashboard(props) {
             uba: tempUBA,
           });
           if (temp.length > 0) {
-            // console.log(temp);
+            console.log(
+              'SELECT business_year, business_month, principal_name, principal_acronym, ' +
+                ' sum(sales) as sales, sum(target) as target, sum(uba) as uba FROM perprincipalpermonth_tbl  where ' +
+                YearQuery +
+                MonthQuery +
+                ' group by business_year, business_month,  principal_name' +
+                ' order by CAST((sales) AS UNSIGNED)   desc ',
+            );
             setPerPrincipal(temp);
             setperPrincipalforFlatlist(temp2);
             setTotalSales(tempSales);
@@ -854,7 +852,9 @@ export default function PerPrincipalDashboard(props) {
                 </Text>
                 <PieChart
                   style={{height: scale(470), opacity: 0.9}}
-                  outerRadius={globalCompany.company === 'coslor/' ? '80%' : '100%'}
+                  outerRadius={
+                    globalCompany.company === 'coslor/' ? '80%' : '100%'
+                  }
                   innerRadius={'30%'}
                   data={data}>
                   <Labels />

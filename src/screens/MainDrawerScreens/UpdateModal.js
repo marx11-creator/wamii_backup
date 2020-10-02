@@ -632,7 +632,7 @@ export default function UpdateModal(props) {
   }, [PerAreaLocalData]);
 
   function SQLerror(err) {
-    console.log('SPECIAL Error  : ' + err);
+    console.log('SPECIAL Error  : ' + err.message);
   }
 
   function StartUpdate() {
@@ -813,6 +813,7 @@ export default function UpdateModal(props) {
             perymtsatString = '';
             runningIndexCount = 0;
             dbperymtsat.transaction(function (tx) {
+              // done concat
               tx.executeSql(
                 'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
                   stringnow.slice(0, -1),
@@ -833,6 +834,7 @@ export default function UpdateModal(props) {
             perymtsatString = '';
 
             dbperymtsat.transaction(function (tx) {
+              // done concat
               tx.executeSql(
                 'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
                   stringnow.slice(0, -1),
@@ -950,6 +952,7 @@ export default function UpdateModal(props) {
     });
   }
   function SavePerPrincipalAPIData() {
+    console.log(PerPrincipalLocalData);
     var currIndex = 0;
     var perprincipalpermonthString = '';
     var runningIndexCount = 0;
@@ -1005,6 +1008,7 @@ export default function UpdateModal(props) {
             runningIndexCount = 0;
 
             dbperprincipal.transaction(function (tx) {
+              // done concat
               tx.executeSql(
                 'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, sales, target, uba, dateTimeUpdated) VALUES   ' +
                   stringnow.slice(0, -1),
@@ -1025,6 +1029,7 @@ export default function UpdateModal(props) {
             perprincipalpermonthString = '';
 
             dbperprincipal.transaction(function (tx) {
+              // done concat
               tx.executeSql(
                 'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, sales, target, uba, dateTimeUpdated) VALUES   ' +
                   stringnow.slice(0, -1),
@@ -1144,6 +1149,8 @@ export default function UpdateModal(props) {
     });
   }
   function SavePerAreaAPIData() {
+    console.log(' 0.1 SavePerAreaAPIData');
+    console.log(PerAreaLocalData.length);
     var currIndex = 0;
     var perareapermonthString = '';
     var runningIndexCount = 0;
@@ -1192,6 +1199,7 @@ export default function UpdateModal(props) {
             perareapermonthString = '';
             runningIndexCount = 0;
             dbperarea.transaction(function (tx) {
+              // done concat
               tx.executeSql(
                 'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
                   stringnow.slice(0, -1),
@@ -1206,12 +1214,13 @@ export default function UpdateModal(props) {
 
           if (
             runningIndexCount < 500 &&
-            currIndex === lineChartLocalData.length
+            currIndex === PerAreaLocalData.length
           ) {
             var stringnow = perareapermonthString;
             perareapermonthString = '';
 
             dbperarea.transaction(function (tx) {
+              // done concat
               tx.executeSql(
                 'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
                   stringnow.slice(0, -1),
@@ -1230,21 +1239,20 @@ export default function UpdateModal(props) {
         }
       });
 
-      if (currIndex === lineChartLocalData.length) {
+      if (currIndex === PerAreaLocalData.length) {
         console.log('5.2 ' + 'SavePerAreaAPIData done concatenating, saved..');
-        updateProgress = Number(updateProgress) + Number(10);
+        updateProgress = Number(updateProgress) + Number(6);
         setglobalState({
           ...globalState,
           updatePercentage: updateProgress,
         });
 
-        UpdateYearMonthsFilter();
-        setq1Principal(true);
-        console.log('6.2 ' + 'DONE SAVING SavePerAreaAPIData ');
+        console.log('7 ' + 'Query completed SavePerAreaAPIData');
+        setq4Area(true);
       }
     }
   }
- 
+
   //     dbperarea.transaction(function (tx) {
   //       tx.executeSql(
   //         'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
@@ -1477,6 +1485,7 @@ export default function UpdateModal(props) {
 
           if (CurrIndex === jsonData.length) {
             dbBusinessCalendar.transaction(function (tx) {
+              // no need concat brake
               tx.executeSql(
                 'Delete from business_calendar_tbl   ',
                 [],
@@ -2142,78 +2151,185 @@ export default function UpdateModal(props) {
     longStrinfg = '';
     var stocks = 0;
     var ProductType = '';
-    var totalProduct = 0;
+    var currIndex = 0;
+    var runningIndexCount = 0;
+
+    //basis
     {
-      ApiPromoItemData.map(function (item, i) {
-        totalProduct = totalProduct + 1;
-        if (item.promo_product === '1') {
-          ProductType = 'Promo';
-        } else {
-          ProductType = 'Regular';
-        }
+      ApiPromoItemData.map(function (item, index) {
+        currIndex = currIndex + 1;
+        runningIndexCount = runningIndexCount + 1;
 
-        if (parseInt(item.total_case) < 1) {
-          stocks = item.total_pieces + ' PCS';
-        } else {
-          stocks = (item.total_case * 1).toFixed(2) + ' CS';
-        }
-        longStrinfg =
-          longStrinfg +
-          "('" +
-          item.principal_name +
-          "'" +
-          ',' +
-          "'" +
-          item.product_id +
-          "'" +
-          ',' +
-          "'" +
-          item.product_variant +
-          "'" +
-          ',' +
-          "'" +
-          item.product_name +
-          "'" +
-          ',' +
-          "'" +
-          ProductType +
-          "'" +
-          ',' +
-          "'" +
-          stocks +
-          "'" +
-          ',' +
-          "'" +
-          item.img_url +
-          "'" +
-          ',' +
-          "'" +
-          item.DateandTimeUpdated +
-          "'" +
-          '),';
-      });
-    }
+        if (runningIndexCount < 501) {
+          if (item.promo_product === '1') {
+            ProductType = 'Promo';
+          } else {
+            ProductType = 'Regular';
+          }
 
-    if (totalProduct === ApiPromoItemData.length) {
-      dbinventory.transaction(function (tx) {
-        tx.executeSql(
-          ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
-            longStrinfg.slice(0, -1),
-          [],
-          (tx, results) => {
-            if (results.rowsAffected > 0) {
-              console.log('SUCCESS SAVING ITEMS');
-            } else {
-              console.log('error');
-            }
-          },
-          (tx, err) => {
-            console.log('ADDED HERE5' + err);
-          },
-        );
+          if (parseInt(item.total_case) < 1) {
+            stocks = item.total_pieces + ' PCS';
+          } else {
+            stocks = (item.total_case * 1).toFixed(2) + ' CS';
+          }
+
+          longStrinfg =
+            longStrinfg +
+            "('" +
+            item.principal_name +
+            "'" +
+            ',' +
+            "'" +
+            item.product_id +
+            "'" +
+            ',' +
+            "'" +
+            item.product_variant +
+            "'" +
+            ',' +
+            "'" +
+            item.product_name +
+            "'" +
+            ',' +
+            "'" +
+            ProductType +
+            "'" +
+            ',' +
+            "'" +
+            stocks +
+            "'" +
+            ',' +
+            "'" +
+            item.img_url +
+            "'" +
+            ',' +
+            "'" +
+            item.DateandTimeUpdated +
+            "'" +
+            '),';
+
+          if (runningIndexCount === 500) {
+            var stringnow = longStrinfg;
+            longStrinfg = '';
+            runningIndexCount = 0;
+            dbinventory.transaction(function (tx) {
+              // done concat
+              tx.executeSql(
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log('SAVED 500X500 SavePromoItems');
+                },
+                SQLerror,
+              );
+            });
+          }
+
+          if (
+            runningIndexCount < 500 &&
+            currIndex === ApiPromoItemData.length
+          ) {
+            var stringnow = longStrinfg;
+            longStrinfg = '';
+
+            dbinventory.transaction(function (tx) {
+              // done concat
+              tx.executeSql(
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log(
+                    'SAVED 500X500 SavePromoItems < 500 ' + runningIndexCount,
+                  );
+                  runningIndexCount = 0;
+                },
+                SQLerror,
+              );
+            });
+          }
+        }
       });
+
+      if (currIndex === ApiPromoItemData.length) {
+        console.log('5.5 ' + 'SavePromoItems done concatenating, saved..');
+      }
     }
   }
+
+  //   {
+  //     ApiPromoItemData.map(function (item, i) {
+  //       totalProduct = totalProduct + 1;
+  //       if (item.promo_product === '1') {
+  //         ProductType = 'Promo';
+  //       } else {
+  //         ProductType = 'Regular';
+  //       }
+
+  //       if (parseInt(item.total_case) < 1) {
+  //         stocks = item.total_pieces + ' PCS';
+  //       } else {
+  //         stocks = (item.total_case * 1).toFixed(2) + ' CS';
+  //       }
+
+  //       longStrinfg =
+  //         longStrinfg +
+  //         "('" +
+  //         item.principal_name +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.product_id +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.product_variant +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.product_name +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         ProductType +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         stocks +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.img_url +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.DateandTimeUpdated +
+  //         "'" +
+  //         '),';
+  //     });
+  //   }
+
+  //   if (totalProduct === ApiPromoItemData.length) {
+  //     dbinventory.transaction(function (tx) {
+  //       tx.executeSql(
+  //         ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
+  //           longStrinfg.slice(0, -1),
+  //         [],
+  //         (tx, results) => {
+  //           if (results.rowsAffected > 0) {
+  //             console.log('SUCCESS SAVING ITEMS');
+  //           } else {
+  //             console.log('error');
+  //           }
+  //         },
+  //         (tx, err) => {
+  //           console.log('ADDED HERE5' + err);
+  //         },
+  //       );
+  //     });
+  //   }
+  // }
 
   // PROMO ITEMS  > END
 
@@ -2266,13 +2382,17 @@ export default function UpdateModal(props) {
 
       {isLoadingActivityIndicator && (
         <View style={styles.loading}>
-          {/* <Button
+          <Button
             title="Test"
             onPress={() => {
-              console.log(ApiPromoItemData.length);
-              console.log(ApiRowsCount);
+              console.log(q1Principal + ' q1Principal');
+              console.log(q2Perymtsat + ' q2Perymtsat');
+              console.log(q4Area + ' q4Area');
+              console.log(q3UserUpdateLog + ' q3UserUpdateLog');
+              console.log(q5Marc + ' q5Marc');
+              console.log(globalStatus.updateStatus);
             }}
-          /> */}
+          />
           <Text style={{color: 'black', fontSize: moderateScale(17)}}>
             Updating... {updateProgress} %{' '}
           </Text>
