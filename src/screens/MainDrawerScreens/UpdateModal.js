@@ -952,7 +952,7 @@ export default function UpdateModal(props) {
     });
   }
   function SavePerPrincipalAPIData() {
-    console.log(PerPrincipalLocalData);
+   
     var currIndex = 0;
     var perprincipalpermonthString = '';
     var runningIndexCount = 0;
@@ -978,19 +978,15 @@ export default function UpdateModal(props) {
             "'" +
             ',' +
             "'" +
-            item.team +
+            item.principal_name +
             "'" +
             ',' +
             "'" +
-            item.salesman_name +
+            item.principal_acronym +
             "'" +
             ',' +
             "'" +
-            item.position_name +
-            "'" +
-            ',' +
-            "'" +
-            item.amount +
+            item.sales +
             "'" +
             ',' +
             "'" +
@@ -998,10 +994,15 @@ export default function UpdateModal(props) {
             "'" +
             ',' +
             "'" +
+            item.uba +
+            "'" +
+            ',' +
+            "'" +
             item.dateTimeUpdated +
             "'" +
             '),';
 
+   
           if (runningIndexCount === 500) {
             var stringnow = perprincipalpermonthString;
             perprincipalpermonthString = '';
@@ -2382,7 +2383,7 @@ export default function UpdateModal(props) {
 
       {isLoadingActivityIndicator && (
         <View style={styles.loading}>
-          <Button
+          {/* <Button
             title="Test"
             onPress={() => {
               console.log(q1Principal + ' q1Principal');
@@ -2392,7 +2393,7 @@ export default function UpdateModal(props) {
               console.log(q5Marc + ' q5Marc');
               console.log(globalStatus.updateStatus);
             }}
-          />
+          /> */}
           <Text style={{color: 'black', fontSize: moderateScale(17)}}>
             Updating... {updateProgress} %{' '}
           </Text>

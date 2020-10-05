@@ -370,6 +370,8 @@ export default function PerPrincipalDashboard(props) {
         PageVisited.PerPrincipalPAGE = 'YES';
         console.log('focus on per principal with changes');
 
+        SearchPrincipal();
+        
         if (perPrincipal.length > 1 && totalSales > 1) {
           var temp = [];
           perPrincipal.map((item, index) => {
