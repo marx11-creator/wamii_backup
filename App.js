@@ -31,16 +31,23 @@ const App = () => {
     updateStatus: 'Start',
     dateTimeUpdated24hr: '',
     updatePercentage: '',
-    DashboardFilterYearNMonthTeam: moment().utcOffset('+08:00').format('YYYY') + moment().utcOffset('+08:00').format('MMMM') + '',
+    DashboardFilterYearNMonthTeam:
+      moment().utcOffset('+08:00').format('YYYY') +
+      moment().utcOffset('+08:00').format('MMMM') +
+      '',
+    lastUpdate: 'NAstart',
   });
   return (
     <PageContext.Provider value={[globalState, setglobalState]}>
-    <NavigationContainer>
-      <Stack.Navigator headerMode="none">
-        <Stack.Screen name="StartLoginScreen" component={StartLandingScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-     </PageContext.Provider>
+      <NavigationContainer>
+        <Stack.Navigator headerMode="none">
+          <Stack.Screen
+            name="StartLoginScreen"
+            component={StartLandingScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PageContext.Provider>
   );
 };
 

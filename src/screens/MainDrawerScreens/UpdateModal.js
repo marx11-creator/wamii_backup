@@ -39,7 +39,6 @@ import {
   globalStatus,
   CurrentAppScreen,
   GetDateTime,
-  ComputeLastDateTimeUpdate,
   CurrentAppVersionUpdate,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
@@ -59,6 +58,11 @@ var lineChartAPIdatalength = 0;
 var PerPrincipalAPIdatalength = 0;
 var PerAreaAPIdatalength = 0;
 var updateProgress = 0;
+
+var MonthDiff = '';
+var DaysDiff = '';
+var HoursDiff = '';
+var MinutesDiff = '';
 
 //marc
 var cur_month = new Date().getMonth() + 1;
@@ -81,26 +85,35 @@ export default function UpdateModal(props) {
   //   console.log(auth);
   // }, 1000);
 
+  // useEffect(() => {
+  //   setglobalState({
+  //     ...globalState,
+  //     timerSeconds: localSeconds,
+  //   });
+  //   FiveSecondsDelay = FiveSecondsDelay + 1;
+  //   if (FiveSecondsDelay === 60) {
+  //     FiveSecondsDelay = 0;
+  //     ComputeLastDateTimeUpdate();
+  //   }
+
+  //   // console.log('second timer running ' + ' ' + localSeconds);
+  //   if (localSeconds === 900) {
+  //     globalStatus.updateStatus = 'Updating';
+
+  //     setglobalState({
+  //       ...globalState,
+  //       timerSeconds: 0,
+  //       updateStatus: 'Updating',
+  //     });
+  //   }
+  // }, [localSeconds]);
+
   useEffect(() => {
-    setglobalState({
-      ...globalState,
-      timerSeconds: localSeconds,
-    });
     FiveSecondsDelay = FiveSecondsDelay + 1;
     if (FiveSecondsDelay === 60) {
+      console.log('60 secs reach');
       FiveSecondsDelay = 0;
       ComputeLastDateTimeUpdate();
-    }
-
-    // console.log('second timer running ' + ' ' + localSeconds);
-    if (localSeconds === 900) {
-      globalStatus.updateStatus = 'Updating';
-
-      setglobalState({
-        ...globalState,
-        timerSeconds: 0,
-        updateStatus: 'Updating',
-      });
     }
   }, [localSeconds]);
 
@@ -195,7 +208,7 @@ export default function UpdateModal(props) {
   function afterUpdate() {
     SaveLastDatetimeUpdated();
     console.log('27 ' + 'UPDATE DONE!!!!!!!!');
-
+    ComputeLastDateTimeUpdate();
     if (globalStatus.updateMode === 'manual') {
       updateProgress = 0;
       setisModalConnectionError(false);
@@ -213,7 +226,7 @@ export default function UpdateModal(props) {
       });
       props.navigation.navigate(CurrentAppScreen.Screen);
 
-      RunTimer();
+      // RunTimer();
       //5
     } else {
       updateProgress = 0;
@@ -358,11 +371,11 @@ export default function UpdateModal(props) {
     const intervalId2 = BackgroundTimer.setInterval(() => {
       secs = secs + 1;
       setLocalSeconds(secs);
-      // console.log(secs);
-      // console.log(globalStatus.updateMode)
+      // globalStatus.CurrentSeconds = secs;
       if (secs === 900) {
         BackgroundTimer.clearInterval(intervalId2);
         GETUpdateVersionAPI();
+        globalStatus.updateStatus = 'Updating';
       }
 
       if (globalStatus.updateMode === 'manual') {
@@ -482,6 +495,7 @@ export default function UpdateModal(props) {
   //====================================================================> RUN UPDATE
 
   useEffect(() => {
+    ComputeLastDateTimeUpdate();
     {
       globalStatus.updateMode === 'manual'
         ? props.navigation.addListener('focus', () => {
@@ -491,6 +505,88 @@ export default function UpdateModal(props) {
         : AutoUpdate();
     }
   }, []);
+
+  function ComputeLastDateTimeUpdate() {
+    console.log('compute running');
+    var now = moment().format('DD/MM/YYYY HH:mm:ss');
+    var then = globalStatus.dateTimeUpdated24hr;
+    var ms = moment(now, 'DD/MM/YYYY HH:mm:ss').diff(
+      moment(then, 'DD/MM/YYYY HH:mm:ss'),
+    );
+    var d = moment.duration(ms);
+    MonthDiff = '';
+    DaysDiff = '';
+    HoursDiff = '';
+    MinutesDiff = '';
+
+    console.log(now);
+
+    console.log(then);
+
+    if (d.months() > 0) {
+      MonthDiff = d.months() + ' month ';
+    } else {
+      MonthDiff = '';
+    }
+
+    if (d.days() === 1) {
+      DaysDiff = d.days() + ' day ';
+    } else if (d.days() > 1) {
+      DaysDiff = d.days() + ' days ';
+    } else if (d.days() < 1) {
+      DaysDiff = '';
+    }
+
+    if (d.hours() === 1) {
+      HoursDiff = d.hours() + ' hour ';
+    } else if (d.hours() > 1) {
+      HoursDiff = d.hours() + ' hours ';
+    } else if (d.hours() < 1) {
+      HoursDiff = '';
+    }
+
+    if (d.minutes() === 1) {
+      MinutesDiff = d.minutes() + ' minute ';
+    } else if (d.minutes() > 1) {
+      MinutesDiff = d.minutes() + ' minutes ';
+    } else if (d.minutes() < 1) {
+      MinutesDiff = '';
+    }
+
+    if (MonthDiff !== '') {
+      console.log('1');
+      setglobalState({
+        ...globalState,
+        lastUpdate: MonthDiff + 'ago',
+      });
+    } else if (DaysDiff !== '') {
+      console.log('2');
+      setglobalState({
+        ...globalState,
+        lastUpdate: DaysDiff + 'ago',
+      });
+    } else if (HoursDiff !== '') {
+      console.log('3');
+      setglobalState({
+        ...globalState,
+        lastUpdate: HoursDiff + 'ago',
+      });
+    } else if (MinutesDiff !== '') {
+      console.log('4');
+      console.log(globalState.lastUpdate);
+      setglobalState({
+        ...globalState,
+        lastUpdate: MinutesDiff + 'ago',
+      });
+      console.log(globalState.lastUpdate);
+    } else {
+      console.log('5');
+      setglobalState({
+        ...globalState,
+        lastUpdate: 'NA60',
+      });
+    }
+  }
 
   function ManualUpdate() {
     if (
@@ -516,6 +612,7 @@ export default function UpdateModal(props) {
   }
 
   function AutoUpdate() {
+    console.log('Auto Update started');
     if (
       globalStatus.updateStatus === 'Updating' &&
       globalStatus.updateMode === 'auto'
@@ -862,6 +959,7 @@ export default function UpdateModal(props) {
         });
 
         UpdateYearMonthsFilter();
+
         setq1Principal(true);
         console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
       }
@@ -952,7 +1050,6 @@ export default function UpdateModal(props) {
     });
   }
   function SavePerPrincipalAPIData() {
-   
     var currIndex = 0;
     var perprincipalpermonthString = '';
     var runningIndexCount = 0;
@@ -1002,7 +1099,6 @@ export default function UpdateModal(props) {
             "'" +
             '),';
 
-   
           if (runningIndexCount === 500) {
             var stringnow = perprincipalpermonthString;
             perprincipalpermonthString = '';

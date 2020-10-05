@@ -44,7 +44,6 @@ import {
   verticalScale,
 } from '../../sharedComponents/scaling';
 import BackgroundTimer from 'react-native-background-timer';
-import App1 from './test';
 import UpdateModal from './UpdateModal';
 import PageContext from './pagecontext';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -339,7 +338,7 @@ export default function Home(props) {
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
               }}>
-              {LastDateTimeUpdated.value}
+               {globalState.lastUpdate}
             </Text>
             <View
               style={{
