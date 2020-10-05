@@ -57,7 +57,8 @@ import {
   PageVisited,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import DashboardModal from '../Dashboard/DashboardModal';
-import PageContext from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 var lineChartAPIdatalength = 0;
 var BottomPerTeamAPIdatalength = 0;
 
@@ -186,7 +187,8 @@ export default function PerSalesmanDashboard(props) {
     console.log('SQL Error: ' + err);
   }
 
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
+  const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
 
   const [isVisibleModalFilter, setisVisibleModalFilter] = useState(false);
 
@@ -670,7 +672,7 @@ export default function PerSalesmanDashboard(props) {
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
               }}>
-              {LastDateTimeUpdated.value}
+                {globalTimer.lastUpdate}
             </Text>
             <View
               style={{

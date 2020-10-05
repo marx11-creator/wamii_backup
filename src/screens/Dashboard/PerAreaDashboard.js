@@ -54,7 +54,8 @@ import {
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
-import PageContext from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 export default function PerAreaDashboard(props) {
   LogBox.ignoreAllLogs();
   YellowBox.ignoreWarnings(['']);
@@ -185,7 +186,9 @@ export default function PerAreaDashboard(props) {
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
+  const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
+  
   const [dateTime, setDateTime] = useState('');
   const [isVisibleFilterModal, setisVisibleFilterModal] = useState(false);
   const [filterMainView, setfilterMainView] = useState(scale(360));
@@ -652,7 +655,7 @@ export default function PerAreaDashboard(props) {
                   alignItems: 'flex-end',
                   justifyContent: 'flex-end',
                 }}>
-                {LastDateTimeUpdated.value}
+                 {globalTimer.lastUpdate}
               </Text>
               <View
                 style={{

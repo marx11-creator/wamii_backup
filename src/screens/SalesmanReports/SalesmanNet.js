@@ -22,11 +22,11 @@ import moment, { months } from 'moment';
 import {ProgressCircle} from 'react-native-svg-charts';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-video';
-import PageContext from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
 var db = openDatabase({name: 'Sales_report.db'});
 
 export default function ViewScreen(props) {
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
  const [DateTimerefreshed, setDateTimerefreshed] = useState('none');
  const [grosssales, setgrosssales] = useState('');
  const [cmamount, setcmamount] = useState('');

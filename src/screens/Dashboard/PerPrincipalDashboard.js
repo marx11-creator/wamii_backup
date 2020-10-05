@@ -52,7 +52,8 @@ import {
   hhmmss,
   PageVisited,
 } from '../../sharedComponents/globalCommands/globalCommands';
-import PageContext from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 export default function PerPrincipalDashboard(props) {
   // LogBox.ignoreAllLogs();
 
@@ -262,7 +263,8 @@ export default function PerPrincipalDashboard(props) {
     console.log('SQL Error: ' + err);
   }
 
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
+  const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
   const [dateTime, setDateTime] = useState('');
 
   const [isVisibleModalFilter, setisVisibleModalFilter] = useState(false);
@@ -754,7 +756,7 @@ export default function PerPrincipalDashboard(props) {
                     alignItems: 'flex-end',
                     justifyContent: 'flex-end',
                   }}>
-                  {LastDateTimeUpdated.value}
+                  {globalTimer.lastUpdate}
                 </Text>
                 <View
                   style={{

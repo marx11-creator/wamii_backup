@@ -8,7 +8,6 @@ import {
   dbSalesmanNet,
   dblastdatetimeupdated,
 } from '../../database/sqliteSetup';
-import PageContext from '../../screens/MainDrawerScreens/pagecontext';
 
 export var ModuleAccess = {
   PerTeam: 'NOT ALLOWED',

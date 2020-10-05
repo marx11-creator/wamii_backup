@@ -45,14 +45,16 @@ import {
 } from '../../sharedComponents/scaling';
 import BackgroundTimer from 'react-native-background-timer';
 import UpdateModal from './UpdateModal';
-import PageContext from './pagecontext';
+import PageContextGlobalState  from './pagecontext';
+import PageContextGlobalTimer from './pagecontext2';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 LogBox.ignoreAllLogs();
 
 export default function Home(props) {
   //  console.log(auth);
-  const [globalState] = useContext(PageContext);
+  const [globalState] = useContext(PageContextGlobalState);
+  const [globalTimer] = useContext(PageContextGlobalTimer);
   const [localSeconds, setlocalSeconds] = useState(0);
 
   const WorkingDaysFields = {
@@ -225,8 +227,10 @@ export default function Home(props) {
     }, []),
   );
 
+
+
+
   useEffect(() => {
-    console.log('test');
     getWorkingDays();
   }, [globalState.dateTimeUpdated24hr]);
 
@@ -338,7 +342,7 @@ export default function Home(props) {
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
               }}>
-               {globalState.lastUpdate}
+               {globalTimer.lastUpdate}
             </Text>
             <View
               style={{
@@ -433,7 +437,7 @@ export default function Home(props) {
             {/* <Button
               title="test"
               onPress={() => {
-                console.log(Target.SalesvsTarget);
+                console.log(globalTimer.lastUpdate);
               }}
             /> */}
           </View>

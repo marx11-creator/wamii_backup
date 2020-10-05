@@ -1,3 +1,3 @@
 import React from 'react'; 
-const PageContext = React.createContext([{}, () => {}]); 
-export default PageContext;
+const PageContextGlobalState = React.createContext([{}, () => {}]); 
+export default PageContextGlobalState;

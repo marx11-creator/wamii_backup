@@ -42,7 +42,8 @@ import {
   CurrentAppVersionUpdate,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
-import PageContext from './pagecontext';
+import PageContextGlobalState from './pagecontext';
+import PageContextGlobalTimer from './pagecontext2';
 import BackgroundTimer from 'react-native-background-timer';
 //marc
 import {useFocusEffect} from '@react-navigation/native';
@@ -72,7 +73,8 @@ var MarcStatus = '0';
 //marc
 
 export default function UpdateModal(props) {
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
+  const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
   const [localSeconds, setLocalSeconds] = useState(0);
 
   var GetPerymtsatAPIDataState = false;
@@ -109,11 +111,12 @@ export default function UpdateModal(props) {
   // }, [localSeconds]);
 
   useEffect(() => {
+    
     FiveSecondsDelay = FiveSecondsDelay + 1;
     if (FiveSecondsDelay === 60) {
       console.log('60 secs reach');
       FiveSecondsDelay = 0;
-      ComputeLastDateTimeUpdate();
+       ComputeLastDateTimeUpdate();
     }
   }, [localSeconds]);
 
@@ -208,7 +211,7 @@ export default function UpdateModal(props) {
   function afterUpdate() {
     SaveLastDatetimeUpdated();
     console.log('27 ' + 'UPDATE DONE!!!!!!!!');
-    ComputeLastDateTimeUpdate();
+
     if (globalStatus.updateMode === 'manual') {
       updateProgress = 0;
       setisModalConnectionError(false);
@@ -334,6 +337,7 @@ export default function UpdateModal(props) {
 
   function SaveLastDatetimeUpdated() {
     var currdt = "('" + moment().format('DD/MM/YYYY HH:mm:ss') + "')";
+    var currdtRaw = moment().format('DD/MM/YYYY HH:mm:ss');
 
     dblastdatetimeupdated.transaction(function (tx) {
       tx.executeSql(
@@ -356,7 +360,9 @@ export default function UpdateModal(props) {
           //   ...globalState,
           //   dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss')
           // })
-          GetDateTime(); // call get last date time updated to update global last date time
+         // GetDateTime(); // call get last date time updated to update global last date time
+         globalStatus.dateTimeUpdated24hr = currdtRaw;
+          ComputeLastDateTimeUpdate();
         },
         (tx, err) => {
           console.log('ADDED HERE7' + err);
@@ -372,7 +378,7 @@ export default function UpdateModal(props) {
       secs = secs + 1;
       setLocalSeconds(secs);
       // globalStatus.CurrentSeconds = secs;
-      if (secs === 900) {
+      if (secs === 70) {
         BackgroundTimer.clearInterval(intervalId2);
         GETUpdateVersionAPI();
         globalStatus.updateStatus = 'Updating';
@@ -555,35 +561,33 @@ export default function UpdateModal(props) {
 
     if (MonthDiff !== '') {
       console.log('1');
-      setglobalState({
-        ...globalState,
+      setglobalTimer({
+        ...globalTimer,
         lastUpdate: MonthDiff + 'ago',
       });
     } else if (DaysDiff !== '') {
       console.log('2');
-      setglobalState({
-        ...globalState,
+      setglobalTimer({
+        ...globalTimer,
         lastUpdate: DaysDiff + 'ago',
       });
     } else if (HoursDiff !== '') {
       console.log('3');
-      setglobalState({
-        ...globalState,
+      setglobalTimer({
+        ...globalTimer,
         lastUpdate: HoursDiff + 'ago',
       });
     } else if (MinutesDiff !== '') {
       console.log('4');
-      console.log(globalState.lastUpdate);
-      setglobalState({
-        ...globalState,
+      setglobalTimer({
+        ...globalTimer,
         lastUpdate: MinutesDiff + 'ago',
       });
-      console.log(globalState.lastUpdate);
     } else {
       console.log('5');
-      setglobalState({
-        ...globalState,
-        lastUpdate: 'NA60',
+      setglobalTimer({
+        ...globalTimer,
+        lastUpdate: '0 minutes ago',
       });
     }
   }
@@ -764,7 +768,10 @@ export default function UpdateModal(props) {
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr1 = teams + '&' + sales_position_name;
-    //  console.log(tempstr1);
+    console.log(server.server_address +
+      globalCompany.company +
+      'persalesmansalestarget/' +
+      tempstr1);
     Promise.race([
       fetch(
         server.server_address +
@@ -781,7 +788,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -987,7 +994,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1188,7 +1195,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1392,7 +1399,7 @@ export default function UpdateModal(props) {
         }),
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1456,7 +1463,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1544,7 +1551,7 @@ export default function UpdateModal(props) {
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1795,7 +1802,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1833,7 +1840,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1873,7 +1880,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1910,7 +1917,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -2189,7 +2196,7 @@ export default function UpdateModal(props) {
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {

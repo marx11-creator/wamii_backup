@@ -42,11 +42,11 @@ import {
   FilterList,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users} from '../../database/sqliteSetup';
-import PageContext from './pagecontext';
+import PageContextGlobalState from './pagecontext';
 import moment from 'moment';
 
 export function DrawerContent(props) {
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
 
   function SQLerror(err) {
     console.log('SQL Error: ' + err);

@@ -48,7 +48,7 @@ import {
   LastDateTimeUpdated,
   hhmmss,
 } from '../../sharedComponents/globalCommands/globalCommands';
-import PageContext from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
 import Icon from 'react-native-vector-icons/Ionicons';
 var ApiRowsCount = 0;
 var count = 0;
@@ -60,7 +60,7 @@ var longStrinfg = '';
 
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
 
   const ApiFields = [
     {

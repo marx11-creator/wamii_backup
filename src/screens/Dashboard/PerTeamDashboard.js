@@ -59,7 +59,8 @@ import {
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
-import PageContext from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 var lineChartAPIdatalength = 0;
 var BottomPerTeamAPIdatalength = 0;
 LogBox.ignoreAllLogs();
@@ -156,7 +157,8 @@ export default function PerTeamDashboard(props) {
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
-  const [globalState] = useContext(PageContext);
+  const [globalState] = useContext(PageContextGlobalState);
+  const [globalTimer] = useContext(PageContextGlobalTimer);
   const [isVisibleModalFilter, setisVisibleModalFilter] = useState(false);
   const [isModalConnectionError, setisModalConnectionError] = useState(false);
   const [isLoadingActivityIndicator, setisLoadingActivityIndicator] = useState(
@@ -547,7 +549,7 @@ export default function PerTeamDashboard(props) {
                     alignItems: 'flex-end',
                     justifyContent: 'flex-end',
                   }}>
-                  {globalState.lastUpdate}
+                  {globalTimer.lastUpdate}
                 </Text>
                 <View
                   style={{
@@ -656,18 +658,18 @@ export default function PerTeamDashboard(props) {
               />
             </Animatable.View>
 
-            <Button
+            {/* <Button
               title="Test"
               onPress={() => {
                 console.log(globalState.lastUpdate);
               }}
-            />
-            <Button
+            /> */}
+            {/* <Button
               title="Test"
               onPress={() => {
                 console.log(globalState.lastUpdate);
               }}
-            />
+            /> */}
           </View>
           <View style={styles.LinearView}>
             <Animatable.View
