@@ -188,7 +188,7 @@ export default function PerAreaDashboard(props) {
   }
   const [globalState, setglobalState] = useContext(PageContextGlobalState);
   const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
-  
+
   const [dateTime, setDateTime] = useState('');
   const [isVisibleFilterModal, setisVisibleFilterModal] = useState(false);
   const [filterMainView, setfilterMainView] = useState(scale(360));
@@ -584,7 +584,6 @@ export default function PerAreaDashboard(props) {
               alignContent: 'center',
               alignItems: 'center',
             }}>
- 
             <View style={{width: 50}}>
               <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
                 <Icon name="md-filter" color={'#ffffff'} size={34} />
@@ -648,44 +647,44 @@ export default function PerAreaDashboard(props) {
                   alignItems: 'flex-end',
                   justifyContent: 'flex-end',
                 }}>
-                 {globalTimer.lastUpdate}
+                {globalTimer.lastUpdate}
               </Text>
               <View
+                style={{
+                  flexDirection: 'row',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                  <Icon name="refresh" color={'#ffffff'} size={10} />
+                </View>
+                <Text
                   style={{
-                    flexDirection: 'row',
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    color: 'white',
+                    fontSize: moderateScale(12, 0.5),
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
                   }}>
-                  <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                    <Icon name="refresh" color={'#ffffff'} size={10} />
-                  </View>
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: moderateScale(12, 0.5),
-                      alignContent: 'flex-end',
-                      alignItems: 'flex-end',
-                      justifyContent: 'flex-end',
-                    }}>
-                    {globalState.updateStatus === 'Updating' ||
-                    globalState.updateStatus === 'Start' ? (
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: moderateScale(12, 0.5),
-                          alignContent: 'flex-end',
-                          alignItems: 'flex-end',
-                          justifyContent: 'flex-end',
-                        }}>
-                        {'Updating...'}{' '}
-                        {globalState.updatePercentage > 0
-                          ? globalState.updatePercentage + ' %'
-                          : ''}
-                      </Text>
-                    ) : null}
+                  {globalState.updateStatus === 'Updating' ||
+                  globalState.updateStatus === 'Start' ? (
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: moderateScale(12, 0.5),
+                        alignContent: 'flex-end',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                      }}>
+                      {'Updating...'}{' '}
+                      {globalState.updatePercentage > 0
+                        ? globalState.updatePercentage + ' %'
+                        : ''}
+                    </Text>
+                  ) : null}
 
-                    {/* <Text
+                  {/* <Text
                         style={{
                           color: 'white',
                           fontSize: moderateScale(12, 0.5),
@@ -695,8 +694,8 @@ export default function PerAreaDashboard(props) {
                         }}>
                         {hhmmss(900 - globalStatus.CurrentSeconds)}
                       </Text> */}
-                  </Text>
-                </View>
+                </Text>
+              </View>
             </View>
           </View>
           <View style={{margin: moderateScale(5)}}>

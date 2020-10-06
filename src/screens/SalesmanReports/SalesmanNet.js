@@ -26,18 +26,21 @@ import {
   DashboardYears,
   LastDateTimeUpdated,
   hhmmss,
+  CurrentAppScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import moment, {months} from 'moment';
 import {ProgressCircle} from 'react-native-svg-charts';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-video';
 import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 import DashboardModal from '../Dashboard/DashboardModal';
 var db = openDatabase({name: 'Sales_report.db'});
 
 export default function ViewScreen(props) {
   const [isVisibleModalFilter, setisVisibleModalFilter] = useState(false);
   const [globalState, setglobalState] = useContext(PageContextGlobalState);
+  const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
   const [DateTimerefreshed, setDateTimerefreshed] = useState('none');
   const [grosssales, setgrosssales] = useState('');
   const [cmamount, setcmamount] = useState('');
@@ -61,6 +64,7 @@ export default function ViewScreen(props) {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per MARC'); //
+      CurrentAppScreen.Screen = 'SalesmanNet';
       push_sales_net();
       push_sales_per_vendor();
       push_sales_per_customer();
@@ -643,17 +647,7 @@ export default function ViewScreen(props) {
               }}>
               Last Update {LastDateTimeUpdated.value} {' ||   '}
             </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignContent: 'center',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                <Icon name="refresh" color={'#ffffff'} size={10} />
-              </View>
-              <Text
+            <Text
                 style={{
                   color: 'white',
                   fontSize: moderateScale(12, 0.5),
@@ -661,35 +655,53 @@ export default function ViewScreen(props) {
                   alignItems: 'flex-end',
                   justifyContent: 'flex-end',
                 }}>
-                {globalState.updateStatus === 'Updating' ||
-                globalState.updateStatus === 'Start' ? (
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: moderateScale(12, 0.5),
-                      alignContent: 'flex-end',
-                      alignItems: 'flex-end',
-                      justifyContent: 'flex-end',
-                    }}>
-                    {'Updating...'}{' '}
-                    {globalState.updatePercentage > 0
-                      ? globalState.updatePercentage + ' %'
-                      : ''}
-                  </Text>
-                ) : (
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: moderateScale(12, 0.5),
-                      alignContent: 'flex-end',
-                      alignItems: 'flex-end',
-                      justifyContent: 'flex-end',
-                    }}>
-                    {hhmmss(900 - globalState.timerSeconds)}
-                  </Text>
-                )}
+                {globalTimer.lastUpdate}{' '}
               </Text>
-            </View>
+            <View
+                style={{
+                  flexDirection: 'row',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+ 
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: moderateScale(12, 0.5),
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
+                  }}>
+                  {globalState.updateStatus === 'Updating' ||
+                  globalState.updateStatus === 'Start' ? (
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: moderateScale(12, 0.5),
+                        alignContent: 'flex-end',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                      }}>
+                      {'>> '}{'Updating...'}{' '}
+                      {globalState.updatePercentage > 0
+                        ? globalState.updatePercentage + ' %'
+                        : ''}
+                    </Text>
+                  ) : null}
+
+                  {/* <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {hhmmss(900 - globalStatus.CurrentSeconds)}
+                      </Text> */}
+                </Text>
+              </View>
           </View>
           <View style={{flex: 1.5, flexDirection: 'row', padding: 10}}>
             <View style={{flex: 1, flexDirection: 'column'}}>

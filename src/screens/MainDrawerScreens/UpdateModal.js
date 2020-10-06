@@ -227,7 +227,7 @@ export default function UpdateModal(props) {
         dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss'),
       });
       props.navigation.navigate(CurrentAppScreen.Screen);
-
+      CheckSystemStatus();
       // RunTimer();
       //5
     } else {
@@ -246,7 +246,7 @@ export default function UpdateModal(props) {
       //6
     }
 
-    CheckSystemStatus();
+    CheckSystemStatus();  //-3
   }
 
   function CheckSystemStatus() {
@@ -1514,7 +1514,7 @@ export default function UpdateModal(props) {
               setisModalConnectionError(false);
               setisLoadingActivityIndicator(false);
               props.navigation.navigate('Home');
-              CheckSystemStatus();
+              CheckSystemStatus(); //-1
             } else {
               console.log(APIUpdateVersion.APIUpdateVersionStatus);
               updateProgress = 0;
@@ -1528,7 +1528,7 @@ export default function UpdateModal(props) {
 
               RunTimer();
               //2
-              CheckSystemStatus();
+              CheckSystemStatus(); //-2
             }
           }
         }
