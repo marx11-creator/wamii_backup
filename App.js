@@ -4,7 +4,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 
 import StartLandingScreen from './src/screens/loginscreens/StartLandingScreen';
-import PageContext from './src/screens/MainDrawerScreens/pagecontext';
+import PageContextGlobalState  from './src/screens/MainDrawerScreens/pagecontext';
+import PageContextGlobalTimer from './src/screens/MainDrawerScreens/pagecontext2';
 import moment from 'moment';
 const Stack = createStackNavigator();
 
@@ -25,22 +26,34 @@ const Stack = createStackNavigator();
 // }
 
 const App = () => {
+  const [globalTimer, setglobalTimer] = useState({
+    lastUpdate: '---',
+  });
   const [globalState, setglobalState] = useState({
     timerSeconds: 0,
     timerMinute: 0,
     updateStatus: 'Start',
     dateTimeUpdated24hr: '',
     updatePercentage: '',
-    DashboardFilterYearNMonthTeam: moment().utcOffset('+08:00').format('YYYY') + moment().utcOffset('+08:00').format('MMMM') + '',
+    DashboardFilterYearNMonthTeam:
+      moment().utcOffset('+08:00').format('YYYY') +
+      moment().utcOffset('+08:00').format('MMMM') +
+      '',
   });
   return (
-    <PageContext.Provider value={[globalState, setglobalState]}>
-    <NavigationContainer>
-      <Stack.Navigator headerMode="none">
-        <Stack.Screen name="StartLoginScreen" component={StartLandingScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-     </PageContext.Provider>
+    <PageContextGlobalState.Provider value={[globalState, setglobalState]}>
+      <PageContextGlobalTimer.Provider value={[globalTimer, setglobalTimer]}>
+      <NavigationContainer>
+        <Stack.Navigator headerMode="none">
+          <Stack.Screen
+            name="StartLoginScreen"
+            component={StartLandingScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+      </PageContextGlobalTimer.Provider>
+    </PageContextGlobalState.Provider>
+
   );
 };
 

@@ -57,7 +57,8 @@ import {
   PageVisited,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import DashboardModal from '../Dashboard/DashboardModal';
-import PageContext from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 var lineChartAPIdatalength = 0;
 var BottomPerTeamAPIdatalength = 0;
 
@@ -186,7 +187,8 @@ export default function PerSalesmanDashboard(props) {
     console.log('SQL Error: ' + err);
   }
 
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
+  const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
 
   const [isVisibleModalFilter, setisVisibleModalFilter] = useState(false);
 
@@ -607,15 +609,8 @@ export default function PerSalesmanDashboard(props) {
         style={styles.backgroundVideo}
       />
       <ScrollView>
-        <View style={{flexDirection: 'row', height: scale(70)}}>
-          {/* <Image
-            style={styles.CompanyLogo}
-            source={{
-              uri:
-                'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
-            }}
-          /> */}
-
+        <View style={{flexDirection: 'row', height: scale(70), alignItems: 'center'}}>
+ 
           <View style={{width: 50}}>
             <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
               <Icon name="md-filter" color={'#ffffff'} size={34} />
@@ -635,7 +630,7 @@ export default function PerSalesmanDashboard(props) {
               style={{
                 paddingBottom: moderateScale(10),
                 alignSelf: 'center',
-                fontSize: moderateScale(28),
+                fontSize: moderateScale(22),
                 color: 'white',
                 fontWeight: 'bold',
                 marginLeft: width / 2 - scale(195),
@@ -670,28 +665,18 @@ export default function PerSalesmanDashboard(props) {
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
               }}>
-              {LastDateTimeUpdated.value}
+                {globalTimer.lastUpdate}
             </Text>
             <View
-              style={{
-                flexDirection: 'row',
-                alignContent: 'center',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                <Icon name="refresh" color={'#ffffff'} size={10} />
-              </View>
-              <Text
-                style={{
-                  color: 'white',
-                  fontSize: moderateScale(12, 0.5),
-                  alignContent: 'flex-end',
-                  alignItems: 'flex-end',
-                  justifyContent: 'flex-end',
-                }}>
-                {globalState.updateStatus === 'Updating' ||
-                globalState.updateStatus === 'Start' ? (
+                  style={{
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                    <Icon name="refresh" color={'#ffffff'} size={10} />
+                  </View>
                   <Text
                     style={{
                       color: 'white',
@@ -700,25 +685,35 @@ export default function PerSalesmanDashboard(props) {
                       alignItems: 'flex-end',
                       justifyContent: 'flex-end',
                     }}>
-                    {'Updating...'}{' '}
-                    {globalState.updatePercentage > 0
-                      ? globalState.updatePercentage + ' %'
-                      : ''}
+                    {globalState.updateStatus === 'Updating' ||
+                    globalState.updateStatus === 'Start' ? (
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {'Updating...'}{' '}
+                        {globalState.updatePercentage > 0
+                          ? globalState.updatePercentage + ' %'
+                          : ''}
+                      </Text>
+                    ) : null}
+
+                    {/* <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {hhmmss(900 - globalStatus.CurrentSeconds)}
+                      </Text> */}
                   </Text>
-                ) : (
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: moderateScale(12, 0.5),
-                      alignContent: 'flex-end',
-                      alignItems: 'flex-end',
-                      justifyContent: 'flex-end',
-                    }}>
-                    {hhmmss(900 - globalState.timerSeconds)}
-                  </Text>
-                )}
-              </Text>
-            </View>
+                </View>
           </View>
           {/* <View style={styles.textLastUpdateView}>
             <Text style={styles.textLastUpdate}>Last Update</Text>

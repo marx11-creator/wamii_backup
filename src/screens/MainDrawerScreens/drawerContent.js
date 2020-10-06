@@ -42,11 +42,11 @@ import {
   FilterList,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users} from '../../database/sqliteSetup';
-import PageContext from './pagecontext';
+import PageContextGlobalState from './pagecontext';
 import moment from 'moment';
 
 export function DrawerContent(props) {
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
 
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
@@ -95,6 +95,7 @@ export function DrawerContent(props) {
       <DrawerContentScrollView>
         <View style={[styles.drawerContent]}>
           <ImageOverlay
+            overlayAlpha={-0.8}
             source={require('../../assets/profilebg.png')}
             height={140}
             contentPosition="top">
@@ -250,8 +251,8 @@ export function DrawerContent(props) {
                   onPress={() => {
                     if (globalStatus.updateStatus === 'Updating') {
                       Alert.alert(
-                        'Note',
-                        'Application already updating in background. Kindly wait',
+                        'Oops!',
+                        'Update is already running. \nPlease wait.',
                         [
                           {
                             text: 'OK',
@@ -268,7 +269,10 @@ export function DrawerContent(props) {
 
                       globalStatus.updateStatus = 'Updating';
                       globalStatus.updateMode = 'manual';
-                      props.navigation.navigate('UpdateModal');
+
+                      setTimeout(() => {
+                        props.navigation.navigate('UpdateModal');
+                      }, 1000);
                     }
                   }}
                   gradientFrom="#00961A"

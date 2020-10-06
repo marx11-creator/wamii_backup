@@ -59,7 +59,8 @@ import {
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
-import PageContext from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 var lineChartAPIdatalength = 0;
 var BottomPerTeamAPIdatalength = 0;
 LogBox.ignoreAllLogs();
@@ -156,7 +157,8 @@ export default function PerTeamDashboard(props) {
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState] = useContext(PageContextGlobalState);
+  const [globalTimer] = useContext(PageContextGlobalTimer);
   const [isVisibleModalFilter, setisVisibleModalFilter] = useState(false);
   const [isModalConnectionError, setisModalConnectionError] = useState(false);
   const [isLoadingActivityIndicator, setisLoadingActivityIndicator] = useState(
@@ -241,30 +243,24 @@ export default function PerTeamDashboard(props) {
 
   //USE EFFECT PART
 
-
-
-
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per team focus');
       CurrentAppScreen.Screen = 'PerTeam';
 
-     if (PageVisited.PerTeamPAGE === 'NO') {
-      PageVisited.PerTeamPAGE = 'YES';
-       console.log('focus on per team with changes')
-       LoadPerTeamFiltered();
-  
-     }
+      if (PageVisited.PerTeamPAGE === 'NO') {
+        PageVisited.PerTeamPAGE = 'YES';
+        console.log('focus on per team with changes');
+        LoadPerTeamFiltered();
+      }
       // LoadPerTeam();
     });
   }, []);
 
   useEffect(() => {
-      console.log('focus on per team from update'); //
-      LoadPerTeam();
-
+    console.log('focus on per team from update'); //
+    LoadPerTeam();
   }, [globalState.dateTimeUpdated24hr]);
-
 
   useEffect(() => {
     if (CurrentDashboardScreen.Screen === 'PERTEAM') {
@@ -274,7 +270,6 @@ export default function PerTeamDashboard(props) {
     }
   }, [FilterList.DashboardFilterYearNMonthTeam]);
 
-
   useEffect(() => {
     settotalSalesAnimation(true);
     setsummaryPercentage((totalSales / totalTarget) * 100);
@@ -283,7 +278,6 @@ export default function PerTeamDashboard(props) {
     settotalTargetsAnimation(true);
     settotalBalanceAnimation(true);
   }, [totalSales]);
-
 
   function LoadPerTeam() {
     GetlineChartColLocalData();
@@ -481,7 +475,7 @@ export default function PerTeamDashboard(props) {
     // ===================================================================================================================
     <View style={{flex: 1}}>
       <Video
-        rate={0.9}
+        rate={1}
         repeat={true}
         resizeMode="cover"
         source={require('../../assets/night.mp4')} // Can be a URL or a local file.
@@ -493,7 +487,7 @@ export default function PerTeamDashboard(props) {
       <ScrollView>
         <View style={{flexDirection: 'column'}}>
           <View style={{margin: moderateScale(5), flex: 1}}>
-            <View style={{flexDirection: 'row', height: scale(70)}}>
+            <View style={{flexDirection: 'row', height: scale(70), alignItems: 'center'}}>
               {/* <Image
                 style={styles.CompanyLogo}
                 source={{
@@ -520,7 +514,7 @@ export default function PerTeamDashboard(props) {
                   style={{
                     paddingBottom: moderateScale(10),
                     alignSelf: 'center',
-                    fontSize: moderateScale(28),
+                    fontSize: moderateScale(22),
                     color: 'white',
                     fontWeight: 'bold',
                     marginLeft: width / 2 - scale(145),
@@ -555,7 +549,7 @@ export default function PerTeamDashboard(props) {
                     alignItems: 'flex-end',
                     justifyContent: 'flex-end',
                   }}>
-                  {LastDateTimeUpdated.value}
+                  {globalTimer.lastUpdate}
                 </Text>
                 <View
                   style={{
@@ -590,8 +584,9 @@ export default function PerTeamDashboard(props) {
                           ? globalState.updatePercentage + ' %'
                           : ''}
                       </Text>
-                    ) : (
-                      <Text
+                    ) : null}
+
+                    {/* <Text
                         style={{
                           color: 'white',
                           fontSize: moderateScale(12, 0.5),
@@ -599,9 +594,8 @@ export default function PerTeamDashboard(props) {
                           alignItems: 'flex-end',
                           justifyContent: 'flex-end',
                         }}>
-                        {hhmmss(900 - globalState.timerSeconds)}
-                      </Text>
-                    )}
+                        {hhmmss(900 - globalStatus.CurrentSeconds)}
+                      </Text> */}
                   </Text>
                 </View>
               </View>
@@ -667,7 +661,13 @@ export default function PerTeamDashboard(props) {
             {/* <Button
               title="Test"
               onPress={() => {
-                console.log(DashboardYears.length);
+                console.log(globalState.lastUpdate);
+              }}
+            /> */}
+            {/* <Button
+              title="Test"
+              onPress={() => {
+                console.log(globalState.lastUpdate);
               }}
             /> */}
           </View>
@@ -1126,27 +1126,26 @@ const styles = StyleSheet.create({
   },
 });
 
-
-      // if (DashboardYears.length > 0) {
-      //   console.log('With data');
-      // } else {
-      //   Alert.alert(
-      //     'NOTE:',
-      //     'Please update application data first. ',
-      //     [
-      //       {
-      //         text: 'UPDATE NOW',
-      //         onPress: () => {
-      //           props.navigation.navigate('UpdateModal');
-      //         },
-      //       },
-      //       {
-      //         text: 'CANCEL',
-      //         // onPress: () => {
-      //         //   props.navigation.navigate('Home');
-      //         // },
-      //       },
-      //     ],
-      //     {cancelable: true},
-      //   );
-      // }
+// if (DashboardYears.length > 0) {
+//   console.log('With data');
+// } else {
+//   Alert.alert(
+//     'NOTE:',
+//     'Please update application data first. ',
+//     [
+//       {
+//         text: 'UPDATE NOW',
+//         onPress: () => {
+//           props.navigation.navigate('UpdateModal');
+//         },
+//       },
+//       {
+//         text: 'CANCEL',
+//         // onPress: () => {
+//         //   props.navigation.navigate('Home');
+//         // },
+//       },
+//     ],
+//     {cancelable: true},
+//   );
+// }

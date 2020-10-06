@@ -8,11 +8,6 @@ import {
   dbSalesmanNet,
   dblastdatetimeupdated,
 } from '../../database/sqliteSetup';
-import PageContext from '../../screens/MainDrawerScreens/pagecontext';
-var MonthDiff = '';
-var DaysDiff = '';
-var HoursDiff = '';
-var MinutesDiff = '';
 
 export var ModuleAccess = {
   PerTeam: 'NOT ALLOWED',
@@ -29,14 +24,15 @@ export var APIToken = {
 };
 
 export var server = {
-  //http://172.16.0.150:3003
-  //https://boiling-atoll-20376.herokuapp.com
-  server_address: 'http://172.16.0.185:3003/',
+  //http://172.16.0.150:3003/
+  //https://boiling-atoll-20376.herokuapp.com/
+  //http://178.128.217.246/
+  server_address: 'http://178.128.217.246/',
 };
 
 export var CurrentAppVersionUpdate = {
-  CurrentAppVersionUpdateField: 1007,
-  CurrentAppVersionUpdateFieldDateRelease: 'September 25, 2020',
+  CurrentAppVersionUpdateField: 1008,
+  CurrentAppVersionUpdateFieldDateRelease: 'October 06, 2020',
 };
 
 export var CurrentDashboardScreen = {
@@ -91,6 +87,7 @@ export var globalStatus = {
   updateStatus: '',
   StartUpUpdate: false,
   dateTimeUpdated24hr: '',
+  CurrentSeconds: '',
 };
 
 export var LastDateTimeUpdated = {
@@ -348,9 +345,9 @@ export function GetDateTime() {
           globalStatus.dateTimeUpdated24hr = results.rows.item(
             0,
           ).dateTimeUpdated24hr;
-          ComputeLastDateTimeUpdate();
+          // ComputeLastDateTimeUpdate();
           console.log('called');
-          console.log(results.rows.item(0).dateTimeUpdated24hr);
+          // console.log(results.rows.item(0).dateTimeUpdated24hr);
           //  console.log(results.rows.item(0).dateTimeUpdated24hr);
         } else {
           //   console.log('No date and time in local db found');
@@ -375,59 +372,4 @@ export function hhmmss(secs) {
 }
 
 
-export function ComputeLastDateTimeUpdate() {
-  var now = moment().format('DD/MM/YYYY HH:mm:ss');
-  var then = globalStatus.dateTimeUpdated24hr;
-  // console.log(moment().format('DD/MM/YYYY HH:mm:ss'));
-  // console.log(globalStatus.dateTimeUpdated24hr + '  aaa');
 
-  var ms = moment(now, 'DD/MM/YYYY HH:mm:ss').diff(
-    moment(then, 'DD/MM/YYYY HH:mm:ss'),
-  );
-  var d = moment.duration(ms);
-  MonthDiff = '';
-  DaysDiff = '';
-  HoursDiff = '';
-  MinutesDiff = '';
-
-  if (d.months() > 0) {
-    MonthDiff = d.months() + ' month ';
-  } else {
-    MonthDiff = '';
-  }
-
-  if (d.days() === 1) {
-    DaysDiff = d.days() + ' day ';
-  } else if (d.days() > 1) {
-    DaysDiff = d.days() + ' days ';
-  } else if (d.days() < 1) {
-    DaysDiff = '';
-  }
-
-  if (d.hours() === 1) {
-    HoursDiff = d.hours() + ' hour ';
-  } else if (d.hours() > 1) {
-    HoursDiff = d.hours() + ' hours ';
-  } else if (d.hours() < 1) {
-    HoursDiff = '';
-  }
-
-  if (d.minutes() === 1) {
-    MinutesDiff = d.minutes() + ' minute ';
-  } else if (d.minutes() > 1) {
-    MinutesDiff = d.minutes() + ' minutes ';
-  } else if (d.minutes() < 1) {
-    MinutesDiff = '';
-  }
-  if (MonthDiff !== '') {
-    LastDateTimeUpdated.value = MonthDiff + 'ago';
-  } else if (DaysDiff !== '') {
-    LastDateTimeUpdated.value = DaysDiff + 'ago';
-  } else if (HoursDiff !== '') {
-    LastDateTimeUpdated.value = HoursDiff + 'ago';
-  } else if (MinutesDiff !== '') {
-    LastDateTimeUpdated.value = MinutesDiff + 'ago';
-  } else {
-    LastDateTimeUpdated.value = '0' + ' minutes ago';
-  }
-}

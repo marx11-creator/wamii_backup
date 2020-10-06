@@ -9,6 +9,8 @@ import {
   ActivityIndicator,
   StyleSheet,
   Alert,
+  Linking,
+  BackHandler,
 } from 'react-native';
 import FlatButton from '../../sharedComponents/custombutton';
 import {dbperymtsat} from '../../database/sqliteSetup';
@@ -37,14 +39,16 @@ import {
   globalStatus,
   CurrentAppScreen,
   GetDateTime,
-  ComputeLastDateTimeUpdate,
+  CurrentAppVersionUpdate,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
-import PageContext from './pagecontext';
+import PageContextGlobalState from './pagecontext';
+import PageContextGlobalTimer from './pagecontext2';
 import BackgroundTimer from 'react-native-background-timer';
 //marc
 import {useFocusEffect} from '@react-navigation/native';
 import {sqrt} from 'react-native-reanimated';
+import {SQLErrors} from 'react-native-sqlite-storage';
 //marc
 var ApiRowsCount = 0;
 var longStrinfg = '';
@@ -56,6 +60,11 @@ var PerPrincipalAPIdatalength = 0;
 var PerAreaAPIdatalength = 0;
 var updateProgress = 0;
 
+var MonthDiff = '';
+var DaysDiff = '';
+var HoursDiff = '';
+var MinutesDiff = '';
+
 //marc
 var cur_month = new Date().getMonth() + 1;
 var prev_month = new Date().getMonth();
@@ -64,7 +73,8 @@ var MarcStatus = '0';
 //marc
 
 export default function UpdateModal(props) {
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
+  const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
   const [localSeconds, setLocalSeconds] = useState(0);
 
   var GetPerymtsatAPIDataState = false;
@@ -77,26 +87,35 @@ export default function UpdateModal(props) {
   //   console.log(auth);
   // }, 1000);
 
+  // useEffect(() => {
+  //   setglobalState({
+  //     ...globalState,
+  //     timerSeconds: localSeconds,
+  //   });
+  //   FiveSecondsDelay = FiveSecondsDelay + 1;
+  //   if (FiveSecondsDelay === 60) {
+  //     FiveSecondsDelay = 0;
+  //     ComputeLastDateTimeUpdate();
+  //   }
+
+  //   // console.log('second timer running ' + ' ' + localSeconds);
+  //   if (localSeconds === 900) {
+  //     globalStatus.updateStatus = 'Updating';
+
+  //     setglobalState({
+  //       ...globalState,
+  //       timerSeconds: 0,
+  //       updateStatus: 'Updating',
+  //     });
+  //   }
+  // }, [localSeconds]);
+
   useEffect(() => {
-    setglobalState({
-      ...globalState,
-      timerSeconds: localSeconds,
-    });
     FiveSecondsDelay = FiveSecondsDelay + 1;
     if (FiveSecondsDelay === 60) {
+      console.log('60 secs reach');
       FiveSecondsDelay = 0;
       ComputeLastDateTimeUpdate();
-    }
-
-    //  console.log('second timer running ' + ' ' + localSeconds);
-    if (localSeconds === 900) {
-      globalStatus.updateStatus = 'Updating';
-
-      setglobalState({
-        ...globalState,
-        timerSeconds: 0,
-        updateStatus: 'Updating',
-      });
     }
   }, [localSeconds]);
 
@@ -209,7 +228,8 @@ export default function UpdateModal(props) {
       });
       props.navigation.navigate(CurrentAppScreen.Screen);
 
-      RunTimer();
+      // RunTimer();
+      //5
     } else {
       updateProgress = 0;
       console.log(globalStatus.updateMode);
@@ -223,11 +243,100 @@ export default function UpdateModal(props) {
       });
 
       RunTimer();
+      //6
+    }
+
+    CheckSystemStatus();
+  }
+
+  function CheckSystemStatus() {
+    var updateDifference = 0;
+    updateDifference =
+      Number(APIUpdateVersion.APIUpdateVersionField) -
+      Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField);
+    if (APIUpdateVersion.APIUpdateVersionField !== 0) {
+      if (
+        Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField) ===
+        Number(APIUpdateVersion.APIUpdateVersionField)
+      ) {
+        console.log('app is updated');
+      } else {
+        if (updateDifference > 1) {
+          Alert.alert(
+            'Notice',
+            'You are using outdated version off the app. Please update to the latest version wamii_v' +
+              APIUpdateVersion.APIUpdateVersionField +
+              ' \n.',
+            [
+              {
+                text: 'OK',
+                onPress: () => {
+                  BackHandler.exitApp();
+                },
+              },
+            ],
+            {cancelable: true},
+          );
+        } else {
+          Alert.alert(
+            'Update',
+            'A new version of the app is now available! \nPlease download and install on our Viber Group Chat \n\n(App Version wamii_v' +
+              APIUpdateVersion.APIUpdateVersionField +
+              ' \n.',
+            [
+              {
+                text: 'later',
+                onPress: () => {
+                  //   console.log('later');
+                },
+              },
+              {
+                text: 'Update Now',
+                onPress: () => {
+                  Linking.canOpenURL('viber://')
+                    .then((supported) => {
+                      if (!supported) {
+                        ////    console.log('1');
+                      } else {
+                        //    console.log('2');
+                        Linking.openURL('viber://chats');
+                        // Linking.openURL('viber://chat?number=639188989911');
+                      }
+                    })
+                    .catch((err) => console.log(err));
+                },
+              },
+            ],
+            {cancelable: true},
+          );
+        }
+      }
+    }
+
+    if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
+      const input = APIUpdateVersion.APIUpdateVersionNotice;
+      const [msg1, msg2, msg3] = input.split('~');
+      Alert.alert(
+        'System Maintenance',
+        msg1 + '\n \n' + msg2 + '\n' + msg3 + '\n',
+        [
+          {
+            text: 'OK',
+            // onPress: () => {
+            //   props.navigation.navigate('Home');
+            // },
+          },
+        ],
+        {cancelable: true},
+      );
+    } else {
+      console.log('asd');
     }
   }
 
   function SaveLastDatetimeUpdated() {
     var currdt = "('" + moment().format('DD/MM/YYYY HH:mm:ss') + "')";
+    var currdtRaw = moment().format('DD/MM/YYYY HH:mm:ss');
 
     dblastdatetimeupdated.transaction(function (tx) {
       tx.executeSql(
@@ -236,7 +345,9 @@ export default function UpdateModal(props) {
         (tx, results) => {
           console.log('last datetimeupdatedtbl cleared');
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE6' + err);
+        },
       );
 
       tx.executeSql(
@@ -248,22 +359,28 @@ export default function UpdateModal(props) {
           //   ...globalState,
           //   dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss')
           // })
-          GetDateTime(); // call get last date time updated to update global last date time
+          // GetDateTime(); // call get last date time updated to update global last date time
+          globalStatus.dateTimeUpdated24hr = currdtRaw;
+          ComputeLastDateTimeUpdate();
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE7' + err);
+        },
       );
     });
   }
 
   function RunTimer() {
+    console.log('timer triggered');
     var secs = 0;
     const intervalId2 = BackgroundTimer.setInterval(() => {
       secs = secs + 1;
       setLocalSeconds(secs);
-
+      // globalStatus.CurrentSeconds = secs;
       if (secs === 900) {
         BackgroundTimer.clearInterval(intervalId2);
         GETUpdateVersionAPI();
+        globalStatus.updateStatus = 'Updating';
       }
 
       if (globalStatus.updateMode === 'manual') {
@@ -278,7 +395,6 @@ export default function UpdateModal(props) {
       updateProgress = 0;
       setglobalState({
         ...globalState,
-        updateStatus: 'Updating',
         updatePercentage: updateProgress,
       });
       setisModalConnectionError(true);
@@ -291,13 +407,13 @@ export default function UpdateModal(props) {
         updateStatus: 'Idle',
       });
       console.log('error occured in background update manual');
-      // globalStatus.updateMode = 'auto';
-      // RunTimer();
+      globalStatus.updateMode = 'auto';
+      RunTimer();
+      //7
     } else {
       updateProgress = 0;
       setglobalState({
         ...globalState,
-        updateStatus: 'Updating',
         updatePercentage: updateProgress,
       });
       setisModalConnectionError(false);
@@ -312,6 +428,7 @@ export default function UpdateModal(props) {
       });
 
       RunTimer();
+      //8
     }
   }
 
@@ -383,6 +500,7 @@ export default function UpdateModal(props) {
   //====================================================================> RUN UPDATE
 
   useEffect(() => {
+    ComputeLastDateTimeUpdate();
     {
       globalStatus.updateMode === 'manual'
         ? props.navigation.addListener('focus', () => {
@@ -392,6 +510,86 @@ export default function UpdateModal(props) {
         : AutoUpdate();
     }
   }, []);
+
+  function ComputeLastDateTimeUpdate() {
+    console.log('compute running');
+    var now = moment().format('DD/MM/YYYY HH:mm:ss');
+    var then = globalStatus.dateTimeUpdated24hr;
+    var ms = moment(now, 'DD/MM/YYYY HH:mm:ss').diff(
+      moment(then, 'DD/MM/YYYY HH:mm:ss'),
+    );
+    var d = moment.duration(ms);
+    MonthDiff = '';
+    DaysDiff = '';
+    HoursDiff = '';
+    MinutesDiff = '';
+
+    console.log(now);
+
+    console.log(then);
+
+    if (d.months() > 0) {
+      MonthDiff = d.months() + ' month ';
+    } else {
+      MonthDiff = '';
+    }
+
+    if (d.days() === 1) {
+      DaysDiff = d.days() + ' day ';
+    } else if (d.days() > 1) {
+      DaysDiff = d.days() + ' days ';
+    } else if (d.days() < 1) {
+      DaysDiff = '';
+    }
+
+    if (d.hours() === 1) {
+      HoursDiff = d.hours() + ' hour ';
+    } else if (d.hours() > 1) {
+      HoursDiff = d.hours() + ' hours ';
+    } else if (d.hours() < 1) {
+      HoursDiff = '';
+    }
+
+    if (d.minutes() === 1) {
+      MinutesDiff = d.minutes() + ' minute ';
+    } else if (d.minutes() > 1) {
+      MinutesDiff = d.minutes() + ' minutes ';
+    } else if (d.minutes() < 1) {
+      MinutesDiff = '';
+    }
+
+    if (MonthDiff !== '') {
+      console.log('1');
+      setglobalTimer({
+        ...globalTimer,
+        lastUpdate: MonthDiff + 'ago',
+      });
+    } else if (DaysDiff !== '') {
+      console.log('2');
+      setglobalTimer({
+        ...globalTimer,
+        lastUpdate: DaysDiff + 'ago',
+      });
+    } else if (HoursDiff !== '') {
+      console.log('3');
+      setglobalTimer({
+        ...globalTimer,
+        lastUpdate: HoursDiff + 'ago',
+      });
+    } else if (MinutesDiff !== '') {
+      console.log('4');
+      setglobalTimer({
+        ...globalTimer,
+        lastUpdate: MinutesDiff + 'ago',
+      });
+    } else {
+      console.log('5');
+      setglobalTimer({
+        ...globalTimer,
+        lastUpdate: '0 minutes ago',
+      });
+    }
+  }
 
   function ManualUpdate() {
     if (
@@ -417,6 +615,7 @@ export default function UpdateModal(props) {
   }
 
   function AutoUpdate() {
+    console.log('Auto Update started');
     if (
       globalStatus.updateStatus === 'Updating' &&
       globalStatus.updateMode === 'auto'
@@ -533,7 +732,7 @@ export default function UpdateModal(props) {
   }, [PerAreaLocalData]);
 
   function SQLerror(err) {
-    console.log('SQL Error1 : ' + err);
+    console.log('SPECIAL Error  : ' + err.message);
   }
 
   function StartUpdate() {
@@ -568,7 +767,12 @@ export default function UpdateModal(props) {
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr1 = teams + '&' + sales_position_name;
-    //  console.log(tempstr1);
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'persalesmansalestarget/' +
+        tempstr1,
+    );
     Promise.race([
       fetch(
         server.server_address +
@@ -585,7 +789,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -647,83 +851,125 @@ export default function UpdateModal(props) {
           console.log('4 ' + 'deleted local perymtsat');
           SavePerymtsatAPIData();
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE8' + err);
+        },
       );
     });
   }
 
   function SavePerymtsatAPIData() {
+    console.log(
+      lineChartLocalData.length + ' is the length of lineChartLocalData',
+    );
     var perymtsatString = '';
     var currIndex = 0;
-    //const LengthlineChartLocalData = lineChartLocalData.length - 1;
+    var runningIndexCount = 0;
+
+    //basis
     {
       lineChartLocalData.map(function (item, index) {
         currIndex = currIndex + 1;
-        perymtsatString =
-          perymtsatString +
-          "('" +
-          item.business_year +
-          "'" +
-          ',' +
-          "'" +
-          item.business_month +
-          "'" +
-          ',' +
-          "'" +
-          item.invoice_date +
-          "'" +
-          ',' +
-          "'" +
-          item.team +
-          "'" +
-          ',' +
-          "'" +
-          item.salesman_name +
-          "'" +
-          ',' +
-          "'" +
-          item.position_name +
-          "'" +
-          ',' +
-          "'" +
-          item.amount +
-          "'" +
-          ',' +
-          "'" +
-          item.target +
-          "'" +
-          ',' +
-          "'" +
-          item.dateTimeUpdated +
-          "'" +
-          '),';
+        runningIndexCount = runningIndexCount + 1;
+
+        if (runningIndexCount < 501) {
+          // console.log('saved on ' + currIndex + ' indexxxxxx');
+          perymtsatString =
+            perymtsatString +
+            "('" +
+            item.business_year +
+            "'" +
+            ',' +
+            "'" +
+            item.business_month +
+            "'" +
+            ',' +
+            "'" +
+            item.invoice_date +
+            "'" +
+            ',' +
+            "'" +
+            item.team +
+            "'" +
+            ',' +
+            "'" +
+            item.salesman_name +
+            "'" +
+            ',' +
+            "'" +
+            item.position_name +
+            "'" +
+            ',' +
+            "'" +
+            item.amount +
+            "'" +
+            ',' +
+            "'" +
+            item.target +
+            "'" +
+            ',' +
+            "'" +
+            item.dateTimeUpdated +
+            "'" +
+            '),';
+
+          if (runningIndexCount === 500) {
+            var stringnow = perymtsatString;
+            perymtsatString = '';
+            runningIndexCount = 0;
+            dbperymtsat.transaction(function (tx) {
+              // done concat
+              tx.executeSql(
+                'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log('SAVED 500X500 SavePerymtsatAPIData');
+                },
+                SQLerror,
+              );
+            });
+          }
+
+          if (
+            runningIndexCount < 500 &&
+            currIndex === lineChartLocalData.length
+          ) {
+            var stringnow = perymtsatString;
+            perymtsatString = '';
+
+            dbperymtsat.transaction(function (tx) {
+              // done concat
+              tx.executeSql(
+                'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log(
+                    'SAVED 500X500 SavePerymtsatAPIData < 500 ' +
+                      runningIndexCount,
+                  );
+                  runningIndexCount = 0;
+                },
+                SQLerror,
+              );
+            });
+          }
+        }
       });
 
       if (currIndex === lineChartLocalData.length) {
-        ///console.log(perymtsatString);
-
-        console.log(
-          '5 ' + 'SavePerymtsatAPIData done concatenating, saving...',
-        );
+        console.log('5 ' + 'SavePerymtsatAPIData done concatenating, saved..');
         updateProgress = Number(updateProgress) + Number(10);
         setglobalState({
           ...globalState,
           updatePercentage: updateProgress,
         });
 
-        dbperymtsat.transaction(function (tx) {
-          tx.executeSql(
-            'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
-              perymtsatString.slice(0, -1),
-            [],
-            (tx, results) => {
-              UpdateYearMonthsFilter();
-              setq1Principal(true);
-              console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
-            },
-            SQLerror,
-          );
-        });
+        UpdateYearMonthsFilter();
+
+        setq1Principal(true);
+        console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
       }
     }
   }
@@ -749,7 +995,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -805,78 +1051,125 @@ export default function UpdateModal(props) {
 
           SavePerPrincipalAPIData();
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE10' + err);
+        },
       );
     });
   }
   function SavePerPrincipalAPIData() {
     var currIndex = 0;
     var perprincipalpermonthString = '';
-    // const LengthPerPrincipalLocalData = PerPrincipalLocalData.length - 1;
+    var runningIndexCount = 0;
+    // done concat
     {
       PerPrincipalLocalData.map(function (item, index) {
         currIndex = currIndex + 1;
-        perprincipalpermonthString =
-          perprincipalpermonthString +
-          "('" +
-          item.business_year +
-          "'" +
-          ',' +
-          "'" +
-          item.business_month +
-          "'" +
-          ',' +
-          "'" +
-          item.invoice_date +
-          "'" +
-          ',' +
-          "'" +
-          item.principal_name +
-          "'" +
-          ',' +
-          "'" +
-          item.principal_acronym +
-          "'" +
-          ',' +
-          "'" +
-          item.sales +
-          "'" +
-          ',' +
-          "'" +
-          item.target +
-          "'" +
-          ',' +
-          "'" +
-          item.uba +
-          "'" +
-          ',' +
-          "'" +
-          item.dateTimeUpdated +
-          "'" +
-          '),';
-      });
 
-      dbperprincipal.transaction(function (tx) {
-        tx.executeSql(
-          'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, sales, target, uba, dateTimeUpdated) VALUES   ' +
-            perprincipalpermonthString.slice(0, -1),
-          [],
-          (tx, results) => {
-            if (currIndex === PerPrincipalLocalData.length) {
-              updateProgress = Number(updateProgress) + Number(7);
-              setglobalState({
-                ...globalState,
-                updatePercentage: updateProgress,
-              });
+        runningIndexCount = runningIndexCount + 1;
+        if (runningIndexCount < 501) {
+          perprincipalpermonthString =
+            perprincipalpermonthString +
+            "('" +
+            item.business_year +
+            "'" +
+            ',' +
+            "'" +
+            item.business_month +
+            "'" +
+            ',' +
+            "'" +
+            item.invoice_date +
+            "'" +
+            ',' +
+            "'" +
+            item.principal_name +
+            "'" +
+            ',' +
+            "'" +
+            item.principal_acronym +
+            "'" +
+            ',' +
+            "'" +
+            item.sales +
+            "'" +
+            ',' +
+            "'" +
+            item.target +
+            "'" +
+            ',' +
+            "'" +
+            item.uba +
+            "'" +
+            ',' +
+            "'" +
+            item.dateTimeUpdated +
+            "'" +
+            '),';
 
-              setq2Perymtsat(true);
-            }
-          },
-          SQLerror,
-        );
+          if (runningIndexCount === 500) {
+            var stringnow = perprincipalpermonthString;
+            perprincipalpermonthString = '';
+            runningIndexCount = 0;
+
+            dbperprincipal.transaction(function (tx) {
+              // done concat
+              tx.executeSql(
+                'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, sales, target, uba, dateTimeUpdated) VALUES   ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log('SAVED 500X500 SavePerPrincipalAPIData');
+                },
+                SQLerror,
+              );
+            });
+          }
+
+          if (
+            runningIndexCount < 500 &&
+            currIndex === PerPrincipalLocalData.length
+          ) {
+            var stringnow = perprincipalpermonthString;
+            perprincipalpermonthString = '';
+
+            dbperprincipal.transaction(function (tx) {
+              // done concat
+              tx.executeSql(
+                'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, sales, target, uba, dateTimeUpdated) VALUES   ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log(
+                    'SAVED 500X500  SavePerPrincipalAPIData < 500 ' +
+                      runningIndexCount,
+                  );
+                  runningIndexCount = 0;
+                },
+                SQLerror,
+              );
+            });
+          }
+        }
+
+        if (currIndex === PerPrincipalLocalData.length) {
+          console.log(
+            '5.1 ' + ' SavePerPrincipalAPIData done concatenating, saved..',
+          );
+          updateProgress = Number(updateProgress) + Number(7);
+          setglobalState({
+            ...globalState,
+            updatePercentage: updateProgress,
+          });
+
+          setq2Perymtsat(true);
+          console.log('6.1 ' + 'DONE SAVING SavePerPrincipalAPIData ');
+        }
       });
     }
   }
+
+//added quote for zou1
 
   //PER AREA
   const GetPerAreaAPIData = () => {
@@ -905,7 +1198,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -956,71 +1249,141 @@ export default function UpdateModal(props) {
           console.log('4.1' + ' deleted local perareapermonth_tbl');
           SavePerAreaAPIData();
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE12' + err);
+        },
       );
     });
   }
   function SavePerAreaAPIData() {
+    console.log(' 0.1 SavePerAreaAPIData');
+    console.log(PerAreaLocalData.length);
     var currIndex = 0;
     var perareapermonthString = '';
+    var runningIndexCount = 0;
     // const LengthPerAreaLocalData = PerAreaLocalData.length - 1;
     {
       PerAreaLocalData.map(function (item, index) {
         currIndex = currIndex + 1;
-        perareapermonthString =
-          perareapermonthString +
-          "('" +
-          item.business_year +
-          "'" +
-          ',' +
-          "'" +
-          item.business_month +
-          "'" +
-          ',' +
-          "'" +
-          item.invoice_date +
-          "'" +
-          ',' +
-          "'" +
-          item.province +
-          "'" +
-          ',' +
-          "'" +
-          item.sales +
-          "'" +
-          ',' +
-          "'" +
-          item.uba +
-          "'" +
-          ',' +
-          "'" +
-          item.dateTimeUpdated +
-          "'" +
-          '),';
+        runningIndexCount = runningIndexCount + 1;
+
+        if (runningIndexCount < 501) {
+          // console.log('saved on ' + currIndex + ' indexxxxxx');
+
+          perareapermonthString =
+            perareapermonthString +
+            "('" +
+            item.business_year +
+            "'" +
+            ',' +
+            "'" +
+            item.business_month +
+            "'" +
+            ',' +
+            "'" +
+            item.invoice_date +
+            "'" +
+            ',' +
+            "'" +
+            item.province +
+            "'" +
+            ',' +
+            "'" +
+            item.sales +
+            "'" +
+            ',' +
+            "'" +
+            item.uba +
+            "'" +
+            ',' +
+            "'" +
+            item.dateTimeUpdated +
+            "'" +
+            '),';
+
+          if (runningIndexCount === 500) {
+            var stringnow = perareapermonthString;
+            perareapermonthString = '';
+            runningIndexCount = 0;
+            dbperarea.transaction(function (tx) {
+              // done concat
+              tx.executeSql(
+                'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log('SAVED 500X500 SavePerAreaAPIData');
+                },
+                SQLerror,
+              );
+            });
+          }
+
+          if (
+            runningIndexCount < 500 &&
+            currIndex === PerAreaLocalData.length
+          ) {
+            var stringnow = perareapermonthString;
+            perareapermonthString = '';
+
+            dbperarea.transaction(function (tx) {
+              // done concat
+              tx.executeSql(
+                'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log(
+                    'SAVED 500X500 SavePerAreaAPIData < 500 ' +
+                      runningIndexCount,
+                  );
+                  runningIndexCount = 0;
+                },
+                SQLerror,
+              );
+            });
+          }
+        }
       });
 
-      dbperarea.transaction(function (tx) {
-        tx.executeSql(
-          'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
-            perareapermonthString.slice(0, -1),
-          [],
-          (tx, results) => {
-            if (currIndex === PerAreaLocalData.length) {
-              updateProgress = Number(updateProgress) + Number(6);
-              setglobalState({
-                ...globalState,
-                updatePercentage: updateProgress,
-              });
+      if (currIndex === PerAreaLocalData.length) {
+        console.log('5.2 ' + 'SavePerAreaAPIData done concatenating, saved..');
+        updateProgress = Number(updateProgress) + Number(6);
+        setglobalState({
+          ...globalState,
+          updatePercentage: updateProgress,
+        });
 
-              console.log('7 ' + 'Query completed SavePerAreaAPIData');
-              setq4Area(true);
-            }
-          },
-          SQLerror,
-        );
-      });
+        console.log('7 ' + 'Query completed SavePerAreaAPIData');
+        setq4Area(true);
+      }
     }
   }
+
+  //     dbperarea.transaction(function (tx) {
+  //       tx.executeSql(
+  //         'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
+  //           perareapermonthString.slice(0, -1),
+  //         [],
+  //         (tx, results) => {
+  //           if (currIndex === PerAreaLocalData.length) {
+  //             updateProgress = Number(updateProgress) + Number(6);
+  //             setglobalState({
+  //               ...globalState,
+  //               updatePercentage: updateProgress,
+  //             });
+
+  //             console.log('7 ' + 'Query completed SavePerAreaAPIData');
+  //             setq4Area(true);
+  //           }
+  //         },
+  //         (tx, err) => {
+  //           console.log('ADDED HERE13' + err);
+  //         },
+  //       );
+  //     });
+  //   }
+  // }
 
   const APISaveUpdate = () => {
     Promise.race([
@@ -1039,7 +1402,7 @@ export default function UpdateModal(props) {
         }),
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1103,7 +1466,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1133,9 +1496,39 @@ export default function UpdateModal(props) {
             setq3UserUpdateLog(true);
           } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
             if (globalStatus.updateMode === 'manual') {
+              console.log('MANUAL');
+              globalStatus.updateMode = 'auto';
+              updateProgress = 0;
+              setglobalState({
+                ...globalState,
+                updatePercentage: updateProgress,
+                updateStatus: 'Idle',
+              });
+
+              globalStatus.updateStatus = 'Idle';
+
+              RunTimer();
+
+              //1
+
               setisModalConnectionError(false);
               setisLoadingActivityIndicator(false);
               props.navigation.navigate('Home');
+              CheckSystemStatus();
+            } else {
+              console.log(APIUpdateVersion.APIUpdateVersionStatus);
+              updateProgress = 0;
+              setglobalState({
+                ...globalState,
+                updatePercentage: updateProgress,
+                updateStatus: 'Idle',
+              });
+
+              globalStatus.updateStatus = 'Idle';
+
+              RunTimer();
+              //2
+              CheckSystemStatus();
             }
           }
         }
@@ -1161,7 +1554,7 @@ export default function UpdateModal(props) {
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1199,6 +1592,7 @@ export default function UpdateModal(props) {
 
           if (CurrIndex === jsonData.length) {
             dbBusinessCalendar.transaction(function (tx) {
+              // no need concat brake
               tx.executeSql(
                 'Delete from business_calendar_tbl   ',
                 [],
@@ -1211,11 +1605,15 @@ export default function UpdateModal(props) {
                         BusinessCalendarString.slice(0, -1),
                       [],
                       (tx, results) => {},
-                      SQLerror,
+                      (tx, err) => {
+                        console.log('ADDED HERE14' + err);
+                      },
                     );
                   });
                 },
-                SQLerror,
+                (tx, err) => {
+                  console.log('ADDED HERE15' + err);
+                },
               );
             });
           }
@@ -1407,7 +1805,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1445,7 +1843,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1485,7 +1883,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1522,7 +1920,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1731,7 +2129,9 @@ export default function UpdateModal(props) {
           setload_v(3);
           console.log('25 ' + 'DONE upload_data_per_vendor');
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE1' + err);
+        },
       );
     });
   };
@@ -1753,7 +2153,9 @@ export default function UpdateModal(props) {
           setload_c(3);
           console.log('26 ' + 'DONE upload_data_per_category');
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE2' + err);
+        },
       );
     });
   };
@@ -1797,7 +2199,7 @@ export default function UpdateModal(props) {
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
+        setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
     ])
       .then((responseData) => {
@@ -1839,7 +2241,9 @@ export default function UpdateModal(props) {
             }
           }
         },
-        SQLerror,
+        (tx, err) => {
+          console.log('ADDED HERE3' + err);
+        },
       );
     });
   }
@@ -1854,76 +2258,185 @@ export default function UpdateModal(props) {
     longStrinfg = '';
     var stocks = 0;
     var ProductType = '';
-    var totalProduct = 0;
+    var currIndex = 0;
+    var runningIndexCount = 0;
+
+    //basis
     {
-      ApiPromoItemData.map(function (item, i) {
-        totalProduct = totalProduct + 1;
-        if (item.promo_product === '1') {
-          ProductType = 'Promo';
-        } else {
-          ProductType = 'Regular';
-        }
+      ApiPromoItemData.map(function (item, index) {
+        currIndex = currIndex + 1;
+        runningIndexCount = runningIndexCount + 1;
 
-        if (parseInt(item.total_case) < 1) {
-          stocks = item.total_pieces + ' PCS';
-        } else {
-          stocks = (item.total_case * 1).toFixed(2) + ' CS';
-        }
-        longStrinfg =
-          longStrinfg +
-          "('" +
-          item.principal_name +
-          "'" +
-          ',' +
-          "'" +
-          item.product_id +
-          "'" +
-          ',' +
-          "'" +
-          item.product_variant +
-          "'" +
-          ',' +
-          "'" +
-          item.product_name +
-          "'" +
-          ',' +
-          "'" +
-          ProductType +
-          "'" +
-          ',' +
-          "'" +
-          stocks +
-          "'" +
-          ',' +
-          "'" +
-          item.img_url +
-          "'" +
-          ',' +
-          "'" +
-          item.DateandTimeUpdated +
-          "'" +
-          '),';
-      });
-    }
+        if (runningIndexCount < 501) {
+          if (item.promo_product === '1') {
+            ProductType = 'Promo';
+          } else {
+            ProductType = 'Regular';
+          }
 
-    if (totalProduct === ApiPromoItemData.length) {
-      dbinventory.transaction(function (tx) {
-        tx.executeSql(
-          ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
-            longStrinfg.slice(0, -1),
-          [],
-          (tx, results) => {
-            if (results.rowsAffected > 0) {
-              console.log('SUCCESS SAVING ITEMS');
-            } else {
-              console.log('error');
-            }
-          },
-          SQLerror,
-        );
+          if (parseInt(item.total_case) < 1) {
+            stocks = item.total_pieces + ' PCS';
+          } else {
+            stocks = (item.total_case * 1).toFixed(2) + ' CS';
+          }
+
+          longStrinfg =
+            longStrinfg +
+            "('" +
+            item.principal_name +
+            "'" +
+            ',' +
+            "'" +
+            item.product_id +
+            "'" +
+            ',' +
+            "'" +
+            item.product_variant +
+            "'" +
+            ',' +
+            "'" +
+            item.product_name +
+            "'" +
+            ',' +
+            "'" +
+            ProductType +
+            "'" +
+            ',' +
+            "'" +
+            stocks +
+            "'" +
+            ',' +
+            "'" +
+            item.img_url +
+            "'" +
+            ',' +
+            "'" +
+            item.DateandTimeUpdated +
+            "'" +
+            '),';
+
+          if (runningIndexCount === 500) {
+            var stringnow = longStrinfg;
+            longStrinfg = '';
+            runningIndexCount = 0;
+            dbinventory.transaction(function (tx) {
+              // done concat
+              tx.executeSql(
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log('SAVED 500X500 SavePromoItems');
+                },
+                SQLerror,
+              );
+            });
+          }
+
+          if (
+            runningIndexCount < 500 &&
+            currIndex === ApiPromoItemData.length
+          ) {
+            var stringnow = longStrinfg;
+            longStrinfg = '';
+
+            dbinventory.transaction(function (tx) {
+              // done concat
+              tx.executeSql(
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
+                  stringnow.slice(0, -1),
+                [],
+                (tx, results) => {
+                  console.log(
+                    'SAVED 500X500 SavePromoItems < 500 ' + runningIndexCount,
+                  );
+                  runningIndexCount = 0;
+                },
+                SQLerror,
+              );
+            });
+          }
+        }
       });
+
+      if (currIndex === ApiPromoItemData.length) {
+        console.log('5.5 ' + 'SavePromoItems done concatenating, saved..');
+      }
     }
   }
+
+  //   {
+  //     ApiPromoItemData.map(function (item, i) {
+  //       totalProduct = totalProduct + 1;
+  //       if (item.promo_product === '1') {
+  //         ProductType = 'Promo';
+  //       } else {
+  //         ProductType = 'Regular';
+  //       }
+
+  //       if (parseInt(item.total_case) < 1) {
+  //         stocks = item.total_pieces + ' PCS';
+  //       } else {
+  //         stocks = (item.total_case * 1).toFixed(2) + ' CS';
+  //       }
+
+  //       longStrinfg =
+  //         longStrinfg +
+  //         "('" +
+  //         item.principal_name +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.product_id +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.product_variant +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.product_name +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         ProductType +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         stocks +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.img_url +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.DateandTimeUpdated +
+  //         "'" +
+  //         '),';
+  //     });
+  //   }
+
+  //   if (totalProduct === ApiPromoItemData.length) {
+  //     dbinventory.transaction(function (tx) {
+  //       tx.executeSql(
+  //         ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
+  //           longStrinfg.slice(0, -1),
+  //         [],
+  //         (tx, results) => {
+  //           if (results.rowsAffected > 0) {
+  //             console.log('SUCCESS SAVING ITEMS');
+  //           } else {
+  //             console.log('error');
+  //           }
+  //         },
+  //         (tx, err) => {
+  //           console.log('ADDED HERE5' + err);
+  //         },
+  //       );
+  //     });
+  //   }
+  // }
 
   // PROMO ITEMS  > END
 
@@ -1937,6 +2450,7 @@ export default function UpdateModal(props) {
           onRequestClose={() => {
             globalStatus.updateMode = 'auto';
             RunTimer();
+            //3
             setisModalConnectionError(false);
             setisLoadingActivityIndicator(false);
 
@@ -1960,6 +2474,7 @@ export default function UpdateModal(props) {
                 onPress={() => {
                   globalStatus.updateMode = 'auto';
                   RunTimer();
+                  //4
                   setisModalConnectionError(false);
                   setisLoadingActivityIndicator(false);
                   props.navigation.navigate('Home');
@@ -1973,15 +2488,19 @@ export default function UpdateModal(props) {
       </View>
 
       {isLoadingActivityIndicator && (
-        <View style={styles.loading}>
-          <Button
+        <View style={[styles.loading,{backgroundColor:'#2C302E'}]}>
+          {/* <Button
             title="Test"
             onPress={() => {
-              console.log(ApiPromoItemData.length);
-              console.log(ApiRowsCount);
+              console.log(q1Principal + ' q1Principal');
+              console.log(q2Perymtsat + ' q2Perymtsat');
+              console.log(q4Area + ' q4Area');
+              console.log(q3UserUpdateLog + ' q3UserUpdateLog');
+              console.log(q5Marc + ' q5Marc');
+              console.log(globalStatus.updateStatus);
             }}
-          />
-          <Text style={{color: 'black', fontSize: moderateScale(17)}}>
+          /> */}
+          <Text style={{color: 'white', fontSize: moderateScale(17)}}>
             Updating... {updateProgress} %{' '}
           </Text>
           <ActivityIndicator size="large" color="green" />

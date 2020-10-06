@@ -54,7 +54,8 @@ import {
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
-import PageContext from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 export default function PerAreaDashboard(props) {
   LogBox.ignoreAllLogs();
   YellowBox.ignoreWarnings(['']);
@@ -185,7 +186,9 @@ export default function PerAreaDashboard(props) {
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
-  const [globalState, setglobalState] = useContext(PageContext);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
+  const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
+  
   const [dateTime, setDateTime] = useState('');
   const [isVisibleFilterModal, setisVisibleFilterModal] = useState(false);
   const [filterMainView, setfilterMainView] = useState(scale(360));
@@ -234,97 +237,87 @@ export default function PerAreaDashboard(props) {
 
   //USE EFFECT PART
 
-   
-  
-
-
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per area focus'); //
       CurrentAppScreen.Screen = 'PerArea';
       if (PageVisited.PerAreaPAGE === 'NO') {
         PageVisited.PerAreaPAGE = 'YES';
-        console.log('focus on per area with changes')
-        
-          // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
-          SearchPrincipal();
+        console.log('focus on per area with changes');
 
-          if (perArea.length > 1 && totalSales > 1) {
-            // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
-            var temp = [];
-            perArea.map((item, index) => {
-              //BUILD PRINCIPAL ACONYM
-              temp.push(item.principal_acronym);
-            });
-    
-            var tempSales = [];
-            var firstContribution = 1;
-            perArea.map((item, index) => {
-              // BUILD PRINCIPAL SALES
-              tempSales.push(((item.sales1 / totalSales) * 100).toFixed(2) * 1);
-              if (firstContribution === 1) {
-                setCurrentContribution(
-                  ((item.sales1 / totalSales) * 100).toFixed(2) * 1,
-                );
-                firstContribution = 0;
-              }
-            });
-    
-            if (temp.length === tempSales.length) {
-              //  POPULATE NEEDED DATA
-              setDynamicPrincipalList(temp);
-              setDynamicPrincipalSales(tempSales);
+        // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
+        SearchPrincipal();
+
+        if (perArea.length > 1 && totalSales > 1) {
+          // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
+          var temp = [];
+          perArea.map((item, index) => {
+            //BUILD PRINCIPAL ACONYM
+            temp.push(item.principal_acronym);
+          });
+
+          var tempSales = [];
+          var firstContribution = 1;
+          perArea.map((item, index) => {
+            // BUILD PRINCIPAL SALES
+            tempSales.push(((item.sales1 / totalSales) * 100).toFixed(2) * 1);
+            if (firstContribution === 1) {
+              setCurrentContribution(
+                ((item.sales1 / totalSales) * 100).toFixed(2) * 1,
+              );
+              firstContribution = 0;
             }
+          });
+
+          if (temp.length === tempSales.length) {
+            //  POPULATE NEEDED DATA
+            setDynamicPrincipalList(temp);
+            setDynamicPrincipalSales(tempSales);
           }
+        }
       }
     });
   }, []);
 
-
-  
   useEffect(() => {
     console.log('focus on per area from update'); //
- 
 
-// LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
-SearchPrincipal();
+    // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
+    SearchPrincipal();
 
-if (perArea.length > 1 && totalSales > 1) {
-  // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
-  var temp = [];
-  perArea.map((item, index) => {
-    //BUILD PRINCIPAL ACONYM
-    temp.push(item.principal_acronym);
-  });
+    if (perArea.length > 1 && totalSales > 1) {
+      // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
+      var temp = [];
+      perArea.map((item, index) => {
+        //BUILD PRINCIPAL ACONYM
+        temp.push(item.principal_acronym);
+      });
 
-  var tempSales = [];
-  var firstContribution = 1;
-  perArea.map((item, index) => {
-    // BUILD PRINCIPAL SALES
-    tempSales.push(((item.sales1 / totalSales) * 100).toFixed(2) * 1);
-    if (firstContribution === 1) {
-      setCurrentContribution(
-        ((item.sales1 / totalSales) * 100).toFixed(2) * 1,
-      );
-      firstContribution = 0;
+      var tempSales = [];
+      var firstContribution = 1;
+      perArea.map((item, index) => {
+        // BUILD PRINCIPAL SALES
+        tempSales.push(((item.sales1 / totalSales) * 100).toFixed(2) * 1);
+        if (firstContribution === 1) {
+          setCurrentContribution(
+            ((item.sales1 / totalSales) * 100).toFixed(2) * 1,
+          );
+          firstContribution = 0;
+        }
+      });
+
+      if (temp.length === tempSales.length) {
+        //  POPULATE NEEDED DATA
+        setDynamicPrincipalList(temp);
+        setDynamicPrincipalSales(tempSales);
+      }
     }
-  });
-
-  if (temp.length === tempSales.length) {
-    //  POPULATE NEEDED DATA
-    setDynamicPrincipalList(temp);
-    setDynamicPrincipalSales(tempSales);
-  }
-}
-  
-    
   }, [globalState.dateTimeUpdated24hr]);
-
 
   useEffect(() => {
     if (CurrentDashboardScreen.Screen === 'PERAREA') {
       console.log('focus on per area from dashboard global'); //
-PageVisited.PerAreaPAGE = 'YES';
+      PageVisited.PerAreaPAGE = 'YES';
       // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
       SearchPrincipal();
 
@@ -591,14 +584,7 @@ PageVisited.PerAreaPAGE = 'YES';
               alignContent: 'center',
               alignItems: 'center',
             }}>
-            {/* <Image
-              style={styles.CompanyLogo}
-              source={{
-                uri:
-                  'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
-              }}
-            /> */}
-
+ 
             <View style={{width: 50}}>
               <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
                 <Icon name="md-filter" color={'#ffffff'} size={34} />
@@ -618,7 +604,7 @@ PageVisited.PerAreaPAGE = 'YES';
                 style={{
                   paddingBottom: moderateScale(10),
                   alignSelf: 'center',
-                  fontSize: moderateScale(28),
+                  fontSize: moderateScale(22),
                   color: 'white',
                   fontWeight: 'bold',
                   marginLeft: width / 2 - scale(185),
@@ -662,55 +648,55 @@ PageVisited.PerAreaPAGE = 'YES';
                   alignItems: 'flex-end',
                   justifyContent: 'flex-end',
                 }}>
-                {LastDateTimeUpdated.value}
+                 {globalTimer.lastUpdate}
               </Text>
               <View
-                style={{
-                  flexDirection: 'row',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                  <Icon name="refresh" color={'#ffffff'} size={10} />
-                </View>
-                <Text
                   style={{
-                    color: 'white',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}>
-                  {globalState.updateStatus === 'Updating' ||
-                  globalState.updateStatus === 'Start' ? (
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: moderateScale(12, 0.5),
-                        alignContent: 'flex-end',
-                        alignItems: 'flex-end',
-                        justifyContent: 'flex-end',
-                      }}>
-                      {'Updating...'}{' '}
-                      {globalState.updatePercentage > 0
-                        ? globalState.updatePercentage + ' %'
-                        : ''}
-                    </Text>
-                  ) : (
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: moderateScale(12, 0.5),
-                        alignContent: 'flex-end',
-                        alignItems: 'flex-end',
-                        justifyContent: 'flex-end',
-                      }}>
-                      {hhmmss(900 - globalState.timerSeconds)}
-                    </Text>
-                  )}
-                </Text>
-              </View>
+                  <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                    <Icon name="refresh" color={'#ffffff'} size={10} />
+                  </View>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {globalState.updateStatus === 'Updating' ||
+                    globalState.updateStatus === 'Start' ? (
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {'Updating...'}{' '}
+                        {globalState.updatePercentage > 0
+                          ? globalState.updatePercentage + ' %'
+                          : ''}
+                      </Text>
+                    ) : null}
+
+                    {/* <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {hhmmss(900 - globalStatus.CurrentSeconds)}
+                      </Text> */}
+                  </Text>
+                </View>
             </View>
           </View>
           <View style={{margin: moderateScale(5)}}>
