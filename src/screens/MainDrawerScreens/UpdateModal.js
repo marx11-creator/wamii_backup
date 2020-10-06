@@ -111,12 +111,11 @@ export default function UpdateModal(props) {
   // }, [localSeconds]);
 
   useEffect(() => {
-    
     FiveSecondsDelay = FiveSecondsDelay + 1;
     if (FiveSecondsDelay === 60) {
       console.log('60 secs reach');
       FiveSecondsDelay = 0;
-       ComputeLastDateTimeUpdate();
+      ComputeLastDateTimeUpdate();
     }
   }, [localSeconds]);
 
@@ -360,8 +359,8 @@ export default function UpdateModal(props) {
           //   ...globalState,
           //   dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss')
           // })
-         // GetDateTime(); // call get last date time updated to update global last date time
-         globalStatus.dateTimeUpdated24hr = currdtRaw;
+          // GetDateTime(); // call get last date time updated to update global last date time
+          globalStatus.dateTimeUpdated24hr = currdtRaw;
           ComputeLastDateTimeUpdate();
         },
         (tx, err) => {
@@ -378,7 +377,7 @@ export default function UpdateModal(props) {
       secs = secs + 1;
       setLocalSeconds(secs);
       // globalStatus.CurrentSeconds = secs;
-      if (secs === 70) {
+      if (secs === 900) {
         BackgroundTimer.clearInterval(intervalId2);
         GETUpdateVersionAPI();
         globalStatus.updateStatus = 'Updating';
@@ -768,10 +767,12 @@ export default function UpdateModal(props) {
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr1 = teams + '&' + sales_position_name;
-    console.log(server.server_address +
-      globalCompany.company +
-      'persalesmansalestarget/' +
-      tempstr1);
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'persalesmansalestarget/' +
+        tempstr1,
+    );
     Promise.race([
       fetch(
         server.server_address +
@@ -2485,7 +2486,7 @@ export default function UpdateModal(props) {
       </View>
 
       {isLoadingActivityIndicator && (
-        <View style={styles.loading}>
+        <View style={[styles.loading,{backgroundColor:'#2C302E'}]}>
           {/* <Button
             title="Test"
             onPress={() => {
@@ -2497,7 +2498,7 @@ export default function UpdateModal(props) {
               console.log(globalStatus.updateStatus);
             }}
           /> */}
-          <Text style={{color: 'black', fontSize: moderateScale(17)}}>
+          <Text style={{color: 'white', fontSize: moderateScale(17)}}>
             Updating... {updateProgress} %{' '}
           </Text>
           <ActivityIndicator size="large" color="green" />

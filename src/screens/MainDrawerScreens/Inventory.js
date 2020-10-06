@@ -49,6 +49,7 @@ import {
   hhmmss,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 import Icon from 'react-native-vector-icons/Ionicons';
 var ApiRowsCount = 0;
 var count = 0;
@@ -60,7 +61,8 @@ var longStrinfg = '';
 
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
-  const [globalState, setglobalState] = useContext(PageContextGlobalState);
+  const [globalState] = useContext(PageContextGlobalState);
+  const [globalTimer] = useContext(PageContextGlobalTimer);
 
   const ApiFields = [
     {
@@ -698,25 +700,14 @@ export default function Inventory(props) {
     <View style={styles.container}>
       <View style={styles.HeaderView}>
         <View style={{flex: 1}}>
-        <Image
-          style={styles.CompanyLogo}
-          source={{
-            uri:
-              'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
-          }}
-        />
+          <Image
+            style={styles.CompanyLogo}
+            source={{
+              uri:
+                'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
+            }}
+          />
         </View>
-
-        {/* <FlatButton
-          gradientFrom="red"
-          gradientTo="pink"
-          text="Update"
-          onPress={() => {
-            setupdateMessage('Connecting to server...');
-            setLoading(!loading);
-            DownloadPromoItems();
-          }}
-        /> */}
         <View
           style={{
             flex: 1,
@@ -724,7 +715,6 @@ export default function Inventory(props) {
             alignContent: 'center',
             alignItems: 'center',
             alignSelf: 'center',
-
           }}>
           <FlatButton // MAIN
             text="Filter"
@@ -744,7 +734,7 @@ export default function Inventory(props) {
 
         <View
           style={{
-            flex: 0.6,
+            flex: 1,
             width: scale(150),
             marginRight: 10,
             alignContent: 'flex-end',
@@ -769,7 +759,7 @@ export default function Inventory(props) {
               alignItems: 'flex-end',
               justifyContent: 'flex-end',
             }}>
-            {LastDateTimeUpdated.value}
+            {globalTimer.lastUpdate}
           </Text>
           <View
             style={{
@@ -804,18 +794,18 @@ export default function Inventory(props) {
                     ? globalState.updatePercentage + ' %'
                     : ''}
                 </Text>
-              ) : (
-                <Text
-                  style={{
-                    color: '#333333',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                  }}>
-                  {hhmmss(900 - globalState.timerSeconds)}
-                </Text>
-              )}
+              ) : null}
+
+              {/* <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {hhmmss(900 - globalStatus.CurrentSeconds)}
+                      </Text> */}
             </Text>
           </View>
         </View>
@@ -1127,7 +1117,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: moderateScale(10, 0.5),
+    marginTop: moderateScale(1, 0.5),
     backgroundColor: '#ffffff',
   },
   promoitemDetails: {
@@ -1186,6 +1176,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#1AD075',
   },
   centeredView: {
     flex: 1,

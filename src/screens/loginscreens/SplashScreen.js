@@ -25,6 +25,7 @@ import {
   Update1005,
   Update1006,
   Update1007,
+  Update1008,
 } from '../../database/sqliteSetup';
 
 import {
@@ -208,10 +209,19 @@ export default function SplashScreen(props) {
           //console.log(
           //   'before update' + LocalAppVersionUpdate.LocalAppVersionUpdateField,
           // );
-          console.log('focus on Splash123');
           Update1007();
-          CheckUserifLogin();
         }
+
+        if (LocalAppVersionUpdate.LocalAppVersionUpdateField < 1008) {
+          //console.log('update 005 initialized');
+          //console.log(
+          //   'before update' + LocalAppVersionUpdate.LocalAppVersionUpdateField,
+          // );
+          console.log('focus on Splash123');
+          Update1008();
+          CheckUserifLogin(); //moved tihs when u have new update to load check user on last update
+        }
+
 
       } else {
         //console.log('local is updated, nothing to update.');

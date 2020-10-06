@@ -584,14 +584,7 @@ export default function PerAreaDashboard(props) {
               alignContent: 'center',
               alignItems: 'center',
             }}>
-            {/* <Image
-              style={styles.CompanyLogo}
-              source={{
-                uri:
-                  'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
-              }}
-            /> */}
-
+ 
             <View style={{width: 50}}>
               <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
                 <Icon name="md-filter" color={'#ffffff'} size={34} />
@@ -611,7 +604,7 @@ export default function PerAreaDashboard(props) {
                 style={{
                   paddingBottom: moderateScale(10),
                   alignSelf: 'center',
-                  fontSize: moderateScale(28),
+                  fontSize: moderateScale(22),
                   color: 'white',
                   fontWeight: 'bold',
                   marginLeft: width / 2 - scale(185),
@@ -658,52 +651,52 @@ export default function PerAreaDashboard(props) {
                  {globalTimer.lastUpdate}
               </Text>
               <View
-                style={{
-                  flexDirection: 'row',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                  <Icon name="refresh" color={'#ffffff'} size={10} />
-                </View>
-                <Text
                   style={{
-                    color: 'white',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
+                    flexDirection: 'row',
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}>
-                  {globalState.updateStatus === 'Updating' ||
-                  globalState.updateStatus === 'Start' ? (
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: moderateScale(12, 0.5),
-                        alignContent: 'flex-end',
-                        alignItems: 'flex-end',
-                        justifyContent: 'flex-end',
-                      }}>
-                      {'Updating...'}{' '}
-                      {globalState.updatePercentage > 0
-                        ? globalState.updatePercentage + ' %'
-                        : ''}
-                    </Text>
-                  ) : (
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: moderateScale(12, 0.5),
-                        alignContent: 'flex-end',
-                        alignItems: 'flex-end',
-                        justifyContent: 'flex-end',
-                      }}>
-                      {hhmmss(900 - globalState.timerSeconds)}
-                    </Text>
-                  )}
-                </Text>
-              </View>
+                  <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                    <Icon name="refresh" color={'#ffffff'} size={10} />
+                  </View>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {globalState.updateStatus === 'Updating' ||
+                    globalState.updateStatus === 'Start' ? (
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {'Updating...'}{' '}
+                        {globalState.updatePercentage > 0
+                          ? globalState.updatePercentage + ' %'
+                          : ''}
+                      </Text>
+                    ) : null}
+
+                    {/* <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {hhmmss(900 - globalStatus.CurrentSeconds)}
+                      </Text> */}
+                  </Text>
+                </View>
             </View>
           </View>
           <View style={{margin: moderateScale(5)}}>

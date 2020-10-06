@@ -95,6 +95,7 @@ export function DrawerContent(props) {
       <DrawerContentScrollView>
         <View style={[styles.drawerContent]}>
           <ImageOverlay
+            overlayAlpha={-0.8}
             source={require('../../assets/profilebg.png')}
             height={140}
             contentPosition="top">

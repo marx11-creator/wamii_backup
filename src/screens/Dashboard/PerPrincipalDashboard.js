@@ -695,7 +695,7 @@ export default function PerPrincipalDashboard(props) {
       <ScrollView>
         <View style={{flexDirection: 'column'}}>
           <View style={{margin: moderateScale(5)}}>
-            <View style={{flexDirection: 'row', height: scale(90)}}>
+          <View style={{flexDirection: 'row', height: scale(70), alignItems: 'center'}}>
               {/* <Image
                 style={styles.CompanyLogo}
                 source={{
@@ -708,6 +708,7 @@ export default function PerPrincipalDashboard(props) {
                   <Icon name="md-filter" color={'#ffffff'} size={34} />
                 </TouchableOpacity>
               </View>
+
               <TouchableOpacity
                 onPress={() => {
                   {
@@ -721,12 +722,12 @@ export default function PerPrincipalDashboard(props) {
                   style={{
                     paddingBottom: moderateScale(10),
                     alignSelf: 'center',
-                    fontSize: moderateScale(28),
+                    fontSize: moderateScale(22),
                     color: 'white',
                     fontWeight: 'bold',
-                    marginLeft: width / 2 - scale(235),
+                    marginLeft: width / 2 - scale(145),
                   }}>
-                  Sales Per Vendor
+                  Per Principal
                 </Text>
               </TouchableOpacity>
               <View
@@ -791,8 +792,9 @@ export default function PerPrincipalDashboard(props) {
                           ? globalState.updatePercentage + ' %'
                           : ''}
                       </Text>
-                    ) : (
-                      <Text
+                    ) : null}
+
+                    {/* <Text
                         style={{
                           color: 'white',
                           fontSize: moderateScale(12, 0.5),
@@ -800,9 +802,8 @@ export default function PerPrincipalDashboard(props) {
                           alignItems: 'flex-end',
                           justifyContent: 'flex-end',
                         }}>
-                        {hhmmss(900 - globalState.timerSeconds)}
-                      </Text>
-                    )}
+                        {hhmmss(900 - globalStatus.CurrentSeconds)}
+                      </Text> */}
                   </Text>
                 </View>
               </View>

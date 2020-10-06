@@ -31,8 +31,8 @@ export var server = {
 };
 
 export var CurrentAppVersionUpdate = {
-  CurrentAppVersionUpdateField: 1007,
-  CurrentAppVersionUpdateFieldDateRelease: 'September 25, 2020',
+  CurrentAppVersionUpdateField: 1008,
+  CurrentAppVersionUpdateFieldDateRelease: 'October 06, 2020',
 };
 
 export var CurrentDashboardScreen = {

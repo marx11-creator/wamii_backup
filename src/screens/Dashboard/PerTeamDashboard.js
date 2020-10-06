@@ -487,7 +487,7 @@ export default function PerTeamDashboard(props) {
       <ScrollView>
         <View style={{flexDirection: 'column'}}>
           <View style={{margin: moderateScale(5), flex: 1}}>
-            <View style={{flexDirection: 'row', height: scale(70)}}>
+            <View style={{flexDirection: 'row', height: scale(70), alignItems: 'center'}}>
               {/* <Image
                 style={styles.CompanyLogo}
                 source={{
@@ -514,7 +514,7 @@ export default function PerTeamDashboard(props) {
                   style={{
                     paddingBottom: moderateScale(10),
                     alignSelf: 'center',
-                    fontSize: moderateScale(28),
+                    fontSize: moderateScale(22),
                     color: 'white',
                     fontWeight: 'bold',
                     marginLeft: width / 2 - scale(145),

@@ -620,7 +620,7 @@ export function Update1006() {
   }
 }
 
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1006
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1007
 
 export function Update1007() {
   {
@@ -652,3 +652,37 @@ export function Update1007() {
     });
   }
 }
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1008
+
+export function Update1008() {
+  {
+    dbUpdateDbVersion.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  updateversion_tbl (updateversion, dateTimeUpdated) VALUES (?,?)',
+        [1008, moment().utcOffset('+08:00').format('YYYY-MM-DD hh:mm:ss a')],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('1008 updated added to local test');
+
+            // Alert.alert(
+            //   'System Message',
+            //   'System updated Automatically, Please restart application.',
+            //   [
+            //     {
+            //       text: 'OK',
+            //       onPress: () => {
+            //         BackHandler.exitApp();
+            //       },
+            //     },
+            //   ],
+            //   {cancelable: true},
+            // );
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+}
+
