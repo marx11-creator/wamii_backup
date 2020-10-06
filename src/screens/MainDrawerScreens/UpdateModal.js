@@ -1169,7 +1169,7 @@ export default function UpdateModal(props) {
     }
   }
 
-//added quote for zou
+//added quote for zou1
 
   //PER AREA
   const GetPerAreaAPIData = () => {
