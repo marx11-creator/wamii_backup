@@ -1168,6 +1168,7 @@ export default function UpdateModal(props) {
       });
     }
   }
+  
 
   //PER AREA
   const GetPerAreaAPIData = () => {
