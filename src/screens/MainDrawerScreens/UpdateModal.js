@@ -156,6 +156,7 @@ export default function UpdateModal(props) {
   const [q3UserUpdateLog, setq3UserUpdateLog] = useState(false);
   const [q4Area, setq4Area] = useState(false);
   const [q5Marc, setq5Marc] = useState(false);
+  const [q6Inventory, setq6Inventory] = useState(false);
   const [isModalConnectionError, setisModalConnectionError] = useState(false);
   const [isLoadingActivityIndicator, setisLoadingActivityIndicator] = useState(
     false,
@@ -439,6 +440,7 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
+      q6Inventory &&
       globalStatus.updateStatus === 'Updating'
     ) {
       afterUpdate();
@@ -452,6 +454,7 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
+      q6Inventory &&
       globalStatus.updateStatus === 'Updating'
     ) {
       afterUpdate();
@@ -465,6 +468,7 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
+      q6Inventory &&
       globalStatus.updateStatus === 'Updating'
     ) {
       afterUpdate();
@@ -478,6 +482,7 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
+      q6Inventory &&
       globalStatus.updateStatus === 'Updating'
     ) {
       afterUpdate();
@@ -491,11 +496,28 @@ export default function UpdateModal(props) {
       q4Area &&
       q3UserUpdateLog &&
       q5Marc &&
+      q6Inventory &&
       globalStatus.updateStatus === 'Updating'
     ) {
       afterUpdate();
     }
   }, [q5Marc]);
+
+
+  useEffect(() => {
+    if (
+      q1Principal &&
+      q2Perymtsat &&
+      q4Area &&
+      q3UserUpdateLog &&
+      q5Marc &&
+      q6Inventory &&
+      globalStatus.updateStatus === 'Updating'
+    ) {
+      afterUpdate();
+    }
+  }, [q6Inventory]);
+
 
   //====================================================================> RUN UPDATE
 
@@ -741,6 +763,7 @@ export default function UpdateModal(props) {
     setq3UserUpdateLog(false); //update status of function to false
     setq4Area(false); //update status of function to false
     setq5Marc(false); //update status of function to false
+    setq6Inventory(false); //update Inventory
     if (global.sales_position_name === 'ALLSALESMAN') {
       setq5Marc(true);
       console.log('3 ' + 'ALL SALSMAN 123');
@@ -2171,6 +2194,13 @@ export default function UpdateModal(props) {
       promo_product: '',
       inventory: '',
       img_url: '',
+      effective_price_date: '',
+      CASE_COMPANY: '',
+      CASE_BOOKING: '',
+      CASE_EXTRUCK: '',
+      PCS_COMPANY: '',
+      PCS_BOOKING: '',
+      PCS_EXTRUCK: '',
       DateandTimeUpdated: '',
     },
   ];
@@ -2187,7 +2217,6 @@ export default function UpdateModal(props) {
   ];
   const [ApiPromoItemData, setApiPromoItemData] = useState(ApiFields);
   const [ItemsDeleted, setItemsDeleted] = useState(false);
-  const [LocalPromoItemData, setLocalPromoItemData] = useState(LocalDBFields);
   const DownloadPromoItems = () => {
     Promise.race([
       fetch(server.server_address + globalCompany.company + 'promo_item', {
@@ -2229,16 +2258,11 @@ export default function UpdateModal(props) {
         'Delete from promo_items_tbl ',
         [],
         (tx, results) => {
-          // console.log('Results', results.rowsAffected);
           if (results.rowsAffected > 0) {
             setItemsDeleted(true);
           } else {
-            if (LocalPromoItemData.length > 1) {
-              console.log('error deleting');
-            } else {
-              console.log('nothing to delete, set true to save fetch sku');
-              setItemsDeleted(true);
-            }
+            console.log('nothing to delete, set true to save fetch sku');
+            setItemsDeleted(true);
           }
         },
         (tx, err) => {
@@ -2313,6 +2337,34 @@ export default function UpdateModal(props) {
             "'" +
             item.DateandTimeUpdated +
             "'" +
+            ',' +
+            "'" +
+            item.effective_price_date +
+            "'" +
+            ',' +
+            "'" +
+            item.CASE_COMPANY +
+            "'" +
+            ',' +
+            "'" +
+            item.CASE_BOOKING +
+            "'" +
+            ',' +
+            "'" +
+            item.CASE_EXTRUCK +
+            "'" +
+            ',' +
+            "'" +
+            item.PCS_COMPANY +
+            "'" +
+            ',' +
+            "'" +
+            item.PCS_BOOKING +
+            "'" +
+            ',' +
+            "'" +
+            item.PCS_EXTRUCK +
+            "'" +
             '),';
 
           if (runningIndexCount === 500) {
@@ -2322,7 +2374,7 @@ export default function UpdateModal(props) {
             dbinventory.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -2343,7 +2395,7 @@ export default function UpdateModal(props) {
             dbinventory.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -2361,6 +2413,7 @@ export default function UpdateModal(props) {
 
       if (currIndex === ApiPromoItemData.length) {
         console.log('5.5 ' + 'SavePromoItems done concatenating, saved..');
+        setq6Inventory(true);
       }
     }
   }

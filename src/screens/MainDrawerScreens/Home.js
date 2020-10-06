@@ -245,7 +245,7 @@ export default function Home(props) {
         globalStatus.updateStatus = 'Updating';
       }
 
-      if (secs === 3 && globalStatus.StartUpUpdate === false) {
+      if (secs === 2 && globalStatus.StartUpUpdate === false) {
         // var screenname = CurrentAppScreen.Screen;
         console.log('3seonds was run');
         globalStatus.updateStatus = 'Updating';
@@ -557,7 +557,7 @@ export default function Home(props) {
           </Text>
         </View> */}
           </View>
-          {localSeconds === 3 ? <UpdateModal /> : null}
+          {localSeconds === 2 ? <UpdateModal /> : null}
         </View>
       </ScrollView>
     </ImageOverlay>

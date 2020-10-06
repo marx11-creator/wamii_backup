@@ -51,6 +51,9 @@ import {
 import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
 import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 import Icon from 'react-native-vector-icons/Ionicons';
+import numbro from 'numbro';
+
+
 var ApiRowsCount = 0;
 var count = 0;
 var localItemcount = 0;
@@ -59,6 +62,7 @@ var VariantListfromPicker = '';
 var TypeListfromPicker = '';
 var longStrinfg = '';
 
+var test = 'aa';
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
   const [globalState] = useContext(PageContextGlobalState);
@@ -121,6 +125,15 @@ export default function Inventory(props) {
       value: 'Regular',
     },
   ];
+
+  const ItemFields = [
+    {
+      Vendor: '',
+      Category: '',
+    },
+  ];
+
+
   const [updateMessage, setupdateMessage] = useState('Updating...');
   const [testnum, settestnum] = useState(10);
   const [principalPicker, setPrincipalPicker] = useState('');
@@ -128,7 +141,7 @@ export default function Inventory(props) {
   const [PrincipalList, setPrincipalList] = useState(PrincipalListFields);
   const [VariantList, setVariantList] = useState(VariantListFields);
   const [TypeList, setTypeList] = useState(TypeListFields);
-
+  const [ItemList, setItemList] = useState(ItemFields);
   const [arrVariantListfromPicker, setarrVariantListfromPicker] = useState([]);
   const [arrTypeListfromPicker, setarrTypeListfromPicker] = useState([]);
   const [isModalVisible2, setisModalVisible2] = useState(false);
@@ -168,39 +181,39 @@ export default function Inventory(props) {
   //   console.log(height);
   // }, []);
 
-  function wait(timeout) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, timeout);
-    });
-  }
+  // function wait(timeout) {
+  //   return new Promise((resolve) => {
+  //     setTimeout(resolve, timeout);
+  //   });
+  // }
 
   // const dateTimeSet = () => {
   //   var date = moment().utcOffset('+08:00').format('MMMM DD YYYY, h:mm:ss a');
   //   setDateTime(date);
   // };
 
-  const onRefresh = React.useCallback(() => {
-    setPromoSKURefreshing(true);
+  // const onRefresh = React.useCallback(() => {
+  //   setPromoSKURefreshing(true);
 
-    // wait(1000).then(() => {
-    console.log('slide down..');
-    DownloadPromoItems();
-    // dateTimeSet();
-    // });
-  }, [PromoSKURefreshing]);
+  //   // wait(1000).then(() => {
+  //   console.log('slide down..');
+  //   DownloadPromoItems();
+  //   // dateTimeSet();
+  //   // });
+  // }, [PromoSKURefreshing]);
 
-  useEffect(() => {
-    if (ApiPromoItemData.length === ApiRowsCount) {
-      ApiRowsCount = 0;
-      DeleteItems();
-    }
-  });
+  // useEffect(() => {
+  //   if (ApiPromoItemData.length === ApiRowsCount) {
+  //     ApiRowsCount = 0;
+  //     DeleteItems();
+  //   }
+  // });
 
-  useEffect(() => {
-    if (ItemsDeleted === true) {
-      [SavePromoItems(), setItemsDeleted(false)];
-    }
-  });
+  // useEffect(() => {
+  //   if (ItemsDeleted === true) {
+  //     [SavePromoItems(), setItemsDeleted(false)];
+  //   }
+  // });
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
@@ -226,6 +239,13 @@ export default function Inventory(props) {
   // [],
 
   function GetLocalPromoItems() {
+    var Vendor = ''
+    var Category = '';
+    var Brand = '';
+    var TotalItems = 0;
+    var TotalCase = 0;
+    var TotalAmount = 0;
+
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM promo_items_tbl ' +
@@ -236,9 +256,18 @@ export default function Inventory(props) {
           for (let i = 0; i < results.rows.length; ++i) {
             localItemcount = localItemcount + 1;
             temp.push(results.rows.item(i));
+
+TotalItems = TotalItems + 1;
+TotalCase = TotalCase + results.rows.item(i).inventory
+TotalAmount = TotalAmount + 1;
+            
           }
           console.log('Successfully loaded Initial ' + temp.length + ' sku');
           setLocalPromoItemData(temp);
+
+
+
+
         },
       );
     });
@@ -305,23 +334,23 @@ export default function Inventory(props) {
     });
   }
 
-  function GetDateTime() {
-    dbinventory.transaction((tx) => {
-      tx.executeSql(
-        'SELECT DateandTimeUpdated FROM promo_items_tbl limit 1',
-        [],
-        (tx, results) => {
-          var len = results.rows.length;
-          if (len > 0) {
-            // console.log(results.rows.item(0).DateandTimeUpdated);
-            setDateTime(results.rows.item(0).DateandTimeUpdated);
-          } else {
-            console.log('No date and time in local db found');
-          }
-        },
-      );
-    });
-  }
+  // function GetDateTime() {
+  //   dbinventory.transaction((tx) => {
+  //     tx.executeSql(
+  //       'SELECT DateandTimeUpdated FROM promo_items_tbl limit 1',
+  //       [],
+  //       (tx, results) => {
+  //         var len = results.rows.length;
+  //         if (len > 0) {
+  //           // console.log(results.rows.item(0).DateandTimeUpdated);
+  //           setDateTime(results.rows.item(0).DateandTimeUpdated);
+  //         } else {
+  //           console.log('No date and time in local db found');
+  //         }
+  //       },
+  //     );``
+  //   });
+  // }
 
   function GetPrincipalList() {
     const AllPrincipal = {
@@ -384,126 +413,126 @@ export default function Inventory(props) {
     });
   }
 
-  const DownloadPromoItems = () => {
-    Promise.race([
-      fetch(server.server_address + globalCompany.company + 'promo_item', {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + APIToken.access_token,
-        },
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 40000),
-      ),
-    ])
-      .then((responseData) => {
-        return responseData.json();
-      })
-      .then((jsonData) => {
-        // console.log(jsonData);
-        setApiPromoItemData(jsonData);
-        ApiRowsCount = jsonData.length;
-        //console.log(ApiPromoItemData);
-        setupdateMessage(jsonData.length + ' rows fetched. saving data...');
-      })
-      .catch(function (error) {
-        console.log('Error 1:' + error.message);
-        setLoading(false);
-        setModalVisible(true);
-      })
-      .done();
-  };
+  // const DownloadPromoItems = () => {
+  //   Promise.race([
+  //     fetch(server.server_address + globalCompany.company + 'promo_item', {
+  //       method: 'GET',
+  //       headers: {
+  //         Accept: 'application/json',
+  //         'Content-Type': 'application/json',
+  //         Authorization: 'Bearer ' + APIToken.access_token,
+  //       },
+  //     }),
+  //     new Promise((_, reject) =>
+  //       setTimeout(() => reject(new Error('Timeout')), 40000),
+  //     ),
+  //   ])
+  //     .then((responseData) => {
+  //       return responseData.json();
+  //     })
+  //     .then((jsonData) => {
+  //       // console.log(jsonData);
+  //       setApiPromoItemData(jsonData);
+  //       ApiRowsCount = jsonData.length;
+  //       //console.log(ApiPromoItemData);
+  //       setupdateMessage(jsonData.length + ' rows fetched. saving data...');
+  //     })
+  //     .catch(function (error) {
+  //       console.log('Error 1:' + error.message);
+  //       setLoading(false);
+  //       setModalVisible(true);
+  //     })
+  //     .done();
+  // };
 
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
 
-  function SavePromoItems() {
-    longStrinfg = '';
-    var stocks = 0;
-    var ProductType = '';
-    var totalProduct = 0;
-    {
-      ApiPromoItemData.map(function (item, i) {
-        totalProduct = totalProduct + 1;
-        if (item.promo_product === '1') {
-          ProductType = 'Promo';
-        } else {
-          ProductType = 'Regular';
-        }
+  // function SavePromoItems() {
+  //   longStrinfg = '';
+  //   var stocks = 0;
+  //   var ProductType = '';
+  //   var totalProduct = 0;
+  //   {
+  //     ApiPromoItemData.map(function (item, i) {
+  //       totalProduct = totalProduct + 1;
+  //       if (item.promo_product === '1') {
+  //         ProductType = 'Promo';
+  //       } else {
+  //         ProductType = 'Regular';
+  //       }
 
-        if (parseInt(item.total_case) < 1) {
-          stocks = item.total_pieces + ' PCS';
-        } else {
-          stocks = (item.total_case * 1).toFixed(2) + ' CS';
-        }
-        longStrinfg =
-          longStrinfg +
-          "('" +
-          item.principal_name +
-          "'" +
-          ',' +
-          "'" +
-          item.product_id +
-          "'" +
-          ',' +
-          "'" +
-          item.product_variant +
-          "'" +
-          ',' +
-          "'" +
-          item.product_name +
-          "'" +
-          ',' +
-          "'" +
-          ProductType +
-          "'" +
-          ',' +
-          "'" +
-          stocks +
-          "'" +
-          ',' +
-          "'" +
-          item.img_url +
-          "'" +
-          ',' +
-          "'" +
-          item.DateandTimeUpdated +
-          "'" +
-          '),';
-      });
-    }
+  //       if (parseInt(item.total_case) < 1) {
+  //         stocks = item.total_pieces + ' PCS';
+  //       } else {
+  //         stocks = (item.total_case * 1).toFixed(2) + ' CS';
+  //       }
+  //       longStrinfg =
+  //         longStrinfg +
+  //         "('" +
+  //         item.principal_name +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.product_id +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.product_variant +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.product_name +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         ProductType +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         stocks +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.img_url +
+  //         "'" +
+  //         ',' +
+  //         "'" +
+  //         item.DateandTimeUpdated +
+  //         "'" +
+  //         '),';
+  //     });
+  //   }
 
-    if (totalProduct === ApiPromoItemData.length) {
-      dbinventory.transaction(function (tx) {
-        tx.executeSql(
-          ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
-            longStrinfg.slice(0, -1),
-          [],
-          (tx, results) => {
-            if (results.rowsAffected > 0) {
-              setLoading(false);
-              GetLocalPromoItems();
-              GetPrincipalList();
-              GetDateTime();
-              setPromoSKURefreshing(false);
+  //   if (totalProduct === ApiPromoItemData.length) {
+  //     dbinventory.transaction(function (tx) {
+  //       tx.executeSql(
+  //         ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated) values ' +
+  //           longStrinfg.slice(0, -1),
+  //         [],
+  //         (tx, results) => {
+  //           if (results.rowsAffected > 0) {
+  //             setLoading(false);
+  //             GetLocalPromoItems();
+  //             GetPrincipalList();
+  //             GetDateTime();
+  //             setPromoSKURefreshing(false);
 
-              Alert.alert(
-                'Success!',
-                ApiPromoItemData.length + ' Products updated.',
-                [{text: 'Ok'}],
-              );
-            } else {
-              console.log('error');
-            }
-          },
-          SQLerror,
-        );
-      });
-    }
-  }
+  //             Alert.alert(
+  //               'Success!',
+  //               ApiPromoItemData.length + ' Products updated.',
+  //               [{text: 'Ok'}],
+  //             );
+  //           } else {
+  //             console.log('error');
+  //           }
+  //         },
+  //         SQLerror,
+  //       );
+  //     });
+  //   }
+  // }
 
   // function SavePromoItems() {
   //   var stocks = 0;
@@ -566,29 +595,29 @@ export default function Inventory(props) {
   //   ApiRowsCount = 0;
   // }
 
-  function DeleteItems() {
-    dbinventory.transaction(function (tx) {
-      tx.executeSql(
-        'Delete from promo_items_tbl ',
-        [],
-        (tx, results) => {
-          // console.log('Results', results.rowsAffected);
-          if (results.rowsAffected > 0) {
-            setupdateMessage('Current inventory cleared..');
-            setItemsDeleted(true);
-          } else {
-            if (LocalPromoItemData.length > 1) {
-              console.log('error deleting');
-            } else {
-              console.log('nothing to delete, set true to save fetch sku');
-              setItemsDeleted(true);
-            }
-          }
-        },
-        SQLerror,
-      );
-    });
-  }
+  // function DeleteItems() {
+  //   dbinventory.transaction(function (tx) {
+  //     tx.executeSql(
+  //       'Delete from promo_items_tbl ',
+  //       [],
+  //       (tx, results) => {
+  //         // console.log('Results', results.rowsAffected);
+  //         if (results.rowsAffected > 0) {
+  //           setupdateMessage('Current inventory cleared..');
+  //           setItemsDeleted(true);
+  //         } else {
+  //           if (LocalPromoItemData.length > 1) {
+  //             console.log('error deleting');
+  //           } else {
+  //             console.log('nothing to delete, set true to save fetch sku');
+  //             setItemsDeleted(true);
+  //           }
+  //         }
+  //       },
+  //       SQLerror,
+  //     );
+  //   });
+  // }
 
   const images = [
     {
@@ -597,25 +626,26 @@ export default function Inventory(props) {
     },
   ];
 
-  function FlatListHeader() {
-    return (
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        <Text style={{marginRight: moderateScale(10, 0.5)}}>Updating...</Text>
-        <ActivityIndicator size="large" color="green" />
-      </View>
-    );
-  }
+  // function FlatListHeader() {
+  //   return (
+  //     <View
+  //       style={{
+  //         flexDirection: 'row',
+  //         justifyContent: 'center',
+  //         alignItems: 'center',
+  //       }}>
+  //       <Text style={{marginRight: moderateScale(10, 0.5)}}>Updating...</Text>
+  //       <ActivityIndicator size="large" color="green" />
+  //     </View>
+  //   );
+  // }
 
   const renderItem = ({item}) =>
     item.product_variant === '' ? null : (
       <LinearGradient style={{margin: 2}} colors={['#F96E71', '#C70E11']}>
-        <View style={styles.promoItemDetailsNImage}>
-          <View style={styles.promoitemImageContainer}>
+        <View style={[styles.promoItemDetailsNImage]}>
+          <View style={{backgroundColor: 'transparent', flex: 1, flexDirection: 'row'}}>
+          <View style={[styles.promoitemImageContainer]}>
             <TouchableOpacity
               onPress={() => {
                 setSelectedImage(item.img_url);
@@ -633,7 +663,27 @@ export default function Inventory(props) {
               />
             </TouchableOpacity>
           </View>
-          <View style={styles.promoitemDetails}>
+
+<View style={{flex: 1,backgroundColor:'transparent', marginLeft: scale(15), flexDirection: 'column',justifyContent: 'space-evenly',margin: scale(10)}}>
+  <Text style={{fontSize: moderateScale(13, 0.5), color: '#ffffff'}}>{'BK: P'}{numbro(item.PCS_BOOKING).format({
+  thousandSeparated: true,
+  mantissa: 2,
+})}</Text>
+
+
+
+
+
+
+
+  <Text style={{fontSize: moderateScale(13, 0.5), color: '#ffffff'}}>{'VAN: P'}{numbro(item.PCS_EXTRUCK).format({
+  thousandSeparated: true,
+  mantissa: 2,
+})}</Text>
+</View>
+          </View>
+          
+          <View style={[styles.promoitemDetails,{backgroundColor: 'transparent'}]}>
             <Text style={styles.item2}>{item.product_variant}</Text>
             <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
               {item.product_name}
@@ -698,8 +748,10 @@ export default function Inventory(props) {
 
   return (
     <View style={styles.container}>
+      
+      <View style={{flexDirection: 'column'}}>
       <View style={styles.HeaderView}>
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, marginLeft: scale(5)}}>
           <Image
             style={styles.CompanyLogo}
             source={{
@@ -810,6 +862,26 @@ export default function Inventory(props) {
           </View>
         </View>
       </View>
+<View style={{flexDirection: 'row', backgroundColor: '#1AD075'}}>
+
+<View style={{backgroundColor: 'transparent', flex: 1, marginLeft: scale(5)}}>
+        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Vendor : {test}</Text>
+        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Category : </Text>
+        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Brand : </Text>
+      </View>
+      <View style={{backgroundColor: 'transparent', flex: 1 }}>
+        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Total Items : </Text>
+        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Total Case : </Text>
+        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Total Amount : </Text>
+      </View>
+
+</View>
+
+      </View>
+      {/* <Button title= "click" onPress={()=> {
+        test = 'bb';
+        console.log(test);
+      }} /> */}
       <SafeAreaView style={styles.container}>
         <FlatList
           data={LocalPromoItemData}
@@ -1128,7 +1200,7 @@ const styles = StyleSheet.create({
   promoitemImageContainer: {
     backgroundColor: 'white',
     borderRadius: 20,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
   },
   promoitemImage: {
     width: scale(100),
@@ -1159,16 +1231,15 @@ const styles = StyleSheet.create({
     padding: 5,
     width: width / 2 - 8,
     flexDirection: 'column',
-    alignItems: 'flex-start',
     marginBottom: 3,
     marginLeft: 3,
   },
   item: {
-    fontSize: moderateScale(14, 0.4),
+    fontSize: moderateScale(13, 0.4),
     color: 'white',
   },
   item2: {
-    fontSize: moderateScale(16, 0.4),
+    fontSize: moderateScale(14, 0.4),
     color: 'white',
     fontWeight: 'bold',
   },
