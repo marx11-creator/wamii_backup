@@ -99,7 +99,7 @@ export default function ViewScreen(props) {
     } else if (num > 999999) {
       return (num / 1000000).toFixed(2) + 'M'; // convert to M for number from > 1 million
     } else if (num < 1000) {
-      return num; // if value < 1000, nothing to do
+      return (num * 1).toFixed(2); // if value < 1000, nothing to do
     }
   }
 
