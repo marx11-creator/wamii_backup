@@ -12,8 +12,6 @@ import ChangePassword from './ChangePassword';
 import BusinessCalendar from './BusinessCalendar';
 import ViewScreen from '../SalesmanReports/SalesmanNet';
 
-import CryptoSample from '../MainDrawerScreens/CryptoSample';
-
 const Drawer = createDrawerNavigator();
 
 export default function StartMainDrawerScreen(props) {
@@ -35,7 +33,6 @@ export default function StartMainDrawerScreen(props) {
       <Drawer.Screen name="BusinessCalendar" component={BusinessCalendar} />
       <Drawer.Screen name="SalesmanNet" component={ViewScreen} />
 
-      <Drawer.Screen name="CryptoSample" component={CryptoSample} />
     </Drawer.Navigator>
   );
 }

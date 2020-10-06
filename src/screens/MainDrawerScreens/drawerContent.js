@@ -381,21 +381,6 @@ export function DrawerContent(props) {
               }}
             />
           </Drawer.Section>
-
-          {/* Marc Test Site -- Start */}
-          <Drawer.Section style={styles.bottomDrawerSection}>
-            <DrawerItem
-              icon={({color, size}) => (
-                <Icon name="spellcheck" color={color} size={size} />
-              )}
-              label="Test Site"
-              onPress={() => {
-                // Alert.alert('This is a test page');
-                props.navigation.navigate('CryptoSample');
-              }}
-            />
-          </Drawer.Section>
-          {/* Marc Test Site -- End */}
         </View>
       </DrawerContentScrollView>
     </View>
