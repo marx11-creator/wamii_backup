@@ -103,6 +103,8 @@ export default function ViewScreen(props) {
     }
   }
 
+  //test
+
   function push_sales_net() {
     console.log('push run');
     var YearQuery = '';
