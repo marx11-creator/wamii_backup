@@ -32,6 +32,7 @@ import {
 import {
   UpdateYearMonthsFilter,
   globalStatus,
+  OtherSettings,
 } from '../../sharedComponents/globalCommands/globalCommands';
 
 import moment from 'moment';
@@ -282,10 +283,19 @@ export default function Home(props) {
       console.log('focus on per Home');
       CurrentAppScreen.Screen = 'Home';
       UpdateYearMonthsFilter();
+      CheckForceLogout();
     });
   }, []);
 
 
+
+  function CheckForceLogout(){
+    if (OtherSettings.AutoLogout === 'TRUE'){
+      console.log('AUTO LOGOUT TRUE')
+    } else {
+      console.log('AUTO LOGOUT TRUE')
+    }
+  }
 
   return (
     <ImageOverlay

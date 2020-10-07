@@ -40,7 +40,12 @@ import {
   CurrentAppScreen,
   GetDateTime,
   CurrentAppVersionUpdate,
+  ResetModuleAccess,
+  ClearTeamAccess,
+  ClearDefaults,
 } from '../../sharedComponents/globalCommands/globalCommands';
+
+
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
 import PageContextGlobalState from './pagecontext';
 import PageContextGlobalTimer from './pagecontext2';
@@ -1477,6 +1482,7 @@ export default function UpdateModal(props) {
         '&' +
         dateTimeUpdated,
     );
+    console.log(APIToken.access_token);
     Promise.race([
       //---------------------------------------------------------------first command
       fetch(
@@ -1511,7 +1517,43 @@ export default function UpdateModal(props) {
               key.dateTimeRelease;
             APIUpdateVersion.APIUpdateVersionStatus = key.status;
             APIUpdateVersion.APIUpdateVersionNotice = key.notice;
+            APIUpdateVersion.APIForceLogout = key.auto_logout;
+            console.log(key.auto_logout);
           });
+
+
+        if(APIUpdateVersion.APIForceLogout === 'TRUE') {
+          // ResetModuleAccess();
+          // ClearTeamAccess();
+          // ClearDefaults();
+          // setglobalState({
+          //   timerSeconds: 0,
+          //   timerMinute: 0,
+          //   updateStatus: 'Start',
+          //   dateTimeUpdated24hr: '',
+          //   updatePercentage: '',
+          // });
+
+          // Alert.alert(
+          //   'Oops!',
+          //   'You have been automatically logout. Please Try again.' +
+          //     APIUpdateVersion.APIUpdateVersionField +
+          //     ' \n.',
+          //   [
+          //     {
+          //       text: 'OK',
+          //       onPress: () => {
+          //         BackHandler.exitApp();
+          //       },
+          //     },
+          //   ],
+          //   {cancelable: true},
+          // );
+
+
+
+          // BackHandler.exitApp();
+        } else {
 
           if (APIUpdateVersion.APIUpdateVersionStatus === 'ONLINE') {
             StartUpdate();
@@ -1562,6 +1604,10 @@ export default function UpdateModal(props) {
               CheckSystemStatus(); //-2
             }
           }
+        }
+
+
+         
         }
       })
       .catch(function (error) {

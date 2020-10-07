@@ -107,6 +107,7 @@ export var APIUpdateVersion = {
   APIUpdateVersionDateTimeRelease: '',
   APIUpdateVersionStatus: '',
   APIUpdateVersionNotice: '',
+  APIForceLogout: 'FALSE',
 };
 
 export var OtherSettings = {
