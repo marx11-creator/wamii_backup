@@ -228,7 +228,7 @@ export default function UpdateModal(props) {
         dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss'),
       });
       props.navigation.navigate(CurrentAppScreen.Screen);
-      CheckSystemStatus();
+      CheckSystemStatus(); //3.3
       // RunTimer();
       //5
     } else {
@@ -247,7 +247,7 @@ export default function UpdateModal(props) {
       //6
     }
 
-    CheckSystemStatus();  //-3
+    CheckSystemStatus(); //-3
   }
 
   function CheckSystemStatus() {
@@ -315,6 +315,7 @@ export default function UpdateModal(props) {
     }
 
     if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
+      //1
       const input = APIUpdateVersion.APIUpdateVersionNotice;
       const [msg1, msg2, msg3] = input.split('~');
       Alert.alert(
@@ -503,7 +504,6 @@ export default function UpdateModal(props) {
     }
   }, [q5Marc]);
 
-
   useEffect(() => {
     if (
       q1Principal &&
@@ -517,7 +517,6 @@ export default function UpdateModal(props) {
       afterUpdate();
     }
   }, [q6Inventory]);
-
 
   //====================================================================> RUN UPDATE
 
@@ -1192,7 +1191,7 @@ export default function UpdateModal(props) {
     }
   }
 
-//added quote for zou1
+  //added quote for zou1
 
   //PER AREA
   const GetPerAreaAPIData = () => {
@@ -1470,6 +1469,14 @@ export default function UpdateModal(props) {
     var dateTimeUpdated = moment()
       .utcOffset('+08:00')
       .format('YYYY-MM-DD hh:mm:ss a');
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'updateversion2/' +
+        user_name +
+        '&' +
+        dateTimeUpdated,
+    );
     Promise.race([
       //---------------------------------------------------------------first command
       fetch(
@@ -1518,6 +1525,7 @@ export default function UpdateModal(props) {
             console.log('11 ' + 'user update log saved in API');
             setq3UserUpdateLog(true);
           } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
+            //2
             if (globalStatus.updateMode === 'manual') {
               console.log('MANUAL');
               globalStatus.updateMode = 'auto';
@@ -2194,27 +2202,19 @@ export default function UpdateModal(props) {
       promo_product: '',
       inventory: '',
       img_url: '',
+      total_case: 0,
+      total_pieces: 0,
       effective_price_date: '',
-      CASE_COMPANY: '',
-      CASE_BOOKING: '',
-      CASE_EXTRUCK: '',
-      PCS_COMPANY: '',
-      PCS_BOOKING: '',
-      PCS_EXTRUCK: '',
+      CASE_COMPANY: 0,
+      CASE_BOOKING: 0,
+      CASE_EXTRUCK: 0,
+      PCS_COMPANY: 0,
+      PCS_BOOKING: 0,
+      PCS_EXTRUCK: 0,
       DateandTimeUpdated: '',
     },
   ];
-  const LocalDBFields = [
-    {
-      ref_id: '',
-      product_id: '',
-      product_variant: '',
-      product_name: '',
-      inventory: '',
-      img_url: ' ',
-      DateandTimeUpdated: '',
-    },
-  ];
+
   const [ApiPromoItemData, setApiPromoItemData] = useState(ApiFields);
   const [ItemsDeleted, setItemsDeleted] = useState(false);
   const DownloadPromoItems = () => {
@@ -2339,6 +2339,14 @@ export default function UpdateModal(props) {
             "'" +
             ',' +
             "'" +
+            item.total_case +
+            "'" +
+            ',' +
+            "'" +
+            item.total_pieces +
+            "'" +
+            ',' +
+            "'" +
             item.effective_price_date +
             "'" +
             ',' +
@@ -2374,7 +2382,7 @@ export default function UpdateModal(props) {
             dbinventory.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, total_case, total_pieces, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -2395,7 +2403,7 @@ export default function UpdateModal(props) {
             dbinventory.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, total_case, total_pieces, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -2541,7 +2549,7 @@ export default function UpdateModal(props) {
       </View>
 
       {isLoadingActivityIndicator && (
-        <View style={[styles.loading,{backgroundColor:'#2C302E'}]}>
+        <View style={[styles.loading, {backgroundColor: '#2C302E'}]}>
           {/* <Button
             title="Test"
             onPress={() => {

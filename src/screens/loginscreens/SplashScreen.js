@@ -1,11 +1,15 @@
-import React, {useEffect, useState,useContext} from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import React, {useEffect, useState, useContext} from 'react';
+import {CommonActions} from '@react-navigation/native';
 import {
+  Modal,
   View,
   Text,
   Dimensions,
   StyleSheet,
   TouchableOpacity,
   LogBox,
+  BackHandler,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -27,7 +31,13 @@ import {
   Update1007,
   Update1008,
 } from '../../database/sqliteSetup';
-
+import {
+  scale,
+  moderateScale,
+  verticalScale,
+  width,
+  height,
+} from '../../sharedComponents/scaling';
 import {
   ModuleAccess,
   APIToken,
@@ -36,27 +46,23 @@ import {
   ResetModuleAccess,
   ClearTeamAccess,
   ClearDefaults,
-
+  OtherSettings,
 } from '../../sharedComponents/globalCommands/globalCommands';
 
 import BackgroundTimer from 'react-native-background-timer';
 import {cos} from 'react-native-reanimated';
 import DeviceInfo from 'react-native-device-info';
+import FlatButton from '../../sharedComponents/custombutton';
 // LogBox.ignoreAllLogs();
-
 
 // global.salespositionname = 'PMS 1 PAMPANGA';
 // global.team = 'TEAM JR';
 // global.date_from = '2020-09-01';
 // global.date_to = '2020-09-31';
 
-
-
 export default function SplashScreen(props) {
   CreateDatabase();
 
-
-  
   DeviceInfo.getDeviceName().then((deviceName) => {
     global.device_name = deviceName;
     global.device_id = DeviceInfo.getUniqueId();
@@ -65,11 +71,14 @@ export default function SplashScreen(props) {
   function SQLerror(err) {
     console.log('SQL Error: ' + err);
   }
-
+  const [isLoadingActivityIndicator, setisLoadingActivityIndicator] = useState(
+    false,
+  );
+  const [isModalConnectionError, setisModalConnectionError] = useState(false);
+  const [ModalErrorMessage, setModalErrorMessage] = useState('');
   const [LogoAnimation, setLogoAnimation] = useState(false);
   const [ShowGettingStarted, setShowGettingStarted] = useState(false);
 
-  
   // useEffect(() => {
   //   if (loading === true) {
   //     CheckUserifLogin();
@@ -88,7 +97,6 @@ export default function SplashScreen(props) {
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
-
       setLogoAnimation(true);
       var currSecc = 0;
       const intervalId = BackgroundTimer.setInterval(() => {
@@ -100,7 +108,7 @@ export default function SplashScreen(props) {
         if (currSecc === 1) {
           // CheckUserifLogin();
           GetAppVersionInLocalDB();
-      
+
           BackgroundTimer.clearInterval(intervalId);
         }
       }, 1000);
@@ -108,7 +116,6 @@ export default function SplashScreen(props) {
   }, []);
 
   function GetAppVersionInLocalDB() {
-  
     dbUpdateDbVersion.transaction((tx) => {
       tx.executeSql(
         'SELECT max(updateversion) as updateversion, dateTimeUpdated FROM updateversion_tbl',
@@ -121,7 +128,6 @@ export default function SplashScreen(props) {
               0,
             ).updateversion;
             RunDBUpdate();
-
           } else {
             //console.log('no update version found');
             LocalAppVersionUpdate.LocalAppVersionUpdateField = 1000;
@@ -132,22 +138,19 @@ export default function SplashScreen(props) {
       );
     });
   }
- 
-  function RunDBUpdate() {
 
+  function RunDBUpdate() {
     //if local and current have initialized
     if (
       LocalAppVersionUpdate.LocalAppVersionUpdateField > 0 &&
       CurrentAppVersionUpdate.CurrentAppVersionUpdateField > 0
     ) {
-    
       //console.log('local and current have initialized');
       //if local is less than current app update or local is not updated
       if (
         LocalAppVersionUpdate.LocalAppVersionUpdateField <
         CurrentAppVersionUpdate.CurrentAppVersionUpdateField
       ) {
-
         const intervalUpdateChecker = BackgroundTimer.setInterval(() => {
           if (
             LocalAppVersionUpdate.LocalAppVersionUpdateField ===
@@ -221,8 +224,6 @@ export default function SplashScreen(props) {
           Update1008();
           CheckUserifLogin(); //moved tihs when u have new update to load check user on last update
         }
-
-
       } else {
         //console.log('local is updated, nothing to update.');
         // console.log('6');
@@ -267,9 +268,9 @@ export default function SplashScreen(props) {
             APIToken.access_token = results.rows.item(0).access_token;
             // console.log(results.rows.item(0).dateTimeObtained);
             dateTimeObtained = results.rows.item(0).dateTimeObtained;
-           // console.log(moment(currentdate).diff(dateTimeObtained, 'days'));
+            // console.log(moment(currentdate).diff(dateTimeObtained, 'days'));
             if (moment(currentdate).diff(dateTimeObtained, 'days') > 29) {
-            //  console.log('reach 30days, auto logout');
+              //  console.log('reach 30days, auto logout');
 
               ResetModuleAccess();
               ClearTeamAccess();
@@ -277,7 +278,7 @@ export default function SplashScreen(props) {
               UpdateUserActiveStatus();
               setShowGettingStarted(true);
             } else {
-           //   console.log('token still valid');
+              //   console.log('token still valid');
               GetUserLocalCredential();
             }
           } else {
@@ -289,7 +290,6 @@ export default function SplashScreen(props) {
     });
   }
 
-
   function UpdateUserActiveStatus() {
     dbsystem_users.transaction((tx) => {
       tx.executeSql(
@@ -298,17 +298,15 @@ export default function SplashScreen(props) {
         (tx, results) => {
           var len = results.rowsAffected;
           if (len > 0) {
-          //  console.log('User UpdateUserActiveStatus changed to INACTIVE');
-    
+            //  console.log('User UpdateUserActiveStatus changed to INACTIVE');
           } else {
-         //   console.log('user cannot update his  ActiveStatus');
+            //   console.log('user cannot update his  ActiveStatus');
           }
         },
         SQLerror,
       );
     });
   }
-
 
   function GetUserLocalCredential() {
     dbsystem_users.transaction((tx) => {
@@ -368,42 +366,108 @@ export default function SplashScreen(props) {
               global.sales_position_name = key.constant_value;
             }
 
+            //GET AUTO_LOGOUT STATUS
+            if (key.constant_type === 'ACCOUNT_VALIDITY') {
+              OtherSettings.AccountValidity = key.constant_value;
+            }
+
             //if loop reach last record ------------------------------------------------------->
             if (index === temp.length - 1) {
-              // console.log(
-              //   'LOCAL index and json datamatched or last record reached',
-              // );
+              console.log(
+                'index and json datamatched or last record reached, checking account validity...',
+              );
 
-              global.TeamAccessListForAPI = global.TeamAccessList.slice(0, -1);
+              if (OtherSettings.AccountValidity !== '') {
+                var currentdate = moment()
+                  .utcOffset('+08:00')
+                  .format('YYYY-MM-DD');
+                console.log(currentdate);
+                console.log(OtherSettings.AccountValidity);
 
-              //REMOVE LAST COMMA
-              global.TeamAccessList =
-                '(' + global.TeamAccessList.slice(0, -1) + ')';
+                console.log(
+                  moment(OtherSettings.AccountValidity).diff(
+                    currentdate,
+                    'days',
+                  ),
+                );
+                if (
+                  moment(currentdate).diff(
+                    OtherSettings.AccountValidity,
+                    'days',
+                  ) > 0
+                ) {
+                  setModalErrorMessage(
+                    'Your Account has expired.\n\nPlease contact I.T Support Team.',
+                  );
 
-              if (global.sales_position_name === '') {
-                global.sales_position_name = 'ALLSALESMAN';
+                  setisLoadingActivityIndicator(true);
+
+                  setisModalConnectionError(true);
+
+                  OtherSettings.AccountValidity = '';
+                } else {
+                  console.log('user ACCOUT HAS VALIDITY AND NOT YET EXPIRED');
+
+                  global.TeamAccessListForAPI = global.TeamAccessList.slice(
+                    0,
+                    -1,
+                  );
+
+                  global.TeamAccessList =
+                    '(' + global.TeamAccessList.slice(0, -1) + ')';
+
+                  if (global.sales_position_name === '') {
+                    global.sales_position_name = 'ALLSALESMAN';
+                  }
+                  global.user_name = key.user_name;
+                  global.name = key.name;
+                  global.account_type = key.account_type;
+
+                  setShowGettingStarted(false);
+                  setLogoAnimation(false);
+                  props.navigation.navigate('StartMainDrawerScreen');
+                }
+              } else {
+                console.log('user has no validity');
+                global.TeamAccessListForAPI = global.TeamAccessList.slice(
+                  0,
+                  -1,
+                );
+
+                global.TeamAccessList =
+                  '(' + global.TeamAccessList.slice(0, -1) + ')';
+
+                if (global.sales_position_name === '') {
+                  global.sales_position_name = 'ALLSALESMAN';
+                }
+                global.user_name = key.user_name;
+                global.name = key.name;
+                global.account_type = key.account_type;
+
+                setShowGettingStarted(false);
+                setLogoAnimation(false);
+                props.navigation.navigate('StartMainDrawerScreen');
               }
-
-              //console.log(global.TeamAccessListForAPI);
-              //SET GLOBAL USERNAME and NAME
-              global.user_name = key.user_name;
-              global.name = key.name;
-              global.account_type = key.account_type;
-              // console.log(key.user_name);
-              // console.log(key.name);
-              // console.log(key.account_type);
-
-              // console.log('successfully read GetUserLocalCredential');
-              //NAVIGATE TO HOME PAGE
-              setShowGettingStarted(false);
-              setLogoAnimation(false);
-              props.navigation.navigate('StartMainDrawerScreen');
             }
           });
         },
         SQLerror,
       );
     });
+  }
+
+  function testReset() {
+    props.navigation.dispatch(
+      CommonActions.reset({
+        index: 1,
+        routes: [
+          {name: 'SplashScreen'},
+          {
+            name: 'SplashScreen',
+          },
+        ],
+      }),
+    );
   }
 
   return (
@@ -429,7 +493,6 @@ export default function SplashScreen(props) {
                 props.navigation.navigate('LoginScreen');
                 setShowGettingStarted(false);
                 setLogoAnimation(false);
-                
               }}>
               <LinearGradient
                 colors={['#08d464', '#01ab9d']}
@@ -450,17 +513,43 @@ export default function SplashScreen(props) {
         </Animatable.View>
       )}
 
-      {/* {loading && (
-        <View style={styles.loading}>
-          <Text style={{color: 'white', fontSize: 20}}>Pleas wait ... </Text>
-          <ActivityIndicator size="large" color="green" />
-        </View>
-      )} */}
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isLoadingActivityIndicator}
+          onRequestClose={() => {
+            setisModalConnectionError(false);
+            setisLoadingActivityIndicator(false);
+            setisLoadingActivityIndicator(false);
+            testReset();
+            BackHandler.exitApp();
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{ModalErrorMessage}</Text>
+
+              <FlatButton
+                text="Close"
+                onPress={() => {
+                  setisModalConnectionError(false);
+                  setisLoadingActivityIndicator(false);
+                  setisLoadingActivityIndicator(false);
+                  testReset();
+                  BackHandler.exitApp();
+                }}
+                gradientFrom="red"
+                gradientTo="pink"
+              />
+            </View>
+          </View>
+        </Modal>
+      </View>
     </View>
   );
 }
 
-const {height} = Dimensions.get('screen');
+// const {height} = Dimensions.get('screen');
 const height_logo = height * 0.28;
 
 const styles = StyleSheet.create({
@@ -521,5 +610,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  modalView: {
+    height: 250,
+    margin: 20,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: scale(25),
+    textAlign: 'center',
   },
 });

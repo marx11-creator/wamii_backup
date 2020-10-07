@@ -7,6 +7,7 @@ import {
   dbinventory,
   dbSalesmanNet,
   dblastdatetimeupdated,
+  dbsystem_users,
 } from '../../database/sqliteSetup';
 
 export var ModuleAccess = {
@@ -52,15 +53,12 @@ export var LocalAppVersionUpdate = {
   LocalAppVersionUpdateField: 0,
 };
 
-
 export var PageVisited = {
   PerTeamPAGE: 'YES',
   PerSalesmanPAGE: 'YES',
   PerPrincipalPAGE: 'YES',
   PerAreaPAGE: 'YES',
 };
-
-
 
 export var DashboardMonths = [];
 export var DashboardYears = [];
@@ -111,6 +109,11 @@ export var APIUpdateVersion = {
   APIUpdateVersionNotice: '',
 };
 
+export var OtherSettings = {
+  AutoLogout: 0,
+  AccountValidity: '',
+};
+
 export const ResetModuleAccess = () => {
   return (
     (ModuleAccess.PerTeam = 'NOT ALLOWED'),
@@ -134,6 +137,7 @@ export function ClearDefaults() {
   DeletePerPrincipalAPIData();
   DeleteCalendar();
   DeleteItems();
+  DeleteSystemUser();
   delete_per_customer_tbl();
   delete_net_tbl();
   delete_per_vendor_tbl();
@@ -171,6 +175,20 @@ let delete_per_category_tbl = () => {
     });
   });
 };
+
+
+function DeleteSystemUser() {
+  dbsystem_users.transaction(function (tx) {
+    tx.executeSql(
+      'Delete from system_users_tbl ',
+      [],
+      (tx, results) => {},
+      SQLerror,
+    );
+  });
+}
+
+
 
 function DeleteItems() {
   dbinventory.transaction(function (tx) {
@@ -370,6 +388,3 @@ export function hhmmss(secs) {
   return `${pad(minutes)}:${pad(secs)}`;
   // return pad(hours)+":"+pad(minutes)+":"+pad(secs); for old browsers
 }
-
-
-

@@ -285,14 +285,7 @@ export default function Home(props) {
     });
   }, []);
 
-  function testReset() {
-    const resetAction = StackActions.reset({
-      index: 0,
-      actions: [NavigationActions.navigate({routeName: 'Home'})],
-      key: null,
-    });
-    props.navigation.dispatch(resetAction);
-  }
+
 
   return (
     <ImageOverlay
@@ -436,12 +429,12 @@ export default function Home(props) {
                 {' '}
                 Wing An Marketing Inc.
               </Text>
-              {/* <Button
+              <Button
               title="test"
               onPress={() => {
-                console.log(globalTimer.lastUpdate);
+                testReset();
               }}
-            /> */}
+            />
             </View>
 
             <View

@@ -32,6 +32,7 @@ import FlatButton from '../../sharedComponents/custombutton';
 import {
   globalCompany,
   ModuleAccess,
+  OtherSettings,
   server,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users, dbAppToken} from '../../database/sqliteSetup';
@@ -131,7 +132,7 @@ const SignScreen = (props) => {
           ],
           (tx, results) => {
             if (results.rowsAffected > 0) {
-             // console.log('user credential saved while mapping');
+              // console.log('user credential saved while mapping');
             }
           },
           SQLerror,
@@ -161,6 +162,7 @@ const SignScreen = (props) => {
     ClearUserLogin();
     ClearAppToken();
     setisLoadingActivityIndicator(true);
+    
     const unpw = data.user_name + '&' + data.password;
     // console.log(unpw);
     Promise.race([
@@ -230,7 +232,6 @@ const SignScreen = (props) => {
   };
 
   function InsertLoginInfo(props) {
- ;
     fetch(server.server_address + globalCompany.company + 'InsertLoginInfo', {
       method: 'PUT',
       headers: {
@@ -336,7 +337,12 @@ const SignScreen = (props) => {
 
   const GetUserAccess = () => {
     const unpw = data.user_name + '&' + data.password;
-    // console.log(unpw);
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'users/getuseraccess/' +
+        unpw,
+    );
     Promise.race([
       fetch(
         server.server_address +
@@ -417,33 +423,91 @@ const SignScreen = (props) => {
               global.sales_position_name = key.constant_value;
             }
 
+            //GET AUTO_LOGOUT STATUS
+            if (key.constant_type === 'ACCOUNT_VALIDITY') {
+              OtherSettings.AccountValidity = key.constant_value;
+            }
+
             //SAVE USER CREDENTIALS
             SaveUserLogin(key);
 
             //if loop reach last record ------------------------------------------------------->
             if (index === jsonData.length - 1) {
-              console.log('index and json datamatched or last record reached');
+              console.log(
+                'index and json datamatched or last record reached, checking account validity...',
+              );
 
-              //REMOVE LAST COMMA
+              if (OtherSettings.AccountValidity !== '') {
+                var currentdate = moment()
+                  .utcOffset('+08:00')
+                  .format('YYYY-MM-DD');
+                console.log(currentdate);
+                console.log(OtherSettings.AccountValidity);
 
-              global.TeamAccessListForAPI = global.TeamAccessList.slice(0, -1);
+                console.log(
+                  moment(OtherSettings.AccountValidity).diff(
+                    currentdate,
+                    'days',
+                  ),
+                );
+                if (
+                  moment(currentdate).diff(
+                    OtherSettings.AccountValidity,
+                    'days',
+                  ) > 0
+                ) {
+                  setModalErrorMessage(
+                    'Your Account has expired.\n\nPlease contact I.T Support Team.',
+                  );
+                  setisModalConnectionError(true);
+                  OtherSettings.AccountValidity = '';
+                } else {
+                  console.log('user ACCOUT HAS VALIDITY AND NOT YET EXPIRED');
+                  //IF USER HAS NO ACCOUNT VALIDITY PROCEED TO SAVING AND HOME
 
-              global.TeamAccessList =
-                '(' + global.TeamAccessList.slice(0, -1) + ')';
-
-              if (global.sales_position_name === '') {
-                global.sales_position_name = 'ALLSALESMAN';
+                  //REMOVE LAST COMMA
+                  global.TeamAccessListForAPI = global.TeamAccessList.slice(
+                    0,
+                    -1,
+                  );
+                  global.TeamAccessList =
+                    '(' + global.TeamAccessList.slice(0, -1) + ')';
+                  if (global.sales_position_name === '') {
+                    global.sales_position_name = 'ALLSALESMAN';
+                  }
+                  //SET GLOBAL USERNAME and NAME
+                  global.user_name = key.user_name;
+                  global.name = key.name;
+                  global.account_type = key.account_type;
+                  //HIDE ACTIVITY INDICATOR
+                  setisLoadingActivityIndicator(false);
+                  //NAVIGATE TO HOME PAGE
+                  props.navigation.navigate('StartMainDrawerScreen');
+                }
+              } else {
+                console.log('user has no validity');
+                //IF USER HAS NO ACCOUNT VALIDITY PROCEED TO SAVING AND HOME
+                //SAVE USER CREDENTIALS
+                SaveUserLogin(key);
+                //REMOVE LAST COMMA
+                global.TeamAccessListForAPI = global.TeamAccessList.slice(
+                  0,
+                  -1,
+                );
+                global.TeamAccessList =
+                  '(' + global.TeamAccessList.slice(0, -1) + ')';
+                if (global.sales_position_name === '') {
+                  global.sales_position_name = 'ALLSALESMAN';
+                }
+                //SET GLOBAL USERNAME and NAME
+                global.user_name = key.user_name;
+                global.name = key.name;
+                global.account_type = key.account_type;
+                //HIDE ACTIVITY INDICATOR
+                setisLoadingActivityIndicator(false);
+                //NAVIGATE TO HOME PAGE
+                props.navigation.navigate('StartMainDrawerScreen');
               }
-              //SET GLOBAL USERNAME and NAME
-              global.user_name = key.user_name;
-              global.name = key.name;
-              global.account_type = key.account_type;
-
-              //HIDE ACTIVITY INDICATOR
-              setisLoadingActivityIndicator(false);
-
-              //NAVIGATE TO HOME PAGE
-              props.navigation.navigate('StartMainDrawerScreen');
             } else {
               // console.log(index);
               // console.log(jsonData.length - 1);

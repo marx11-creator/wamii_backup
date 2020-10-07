@@ -53,7 +53,6 @@ import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
 import Icon from 'react-native-vector-icons/Ionicons';
 import numbro from 'numbro';
 
-
 var ApiRowsCount = 0;
 var count = 0;
 var localItemcount = 0;
@@ -68,39 +67,26 @@ export default function Inventory(props) {
   const [globalState] = useContext(PageContextGlobalState);
   const [globalTimer] = useContext(PageContextGlobalTimer);
 
-  const ApiFields = [
-    {
-      principal_name: '',
-      product_id: '',
-      product_variant: '',
-      product_name: '',
-      promo_product: '',
-      inventory: '',
-      img_url: '',
-      DateandTimeUpdated: '',
-    },
-  ];
   const LocalDBFields = [
     {
-      ref_id: '',
-      product_id: '',
-      product_variant: '',
-      product_name: '',
-      inventory: '',
+      ref_id: ' ',
+      product_id: ' ',
+      product_variant: ' ',
+      product_name: ' ',
+      inventory: ' ',
       img_url: ' ',
-      DateandTimeUpdated: '',
+      DateandTimeUpdated: ' ',
+      total_case: 0,
+      total_pieces: 0,
+      effective_price_date: '',
+      CASE_COMPANY: 0,
+      CASE_BOOKING: 0,
+      CASE_EXTRUCK: 0,
+      PCS_COMPANY: 0,
+      PCS_BOOKING: 0,
+      PCS_EXTRUCK: 0,
     },
-  ];
-
-  const PrincipalListX = [
-    {
-      principal_name: '',
-    },
-  ];
-  const VariantListX = [
-    {
-      product_variant: '',
-    },
+    
   ];
 
   const PrincipalListFields = [
@@ -133,26 +119,31 @@ export default function Inventory(props) {
     },
   ];
 
+  const InventorySummaryFields = [
+    {
+      VendorName: ' ',
+      Category: ' ',
+      Brand: ' ',
+      TotalItems: 0,
+      TotalCase: 0,
+      TotalAmount: 0,
+    },
+  ];
 
+  const [InventorySummary, setInventorySummary] = useState(
+    InventorySummaryFields,
+  );
   const [updateMessage, setupdateMessage] = useState('Updating...');
   const [testnum, settestnum] = useState(10);
   const [principalPicker, setPrincipalPicker] = useState('');
-  const [variantPicker, setVariantPicker] = useState('');
   const [PrincipalList, setPrincipalList] = useState(PrincipalListFields);
   const [VariantList, setVariantList] = useState(VariantListFields);
-  const [TypeList, setTypeList] = useState(TypeListFields);
-  const [ItemList, setItemList] = useState(ItemFields);
   const [arrVariantListfromPicker, setarrVariantListfromPicker] = useState([]);
   const [arrTypeListfromPicker, setarrTypeListfromPicker] = useState([]);
   const [isModalVisible2, setisModalVisible2] = useState(false);
-
-  const [PromoSKURefreshing, setPromoSKURefreshing] = useState(false);
-
-  const [dateTime, setDateTime] = useState('');
+  const [TypeList, setTypeList] = useState(TypeListFields);
 
   const [loading, setLoading] = useState(false);
-
-  const [ApiPromoItemData, setApiPromoItemData] = useState(ApiFields);
 
   const [LocalPromoItemData, setLocalPromoItemData] = useState(LocalDBFields);
   const [
@@ -225,7 +216,10 @@ export default function Inventory(props) {
   }, []);
 
   // useEffect(() => {
-  //   dateTimeSet();
+  //   setInventorySummary({
+  //     ...InventorySummary,
+  //     VendorName: 'ALL',
+  //   });
   // },[])
 
   // WHERE IN OPRATOR
@@ -239,17 +233,18 @@ export default function Inventory(props) {
   // [],
 
   function GetLocalPromoItems() {
-    var Vendor = ''
+    var Vendor = '';
     var Category = '';
     var Brand = '';
-    var TotalItems = 0;
-    var TotalCase = 0;
-    var TotalAmount = 0;
+    var TotalItems1 = 0;
+    var TotalCase1 = 0;
+    var TotalAmount1 = 0;
 
     dbinventory.transaction((tx) => {
+      LocalPromoItemData.length = 0;
       tx.executeSql(
         'SELECT * FROM promo_items_tbl ' +
-          ' order by product_variant, product_name limit 100 ',
+          ' order by principal_name, product_variant, product_name   ',
         [],
         (tx, results) => {
           var temp = [];
@@ -257,23 +252,42 @@ export default function Inventory(props) {
             localItemcount = localItemcount + 1;
             temp.push(results.rows.item(i));
 
-TotalItems = TotalItems + 1;
-TotalCase = TotalCase + results.rows.item(i).inventory
-TotalAmount = TotalAmount + 1;
-            
+            TotalItems1 = TotalItems1 + 1;
+            TotalCase1 = TotalCase1 + Number(results.rows.item(i).total_case);
+            TotalAmount1 =
+              TotalAmount1 +
+              Number(
+                Number(results.rows.item(i).total_case) *
+                  Number(results.rows.item(i).CASE_COMPANY),
+              );
           }
+
+          setInventorySummary({
+            ...InventorySummary,
+            TotalItems: TotalItems1,
+            TotalCase: TotalCase1,
+            TotalAmount: TotalAmount1,
+            VendorName: 'ALL',
+            Category: 'ALL',
+            Brand: 'ALL',
+          });
+
           console.log('Successfully loaded Initial ' + temp.length + ' sku');
           setLocalPromoItemData(temp);
-
-
-
-
         },
+        SQLerror,
       );
     });
   }
 
   function GetLocalPromoItemsFiltered() {
+    var Vendor = '';
+    var Category = '';
+    var Brand = '';
+    var TotalItems1 = 0;
+    var TotalCase1 = 0;
+    var TotalAmount1 = 0;
+
     var PrincipalQuery = '';
     if (PrincipalPickerCatcher === '' || PrincipalPickerCatcher === 'ALL') {
       PrincipalQuery = '  principal_name like ' + "'%%' ";
@@ -305,27 +319,37 @@ TotalAmount = TotalAmount + 1;
         ')';
     }
 
-    console.log(
-      'SELECT * FROM promo_items_tbl where ' +
-        PrincipalQuery +
-        VariantQuery +
-        PromoProductQuery +
-        ' order by product_variant, product_name',
-    );
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM promo_items_tbl where ' +
           PrincipalQuery +
           VariantQuery +
           PromoProductQuery +
-          ' order by product_variant, product_name',
+          ' order by principal_name, product_variant, product_name',
         [],
         (tx, results) => {
           var temp = [];
           for (let i = 0; i < results.rows.length; ++i) {
             localItemcount = localItemcount + 1;
             temp.push(results.rows.item(i));
+
+            TotalItems1 = TotalItems1 + 1;
+            TotalCase1 = TotalCase1 + Number(results.rows.item(i).total_case);
+            TotalAmount1 =
+              TotalAmount1 +
+              Number(
+                Number(results.rows.item(i).total_case) *
+                  Number(results.rows.item(i).CASE_COMPANY),
+              );
           }
+          setInventorySummary({
+            ...InventorySummary,
+            TotalItems: TotalItems1,
+            TotalCase: TotalCase1,
+            TotalAmount: TotalAmount1,
+            VendorName: PrincipalPickerCatcher,
+          });
+
           console.log('Successfully loaded FILTERED ' + temp.length + ' sku');
           setLocalPromoItemData(temp);
         },
@@ -642,48 +666,80 @@ TotalAmount = TotalAmount + 1;
 
   const renderItem = ({item}) =>
     item.product_variant === '' ? null : (
-      <LinearGradient style={{margin: 2}} colors={['#F96E71', '#C70E11']}>
+      <LinearGradient
+        start={{x: 0.3, y: 0.6}}
+        end={{x: 0.8, y: 1}}
+        style={{
+          margin: 2,
+          marginTop: 0,
+          borderColor: '#C6CDC8',
+          borderWidth: 0.9,
+        }}
+        colors={['white', '#15C88B']}>
         <View style={[styles.promoItemDetailsNImage]}>
-          <View style={{backgroundColor: 'transparent', flex: 1, flexDirection: 'row'}}>
-          <View style={[styles.promoitemImageContainer]}>
-            <TouchableOpacity
-              onPress={() => {
-                setSelectedImage(item.img_url);
-                setVisibleMainModal(true);
+          <View
+            style={{
+              backgroundColor: 'transparent',
+              flex: 1,
+              flexDirection: 'row',
+            }}>
+            <View style={[styles.promoitemImageContainer]}>
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedImage(item.img_url);
+                  setVisibleMainModal(true);
+                }}>
+                <Image
+                  style={styles.promoitemImage}
+                  source={{
+                    uri: item.img_url,
+                  }}
+                  onError={() => ({
+                    uri:
+                      'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
+                  })}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'transparent',
+                marginLeft: scale(15),
+                flexDirection: 'column',
+                justifyContent: 'space-evenly',
+                margin: scale(10),
+                alignItems: 'flex-end',
               }}>
-              <Image
-                style={styles.promoitemImage}
-                source={{
-                  uri: item.img_url,
-                }}
-                onError={() => ({
-                  uri:
-                    'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
+                              <Text
+                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                {'Price per PCs '}
+                
+              </Text>
+
+              <Text
+                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                {'BK: P'}
+                {numbro(Number(item.PCS_BOOKING)).format({
+                  thousandSeparated: true,
+                  mantissa: 2,
                 })}
-              />
-            </TouchableOpacity>
+              </Text>
+
+              <Text
+                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                {'VAN: P'}
+                {numbro(Number(item.PCS_EXTRUCK)).format({
+                  thousandSeparated: true,
+                  mantissa: 2,
+                })}
+              </Text>
+            </View>
           </View>
 
-<View style={{flex: 1,backgroundColor:'transparent', marginLeft: scale(15), flexDirection: 'column',justifyContent: 'space-evenly',margin: scale(10)}}>
-  <Text style={{fontSize: moderateScale(13, 0.5), color: '#ffffff'}}>{'BK: P'}{numbro(item.PCS_BOOKING).format({
-  thousandSeparated: true,
-  mantissa: 2,
-})}</Text>
-
-
-
-
-
-
-
-  <Text style={{fontSize: moderateScale(13, 0.5), color: '#ffffff'}}>{'VAN: P'}{numbro(item.PCS_EXTRUCK).format({
-  thousandSeparated: true,
-  mantissa: 2,
-})}</Text>
-</View>
-          </View>
-          
-          <View style={[styles.promoitemDetails,{backgroundColor: 'transparent'}]}>
+          <View
+            style={[styles.promoitemDetails, {backgroundColor: 'transparent', marginTop:10}]}>
             <Text style={styles.item2}>{item.product_variant}</Text>
             <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
               {item.product_name}
@@ -748,107 +804,112 @@ TotalAmount = TotalAmount + 1;
 
   return (
     <View style={styles.container}>
-      
-      <View style={{flexDirection: 'column'}}>
-      <View style={styles.HeaderView}>
-        <View style={{flex: 1, marginLeft: scale(5)}}>
-          <Image
-            style={styles.CompanyLogo}
-            source={{
-              uri:
-                'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
-            }}
-          />
-        </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignContent: 'center',
-            alignItems: 'center',
-            alignSelf: 'center',
-          }}>
-          <FlatButton // MAIN
-            text="Filter"
-            gradientFrom="#F08E90"
-            gradientTo="#D6171A"
-            onPress={() => {
-              // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
-              GetPrincipalList();
-              setisModalVisible2(!isModalVisible2);
-            }}
-          />
-        </View>
-
-        {/* <View style={styles.textLastUpdateView}>
-          <Text style={styles.textLastUpdate}>Last Update : {dateTime}</Text>
-        </View> */}
-
-        <View
-          style={{
-            flex: 1,
-            width: scale(150),
-            marginRight: 10,
-            alignContent: 'flex-end',
-            alignItems: 'flex-end',
-            justifyContent: 'flex-end',
-          }}>
-          <Text
-            style={{
-              color: '#333333',
-              fontSize: moderateScale(12, 0.5),
-              alignContent: 'flex-end',
-              alignItems: 'flex-end',
-              justifyContent: 'flex-end',
-            }}>
-            Last Update
-          </Text>
-          <Text
-            style={{
-              color: '#333333',
-              fontSize: moderateScale(12, 0.5),
-              alignContent: 'flex-end',
-              alignItems: 'flex-end',
-              justifyContent: 'flex-end',
-            }}>
-            {globalTimer.lastUpdate}
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignContent: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-              <Icon name="refresh" color={'#333333'} size={10} />
+      <LinearGradient
+        start={{x: 1, y: 0.5}}
+        end={{x: 1, y: 4}}
+        style={{margin: 0}}
+        colors={['#0B7021', '#021005']}>
+        <View style={{flexDirection: 'column'}}>
+          <View style={styles.HeaderView}>
+            <View style={{flex: 1, marginLeft: scale(5)}}>
+              {/* <Image
+                style={styles.CompanyLogo}
+                source={{
+                  uri:
+                    'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
+                }}
+              /> */}
+                            <View style={{width: 50}}>
+                <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+                  <Icon name="md-filter" color={'#ffffff'} size={34} />
+                </TouchableOpacity>
+              </View>
             </View>
-            <Text
+            <View
               style={{
-                color: '#333333',
-                fontSize: moderateScale(12, 0.5),
+                flex: 1,
+                justifyContent: 'center',
+                alignContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+              }}>
+              <FlatButton // MAIN
+                text="Filter"
+                gradientFrom="#F9A7A8"
+                gradientTo="#D6171A"
+                onPress={() => {
+                  // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
+                  GetPrincipalList();
+                  setisModalVisible2(!isModalVisible2);
+                }}
+              />
+            </View>
+
+            <View
+              style={{
+                flex: 1,
+                width: scale(150),
+                marginRight: 10,
                 alignContent: 'flex-end',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
               }}>
-              {globalState.updateStatus === 'Updating' ||
-              globalState.updateStatus === 'Start' ? (
+              <Text
+                style={{
+                  color: '#ffffff',
+                  fontSize: moderateScale(12, 0.5),
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                Last Update
+              </Text>
+              <Text
+                style={{
+                  color: '#ffffff',
+                  fontSize: moderateScale(12, 0.5),
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                {globalTimer.lastUpdate}
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                  <Icon name="refresh" color={'#ffffff'} size={10} />
+                </View>
                 <Text
                   style={{
-                    color: '#333333',
+                    color: '#ffffff',
                     fontSize: moderateScale(12, 0.5),
                     alignContent: 'flex-end',
                     alignItems: 'flex-end',
                     justifyContent: 'flex-end',
                   }}>
-                  {'Updating...'}{' '}
-                  {globalState.updatePercentage > 0
-                    ? globalState.updatePercentage + ' %'
-                    : ''}
-                </Text>
-              ) : null}
+                  {globalState.updateStatus === 'Updating' ||
+                  globalState.updateStatus === 'Start' ? (
+                    <Text
+                      style={{
+                        color: '#ffffff',
+                        fontSize: moderateScale(12, 0.5),
+                        alignContent: 'flex-end',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                      }}>
+                      {'Updating...'}{' '}
+                      {globalState.updatePercentage > 0
+                        ? globalState.updatePercentage + ' %'
+                        : ''}
+                    </Text>
+                  ) : null}
 
-              {/* <Text
+                  {/* <Text
                         style={{
                           color: 'white',
                           fontSize: moderateScale(12, 0.5),
@@ -858,29 +919,183 @@ TotalAmount = TotalAmount + 1;
                         }}>
                         {hhmmss(900 - globalStatus.CurrentSeconds)}
                       </Text> */}
-            </Text>
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View style={{flexDirection: 'row', backgroundColor: 'transparent'}}>
+            <View
+              style={{
+                backgroundColor: 'transparent',
+                flex: 1,
+                marginLeft: scale(5),
+              }}>
+              <View
+                style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
+                <View style={{flex: 1, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    Vendor :
+                  </Text>
+                </View>
+
+                <View style={{flex: 2, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(13, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    {InventorySummary.VendorName}
+                  </Text>
+                </View>
+              </View>
+
+              <View
+                style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
+                <View style={{flex: 1, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    Category :
+                  </Text>
+                </View>
+
+                <View style={{flex: 2, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    {InventorySummary.Category}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
+                <View style={{flex: 1, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    Brand :
+                  </Text>
+                </View>
+
+                <View style={{flex: 2, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    {InventorySummary.Brand}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View style={{backgroundColor: 'transparent', flex: 1}}>
+              <View
+                style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
+                <View style={{flex: 1, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    Total Items :
+                  </Text>
+                </View>
+
+                <View style={{flex: 1, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    {InventorySummary.TotalItems > 0
+                      ? numbro(Number(InventorySummary.TotalItems)).format({
+                          thousandSeparated: true,
+                          mantissa: 0,
+                        })
+                      : null}
+                  </Text>
+                </View>
+              </View>
+
+              <View
+                style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
+                <View style={{flex: 1, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    Total Case :
+                  </Text>
+                </View>
+
+                <View style={{flex: 1, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    {InventorySummary.TotalCase > 0
+                      ? numbro(Number(InventorySummary.TotalCase)).format({
+                          thousandSeparated: true,
+                          mantissa: 0,
+                        })
+                      : null}
+                  </Text>
+                </View>
+              </View>
+
+              <View
+                style={{backgroundColor: 'transparent', flexDirection: 'row', marginBottom: 3}}>
+                <View style={{flex: 1, backgroundColor: 'transparent'}}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(15, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    Total Amount :
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: 'transparent',
+                    justifyContent: 'center',
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: moderateScale(13, 0.5),
+                      color: '#ffffff',
+                    }}>
+                    P{' '}
+                    {InventorySummary.TotalAmount > 0
+                      ? numbro(Number(InventorySummary.TotalAmount)).format({
+                          thousandSeparated: true,
+                          mantissa: 0,
+                        })
+                      : null}
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
         </View>
-      </View>
-<View style={{flexDirection: 'row', backgroundColor: '#1AD075'}}>
+      </LinearGradient>
 
-<View style={{backgroundColor: 'transparent', flex: 1, marginLeft: scale(5)}}>
-        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Vendor : {test}</Text>
-        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Category : </Text>
-        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Brand : </Text>
-      </View>
-      <View style={{backgroundColor: 'transparent', flex: 1 }}>
-        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Total Items : </Text>
-        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Total Case : </Text>
-        <Text style={{fontSize: moderateScale(15, 0.5), color: '#ffffff'}}>Total Amount : </Text>
-      </View>
-
-</View>
-
-      </View>
       {/* <Button title= "click" onPress={()=> {
         test = 'bb';
-        console.log(test);
+        console.log(InventorySummary.VendorName);
       }} /> */}
       <SafeAreaView style={styles.container}>
         <FlatList
@@ -1190,7 +1405,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: moderateScale(1, 0.5),
-    backgroundColor: '#ffffff',
+    backgroundColor: '#BBF9CE',
   },
   promoitemDetails: {
     // backgroundColor: '#F0515E',
@@ -1227,7 +1442,6 @@ const styles = StyleSheet.create({
     width: scale(200),
   },
   promoItemDetailsNImage: {
-    // backgroundColor: '#F0515E',
     padding: 5,
     width: width / 2 - 8,
     flexDirection: 'column',
@@ -1236,18 +1450,19 @@ const styles = StyleSheet.create({
   },
   item: {
     fontSize: moderateScale(13, 0.4),
-    color: 'white',
+    color: '#000000',
   },
   item2: {
     fontSize: moderateScale(14, 0.4),
-    color: 'white',
+    color: '#000000',
     fontWeight: 'bold',
+    textDecorationLine: 'underline',
   },
   HeaderView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1AD075',
+    backgroundColor: 'transparent',
   },
   centeredView: {
     flex: 1,
