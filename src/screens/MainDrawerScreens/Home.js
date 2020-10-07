@@ -28,6 +28,9 @@ import {
   LastDateTimeUpdated,
   hhmmss,
   APIToken,
+  ResetModuleAccess,
+  ClearTeamAccess,
+  ClearDefaults,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {
   UpdateYearMonthsFilter,
@@ -46,15 +49,17 @@ import {
 } from '../../sharedComponents/scaling';
 import BackgroundTimer from 'react-native-background-timer';
 import UpdateModal from './UpdateModal';
-import PageContextGlobalState from './pagecontext';
-import PageContextGlobalTimer from './pagecontext2';
+import PageContextGlobalState from './pagecontextGlobalState';
+import PageContextGlobalTimer from './pagecontextGlobalTimer';
+import PageContextAutoLogout from './pagecontextAutoLogout';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 LogBox.ignoreAllLogs();
 
 export default function Home(props) {
   //  console.log(auth);
-  const [globalState] = useContext(PageContextGlobalState);
+  const [globalAutoLogout, setglobalAutoLogout] = useContext(PageContextAutoLogout);
+  const [globalState, setglobalState] = useContext(PageContextGlobalState);
   const [globalTimer] = useContext(PageContextGlobalTimer);
   const [localSeconds, setlocalSeconds] = useState(0);
 
@@ -228,6 +233,27 @@ export default function Home(props) {
     }, []),
   );
 
+
+  useEffect(() => {
+  if (globalAutoLogout === 'TRUE'){
+    setglobalAutoLogout('FALSE');
+    ResetModuleAccess();
+    ClearTeamAccess();
+    ClearDefaults();
+
+    setglobalState({
+      timerSeconds: 0,
+      timerMinute: 0,
+      updateStatus: 'Start',
+      dateTimeUpdated24hr: '',
+      updatePercentage: '',
+    });
+ 
+    props.navigation.navigate('SplashScreen');
+  }
+  }, [globalAutoLogout]);
+
+
   useEffect(() => {
     getWorkingDays();
   }, [globalState.dateTimeUpdated24hr]);
@@ -283,19 +309,10 @@ export default function Home(props) {
       console.log('focus on per Home');
       CurrentAppScreen.Screen = 'Home';
       UpdateYearMonthsFilter();
-      CheckForceLogout();
     });
   }, []);
 
 
-
-  function CheckForceLogout(){
-    if (OtherSettings.AutoLogout === 'TRUE'){
-      console.log('AUTO LOGOUT TRUE')
-    } else {
-      console.log('AUTO LOGOUT TRUE')
-    }
-  }
 
   return (
     <ImageOverlay
@@ -439,12 +456,12 @@ export default function Home(props) {
                 {' '}
                 Wing An Marketing Inc.
               </Text>
-              <Button
+              {/* <Button
               title="test"
               onPress={() => {
-                testReset();
+                console.log(globalAutoLogout);
               }}
-            />
+            /> */}
             </View>
 
             <View

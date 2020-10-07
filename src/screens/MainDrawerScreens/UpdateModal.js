@@ -47,8 +47,9 @@ import {
 
 
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
-import PageContextGlobalState from './pagecontext';
-import PageContextGlobalTimer from './pagecontext2';
+import PageContextGlobalState from './pagecontextGlobalState';
+import PageContextGlobalTimer from './pagecontextGlobalTimer';
+import PageContextAutoLogout from './pagecontextAutoLogout';
 import BackgroundTimer from 'react-native-background-timer';
 //marc
 import {useFocusEffect} from '@react-navigation/native';
@@ -78,6 +79,7 @@ var MarcStatus = '0';
 //marc
 
 export default function UpdateModal(props) {
+ const [globalAutoLogout, setglobalAutoLogout] = useContext(PageContextAutoLogout);
   const [globalState, setglobalState] = useContext(PageContextGlobalState);
   const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
   const [localSeconds, setLocalSeconds] = useState(0);
@@ -1412,61 +1414,61 @@ export default function UpdateModal(props) {
   //   }
   // }
 
-  const APISaveUpdate = () => {
-    Promise.race([
-      fetch(server.server_address + globalCompany.company + 'UserUpdateLog', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + APIToken.access_token,
-        },
-        body: JSON.stringify({
-          user_name: global.user_name,
-          dateTimeUpdated: moment()
-            .utcOffset('+08:00')
-            .format('YYYY-MM-DD hh:mm:ss a'),
-        }),
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
-      ),
-    ])
-      .then((responseData) => {
-        return responseData.json();
-      })
-      .then((jsonData) => {
-        updateProgress = Number(updateProgress) + Number(7);
-        setglobalState({
-          ...globalState,
-          updatePercentage: updateProgress,
-        });
+  // const APISaveUpdate = () => {
+  //   Promise.race([
+  //     fetch(server.server_address + globalCompany.company + 'UserUpdateLog', {
+  //       method: 'POST',
+  //       headers: {
+  //         Accept: 'application/json',
+  //         'Content-Type': 'application/json',
+  //         Authorization: 'Bearer ' + APIToken.access_token,
+  //       },
+  //       body: JSON.stringify({
+  //         user_name: global.user_name,
+  //         dateTimeUpdated: moment()
+  //           .utcOffset('+08:00')
+  //           .format('YYYY-MM-DD hh:mm:ss a'),
+  //       }),
+  //     }),
+  //     new Promise((_, reject) =>
+  //       setTimeout(() => reject(new Error('Timeout')), 160000),
+  //     ),
+  //   ])
+  //     .then((responseData) => {
+  //       return responseData.json();
+  //     })
+  //     .then((jsonData) => {
+  //       updateProgress = Number(updateProgress) + Number(7);
+  //       setglobalState({
+  //         ...globalState,
+  //         updatePercentage: updateProgress,
+  //       });
 
-        console.log('8 ' + 'user update log saved in API');
-        setq3UserUpdateLog(true);
-      })
-      .catch(function (error) {
-        console.log('error in APISaveUpdate :' + error.text);
+  //       console.log('8 ' + 'user update log saved in API');
+  //       setq3UserUpdateLog(true);
+  //     })
+  //     .catch(function (error) {
+  //       console.log('error in APISaveUpdate :' + error.text);
 
-        if (globalStatus.updateMode === 'manual') {
-          Alert.alert(
-            'Error',
-            'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
-            [
-              {
-                text: 'OK',
-              },
-            ],
-            {cancelable: true},
-          );
+  //       if (globalStatus.updateMode === 'manual') {
+  //         Alert.alert(
+  //           'Error',
+  //           'Application Error,  No data found \n err1001 \n \n Please Contact Support Team.',
+  //           [
+  //             {
+  //               text: 'OK',
+  //             },
+  //           ],
+  //           {cancelable: true},
+  //         );
 
-          setisModalConnectionError(false);
-          setisLoadingActivityIndicator(false);
-          props.navigation.navigate('Home');
-        }
-      })
-      .done();
-  };
+  //         setisModalConnectionError(false);
+  //         setisLoadingActivityIndicator(false);
+  //         props.navigation.navigate('Home');
+  //       }
+  //     })
+  //     .done();
+  // };
 
   const GETUpdateVersionAPI = () => {
     console.log('9 ' + 'run GETUpdateVersionAPI');
@@ -1523,6 +1525,8 @@ export default function UpdateModal(props) {
 
 
         if(APIUpdateVersion.APIForceLogout === 'TRUE') {
+          console.log('what to do');
+          setglobalAutoLogout('TRUE');
           // ResetModuleAccess();
           // ClearTeamAccess();
           // ClearDefaults();

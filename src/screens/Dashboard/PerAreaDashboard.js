@@ -54,8 +54,8 @@ import {
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
-import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
-import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontextGlobalState';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontextGlobalTimer';
 export default function PerAreaDashboard(props) {
   LogBox.ignoreAllLogs();
   YellowBox.ignoreWarnings(['']);

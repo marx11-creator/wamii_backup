@@ -266,6 +266,7 @@ export default function SplashScreen(props) {
           var dateTimeObtained = '';
           if (len > 0) {
             APIToken.access_token = results.rows.item(0).access_token;
+            console.log(results.rows.item(0).access_token);
             // console.log(results.rows.item(0).dateTimeObtained);
             dateTimeObtained = results.rows.item(0).dateTimeObtained;
             // console.log(moment(currentdate).diff(dateTimeObtained, 'days'));
@@ -405,6 +406,9 @@ export default function SplashScreen(props) {
                   setisModalConnectionError(true);
 
                   OtherSettings.AccountValidity = '';
+                  ResetModuleAccess();
+                  ClearTeamAccess();
+                  ClearDefaults();
                 } else {
                   console.log('user ACCOUT HAS VALIDITY AND NOT YET EXPIRED');
 

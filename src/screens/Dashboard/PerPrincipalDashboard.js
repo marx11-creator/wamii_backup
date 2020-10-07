@@ -52,8 +52,8 @@ import {
   hhmmss,
   PageVisited,
 } from '../../sharedComponents/globalCommands/globalCommands';
-import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
-import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontextGlobalState';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontextGlobalTimer';
 export default function PerPrincipalDashboard(props) {
   // LogBox.ignoreAllLogs();
 

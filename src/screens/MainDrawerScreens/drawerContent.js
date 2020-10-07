@@ -42,7 +42,7 @@ import {
   FilterList,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users} from '../../database/sqliteSetup';
-import PageContextGlobalState from './pagecontext';
+import PageContextGlobalState from './pagecontextGlobalState';
 import moment from 'moment';
 
 export function DrawerContent(props) {

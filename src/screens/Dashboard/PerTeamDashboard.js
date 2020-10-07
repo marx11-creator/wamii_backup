@@ -59,8 +59,8 @@ import {
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
-import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
-import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontextGlobalState';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontextGlobalTimer';
 var lineChartAPIdatalength = 0;
 var BottomPerTeamAPIdatalength = 0;
 LogBox.ignoreAllLogs();

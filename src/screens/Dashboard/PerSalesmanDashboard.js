@@ -57,8 +57,8 @@ import {
   PageVisited,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import DashboardModal from '../Dashboard/DashboardModal';
-import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
-import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontextGlobalState';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontextGlobalTimer';
 var lineChartAPIdatalength = 0;
 var BottomPerTeamAPIdatalength = 0;
 

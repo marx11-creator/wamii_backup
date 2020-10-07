@@ -32,8 +32,8 @@ import moment, {months} from 'moment';
 import {ProgressCircle} from 'react-native-svg-charts';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-video';
-import PageContextGlobalState from '../MainDrawerScreens/pagecontext';
-import PageContextGlobalTimer from '../MainDrawerScreens/pagecontext2';
+import PageContextGlobalState from '../MainDrawerScreens/pagecontextGlobalState';
+import PageContextGlobalTimer from '../MainDrawerScreens/pagecontextGlobalTimer';
 import DashboardModal from '../Dashboard/DashboardModal';
 var db = openDatabase({name: 'Sales_report.db'});
 

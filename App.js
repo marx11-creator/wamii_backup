@@ -4,8 +4,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 
 import StartLandingScreen from './src/screens/loginscreens/StartLandingScreen';
-import PageContextGlobalState  from './src/screens/MainDrawerScreens/pagecontext';
-import PageContextGlobalTimer from './src/screens/MainDrawerScreens/pagecontext2';
+import PageContextGlobalState  from './src/screens/MainDrawerScreens/pagecontextGlobalState';
+import PageContextGlobalTimer from './src/screens/MainDrawerScreens/pagecontextGlobalTimer';
+import PageContextAutoLogout from './src/screens/MainDrawerScreens/pagecontextAutoLogout';
 import moment from 'moment';
 const Stack = createStackNavigator();
 
@@ -26,6 +27,7 @@ const Stack = createStackNavigator();
 // }
 
 const App = () => {
+  const [globalAutoLogout, setglobalAutoLogout] = useState('FALSE');
   const [globalTimer, setglobalTimer] = useState({
     lastUpdate: '---',
   });
@@ -43,6 +45,7 @@ const App = () => {
   return (
     <PageContextGlobalState.Provider value={[globalState, setglobalState]}>
       <PageContextGlobalTimer.Provider value={[globalTimer, setglobalTimer]}>
+        <PageContextAutoLogout.Provider value={[globalAutoLogout, setglobalAutoLogout]}>
       <NavigationContainer>
         <Stack.Navigator headerMode="none">
           <Stack.Screen
@@ -51,6 +54,7 @@ const App = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      </PageContextAutoLogout.Provider>
       </PageContextGlobalTimer.Provider>
     </PageContextGlobalState.Provider>
 
