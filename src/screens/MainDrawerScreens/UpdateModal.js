@@ -1471,6 +1471,7 @@ export default function UpdateModal(props) {
   // };
 
   const GETUpdateVersionAPI = () => {
+    InsertUpdateDataInfo();
     console.log('9 ' + 'run GETUpdateVersionAPI');
     var user_name = global.user_name;
     var dateTimeUpdated = moment()
@@ -1620,6 +1621,42 @@ export default function UpdateModal(props) {
       })
       .done();
   };
+
+
+
+  function InsertUpdateDataInfo() {
+    fetch(
+      server.server_address + globalCompany.company + 'InsertUpdateDataInfo',
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + APIToken.access_token,
+        },
+        body: JSON.stringify({
+          user_name: global.user_name,
+          device_name: global.device_name,
+          device_id: global.device_id,
+          dateTimeUpdated: moment().format('YYYY-MM-DD hh:mm:ss a'),
+          appVersion: CurrentAppVersionUpdate.CurrentAppVersionUpdateField,
+        }),
+      },
+    )
+      .then((responseData) => {
+        return responseData.json();
+      })
+      .then((jsonData) => {
+        if (jsonData.affectedRows > 0) {
+          console.log('user update log saved');
+        }
+      })
+      .catch(function (error) {
+        console.log('error in   user update log :' + error);
+      })
+      .done();
+  }
+
 
   const BusinessCalendarDownload = () => {
     var BusinessCalendarString = '';

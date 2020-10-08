@@ -189,7 +189,7 @@ const SignScreen = (props) => {
         jsonData.map((key, index) => {
           if (global.device_id === key.device_id) {
             freshLogin = false;
-            console.log('Device ID match');
+            console.log('Device ID match1');
             GetToken();
           } else if (key.device_id === '') {
             freshLogin = true;
@@ -261,6 +261,7 @@ const SignScreen = (props) => {
   }
 
   const GetToken = () => {
+    console.log('token get');
     Promise.race([
       fetch('https://wamii.us.auth0.com/oauth/token', {
         method: 'POST',

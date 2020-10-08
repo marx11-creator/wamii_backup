@@ -86,7 +86,6 @@ export default function Inventory(props) {
       PCS_BOOKING: 0,
       PCS_EXTRUCK: 0,
     },
-    
   ];
 
   const PrincipalListFields = [
@@ -133,6 +132,7 @@ export default function Inventory(props) {
   const [InventorySummary, setInventorySummary] = useState(
     InventorySummaryFields,
   );
+  const [unitPrice, setunitPrice] = useState('PCS');
   const [updateMessage, setupdateMessage] = useState('Updating...');
   const [testnum, settestnum] = useState(10);
   const [principalPicker, setPrincipalPicker] = useState('');
@@ -668,14 +668,14 @@ export default function Inventory(props) {
     item.product_variant === '' ? null : (
       <LinearGradient
         start={{x: 0.3, y: 0.6}}
-        end={{x: 0.8, y: 1}}
+        end={{x: 1, y: 1}}
         style={{
           margin: 2,
           marginTop: 0,
           borderColor: '#C6CDC8',
           borderWidth: 0.9,
         }}
-        colors={['white', '#15C88B']}>
+        colors={['white', '#FA3337']}>
         <View style={[styles.promoItemDetailsNImage]}>
           <View
             style={{
@@ -712,34 +712,57 @@ export default function Inventory(props) {
                 margin: scale(10),
                 alignItems: 'flex-end',
               }}>
-                              <Text
-                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                {'Price per PCs '}
-                
-              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  {
+                    unitPrice === 'CASE'
+                      ? setunitPrice('PCS')
+                      : setunitPrice('CASE');
+                  }
+                }}>
+                <Text
+                  style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                  {'Price per '}
+                  {unitPrice === 'CASE' ? 'CASE' : 'PCs'}
+                </Text>
 
-              <Text
-                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                {'BK: P'}
-                {numbro(Number(item.PCS_BOOKING)).format({
-                  thousandSeparated: true,
-                  mantissa: 2,
-                })}
-              </Text>
+                <Text
+                  style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                  {'BK: P'}
 
-              <Text
-                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                {'VAN: P'}
-                {numbro(Number(item.PCS_EXTRUCK)).format({
-                  thousandSeparated: true,
-                  mantissa: 2,
-                })}
-              </Text>
+                  {unitPrice === 'CASE'
+                    ? numbro(Number(item.CASE_BOOKING)).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })
+                    : numbro(Number(item.PCS_BOOKING)).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })}
+                </Text>
+
+                <Text
+                  style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                  {'VAN: P'}
+                  {unitPrice === 'CASE'
+                    ? numbro(Number(item.CASE_EXTRUCK)).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })
+                    : numbro(Number(item.PCS_EXTRUCK)).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })}
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
 
           <View
-            style={[styles.promoitemDetails, {backgroundColor: 'transparent', marginTop:10}]}>
+            style={[
+              styles.promoitemDetails,
+              {backgroundColor: 'transparent', marginTop: 10},
+            ]}>
             <Text style={styles.item2}>{item.product_variant}</Text>
             <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
               {item.product_name}
@@ -805,10 +828,10 @@ export default function Inventory(props) {
   return (
     <View style={styles.container}>
       <LinearGradient
-        start={{x: 1, y: 0.5}}
-        end={{x: 1, y: 4}}
+        // start={{x: 1, y: 0.5}}
+        // end={{x: 1, y: 4}}
         style={{margin: 0}}
-        colors={['#0B7021', '#021005']}>
+        colors={['white', '#15A334']}>
         <View style={{flexDirection: 'column'}}>
           <View style={styles.HeaderView}>
             <View style={{flex: 1, marginLeft: scale(5)}}>
@@ -819,7 +842,7 @@ export default function Inventory(props) {
                     'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
                 }}
               /> */}
-                            <View style={{width: 50}}>
+              <View style={{width: 50}}>
                 <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
                   <Icon name="md-filter" color={'#ffffff'} size={34} />
                 </TouchableOpacity>
@@ -856,7 +879,7 @@ export default function Inventory(props) {
               }}>
               <Text
                 style={{
-                  color: '#ffffff',
+                  color: '#333333',
                   fontSize: moderateScale(12, 0.5),
                   alignContent: 'flex-end',
                   alignItems: 'flex-end',
@@ -866,7 +889,7 @@ export default function Inventory(props) {
               </Text>
               <Text
                 style={{
-                  color: '#ffffff',
+                  color: '#333333',
                   fontSize: moderateScale(12, 0.5),
                   alignContent: 'flex-end',
                   alignItems: 'flex-end',
@@ -882,11 +905,11 @@ export default function Inventory(props) {
                   alignItems: 'center',
                 }}>
                 <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                  <Icon name="refresh" color={'#ffffff'} size={10} />
+                  <Icon name="refresh" color={'#333333'} size={10} />
                 </View>
                 <Text
                   style={{
-                    color: '#ffffff',
+                    color: '#333333',
                     fontSize: moderateScale(12, 0.5),
                     alignContent: 'flex-end',
                     alignItems: 'flex-end',
@@ -896,7 +919,7 @@ export default function Inventory(props) {
                   globalState.updateStatus === 'Start' ? (
                     <Text
                       style={{
-                        color: '#ffffff',
+                        color: '#333333',
                         fontSize: moderateScale(12, 0.5),
                         alignContent: 'flex-end',
                         alignItems: 'flex-end',
@@ -1056,7 +1079,11 @@ export default function Inventory(props) {
               </View>
 
               <View
-                style={{backgroundColor: 'transparent', flexDirection: 'row', marginBottom: 3}}>
+                style={{
+                  backgroundColor: 'transparent',
+                  flexDirection: 'row',
+                  marginBottom: 3,
+                }}>
                 <View style={{flex: 1, backgroundColor: 'transparent'}}>
                   <Text
                     style={{
@@ -1405,7 +1432,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: moderateScale(1, 0.5),
-    backgroundColor: '#BBF9CE',
+    backgroundColor: '#30B234',
   },
   promoitemDetails: {
     // backgroundColor: '#F0515E',
