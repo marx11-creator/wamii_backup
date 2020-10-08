@@ -42,6 +42,7 @@
     "react-native-sqlite-storage": "^5.0.0",
     "react-native-svg": "^12.1.0",
     "react-native-svg-charts": "^5.4.0",
+    "react-native-swiper": "^1.6.0-rc.3",
     "react-native-tab-view": "^2.15.1",
     "react-native-video": "^5.1.0-alpha8",
     "reactn": "^2.2.7"

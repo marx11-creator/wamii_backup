@@ -456,12 +456,12 @@ export default function Home(props) {
                 {' '}
                 Wing An Marketing Inc.
               </Text>
-              {/* <Button
+              <Button
               title="test"
               onPress={() => {
-                console.log(globalAutoLogout);
+               props.navigation.navigate('InventoryImageList');
               }}
-            /> */}
+            />
             </View>
 
             <View
