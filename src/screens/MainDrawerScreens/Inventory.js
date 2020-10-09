@@ -52,7 +52,8 @@ import PageContextGlobalState from '../MainDrawerScreens/pagecontextGlobalState'
 import PageContextGlobalTimer from '../MainDrawerScreens/pagecontextGlobalTimer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import numbro from 'numbro';
-
+import Swiper from 'react-native-swiper';
+import MaterialIcons from 'react-native-vector-icons//MaterialIcons';
 var ApiRowsCount = 0;
 var count = 0;
 var localItemcount = 0;
@@ -64,6 +65,20 @@ var longStrinfg = '';
 var test = 'aa';
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
+  var ImageLoop = [];
+
+  const swiper = React.createRef();
+  // const onIndexChanged = (index) => {
+  //   if (Number(1) + Number(index) === ImageLoop.length) {
+  //     console.log(Number(index) + Number(1) + ' current image');
+  //     setstart(end);
+  //     setend(Number(end) + Number(9));
+  //     swiper.current.scrollTo(0);
+  //   } else {
+  //     console.log(Number(1) + Number(index));
+  //     console.log(ImageLoop.length);
+  //   }
+  // };
   const [globalState] = useContext(PageContextGlobalState);
   const [globalTimer] = useContext(PageContextGlobalTimer);
 
@@ -144,6 +159,9 @@ export default function Inventory(props) {
   const [TypeList, setTypeList] = useState(TypeListFields);
 
   const [loading, setLoading] = useState(false);
+  const [start, setstart] = useState(1);
+  const [end, setend] = useState(100);
+  const [currenIndex, setcurrenIndex] = useState(0);
 
   const [LocalPromoItemData, setLocalPromoItemData] = useState(LocalDBFields);
   const [
@@ -166,6 +184,7 @@ export default function Inventory(props) {
   const [ItemsDeleted, setItemsDeleted] = useState(false);
 
   const [visibleMainModal, setVisibleMainModal] = useState(false);
+  const [visibleImageListModal, setvisibleImageListModal] = useState(false);
 
   // useEffect(() => {
   //   console.log(width);
@@ -205,6 +224,27 @@ export default function Inventory(props) {
   //     [SavePromoItems(), setItemsDeleted(false)];
   //   }
   // });
+
+  // const datas = [
+  //   {
+  //     name: 'ARJAY',
+  //     lastname: 'DAVID',
+  //     age: '28',
+  //     sex: 'M',
+  //   },
+  //   {
+  //     name: 'JANE',
+  //     lastname: 'NALUS',
+  //     age: '27',
+  //     sex: 'F',
+  //   },
+  //   {
+  //     name: 'MARK',
+  //     lastname: 'MANGILA',
+  //     age: '27',
+  //     sex: 'F',
+  //   },
+  // ];
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
@@ -664,6 +704,99 @@ export default function Inventory(props) {
   //   );
   // }
 
+  LocalPromoItemData.slice([start - 1], [end]).map((item, i) => {
+    // placeIDs.push(item.place_id);
+
+    ImageLoop.push(
+      <View
+        testID="Hello"
+        style={{flex: 1, backgroundColor: '#ffffff', flexDirection: 'column'}}>
+        <View
+          style={{
+            backgroundColor: 'red',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            borderBottomColor: '#F5F5F5',
+            borderBottomWidth: 10,
+          }}>
+          <Image
+            style={{
+              width: width,
+              height: 400,
+            }}
+            source={{
+              uri: item.img_url,
+            }}
+            onError={() => ({
+              uri:
+                'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
+            })}
+          />
+        </View>
+        <Text
+          style={{
+            color: 'red',
+            fontSize: moderateScale(25),
+            marginVertical: moderateScale(10),
+          }}>
+          ₱
+          {numbro(Number(item.CASE_BOOKING)).format({
+            thousandSeparated: true,
+            mantissa: 2,
+          })}
+        </Text>
+
+        <View
+          style={{
+            backgroundColor: '#ffffff',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+          }}>
+          <Image
+            style={{
+              width: moderateScale(40),
+              height: moderateScale(40),
+              resizeMode: 'center',
+            }}
+            source={require('../../assets/wamilogo.png')}
+            // source={require('../../assets/coslorlogo.png')}
+          />
+
+          <Text style={[styles.text, {marginLeft: moderateScale(20)}]}>
+            {item.product_name}
+          </Text>
+        </View>
+        <View
+          style={{
+            marginTop: 10,
+            backgroundColor: '#FDD6DB',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+          }}>
+          <View style={{marginVertical: 5, flexDirection: 'row'}}>
+            <Icon name="layers-outline" color={'#FF0F16'} size={19} />
+            <Text style={styles.text}> Sardines {item.category}</Text>
+          </View>
+        </View>
+
+        <MaterialIcons
+          name="grade"
+          size={20}
+          color="#FFF300"
+          borderColor="red"
+          borderWidth={1}
+        />
+
+        <Text style={styles.text}>Brand: {item.Brand}</Text>
+        <Text style={styles.text}>Variant: {item.product_variant}</Text>
+      </View>,
+    );
+  });
+
+  for (let i = 0; i < LocalPromoItemData.length; i++) {}
+
   const renderItem = ({item}) =>
     item.product_variant === '' ? null : (
       <LinearGradient
@@ -675,7 +808,7 @@ export default function Inventory(props) {
           borderColor: '#C6CDC8',
           borderWidth: 0.9,
         }}
-        colors={['white', '#FA3337']}>
+        colors={['white', '#F47F83']}>
         <View style={[styles.promoItemDetailsNImage]}>
           <View
             style={{
@@ -686,8 +819,9 @@ export default function Inventory(props) {
             <View style={[styles.promoitemImageContainer]}>
               <TouchableOpacity
                 onPress={() => {
-                  setSelectedImage(item.img_url);
-                  setVisibleMainModal(true);
+                  setvisibleImageListModal(true);
+                  // setSelectedImage(item.img_url);
+                  // setVisibleMainModal(true);
                 }}>
                 <Image
                   style={styles.promoitemImage}
@@ -1146,6 +1280,39 @@ export default function Inventory(props) {
           </View>
         )}
       </SafeAreaView>
+
+      <Modal
+        //MODAL FOR IMAGE LIST
+        visible={visibleImageListModal}
+        marginBottom={0}
+        marginTop={0}
+        marginLeft={0}
+        marginRight={0}
+        deviceHeight={height}
+        transparent={true}
+        onRequestClose={() => {
+          setvisibleImageListModal(false);
+        }}>
+        <Swiper
+          // ref={swiper}
+          style={{}}
+          onIndexChanged={(index) => {
+            console.log(Number(index) + Number(1) + ' current image');
+          }}
+          //
+          index={currenIndex}
+          showsPagination={false}
+          loadMinimalSize={10}
+          loadMinimal={true}
+          autoplay={false}
+          pagingEnabled={true}
+          autoplayTimeout={2}
+          showsButtons={true}
+          loop={false}>
+          {ImageLoop}
+        </Swiper>
+      </Modal>
+
       <Modal
         visible={visibleMainModal}
         marginBottom={0}
@@ -1538,6 +1705,16 @@ const styles = StyleSheet.create({
     width: width - scale(90),
     height: scale(850),
     alignSelf: 'center',
+  },
+  slide1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    color: '#333333',
+    fontSize: 15,
+    fontWeight: 'bold',
   },
 });
 
