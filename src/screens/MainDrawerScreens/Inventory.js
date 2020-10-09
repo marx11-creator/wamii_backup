@@ -66,7 +66,8 @@ var test = 'aa';
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
   var ImageLoop = [];
-
+  var refContainer = useRef()
+ 
   const swiper = React.createRef();
   // const onIndexChanged = (index) => {
   //   if (Number(1) + Number(index) === ImageLoop.length) {
@@ -144,6 +145,7 @@ export default function Inventory(props) {
     },
   ];
 
+  const [currentIndex, setcurrentIndex] = useState(0);
   const [InventorySummary, setInventorySummary] = useState(
     InventorySummaryFields,
   );
@@ -160,7 +162,7 @@ export default function Inventory(props) {
 
   const [loading, setLoading] = useState(false);
   const [start, setstart] = useState(1);
-  const [end, setend] = useState(100);
+  const [end, setend] = useState(10);
   const [currenIndex, setcurrenIndex] = useState(0);
 
   const [LocalPromoItemData, setLocalPromoItemData] = useState(LocalDBFields);
@@ -185,6 +187,15 @@ export default function Inventory(props) {
 
   const [visibleMainModal, setVisibleMainModal] = useState(false);
   const [visibleImageListModal, setvisibleImageListModal] = useState(false);
+
+
+//   useEffect(()=>{   
+//     if (LocalPromoItemData.length > 0) {
+//       console.log('with data na')
+//       StartPush() 
+//     }
+  
+// },[LocalPromoItemData])
 
   // useEffect(() => {
   //   console.log(width);
@@ -314,6 +325,7 @@ export default function Inventory(props) {
 
           console.log('Successfully loaded Initial ' + temp.length + ' sku');
           setLocalPromoItemData(temp);
+    
         },
         SQLerror,
       );
@@ -704,23 +716,28 @@ export default function Inventory(props) {
   //   );
   // }
 
-  LocalPromoItemData.slice([start - 1], [end]).map((item, i) => {
+ 
+  LocalPromoItemData.slice([start - 1], [LocalPromoItemData.length]).map((item, i) => {
     // placeIDs.push(item.place_id);
-
+//zoom
     ImageLoop.push(
       <View
         testID="Hello"
         style={{flex: 1, backgroundColor: '#ffffff', flexDirection: 'column'}}>
         <View
           style={{
-            backgroundColor: 'red',
+            backgroundColor: '#333333',
             flexDirection: 'row',
             justifyContent: 'flex-start',
             alignItems: 'center',
             borderBottomColor: '#F5F5F5',
             borderBottomWidth: 10,
           }}>
-          <Image
+            <TouchableHighlight onPress={()=>{
+               setSelectedImage(item.img_url);
+                  setVisibleMainModal(true);
+            }}>
+            <Image
             style={{
               width: width,
               height: 400,
@@ -733,6 +750,8 @@ export default function Inventory(props) {
                 'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
             })}
           />
+            </TouchableHighlight>
+          
         </View>
         <Text
           style={{
@@ -795,9 +814,13 @@ export default function Inventory(props) {
     );
   });
 
-  for (let i = 0; i < LocalPromoItemData.length; i++) {}
 
-  const renderItem = ({item}) =>
+
+
+
+  // for (let i = 0; i < LocalPromoItemData.length; i++) {}
+
+  const renderItem = ({item, index}) =>
     item.product_variant === '' ? null : (
       <LinearGradient
         start={{x: 0.3, y: 0.6}}
@@ -819,7 +842,9 @@ export default function Inventory(props) {
             <View style={[styles.promoitemImageContainer]}>
               <TouchableOpacity
                 onPress={() => {
+                  console.log('trigger imagelistmodal')
                   setvisibleImageListModal(true);
+                  setcurrentIndex(index);
                   // setSelectedImage(item.img_url);
                   // setVisibleMainModal(true);
                 }}>
@@ -907,23 +932,23 @@ export default function Inventory(props) {
       </LinearGradient>
     );
 
-  //from array to section list format
-  const result = [];
-  let dayData = {title: '', data: []};
+  // //from array to section list format
+  // const result = [];
+  // let dayData = {title: '', data: []};
 
-  LocalPromoItemData.map(function (item, i) {
-    const Sectiontitle = item.principal_name;
+  // LocalPromoItemData.map(function (item, i) {
+  //   const Sectiontitle = item.principal_name;
 
-    if (dayData.title === Sectiontitle) {
-      dayData.data.push(item);
-    } else {
-      dayData = {
-        title: Sectiontitle,
-        data: [item],
-      };
-      result.push(dayData);
-    }
-  });
+  //   if (dayData.title === Sectiontitle) {
+  //     dayData.data.push(item);
+  //   } else {
+  //     dayData = {
+  //       title: Sectiontitle,
+  //       data: [item],
+  //     };
+  //     result.push(dayData);
+  //   }
+  // });
 
   const SectionListItem = ({item}) =>
     item.product_variant === '' ? null : (
@@ -956,8 +981,6 @@ export default function Inventory(props) {
       </View>
     );
 
-  const ref_input2 = useRef();
-  const ref_input3 = useRef();
 
   return (
     <View style={styles.container}>
@@ -1080,6 +1103,16 @@ export default function Inventory(props) {
               </View>
             </View>
           </View>
+          {/* <Button
+                title="Close Variant"
+                onPress={()=> {
+                  
+                  if(refContainer.current){
+                    refContainer.current.scrollToIndex({ animated: true, index: Math.floor(Number(currentIndex) / 2) });
+        
+                }    
+                }}
+              /> */}
           <View style={{flexDirection: 'row', backgroundColor: 'transparent'}}>
             <View
               style={{
@@ -1260,6 +1293,7 @@ export default function Inventory(props) {
       }} /> */}
       <SafeAreaView style={styles.container}>
         <FlatList
+           ref={refContainer}
           data={LocalPromoItemData}
           renderItem={renderItem}
           // getItemLayout={getItemLayout}
@@ -1292,15 +1326,20 @@ export default function Inventory(props) {
         transparent={true}
         onRequestClose={() => {
           setvisibleImageListModal(false);
+          if(refContainer.current){
+            refContainer.current.scrollToIndex({ animated: true, index: Math.floor(Number(currentIndex) / 2) });
+
+        }  
         }}>
         <Swiper
           // ref={swiper}
           style={{}}
           onIndexChanged={(index) => {
             console.log(Number(index) + Number(1) + ' current image');
+             setcurrentIndex(index);
           }}
           //
-          index={currenIndex}
+          index={currentIndex}
           showsPagination={false}
           loadMinimalSize={10}
           loadMinimal={true}
@@ -1314,6 +1353,7 @@ export default function Inventory(props) {
       </Modal>
 
       <Modal
+      //FOT IMAGE VIEWER
         visible={visibleMainModal}
         marginBottom={0}
         marginTop={0}
@@ -1380,16 +1420,7 @@ export default function Inventory(props) {
                 : styles.FilterHeightMin,
             ]}>
             <View style={{padding: 5}}>
-              {/* <Button
-                title="Close Variant"
-                onPress={() =>
-                  (arrVariantListfromPicker = [
-                    'Alfonso',
-                    'Glade Sport',
-                    'Doublemint',
-                  ])
-                }
-              /> */}
+
               {/* <Button title="chnage" onPress={() => setVariantPicker('')} /> */}
               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Vendor :</Text>

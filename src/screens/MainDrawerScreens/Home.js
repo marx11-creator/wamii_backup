@@ -578,7 +578,7 @@ export default function Home(props) {
           </Text>
         </View> */}
           </View>
-          {localSeconds === 2 ? <UpdateModal /> : null}
+          {localSeconds === 200 ? <UpdateModal /> : null}
         </View>
       </ScrollView>
     </ImageOverlay>
