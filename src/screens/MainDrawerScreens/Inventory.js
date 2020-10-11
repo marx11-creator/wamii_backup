@@ -1452,9 +1452,9 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
           data={CurrentLocalItem}
           renderItem={renderItem}
           // getItemLayout={getItemLayout}
-          initialNumToRender={20}
-          maxToRenderPerBatch={6}
-          windowSize={21}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={2}
           keyExtractor={(item) => item.product_id}
           numColumns={2}
           removeClippedSubviews={true}
