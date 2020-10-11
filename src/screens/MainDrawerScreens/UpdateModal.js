@@ -1485,7 +1485,7 @@ export default function UpdateModal(props) {
         '&' +
         dateTimeUpdated,
     );
-    console.log(APIToken.access_token);
+    // console.log(APIToken.access_token);
     Promise.race([
       //---------------------------------------------------------------first command
       fetch(
@@ -1594,7 +1594,7 @@ export default function UpdateModal(props) {
               props.navigation.navigate('Home');
               CheckSystemStatus(); //-1
             } else {
-              console.log(APIUpdateVersion.APIUpdateVersionStatus);
+              // console.log(APIUpdateVersion.APIUpdateVersionStatus);
               updateProgress = 0;
               setglobalState({
                 ...globalState,

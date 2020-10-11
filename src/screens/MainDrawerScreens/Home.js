@@ -178,9 +178,9 @@ export default function Home(props) {
         (tx, results) => {
           var len = results.rows.length;
           if (len > 0) {
-            console.log(results.rows.item(0).amount);
-            console.log(results.rows.item(0).target);
-            console.log('ACH HERE');
+            // console.log(results.rows.item(0).amount);
+            // console.log(results.rows.item(0).target);
+            // console.log('ACH HERE');
             setTarget({
               ...Target,
               SalesvsTarget:
@@ -259,13 +259,13 @@ export default function Home(props) {
   }, [globalState.dateTimeUpdated24hr]);
 
   useEffect(() => {
-    console.log('3seonds HERE run');
+    // console.log('3seonds HERE run');
     var secs = 0;
     // BackgroundTimer.clearInterval();
     const intervalId = BackgroundTimer.setInterval(() => {
       secs = secs + 1;
-      console.log(secs);
-      console.log(globalStatus.StartUpUpdate);
+      // console.log(secs);
+      // console.log(globalStatus.StartUpUpdate);
       setlocalSeconds(secs);
 
       if (secs === 1 && globalStatus.StartUpUpdate === false) {
@@ -274,7 +274,7 @@ export default function Home(props) {
 
       if (secs === 2 && globalStatus.StartUpUpdate === false) {
         // var screenname = CurrentAppScreen.Screen;
-        console.log('3seonds was run');
+        // console.log('3seonds was run');
         globalStatus.updateStatus = 'Updating';
 
         globalStatus.updateMode = 'auto';

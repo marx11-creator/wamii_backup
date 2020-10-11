@@ -184,8 +184,7 @@ const SignScreen = (props) => {
         return responseData.json();
       })
       .then((jsonData) => {
-        console.log(jsonData);
-
+       
         jsonData.map((key, index) => {
           if (global.device_id === key.device_id) {
             freshLogin = false;
@@ -442,15 +441,15 @@ const SignScreen = (props) => {
                 var currentdate = moment()
                   .utcOffset('+08:00')
                   .format('YYYY-MM-DD');
-                console.log(currentdate);
-                console.log(OtherSettings.AccountValidity);
+                // console.log(currentdate);
+                // console.log(OtherSettings.AccountValidity);
 
-                console.log(
-                  moment(OtherSettings.AccountValidity).diff(
-                    currentdate,
-                    'days',
-                  ),
-                );
+                // console.log(
+                //   moment(OtherSettings.AccountValidity).diff(
+                //     currentdate,
+                //     'days',
+                //   ),
+                // );
                 if (
                   moment(currentdate).diff(
                     OtherSettings.AccountValidity,

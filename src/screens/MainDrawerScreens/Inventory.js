@@ -54,7 +54,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import numbro from 'numbro';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons//MaterialIcons';
-var ApiRowsCount = 0;
+import FadingMessage from '../MainDrawerScreens/test';
+// import FastImage from 'react-native-fast-image';
+
+var CurrentItemCount = 0;
 var count = 0;
 var localItemcount = 0;
 var PrincipalPickerCatcher = '';
@@ -68,6 +71,35 @@ export default function Inventory(props) {
   var ImageLoop = [];
   var refContainer = useRef()
  
+const [onEndReachedCalledDuringMomentum, setonEndReachedCalledDuringMomentum] =useState(false);
+ 
+  const onEndReached = () => {
+    if (onEndReachedCalledDuringMomentum===false) {
+      console.log('reach edndadad')
+      setonEndReachedCalledDuringMomentum(true);
+
+if (start < LocalPromoItemData.length){
+  var temp = [];
+  LocalPromoItemData.slice([start -1 + -2], [end]).map((item, i) => {
+      temp.push(item);             
+  });
+  setCurrentLocalItem(temp);
+  refContainer.current.scrollToIndex({ animated: false, index: 0 });
+  setpage(Number(page) + Number(1))
+      setstart(Number(start) + Number(200));
+  setend(Number(end) + Number(200));
+
+
+
+
+}
+ 
+      
+
+      
+    }
+  };
+
   const swiper = React.createRef();
   // const onIndexChanged = (index) => {
   //   if (Number(1) + Number(index) === ImageLoop.length) {
@@ -84,6 +116,27 @@ export default function Inventory(props) {
   const [globalTimer] = useContext(PageContextGlobalTimer);
 
   const LocalDBFields = [
+    {
+      row_number: 0,
+      ref_id: ' ',
+      product_id: ' ',
+      product_variant: ' ',
+      product_name: ' ',
+      inventory: ' ',
+      img_url: ' ',
+      DateandTimeUpdated: ' ',
+      total_case: 0,
+      total_pieces: 0,
+      effective_price_date: '',
+      CASE_COMPANY: 0,
+      CASE_BOOKING: 0,
+      CASE_EXTRUCK: 0,
+      PCS_COMPANY: 0,
+      PCS_BOOKING: 0,
+      PCS_EXTRUCK: 0,
+    },
+  ];
+  const LocalDBFields2 = [
     {
       ref_id: ' ',
       product_id: ' ',
@@ -144,14 +197,14 @@ export default function Inventory(props) {
       TotalAmount: 0,
     },
   ];
-
+const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
   const [currentIndex, setcurrentIndex] = useState(0);
   const [InventorySummary, setInventorySummary] = useState(
     InventorySummaryFields,
   );
   const [unitPrice, setunitPrice] = useState('PCS');
   const [updateMessage, setupdateMessage] = useState('Updating...');
-  const [testnum, settestnum] = useState(10);
+  const [page, setpage] = useState(0);
   const [principalPicker, setPrincipalPicker] = useState('');
   const [PrincipalList, setPrincipalList] = useState(PrincipalListFields);
   const [VariantList, setVariantList] = useState(VariantListFields);
@@ -162,9 +215,11 @@ export default function Inventory(props) {
 
   const [loading, setLoading] = useState(false);
   const [start, setstart] = useState(1);
-  const [end, setend] = useState(10);
+  const [end, setend] = useState(200);
   const [currenIndex, setcurrenIndex] = useState(0);
 
+  const [floatingArray, setfloatingArray] = useState([]);
+  const [CurrentLocalItem, setCurrentLocalItem] = useState([]);
   const [LocalPromoItemData, setLocalPromoItemData] = useState(LocalDBFields);
   const [
     isVisiblePrincipalDropdownPicker,
@@ -189,18 +244,31 @@ export default function Inventory(props) {
   const [visibleImageListModal, setvisibleImageListModal] = useState(false);
 
 
-//   useEffect(()=>{   
-//     if (LocalPromoItemData.length > 0) {
-//       console.log('with data na')
-//       StartPush() 
-//     }
+  useEffect(()=>{   
+    var temp = [];
+    if (CurrentItemCount === LocalPromoItemData.length) {
+
+      LocalPromoItemData.slice([start -1], [end]).map((item, i) => {
+          temp.push(item);
+      });
+ 
+    setCurrentLocalItem(temp);
+    setstart(Number(start) + Number(200));
+    setend(Number(end) + Number(200));
+    
   
-// },[LocalPromoItemData])
+
+  
+     }  
+},[LocalPromoItemData])
 
   // useEffect(() => {
-  //   console.log(width);
-  //   console.log(height);
-  // }, []);
+  //  if (CurrentLocalItem > 0) {
+  //    console.log('moved to 0 index')
+
+  //  }
+       
+  // }, [CurrentLocalItem]);
 
   // function wait(timeout) {
   //   return new Promise((resolve) => {
@@ -294,12 +362,13 @@ export default function Inventory(props) {
     dbinventory.transaction((tx) => {
       LocalPromoItemData.length = 0;
       tx.executeSql(
-        'SELECT * FROM promo_items_tbl ' +
-          ' order by principal_name, product_variant, product_name   ',
+        'SELECT    promo_items_tbl.* FROM promo_items_tbl ' +
+          ' order by principal_name, product_variant, product_name limit 600  ',
         [],
         (tx, results) => {
           var temp = [];
           for (let i = 0; i < results.rows.length; ++i) {
+           
             localItemcount = localItemcount + 1;
             temp.push(results.rows.item(i));
 
@@ -322,9 +391,11 @@ export default function Inventory(props) {
             Category: 'ALL',
             Brand: 'ALL',
           });
-
+          CurrentItemCount = results.rows.length;
           console.log('Successfully loaded Initial ' + temp.length + ' sku');
           setLocalPromoItemData(temp);
+
+     
     
         },
         SQLerror,
@@ -377,7 +448,7 @@ export default function Inventory(props) {
           PrincipalQuery +
           VariantQuery +
           PromoProductQuery +
-          ' order by principal_name, product_variant, product_name',
+          ' order by principal_name, product_variant, product_name ',
         [],
         (tx, results) => {
           var temp = [];
@@ -522,7 +593,7 @@ export default function Inventory(props) {
   // };
 
   function SQLerror(err) {
-    console.log('SQL Error: ' + err);
+    console.log('SQL Error: ' + err.message);
   }
 
   // function SavePromoItems() {
@@ -717,7 +788,7 @@ export default function Inventory(props) {
   // }
 
  
-  LocalPromoItemData.slice([start - 1], [LocalPromoItemData.length]).map((item, i) => {
+  LocalPromoItemData.slice([0], [LocalPromoItemData.length]).map((item, i) => {
     // placeIDs.push(item.place_id);
 //zoom
     ImageLoop.push(
@@ -750,16 +821,18 @@ export default function Inventory(props) {
                 'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
             })}
           />
+          
             </TouchableHighlight>
           
         </View>
         <Text
           style={{
             color: 'red',
-            fontSize: moderateScale(25),
-            marginVertical: moderateScale(10),
+            fontSize: moderateScale(20),
+            marginBottom: moderateScale(10),
+            marginTop: moderateScale(20),
           }}>
-          ₱
+           {' '} ₱
           {numbro(Number(item.CASE_BOOKING)).format({
             thousandSeparated: true,
             mantissa: 2,
@@ -772,7 +845,9 @@ export default function Inventory(props) {
             flexDirection: 'row',
             justifyContent: 'flex-start',
             alignItems: 'center',
+
           }}>
+            <Text>{' '}</Text>
           <Image
             style={{
               width: moderateScale(40),
@@ -794,22 +869,59 @@ export default function Inventory(props) {
             justifyContent: 'center',
             alignItems: 'flex-start',
           }}>
-          <View style={{marginVertical: 5, flexDirection: 'row'}}>
-            <Icon name="layers-outline" color={'#FF0F16'} size={19} />
-            <Text style={styles.text}> Sardines {item.category}</Text>
+          <View style={{marginVertical: 5, flexDirection: 'row', alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+          
+          <View style={{marginLeft: moderateScale(5)}}>
+          <Icon name="layers-outline" color={'#FF0F16'} size={19} />
+            </View> 
+            <Text style={{color: 'red', fontSize: moderateScale(13)}}> Category {item.category}</Text>
+            <Text style={styles.text}> Sardines{item.category}</Text>
           </View>
         </View>
-
-        <MaterialIcons
+<View>
+  <View style={{     borderBottomColor: '#F5F5F5',
+            borderBottomWidth: 8}} >
+              <View style={{flexDirection: 'row', alignItems: 'center', alignContent: 'center', marginVertical: moderateScale(8)}}>
+              <Text style={{color: '#333333', fontSize: moderateScale(15), marginBottom: 1  }}> 5 </Text>
+  <MaterialIcons
           name="grade"
-          size={20}
-          color="#FFF300"
-          borderColor="red"
-          borderWidth={1}
+          size={moderateScale(20)}
+          color="#F9C500"
+        />
+  <MaterialIcons
+          name="grade"
+          size={moderateScale(20)}
+          color="#F9C500"
         />
 
-        <Text style={styles.text}>Brand: {item.Brand}</Text>
-        <Text style={styles.text}>Variant: {item.product_variant}</Text>
+<MaterialIcons
+          name="grade"
+          size={moderateScale(20)}
+          color="#F9C500"
+        />
+
+<MaterialIcons
+          name="grade"
+          size={moderateScale(20)}
+          color="#F9C500"
+        />
+
+<MaterialIcons
+          name="grade"
+          size={moderateScale(20)}
+          color="#F9C500"
+        />
+              </View>
+  
+
+  </View>
+<View style={{flexDirection: 'column', marginLeft: moderateScale(5), borderBottomWidth: 1, borderBottomColor: '#C7CBC9'}}>  
+<Text style={[styles.text,{marginTop:moderateScale(10)}]}>Brand:   Ligo {item.Brand}</Text>
+        <Text style={[styles.text,{marginBottom: moderateScale(10)}]}>Variant: {item.product_variant}</Text>
+</View>
+     
+</View>
+   
       </View>,
     );
   });
@@ -820,8 +932,12 @@ export default function Inventory(props) {
 
   // for (let i = 0; i < LocalPromoItemData.length; i++) {}
 
+  
+
+  
+
   const renderItem = ({item, index}) =>
-    item.product_variant === '' ? null : (
+    
       <LinearGradient
         start={{x: 0.3, y: 0.6}}
         end={{x: 1, y: 1}}
@@ -842,12 +958,15 @@ export default function Inventory(props) {
             <View style={[styles.promoitemImageContainer]}>
               <TouchableOpacity
                 onPress={() => {
-                  console.log('trigger imagelistmodal')
+                console.log('trigger imagelistmodal')
+                
+          //   setPleaseWaitVisible(true);
                   setvisibleImageListModal(true);
-                  setcurrentIndex(index);
+                  setcurrentIndex( (Number(page) * Number(200)) +  Number(index) );
                   // setSelectedImage(item.img_url);
                   // setVisibleMainModal(true);
                 }}>
+                 
                 <Image
                   style={styles.promoitemImage}
                   source={{
@@ -858,6 +977,18 @@ export default function Inventory(props) {
                       'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
                   })}
                 />
+{/* 
+<FastImage
+        style={styles.promoitemImage}
+        source={{
+            uri: item.img_url,
+            headers: { Authorization: 'someAuthToken' },
+            priority: FastImage.priority.normal,
+        }}
+        resizeMode={FastImage.resizeMode.contain}
+    /> */}
+
+                
               </TouchableOpacity>
             </View>
 
@@ -881,7 +1012,7 @@ export default function Inventory(props) {
                 }}>
                 <Text
                   style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                  {'Price per '}
+                  {item.row_number} {' Price per '}
                   {unitPrice === 'CASE' ? 'CASE' : 'PCs'}
                 </Text>
 
@@ -930,7 +1061,7 @@ export default function Inventory(props) {
           </View>
         </View>
       </LinearGradient>
-    );
+    
 
   // //from array to section list format
   // const result = [];
@@ -981,10 +1112,24 @@ export default function Inventory(props) {
       </View>
     );
 
+// function  LoadinitialItem(){
+ 
+
+
+// }
+
 
   return (
     <View style={styles.container}>
+      {/* {PleaseWaitVisible ? (
+      <View style={{zIndex: 1, width: '100%', height: '100%', opacity: 0.5,
+       position: 'absolute', backgroundColor: 'gray', justifyContent: 'center', alignContent: 'center', alignItems: 'center'}}>
+        <Text style={{fontSize: moderateScale(20)}}>Please wait...</Text>
+      </View>
+      ) : null } */}
+
       <LinearGradient
+      style={{zIndex: 0}}
         // start={{x: 1, y: 0.5}}
         // end={{x: 1, y: 4}}
         style={{margin: 0}}
@@ -1019,8 +1164,15 @@ export default function Inventory(props) {
                 gradientTo="#D6171A"
                 onPress={() => {
                   // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
-                  GetPrincipalList();
-                  setisModalVisible2(!isModalVisible2);
+                  // GetPrincipalList();
+                  // setisModalVisible2(!isModalVisible2);
+              
+                  console.log(onEndReachedCalledDuringMomentum)
+           
+                //   if(refContainer.current){
+                //     refContainer.current.scrollToIndex({ animated: true, index: testnum });
+        
+                // }
                 }}
               />
             </View>
@@ -1103,17 +1255,22 @@ export default function Inventory(props) {
               </View>
             </View>
           </View>
-          {/* <Button
-                title="Close Variant"
+  
+
+{/* 
+
+<Button
+                title="CONSOLE START END"
                 onPress={()=> {
-                  
-                  if(refContainer.current){
-                    refContainer.current.scrollToIndex({ animated: true, index: Math.floor(Number(currentIndex) / 2) });
-        
-                }    
+                  console.log(start)
+                  console.log(end)
                 }}
-              /> */}
-          <View style={{flexDirection: 'row', backgroundColor: 'transparent'}}>
+              />   
+   
+      */}
+
+
+       <View style={{flexDirection: 'row', backgroundColor: 'transparent'}}>
             <View
               style={{
                 backgroundColor: 'transparent',
@@ -1287,23 +1444,84 @@ export default function Inventory(props) {
         </View>
       </LinearGradient>
 
-      {/* <Button title= "click" onPress={()=> {
-        test = 'bb';
-        console.log(InventorySummary.VendorName);
-      }} /> */}
-      <SafeAreaView style={styles.container}>
-        <FlatList
+    
+      <SafeAreaView style={[styles.container,{zIndex: 0}]}>
+        {LocalPromoItemData.length === CurrentItemCount ? (
+          <FlatList
            ref={refContainer}
-          data={LocalPromoItemData}
+          data={CurrentLocalItem}
           renderItem={renderItem}
           // getItemLayout={getItemLayout}
-          initialNumToRender={5}
-          maxToRenderPerBatch={testnum}
-          windowSize={10}
-          keyExtractor={(item, index) => index.toString()}
+          initialNumToRender={20}
+          maxToRenderPerBatch={6}
+          windowSize={21}
+          keyExtractor={(item) => item.product_id}
           numColumns={2}
           removeClippedSubviews={true}
+          onEndReachedThreshold={0.01}
+          onMomentumScrollBegin={() => { setonEndReachedCalledDuringMomentum(false)}}
+
+          onEndReached={onEndReached}
+
+//           onEndReached={()=>{
+          
+ 
+// console.log('end reached')
+
+// if(start === 51) {
+//           var temp = [];
+//             LocalPromoItemData.slice([start -1], [end]).map((item, i) => {
+//                 temp.push(item);             
+//             });
+//             setCurrentLocalItem(temp);
+//             refContainer.current.scrollToIndex({ animated: false, index: 0 });
+
+//                 setstart(Number(start) + Number(50));
+//             setend(Number(end) + Number(50));
+
+
+// }
+  
+
+
+
+
+//           //   var temp = [];
+//           //   LocalPromoItemData.slice([start -1], [end]).map((item, i) => {
+          
+//           //       temp.push(item);
+              
+//           //   });
+          
+//           // setCurrentLocalItem(temp);
+            
+//           //     refContainer.current.scrollToIndex({ animated: false, index: 2 });
+             
+//           //   setstart(Number(start) + Number(50));
+//           //   setend(Number(end) + Number(50));
+            
+          
+ 
+          
+//           }
+        
         />
+
+        ) : (
+          <View style={{flex: 1, justifyContent: 'center', alignContent: 'center', alignItems: 'center'}}>
+        <Image
+            style={{
+              width: moderateScale(250),
+              height: moderateScale(250),
+              resizeMode: 'center',
+            }}
+            source={require('../../assets/wamilogo.png')}
+            // source={require('../../assets/coslorlogo.png')}
+          />
+          <Text style={{fontWeight: '800', fontSize: moderateScale(18)}}>Please Wait...</Text>
+          </View>
+        )}
+        
 
         {loading && (
           <View style={styles.loading}>
@@ -1325,24 +1543,54 @@ export default function Inventory(props) {
         deviceHeight={height}
         transparent={true}
         onRequestClose={() => {
+          console.log(Math.floor(Number(currentIndex) / 2) )
           setvisibleImageListModal(false);
           if(refContainer.current){
-            refContainer.current.scrollToIndex({ animated: true, index: Math.floor(Number(currentIndex) / 2) });
+            refContainer.current.scrollToIndex({ animated: true, index: Number(Number(currentIndex) - Number(4)) / Number(2)  });
 
         }  
         }}>
-        <Swiper
+          <View style={{flex: 1,backgroundColor: '#E9E9E9'}}>
+        
+        
+          <View style={{zIndex: 0, width: '100%', height: '100%', opacity: 0.5,
+       position: 'absolute', backgroundColor: 'gray', justifyContent: 'center', alignContent: 'center', alignItems: 'center'}}>
+        <Text style={{fontSize: moderateScale(20)}}>Please wait...</Text>
+      </View>
+
+
+
+          <Swiper
           // ref={swiper}
-          style={{}}
+          
+          style={{zIndex: 1}}
           onIndexChanged={(index) => {
-            console.log(Number(index) + Number(1) + ' current image');
+            // console.log(Number(index) + Number(1) + ' current image');
+            // console.log(Math.floor(Number(currentIndex) / 2));
              setcurrentIndex(index);
+
+             
+             if (Number(index) + Number(1) === (Number(end)-Number(200)) ){
+               
+
+
+
+              if(CurrentLocalItem.length > 0 ){
+                //  console.log(CurrentLocalItem);
+                 console.log('this is end');
+            
+           
+                // LoadinitialItem();
+
+              }
+
+             }
           }}
           //
           index={currentIndex}
           showsPagination={false}
-          loadMinimalSize={10}
-          loadMinimal={true}
+          loadMinimalSize={20}
+          loadMinimal={false}
           autoplay={false}
           pagingEnabled={true}
           autoplayTimeout={2}
@@ -1350,7 +1598,26 @@ export default function Inventory(props) {
           loop={false}>
           {ImageLoop}
         </Swiper>
+          </View>
+        
       </Modal>
+
+      <Modal
+      //PLEASE WAIT
+       
+        transparent={true}
+        visible={false}
+        onRequestClose={() => {
+          setPleaseWaitVisible(false);
+        }}>
+     
+ <View style={{flex: 1, backgroundColor: 'red'}}>
+   <Text>afaf </Text>
+</View>
+
+      </Modal>
+
+
 
       <Modal
       //FOT IMAGE VIEWER
@@ -1630,7 +1897,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: moderateScale(1, 0.5),
-    backgroundColor: '#30B234',
+    backgroundColor: '#E4E4E4',
   },
   promoitemDetails: {
     // backgroundColor: '#F0515E',
@@ -1744,8 +2011,10 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#333333',
-    fontSize: 15,
+    fontSize: moderateScale(16),
     fontWeight: 'bold',
+    fontStyle: 'normal',
+    fontWeight: '200',
   },
 });
 

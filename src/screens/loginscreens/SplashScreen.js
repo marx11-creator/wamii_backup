@@ -382,15 +382,15 @@ export default function SplashScreen(props) {
                 var currentdate = moment()
                   .utcOffset('+08:00')
                   .format('YYYY-MM-DD');
-                console.log(currentdate);
-                console.log(OtherSettings.AccountValidity);
+                // console.log(currentdate);
+                // console.log(OtherSettings.AccountValidity);
 
-                console.log(
-                  moment(OtherSettings.AccountValidity).diff(
-                    currentdate,
-                    'days',
-                  ),
-                );
+                // console.log(
+                //   moment(OtherSettings.AccountValidity).diff(
+                //     currentdate,
+                //     'days',
+                //   ),
+                // );
                 if (
                   moment(currentdate).diff(
                     OtherSettings.AccountValidity,
