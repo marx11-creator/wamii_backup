@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet, TouchableOpacity, Text, View} from 'react-native';
-import {scale, moderateScale, verticalScale, width, height} from './scaling';
+import {scale, moderateScale, verticalScale, height} from './scaling';
 import LinearGradient from 'react-native-linear-gradient';
 
-export default function FlatButton({text, onPress, gradientFrom, gradientTo}) {
+export default function FlatButton({text, onPress, gradientFrom, gradientTo, width}) {
   return (
     <TouchableOpacity onPress={onPress}>
       <LinearGradient
@@ -11,7 +11,7 @@ export default function FlatButton({text, onPress, gradientFrom, gradientTo}) {
         style={
           ([styles.button],
           {
-            width: scale(160),
+            width: scale(width),
             borderRadius: 10,
             borderWidth: 0.3,
             height: moderateScale(40, 0.3),

@@ -52,8 +52,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import numbro from 'numbro';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons//MaterialIcons';
-import FadingMessage from '../MainDrawerScreens/test';
-import {FloatingAction} from 'react-native-floating-action';
 
 var CurrentItemCount = 0;
 var count = 0;
@@ -99,6 +97,8 @@ export default function Inventory(props) {
     onEndReachedCalledDuringMomentum,
     setonEndReachedCalledDuringMomentum,
   ] = useState(false);
+
+  const [isVisibleButton, setisVisibleButton] = useState(true);
 
   //   const onEndReached = () => {
   //     if (onEndReachedCalledDuringMomentum===false) {
@@ -238,9 +238,8 @@ export default function Inventory(props) {
 
   var start = 1;
   var end = 50;
-  const [currenIndex, setcurrenIndex] = useState(0);
+  const [isLastPage, setisLastPage] = useState(false);
 
-  const [floatingArray, setfloatingArray] = useState([]);
   const [CurrentLocalItem, setCurrentLocalItem] = useState([]);
   const [LocalPromoItemData, setLocalPromoItemData] = useState(LocalDBFields);
   const [
@@ -281,15 +280,12 @@ export default function Inventory(props) {
   // },[LocalPromoItemData])
 
   useEffect(() => {
-    if(PleaseWaitVisible === false){
+    if (PleaseWaitVisible === false) {
       if (refContainer.current) {
         //2
         refContainer.current.scrollToIndex({animated: true, index: 0});
       }
     }
-  
-
-
   }, [PleaseWaitVisible]);
 
   // function wait(timeout) {
@@ -373,82 +369,81 @@ export default function Inventory(props) {
   // 'SELECT * FROM promo_items_tbl where principal_name = ' + testqq + ' ',
   // [],
 
-  function GetLocalPromoItemsOLD(page) {
-    var pageNumber = page * 50;
-    console.log(pageNumber);
-    console.log(pageNumber + 50);
-    var TotalItems1 = 0;
-    var TotalCase1 = 0;
-    var TotalAmount1 = 0;
+  // function GetLocalPromoItemsOLD(page) {
+  //   var pageNumber = page * 50;
+  //   console.log(pageNumber);
+  //   console.log(pageNumber + 50);
+  //   var TotalItems1 = 0;
+  //   var TotalCase1 = 0;
+  //   var TotalAmount1 = 0;
 
-    dbinventory.transaction((tx) => {
-      LocalPromoItemData.length = 0;
-      tx.executeSql(
-        'SELECT    promo_items_tbl.* FROM promo_items_tbl ' +
-          ' order by principal_name, product_variant, product_name limit 1000  ',
-        [],
-        (tx, results) => {
-          var temp = [];
-          for (let i = pageNumber; i < pageNumber + 50; ++i) {
-            temp.push(results.rows.item(i));
-          }
+  //   dbinventory.transaction((tx) => {
+  //     LocalPromoItemData.length = 0;
+  //     tx.executeSql(
+  //       'SELECT    promo_items_tbl.* FROM promo_items_tbl ' +
+  //         ' order by principal_name, product_variant, product_name limit 1000  ',
+  //       [],
+  //       (tx, results) => {
+  //         var temp = [];
+  //         for (let i = pageNumber; i < pageNumber + 50; ++i) {
+  //           temp.push(results.rows.item(i));
+  //         }
 
-          for (let i = 0; i < results.rows.length; ++i) {
+  //         for (let i = 0; i < results.rows.length; ++i) {
+  //           TotalItems1 = TotalItems1 + 1;
+  //           TotalCase1 = TotalCase1 + Number(results.rows.item(i).total_case);
+  //           TotalAmount1 =
+  //             TotalAmount1 +
+  //             Number(
+  //               Number(results.rows.item(i).total_case) *
+  //                 Number(results.rows.item(i).CASE_COMPANY),
+  //             );
+  //         }
 
-          
-            TotalItems1 = TotalItems1 + 1;
-            TotalCase1 = TotalCase1 + Number(results.rows.item(i).total_case);
-            TotalAmount1 =
-              TotalAmount1 +
-              Number(
-                Number(results.rows.item(i).total_case) *
-                  Number(results.rows.item(i).CASE_COMPANY),
-              );
-          }
+  //         setInventorySummary({
+  //           ...InventorySummary,
+  //           TotalItems: TotalItems1,
+  //           TotalCase: TotalCase1,
+  //           TotalAmount: TotalAmount1,
+  //           VendorName: 'ALL',
+  //           Category: 'ALL',
+  //           Brand: 'ALL',
+  //         });
 
-          setInventorySummary({
-            ...InventorySummary,
-            TotalItems: TotalItems1,
-            TotalCase: TotalCase1,
-            TotalAmount: TotalAmount1,
-            VendorName: 'ALL',
-            Category: 'ALL',
-            Brand: 'ALL',
-          });
+  //         CurrentItemCount = results.rows.length;
+  //         console.log('Successfully loaded Initial ' + temp.length + ' sku');
+  //         setLocalPromoItemData(temp);
 
-          CurrentItemCount = results.rows.length;
-          console.log('Successfully loaded Initial ' + temp.length + ' sku');
-          setLocalPromoItemData(temp);
+  //         if (refContainer.current) {
+  //           //2
+  //           refContainer.current.scrollToIndex({animated: true, index: 0});
+  //         }
 
-          if (refContainer.current) {
-            //2
-            refContainer.current.scrollToIndex({animated: true, index: 0});
-          }
+  //         // if (name === 'next') {
+  //         //   console.log('next was clicked');
+  //         //   setstart(Number(start) + Number(50));
+  //         //   setend(Number(end) + Number(50));
+  //         // } else if (name === 'prev') {
+  //         //   console.log('prev was click');
+  //         //   setstart(Number(start) - Number(50));
+  //         //   setend(Number(end) - Number(50));
+  //         // } else {
+  //         //   console.log('name is blank');
+  //         //   setstart(Number(start) + Number(50));
+  //         //   setend(Number(end) + Number(50));
+  //         // }
 
-          // if (name === 'next') {
-          //   console.log('next was clicked');
-          //   setstart(Number(start) + Number(50));
-          //   setend(Number(end) + Number(50));
-          // } else if (name === 'prev') {
-          //   console.log('prev was click');
-          //   setstart(Number(start) - Number(50));
-          //   setend(Number(end) - Number(50));
-          // } else {
-          //   console.log('name is blank');
-          //   setstart(Number(start) + Number(50));
-          //   setend(Number(end) + Number(50));
-          // }
-
-          setPleaseWaitVisible(false);
-        },
-        SQLerror,
-      );
-    });
-  }
+  //         setPleaseWaitVisible(false);
+  //       },
+  //       SQLerror,
+  //     );
+  //   });
+  // }
 
   function GetLocalPromoItems(page) {
-
     var pageNumber = page * 50;
+    var endofPagenumber = pageNumber + 50;
+
     console.log(pageNumber);
     console.log(pageNumber + 50);
     var TotalItems1 = 0;
@@ -498,14 +493,22 @@ export default function Inventory(props) {
           ' order by principal_name, product_variant, product_name ',
         [],
         (tx, results) => {
+          if (Number(pageNumber) + Number(50) > Number(results.rows.length)) {
+            endofPagenumber = results.rows.length;
+            setisLastPage(true);
+          } else {
+            setisLastPage(false);
+          }
+
           var temp = [];
-          for (let i = pageNumber; i < pageNumber + 50; ++i) {
+          CurrentItemCount = 0;
+          for (let i = pageNumber; i < endofPagenumber; ++i) {
+            CurrentItemCount = CurrentItemCount + 1;
+
             temp.push(results.rows.item(i));
           }
 
           for (let i = 0; i < results.rows.length; ++i) {
-
-          
             TotalItems1 = TotalItems1 + 1;
             TotalCase1 = TotalCase1 + Number(results.rows.item(i).total_case);
             TotalAmount1 =
@@ -526,11 +529,9 @@ export default function Inventory(props) {
             Brand: 'ALL',
           });
 
-          CurrentItemCount = results.rows.length;
           console.log('Successfully loaded Initial ' + temp.length + ' sku');
           setLocalPromoItemData(temp);
 
-     
           // if (name === 'next') {
           //   console.log('next was clicked');
           //   setstart(Number(start) + Number(50));
@@ -1203,12 +1204,6 @@ export default function Inventory(props) {
 
   return (
     <View style={styles.container}>
-      {/* <FloatingAction
-    actions={actions}
-    onPressItem={name => {
-      console.log(`selected button: ${name}`);
-    }}
-  /> */}
       {PleaseWaitVisible ? (
         <View
           style={{
@@ -1238,148 +1233,109 @@ export default function Inventory(props) {
         </View>
       ) : null}
 
-      <LinearGradient
-        style={{zIndex: 0}}
-        // start={{x: 1, y: 0.5}}
-        // end={{x: 1, y: 4}}
-        style={{margin: 0}}
-        colors={['white', '#15A334']}>
-        <View style={{flexDirection: 'column'}}>
-          <View style={styles.HeaderView}>
-            <View style={{flex: 1, marginLeft: scale(5)}}>
-              {/* <Image
-                style={styles.CompanyLogo}
-                source={{
-                  uri:
-                    'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
-                }}
-              /> */}
-              <View style={{width: 50}}>
-                <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-                  <Icon name="md-filter" color={'#ffffff'} size={34} />
-                </TouchableOpacity>
-              </View>
+      <View style={{flexDirection: 'column'}}>
+        <View style={styles.HeaderView}>
+          <View style={{flex: 1, marginLeft: scale(15)}}>
+            <View style={{width: 50}}>
+              <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+                <Icon name="md-filter" color={'#ffffff'} size={34} />
+              </TouchableOpacity>
             </View>
-            <View
+          </View>
+          <View
+            style={{
+              flex: 1.5,
+              justifyContent: 'center',
+              alignContent: 'center',
+              alignItems: 'flex-end',
+              alignSelf: 'center',
+            }}>
+            <FlatButton // MAIN
+              width={120}
+              text="Filter"
+              gradientFrom="#F9A7A8"
+              gradientTo="#D6171A"
+              onPress={() => {
+                // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
+                GetPrincipalList();
+                setisModalVisible2(!isModalVisible2);
+                if (refContainer.current) {
+                  //2
+                  refContainer.current.scrollToIndex({
+                    animated: true,
+                    index: 0,
+                  });
+                }
+              }}
+            />
+          </View>
+
+          <View
+            style={{
+              flex: 1,
+              width: scale(150),
+              marginRight: 10,
+              alignContent: 'flex-end',
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+            }}>
+            <Text
               style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignContent: 'center',
-                alignItems: 'center',
-                alignSelf: 'center',
-              }}>
-              <FlatButton // MAIN
-                text="Filter"
-                gradientFrom="#F9A7A8"
-                gradientTo="#D6171A"
-                onPress={() => {
-                  // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
-                  // GetPrincipalList();
-                  // setisModalVisible2(!isModalVisible2);
-
-               //   GetLocalPromoItems();
-                  //   if(refContainer.current){
-                  //     refContainer.current.scrollToIndex({ animated: true, index: testnum });
-
-                  // }
-                }}
-              />
-              {/* <FlatButton // MAIN
-                text="ADD"
-                gradientFrom="#F9A7A8"
-                gradientTo="#D6171A"
-                onPress={() => {
-                  // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
-                  // GetPrincipalList();
-                  // setisModalVisible2(!isModalVisible2);
-         
-                //   if(refContainer.current){
-                //     refContainer.current.scrollToIndex({ animated: true, index: testnum });
-        
-                // }
-                }}
-              />
-               <FlatButton // MAIN
-                text="CONSOLE"
-                gradientFrom="#F9A7A8"
-                gradientTo="#D6171A"
-                onPress={() => {
-                  // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
-                  // GetPrincipalList();
-                  // setisModalVisible2(!isModalVisible2);
-             
-              console.log(start)
-              console.log(end)
-
-                }}
-              /> */}
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-                width: scale(150),
-                marginRight: 10,
+                color: '#ffffff',
+                fontSize: moderateScale(12, 0.5),
                 alignContent: 'flex-end',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
               }}>
+              Last Update
+            </Text>
+            <Text
+              style={{
+                color: '#ffffff',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              {globalTimer.lastUpdate}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 5,
+              }}>
+              <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                <Icon name="refresh" color={'#ffffff'} size={10} />
+              </View>
               <Text
                 style={{
-                  color: '#333333',
+                  color: '#ffffff',
                   fontSize: moderateScale(12, 0.5),
                   alignContent: 'flex-end',
                   alignItems: 'flex-end',
                   justifyContent: 'flex-end',
                 }}>
-                Last Update
-              </Text>
-              <Text
-                style={{
-                  color: '#333333',
-                  fontSize: moderateScale(12, 0.5),
-                  alignContent: 'flex-end',
-                  alignItems: 'flex-end',
-                  justifyContent: 'flex-end',
-                }}>
-                {globalTimer.lastUpdate}
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                  <Icon name="refresh" color={'#333333'} size={10} />
-                </View>
-                <Text
-                  style={{
-                    color: '#333333',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                  }}>
-                  {globalState.updateStatus === 'Updating' ||
-                  globalState.updateStatus === 'Start' ? (
-                    <Text
-                      style={{
-                        color: '#333333',
-                        fontSize: moderateScale(12, 0.5),
-                        alignContent: 'flex-end',
-                        alignItems: 'flex-end',
-                        justifyContent: 'flex-end',
-                      }}>
-                      {'Updating...'}{' '}
-                      {globalState.updatePercentage > 0
-                        ? globalState.updatePercentage + ' %'
-                        : ''}
-                    </Text>
-                  ) : null}
+                {globalState.updateStatus === 'Updating' ||
+                globalState.updateStatus === 'Start' ? (
+                  <Text
+                    style={{
+                      color: '#ffffff',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {'Updating...'}{' '}
+                    {globalState.updatePercentage > 0
+                      ? globalState.updatePercentage + ' %'
+                      : ''}
+                  </Text>
+                ) : null}
 
-                  {/* <Text
+                {/* <Text
                         style={{
                           color: 'white',
                           fontSize: moderateScale(12, 0.5),
@@ -1389,24 +1345,22 @@ export default function Inventory(props) {
                         }}>
                         {hhmmss(900 - globalStatus.CurrentSeconds)}
                       </Text> */}
-                </Text>
-              </View>
+              </Text>
             </View>
           </View>
+        </View>
 
-          {/* 
-
-<Button
-                title="CONSOLE START END"
-                onPress={()=> {
-                  console.log(start)
-                  console.log(end)
-                }}
-              />   
-   
-      */}
-
-          <View style={{flexDirection: 'row', backgroundColor: 'transparent'}}>
+        <LinearGradient
+          style={{zIndex: 0, margin: 0}}
+          // start={{x: 1, y: 0.5}}
+          // end={{x: 1, y: 4}}
+          colors={['#1AD661', '#065223']}>
+          <View
+            style={{
+              flexDirection: 'row',
+              backgroundColor: 'transparent',
+              marginVertical: 10,
+            }}>
             <View
               style={{
                 backgroundColor: 'transparent',
@@ -1577,13 +1531,20 @@ export default function Inventory(props) {
               </View>
             </View>
           </View>
-        </View>
-      </LinearGradient>
+        </LinearGradient>
+      </View>
 
       <SafeAreaView style={[styles.container, {zIndex: 0}]}>
-        {LocalPromoItemData.length === 50 ? (
+        {LocalPromoItemData.length === CurrentItemCount &&
+        LocalPromoItemData.length > 0 ? (
           <View style={{flexDirection: 'column'}}>
             <FlatList
+              onScrollEndDrag={() => {
+                setisVisibleButton(true);
+              }}
+              onScrollBeginDrag={() => {
+                setisVisibleButton(false);
+              }}
               ref={refContainer}
               data={LocalPromoItemData}
               renderItem={renderItem}
@@ -1632,11 +1593,11 @@ export default function Inventory(props) {
 
               //           }
             />
-            {InventorySummary.TotalItems > 50 ? (
+            {InventorySummary.TotalItems > 50 && isLastPage === false && isVisibleButton === true ? (
               <TouchableOpacity
                 onPress={() => {
                   // var currentpageAdd = Number(page) * Number(50);
-
+                  //floating
                   setPleaseWaitVisible(true);
 
                   GetLocalPromoItems(page + 1);
@@ -1645,11 +1606,17 @@ export default function Inventory(props) {
                 }}
                 // NEXT PAGE
                 style={styles.fab}>
-                <Text style={styles.fabIcon}> {'>'} </Text>
+                <Icon
+                  name="chevron-forward-circle-outline"
+                  color={'#ffffff'}
+                  size={60}
+                  alignSelf={'center'}
+                  marginBottom={8}
+                />
               </TouchableOpacity>
             ) : null}
 
-            {page > 0 ? (
+            {page > 0 && isVisibleButton === true  ? (
               <TouchableOpacity
                 //PREVIOUS PAGE
                 onPress={() => {
@@ -1660,7 +1627,13 @@ export default function Inventory(props) {
                   setpage(page - 1);
                 }}
                 style={styles.fab2}>
-                <Text style={styles.fabIcon}> {'<'} </Text>
+                <Icon
+                  name="chevron-back-circle-outline"
+                  color={'#ffffff'}
+                  size={60}
+                  alignSelf={'center'}
+                  marginBottom={8}
+                />
               </TouchableOpacity>
             ) : null}
           </View>
@@ -2006,22 +1979,28 @@ export default function Inventory(props) {
                     flexDirection: 'column',
                     marginTop: 5,
                     alignItems: 'flex-end',
+                    marginRight: moderateScale(20),
                   }}>
                   <View
                     style={{
-                      marginBottom: moderateScale(10, 0.5),
+                      marginBottom: moderateScale(20, 0.5),
                       marginTop: moderateScale(120, 0.5),
                     }}>
                     <FlatButton
+                      width={140}
                       gradientFrom="red"
                       gradientTo="pink"
                       text="Go"
                       onPress={() => {
+                        setPleaseWaitVisible(true);
+
+                        setpage(0);
+                        ('');
                         setisVisibleTypeDropdownPicker(false);
                         setisVisibleVariantDropdownPicker(false);
                         setisVisiblePrincipalDropdownPicker(false);
 
-                        GetLocalPromoItemsFiltered();
+                        GetLocalPromoItems(page * 0);
                         setisModalVisible2(false);
                         setarrVariantListfromPicker([]);
                       }}
@@ -2029,6 +2008,7 @@ export default function Inventory(props) {
                   </View>
                   <View>
                     <FlatButton
+                      width={140}
                       gradientFrom="red"
                       gradientTo="pink"
                       text="Close"
@@ -2061,6 +2041,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#03A9F4',
     borderRadius: 30,
     elevation: 8,
+    opacity: 0.6,
   },
   fab2: {
     position: 'absolute',
@@ -2077,6 +2058,8 @@ const styles = StyleSheet.create({
   fabIcon: {
     fontSize: 30,
     color: 'white',
+    alignSelf: 'center',
+    marginBottom: moderateScale(8),
   },
   loading: {
     position: 'absolute',
@@ -2150,7 +2133,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: 'gray',
   },
   centeredView: {
     flex: 1,

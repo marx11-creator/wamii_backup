@@ -243,6 +243,7 @@ export function DrawerContent(props) {
               }}>
               <View style={{alignItems: 'flex-start', marginLeft: scale(80)}}>
                 <FlatButton
+                 width={160}
                   text={
                     globalState.updateStatus === 'Idle'
                       ? 'Update Now'

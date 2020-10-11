@@ -282,6 +282,7 @@ export default function DashboardModal(props) {
                   alignItems: 'flex-end',
                 }}>
                 <FlatButton
+                width={160}
                   text="Filter"
                   onPress={() => {
                     if (FilterListMirror.DashboardFilterMonth === '') {

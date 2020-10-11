@@ -2611,6 +2611,7 @@ export default function UpdateModal(props) {
               </Text>
 
               <FlatButton
+               width={160}
                 text="Close"
                 // onPress={() => {
                 //   setisModalConnectionError(false);

@@ -763,6 +763,7 @@ export default function BusinessCalendar(props) {
           }}>
           <View style={{marginRight: 20}}>
             <FlatButton
+             width={160}
               text={isEditing ? 'UPDATE' : 'EDIT'}
               onPress={() => {
                 if (global.account_type === 'Administrator') {

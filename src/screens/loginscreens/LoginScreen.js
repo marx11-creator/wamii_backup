@@ -689,6 +689,7 @@ const SignScreen = (props) => {
               <Text style={styles.modalText}>{ModalErrorMessage}</Text>
 
               <FlatButton
+               width={160}
                 text="Close"
                 // onPress={() => {
                 //   setisModalConnectionError(false);
