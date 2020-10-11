@@ -306,7 +306,7 @@ export default function Home(props) {
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
-      console.log('focus on per Home');
+      console.log('focus on per Home1');
       CurrentAppScreen.Screen = 'Home';
       UpdateYearMonthsFilter();
       props.navigation.navigate('Inventory');

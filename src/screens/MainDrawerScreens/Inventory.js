@@ -1,5 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable no-lone-blocks */
 import React, {
   useState,
   useEffect,
@@ -55,7 +53,7 @@ import numbro from 'numbro';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons//MaterialIcons';
 import FadingMessage from '../MainDrawerScreens/test';
-// import FastImage from 'react-native-fast-image';
+import {FloatingAction} from 'react-native-floating-action';
 
 var CurrentItemCount = 0;
 var count = 0;
@@ -68,37 +66,60 @@ var longStrinfg = '';
 var test = 'aa';
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
+  const actions = [
+    {
+      text: 'Accessibility',
+      icon: require('../../assets/wamilogo.png'),
+      name: 'bt_accessibility',
+      position: 2,
+    },
+    {
+      text: 'Language',
+      icon: require('../../assets/wamilogo.png'),
+      name: 'bt_language',
+      position: 1,
+    },
+    {
+      text: 'Location',
+      icon: require('../../assets/wamilogo.png'),
+      name: 'bt_room',
+      position: 3,
+    },
+    {
+      text: 'Video',
+      icon: require('../../assets/wamilogo.png'),
+      name: 'bt_videocam',
+      position: 4,
+    },
+  ];
   var ImageLoop = [];
-  var refContainer = useRef()
- 
-const [onEndReachedCalledDuringMomentum, setonEndReachedCalledDuringMomentum] =useState(false);
- 
-  const onEndReached = () => {
-    if (onEndReachedCalledDuringMomentum===false) {
-      console.log('reach edndadad')
-      setonEndReachedCalledDuringMomentum(true);
+  var refContainer = useRef();
 
-if (start < LocalPromoItemData.length){
-  var temp = [];
-  LocalPromoItemData.slice([start -1 + -2], [end]).map((item, i) => {
-      temp.push(item);             
-  });
-  setCurrentLocalItem(temp);
-  refContainer.current.scrollToIndex({ animated: false, index: 0 });
-  setpage(Number(page) + Number(1))
-      setstart(Number(start) + Number(200));
-  setend(Number(end) + Number(200));
+  const [
+    onEndReachedCalledDuringMomentum,
+    setonEndReachedCalledDuringMomentum,
+  ] = useState(false);
 
+  //   const onEndReached = () => {
+  //     if (onEndReachedCalledDuringMomentum===false) {
+  //       console.log('reach edndadad')
+  //       setonEndReachedCalledDuringMomentum(true);
 
+  // if (start < LocalPromoItemData.length){
+  //   var temp = [];
+  //   LocalPromoItemData.slice([start -1 + -2], [end]).map((item, i) => {
+  //       temp.push(item);
+  //   });
+  //   setCurrentLocalItem(temp);
+  //   refContainer.current.scrollToIndex({ animated: false, index: 0 });
+  //   setpage(Number(page) + Number(1))
+  //       setstart(Number(start) + Number(200));
+  //   setend(Number(end) + Number(200));
 
+  // }
 
-}
- 
-      
-
-      
-    }
-  };
+  //     }
+  //   };
 
   const swiper = React.createRef();
   // const onIndexChanged = (index) => {
@@ -197,7 +218,7 @@ if (start < LocalPromoItemData.length){
       TotalAmount: 0,
     },
   ];
-const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
+  const [PleaseWaitVisible, setPleaseWaitVisible] = useState(false);
   const [currentIndex, setcurrentIndex] = useState(0);
   const [InventorySummary, setInventorySummary] = useState(
     InventorySummaryFields,
@@ -214,8 +235,9 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
   const [TypeList, setTypeList] = useState(TypeListFields);
 
   const [loading, setLoading] = useState(false);
-  const [start, setstart] = useState(1);
-  const [end, setend] = useState(200);
+
+  var start = 1;
+  var end = 50;
   const [currenIndex, setcurrenIndex] = useState(0);
 
   const [floatingArray, setfloatingArray] = useState([]);
@@ -243,32 +265,32 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
   const [visibleMainModal, setVisibleMainModal] = useState(false);
   const [visibleImageListModal, setvisibleImageListModal] = useState(false);
 
+  //   useEffect(()=>{
+  //     var temp = [];
+  //     if (CurrentItemCount === LocalPromoItemData.length) {
 
-  useEffect(()=>{   
-    var temp = [];
-    if (CurrentItemCount === LocalPromoItemData.length) {
+  //       LocalPromoItemData.slice([start -1], [end]).map((item, i) => {
+  //           temp.push(item);
+  //       });
 
-      LocalPromoItemData.slice([start -1], [end]).map((item, i) => {
-          temp.push(item);
-      });
- 
-    setCurrentLocalItem(temp);
-    setstart(Number(start) + Number(200));
-    setend(Number(end) + Number(200));
-    
+  //     setCurrentLocalItem(temp);
+  //     setstart(Number(start) + Number(200));
+  //     setend(Number(end) + Number(200));
+
+  //      }
+  // },[LocalPromoItemData])
+
+  useEffect(() => {
+    if(PleaseWaitVisible === false){
+      if (refContainer.current) {
+        //2
+        refContainer.current.scrollToIndex({animated: true, index: 0});
+      }
+    }
   
 
-  
-     }  
-},[LocalPromoItemData])
 
-  // useEffect(() => {
-  //  if (CurrentLocalItem > 0) {
-  //    console.log('moved to 0 index')
-
-  //  }
-       
-  // }, [CurrentLocalItem]);
+  }, [PleaseWaitVisible]);
 
   // function wait(timeout) {
   //   return new Promise((resolve) => {
@@ -330,7 +352,7 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
       console.log('focus on per per item');
       CurrentAppScreen.Screen = 'Inventory';
       GetPrincipalList();
-      GetLocalPromoItems();
+      GetLocalPromoItems(page);
     });
   }, []);
 
@@ -351,10 +373,10 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
   // 'SELECT * FROM promo_items_tbl where principal_name = ' + testqq + ' ',
   // [],
 
-  function GetLocalPromoItems() {
-    var Vendor = '';
-    var Category = '';
-    var Brand = '';
+  function GetLocalPromoItemsOLD(page) {
+    var pageNumber = page * 50;
+    console.log(pageNumber);
+    console.log(pageNumber + 50);
     var TotalItems1 = 0;
     var TotalCase1 = 0;
     var TotalAmount1 = 0;
@@ -363,15 +385,17 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
       LocalPromoItemData.length = 0;
       tx.executeSql(
         'SELECT    promo_items_tbl.* FROM promo_items_tbl ' +
-          ' order by principal_name, product_variant, product_name limit 600  ',
+          ' order by principal_name, product_variant, product_name limit 1000  ',
         [],
         (tx, results) => {
           var temp = [];
-          for (let i = 0; i < results.rows.length; ++i) {
-           
-            localItemcount = localItemcount + 1;
+          for (let i = pageNumber; i < pageNumber + 50; ++i) {
             temp.push(results.rows.item(i));
+          }
 
+          for (let i = 0; i < results.rows.length; ++i) {
+
+          
             TotalItems1 = TotalItems1 + 1;
             TotalCase1 = TotalCase1 + Number(results.rows.item(i).total_case);
             TotalAmount1 =
@@ -391,22 +415,45 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
             Category: 'ALL',
             Brand: 'ALL',
           });
+
           CurrentItemCount = results.rows.length;
           console.log('Successfully loaded Initial ' + temp.length + ' sku');
           setLocalPromoItemData(temp);
 
-     
-    
+          if (refContainer.current) {
+            //2
+            refContainer.current.scrollToIndex({animated: true, index: 0});
+          }
+
+          // if (name === 'next') {
+          //   console.log('next was clicked');
+          //   setstart(Number(start) + Number(50));
+          //   setend(Number(end) + Number(50));
+          // } else if (name === 'prev') {
+          //   console.log('prev was click');
+          //   setstart(Number(start) - Number(50));
+          //   setend(Number(end) - Number(50));
+          // } else {
+          //   console.log('name is blank');
+          //   setstart(Number(start) + Number(50));
+          //   setend(Number(end) + Number(50));
+          // }
+
+          setPleaseWaitVisible(false);
         },
         SQLerror,
       );
     });
   }
 
-  function GetLocalPromoItemsFiltered() {
-    var Vendor = '';
-    var Category = '';
-    var Brand = '';
+  function GetLocalPromoItems(page) {
+
+    var pageNumber = page * 50;
+    console.log(pageNumber);
+    console.log(pageNumber + 50);
+    var TotalItems1 = 0;
+    var TotalCase1 = 0;
+    var TotalAmount1 = 0;
     var TotalItems1 = 0;
     var TotalCase1 = 0;
     var TotalAmount1 = 0;
@@ -452,10 +499,13 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
         [],
         (tx, results) => {
           var temp = [];
-          for (let i = 0; i < results.rows.length; ++i) {
-            localItemcount = localItemcount + 1;
+          for (let i = pageNumber; i < pageNumber + 50; ++i) {
             temp.push(results.rows.item(i));
+          }
 
+          for (let i = 0; i < results.rows.length; ++i) {
+
+          
             TotalItems1 = TotalItems1 + 1;
             TotalCase1 = TotalCase1 + Number(results.rows.item(i).total_case);
             TotalAmount1 =
@@ -465,16 +515,37 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
                   Number(results.rows.item(i).CASE_COMPANY),
               );
           }
+
           setInventorySummary({
             ...InventorySummary,
             TotalItems: TotalItems1,
             TotalCase: TotalCase1,
             TotalAmount: TotalAmount1,
-            VendorName: PrincipalPickerCatcher,
+            VendorName: 'ALL',
+            Category: 'ALL',
+            Brand: 'ALL',
           });
 
-          console.log('Successfully loaded FILTERED ' + temp.length + ' sku');
+          CurrentItemCount = results.rows.length;
+          console.log('Successfully loaded Initial ' + temp.length + ' sku');
           setLocalPromoItemData(temp);
+
+     
+          // if (name === 'next') {
+          //   console.log('next was clicked');
+          //   setstart(Number(start) + Number(50));
+          //   setend(Number(end) + Number(50));
+          // } else if (name === 'prev') {
+          //   console.log('prev was click');
+          //   setstart(Number(start) - Number(50));
+          //   setend(Number(end) - Number(50));
+          // } else {
+          //   console.log('name is blank');
+          //   setstart(Number(start) + Number(50));
+          //   setend(Number(end) + Number(50));
+          // }
+
+          setPleaseWaitVisible(false);
         },
         SQLerror,
       );
@@ -787,10 +858,9 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
   //   );
   // }
 
- 
   LocalPromoItemData.slice([0], [LocalPromoItemData.length]).map((item, i) => {
     // placeIDs.push(item.place_id);
-//zoom
+    //zoom
     ImageLoop.push(
       <View
         testID="Hello"
@@ -804,26 +874,25 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
             borderBottomColor: '#F5F5F5',
             borderBottomWidth: 10,
           }}>
-            <TouchableHighlight onPress={()=>{
-               setSelectedImage(item.img_url);
-                  setVisibleMainModal(true);
+          <TouchableHighlight
+            onPress={() => {
+              setSelectedImage(item.img_url);
+              setVisibleMainModal(true);
             }}>
             <Image
-            style={{
-              width: width,
-              height: 400,
-            }}
-            source={{
-              uri: item.img_url,
-            }}
-            onError={() => ({
-              uri:
-                'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
-            })}
-          />
-          
-            </TouchableHighlight>
-          
+              style={{
+                width: width,
+                height: 400,
+              }}
+              source={{
+                uri: item.img_url,
+              }}
+              onError={() => ({
+                uri:
+                  'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
+              })}
+            />
+          </TouchableHighlight>
         </View>
         <Text
           style={{
@@ -832,7 +901,8 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
             marginBottom: moderateScale(10),
             marginTop: moderateScale(20),
           }}>
-           {' '} ₱
+          {' '}
+          ₱
           {numbro(Number(item.CASE_BOOKING)).format({
             thousandSeparated: true,
             mantissa: 2,
@@ -845,9 +915,8 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
             flexDirection: 'row',
             justifyContent: 'flex-start',
             alignItems: 'center',
-
           }}>
-            <Text>{' '}</Text>
+          <Text> </Text>
           <Image
             style={{
               width: moderateScale(40),
@@ -869,115 +938,133 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
             justifyContent: 'center',
             alignItems: 'flex-start',
           }}>
-          <View style={{marginVertical: 5, flexDirection: 'row', alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
-          
-          <View style={{marginLeft: moderateScale(5)}}>
-          <Icon name="layers-outline" color={'#FF0F16'} size={19} />
-            </View> 
-            <Text style={{color: 'red', fontSize: moderateScale(13)}}> Category {item.category}</Text>
+          <View
+            style={{
+              marginVertical: 5,
+              flexDirection: 'row',
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <View style={{marginLeft: moderateScale(5)}}>
+              <Icon name="layers-outline" color={'#FF0F16'} size={19} />
+            </View>
+            <Text style={{color: 'red', fontSize: moderateScale(13)}}>
+              {' '}
+              Category {item.category}
+            </Text>
             <Text style={styles.text}> Sardines{item.category}</Text>
           </View>
         </View>
-<View>
-  <View style={{     borderBottomColor: '#F5F5F5',
-            borderBottomWidth: 8}} >
-              <View style={{flexDirection: 'row', alignItems: 'center', alignContent: 'center', marginVertical: moderateScale(8)}}>
-              <Text style={{color: '#333333', fontSize: moderateScale(15), marginBottom: 1  }}> 5 </Text>
-  <MaterialIcons
-          name="grade"
-          size={moderateScale(20)}
-          color="#F9C500"
-        />
-  <MaterialIcons
-          name="grade"
-          size={moderateScale(20)}
-          color="#F9C500"
-        />
+        <View>
+          <View style={{borderBottomColor: '#F5F5F5', borderBottomWidth: 8}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                alignContent: 'center',
+                marginVertical: moderateScale(8),
+              }}>
+              <Text
+                style={{
+                  color: '#333333',
+                  fontSize: moderateScale(15),
+                  marginBottom: 1,
+                }}>
+                {' '}
+                5{' '}
+              </Text>
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(20)}
+                color="#F9C500"
+              />
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(20)}
+                color="#F9C500"
+              />
 
-<MaterialIcons
-          name="grade"
-          size={moderateScale(20)}
-          color="#F9C500"
-        />
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(20)}
+                color="#F9C500"
+              />
 
-<MaterialIcons
-          name="grade"
-          size={moderateScale(20)}
-          color="#F9C500"
-        />
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(20)}
+                color="#F9C500"
+              />
 
-<MaterialIcons
-          name="grade"
-          size={moderateScale(20)}
-          color="#F9C500"
-        />
-              </View>
-  
-
-  </View>
-<View style={{flexDirection: 'column', marginLeft: moderateScale(5), borderBottomWidth: 1, borderBottomColor: '#C7CBC9'}}>  
-<Text style={[styles.text,{marginTop:moderateScale(10)}]}>Brand:   Ligo {item.Brand}</Text>
-        <Text style={[styles.text,{marginBottom: moderateScale(10)}]}>Variant: {item.product_variant}</Text>
-</View>
-     
-</View>
-   
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(20)}
+                color="#F9C500"
+              />
+            </View>
+          </View>
+          <View
+            style={{
+              flexDirection: 'column',
+              marginLeft: moderateScale(5),
+              borderBottomWidth: 1,
+              borderBottomColor: '#C7CBC9',
+            }}>
+            <Text style={[styles.text, {marginTop: moderateScale(10)}]}>
+              Brand: Ligo {item.Brand}
+            </Text>
+            <Text style={[styles.text, {marginBottom: moderateScale(10)}]}>
+              Variant: {item.product_variant}
+            </Text>
+          </View>
+        </View>
       </View>,
     );
   });
 
-
-
-
-
   // for (let i = 0; i < LocalPromoItemData.length; i++) {}
 
-  
+  const renderItem = ({item, index}) => (
+    <LinearGradient
+      start={{x: 0.3, y: 0.6}}
+      end={{x: 1, y: 1}}
+      style={{
+        margin: 2,
+        marginTop: 0,
+        borderColor: '#C6CDC8',
+        borderWidth: 0.9,
+      }}
+      colors={['white', '#F47F83']}>
+      <View style={[styles.promoItemDetailsNImage]}>
+        <View
+          style={{
+            backgroundColor: 'transparent',
+            flex: 1,
+            flexDirection: 'row',
+          }}>
+          <View style={[styles.promoitemImageContainer]}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('trigger imagelistmodal');
 
-  
-
-  const renderItem = ({item, index}) =>
-    
-      <LinearGradient
-        start={{x: 0.3, y: 0.6}}
-        end={{x: 1, y: 1}}
-        style={{
-          margin: 2,
-          marginTop: 0,
-          borderColor: '#C6CDC8',
-          borderWidth: 0.9,
-        }}
-        colors={['white', '#F47F83']}>
-        <View style={[styles.promoItemDetailsNImage]}>
-          <View
-            style={{
-              backgroundColor: 'transparent',
-              flex: 1,
-              flexDirection: 'row',
-            }}>
-            <View style={[styles.promoitemImageContainer]}>
-              <TouchableOpacity
-                onPress={() => {
-                console.log('trigger imagelistmodal')
-                
-          //   setPleaseWaitVisible(true);
-                  setvisibleImageListModal(true);
-                  setcurrentIndex( (Number(page) * Number(200)) +  Number(index) );
-                  // setSelectedImage(item.img_url);
-                  // setVisibleMainModal(true);
-                }}>
-                 
-                <Image
-                  style={styles.promoitemImage}
-                  source={{
-                    uri: item.img_url,
-                  }}
-                  onError={() => ({
-                    uri:
-                      'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
-                  })}
-                />
-{/* 
+                setPleaseWaitVisible(true);
+                //   setvisibleImageListModal(true);
+                //   setcurrentIndex( (Number(page) * Number(200)) +  Number(index) );
+                // setSelectedImage(item.img_url);
+                // setVisibleMainModal(true);
+              }}>
+              <Image
+                style={styles.promoitemImage}
+                source={{
+                  uri: item.img_url,
+                }}
+                onError={() => ({
+                  uri:
+                    'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
+                })}
+              />
+              {/* 
 <FastImage
         style={styles.promoitemImage}
         source={{
@@ -987,81 +1074,79 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
         }}
         resizeMode={FastImage.resizeMode.contain}
     /> */}
-
-                
-              </TouchableOpacity>
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: 'transparent',
-                marginLeft: scale(15),
-                flexDirection: 'column',
-                justifyContent: 'space-evenly',
-                margin: scale(10),
-                alignItems: 'flex-end',
-              }}>
-              <TouchableOpacity
-                onPress={() => {
-                  {
-                    unitPrice === 'CASE'
-                      ? setunitPrice('PCS')
-                      : setunitPrice('CASE');
-                  }
-                }}>
-                <Text
-                  style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                  {item.row_number} {' Price per '}
-                  {unitPrice === 'CASE' ? 'CASE' : 'PCs'}
-                </Text>
-
-                <Text
-                  style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                  {'BK: P'}
-
-                  {unitPrice === 'CASE'
-                    ? numbro(Number(item.CASE_BOOKING)).format({
-                        thousandSeparated: true,
-                        mantissa: 2,
-                      })
-                    : numbro(Number(item.PCS_BOOKING)).format({
-                        thousandSeparated: true,
-                        mantissa: 2,
-                      })}
-                </Text>
-
-                <Text
-                  style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                  {'VAN: P'}
-                  {unitPrice === 'CASE'
-                    ? numbro(Number(item.CASE_EXTRUCK)).format({
-                        thousandSeparated: true,
-                        mantissa: 2,
-                      })
-                    : numbro(Number(item.PCS_EXTRUCK)).format({
-                        thousandSeparated: true,
-                        mantissa: 2,
-                      })}
-                </Text>
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View
-            style={[
-              styles.promoitemDetails,
-              {backgroundColor: 'transparent', marginTop: 10},
-            ]}>
-            <Text style={styles.item2}>{item.product_variant}</Text>
-            <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
-              {item.product_name}
-            </Text>
-            <Text style={styles.item}>Stocks : {item.inventory}</Text>
+            style={{
+              flex: 1,
+              backgroundColor: 'transparent',
+              marginLeft: scale(15),
+              flexDirection: 'column',
+              justifyContent: 'space-evenly',
+              margin: scale(10),
+              alignItems: 'flex-end',
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                {
+                  unitPrice === 'CASE'
+                    ? setunitPrice('PCS')
+                    : setunitPrice('CASE');
+                }
+              }}>
+              <Text
+                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                {item.row_number} {' Price per '}
+                {unitPrice === 'CASE' ? 'CASE' : 'PCs'}
+              </Text>
+
+              <Text
+                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                {'BK: P'}
+
+                {unitPrice === 'CASE'
+                  ? numbro(Number(item.CASE_BOOKING)).format({
+                      thousandSeparated: true,
+                      mantissa: 2,
+                    })
+                  : numbro(Number(item.PCS_BOOKING)).format({
+                      thousandSeparated: true,
+                      mantissa: 2,
+                    })}
+              </Text>
+
+              <Text
+                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                {'VAN: P'}
+                {unitPrice === 'CASE'
+                  ? numbro(Number(item.CASE_EXTRUCK)).format({
+                      thousandSeparated: true,
+                      mantissa: 2,
+                    })
+                  : numbro(Number(item.PCS_EXTRUCK)).format({
+                      thousandSeparated: true,
+                      mantissa: 2,
+                    })}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </LinearGradient>
-    
+
+        <View
+          style={[
+            styles.promoitemDetails,
+            {backgroundColor: 'transparent', marginTop: 10},
+          ]}>
+          <Text style={styles.item2}>{item.product_variant}</Text>
+          <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
+            {item.product_name}
+          </Text>
+          <Text style={styles.item}>Stocks : {item.inventory}</Text>
+        </View>
+      </View>
+    </LinearGradient>
+  );
 
   // //from array to section list format
   // const result = [];
@@ -1112,24 +1197,49 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
       </View>
     );
 
-// function  LoadinitialItem(){
- 
+  // function  LoadinitialItem(){
 
-
-// }
-
+  // }
 
   return (
     <View style={styles.container}>
-      {/* {PleaseWaitVisible ? (
-      <View style={{zIndex: 1, width: '100%', height: '100%', opacity: 0.5,
-       position: 'absolute', backgroundColor: 'gray', justifyContent: 'center', alignContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: moderateScale(20)}}>Please wait...</Text>
-      </View>
-      ) : null } */}
+      {/* <FloatingAction
+    actions={actions}
+    onPressItem={name => {
+      console.log(`selected button: ${name}`);
+    }}
+  /> */}
+      {PleaseWaitVisible ? (
+        <View
+          style={{
+            zIndex: 1,
+            width: '100%',
+            height: '100%',
+            opacity: 0.8,
+            position: 'absolute',
+            backgroundColor: '#ffffff',
+            justifyContent: 'center',
+            alignContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              backgroundColor: '#ffffff',
+              opacity: 1,
+              height: 100,
+              width: 200,
+              borderRadius: 20,
+              justifyContent: 'center',
+              alignContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text style={{fontSize: moderateScale(18)}}>Please wait...</Text>
+          </View>
+        </View>
+      ) : null}
 
       <LinearGradient
-      style={{zIndex: 0}}
+        style={{zIndex: 0}}
         // start={{x: 1, y: 0.5}}
         // end={{x: 1, y: 4}}
         style={{margin: 0}}
@@ -1166,15 +1276,43 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
                   // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
                   // GetPrincipalList();
                   // setisModalVisible2(!isModalVisible2);
-              
-                  console.log(onEndReachedCalledDuringMomentum)
-           
+
+               //   GetLocalPromoItems();
+                  //   if(refContainer.current){
+                  //     refContainer.current.scrollToIndex({ animated: true, index: testnum });
+
+                  // }
+                }}
+              />
+              {/* <FlatButton // MAIN
+                text="ADD"
+                gradientFrom="#F9A7A8"
+                gradientTo="#D6171A"
+                onPress={() => {
+                  // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
+                  // GetPrincipalList();
+                  // setisModalVisible2(!isModalVisible2);
+         
                 //   if(refContainer.current){
                 //     refContainer.current.scrollToIndex({ animated: true, index: testnum });
         
                 // }
                 }}
               />
+               <FlatButton // MAIN
+                text="CONSOLE"
+                gradientFrom="#F9A7A8"
+                gradientTo="#D6171A"
+                onPress={() => {
+                  // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
+                  // GetPrincipalList();
+                  // setisModalVisible2(!isModalVisible2);
+             
+              console.log(start)
+              console.log(end)
+
+                }}
+              /> */}
             </View>
 
             <View
@@ -1255,9 +1393,8 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
               </View>
             </View>
           </View>
-  
 
-{/* 
+          {/* 
 
 <Button
                 title="CONSOLE START END"
@@ -1269,8 +1406,7 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
    
       */}
 
-
-       <View style={{flexDirection: 'row', backgroundColor: 'transparent'}}>
+          <View style={{flexDirection: 'row', backgroundColor: 'transparent'}}>
             <View
               style={{
                 backgroundColor: 'transparent',
@@ -1444,84 +1580,112 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
         </View>
       </LinearGradient>
 
-    
-      <SafeAreaView style={[styles.container,{zIndex: 0}]}>
-        {LocalPromoItemData.length === CurrentItemCount ? (
-          <FlatList
-           ref={refContainer}
-          data={CurrentLocalItem}
-          renderItem={renderItem}
-          // getItemLayout={getItemLayout}
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={2}
-          keyExtractor={(item) => item.product_id}
-          numColumns={2}
-          removeClippedSubviews={true}
-          onEndReachedThreshold={0.01}
-          onMomentumScrollBegin={() => { setonEndReachedCalledDuringMomentum(false)}}
+      <SafeAreaView style={[styles.container, {zIndex: 0}]}>
+        {LocalPromoItemData.length === 50 ? (
+          <View style={{flexDirection: 'column'}}>
+            <FlatList
+              ref={refContainer}
+              data={LocalPromoItemData}
+              renderItem={renderItem}
+              // getItemLayout={getItemLayout}
+              initialNumToRender={10}
+              maxToRenderPerBatch={6}
+              windowSize={10}
+              keyExtractor={(item) => item.product_id}
+              numColumns={2}
+              removeClippedSubviews={true}
+              // onEndReachedThreshold={0.01}
+              // onMomentumScrollBegin={() => { setonEndReachedCalledDuringMomentum(false)}}
 
-          onEndReached={onEndReached}
+              // onEndReached={onEndReached}
 
-//           onEndReached={()=>{
-          
- 
-// console.log('end reached')
+              //           onEndReached={()=>{
 
-// if(start === 51) {
-//           var temp = [];
-//             LocalPromoItemData.slice([start -1], [end]).map((item, i) => {
-//                 temp.push(item);             
-//             });
-//             setCurrentLocalItem(temp);
-//             refContainer.current.scrollToIndex({ animated: false, index: 0 });
+              // console.log('end reached')
 
-//                 setstart(Number(start) + Number(50));
-//             setend(Number(end) + Number(50));
+              // if(start === 51) {
+              //           var temp = [];
+              //             LocalPromoItemData.slice([start -1], [end]).map((item, i) => {
+              //                 temp.push(item);
+              //             });
+              //             setCurrentLocalItem(temp);
+              //             refContainer.current.scrollToIndex({ animated: false, index: 0 });
 
+              //                 setstart(Number(start) + Number(50));
+              //             setend(Number(end) + Number(50));
 
-// }
-  
+              // }
 
+              //           //   var temp = [];
+              //           //   LocalPromoItemData.slice([start -1], [end]).map((item, i) => {
 
+              //           //       temp.push(item);
 
+              //           //   });
 
-//           //   var temp = [];
-//           //   LocalPromoItemData.slice([start -1], [end]).map((item, i) => {
-          
-//           //       temp.push(item);
-              
-//           //   });
-          
-//           // setCurrentLocalItem(temp);
-            
-//           //     refContainer.current.scrollToIndex({ animated: false, index: 2 });
-             
-//           //   setstart(Number(start) + Number(50));
-//           //   setend(Number(end) + Number(50));
-            
-          
- 
-          
-//           }
-        
-        />
+              //           // setCurrentLocalItem(temp);
 
+              //           //     refContainer.current.scrollToIndex({ animated: false, index: 2 });
+
+              //           //   setstart(Number(start) + Number(50));
+              //           //   setend(Number(end) + Number(50));
+
+              //           }
+            />
+            {InventorySummary.TotalItems > 50 ? (
+              <TouchableOpacity
+                onPress={() => {
+                  // var currentpageAdd = Number(page) * Number(50);
+
+                  setPleaseWaitVisible(true);
+
+                  GetLocalPromoItems(page + 1);
+
+                  setpage(page + 1);
+                }}
+                // NEXT PAGE
+                style={styles.fab}>
+                <Text style={styles.fabIcon}> {'>'} </Text>
+              </TouchableOpacity>
+            ) : null}
+
+            {page > 0 ? (
+              <TouchableOpacity
+                //PREVIOUS PAGE
+                onPress={() => {
+                  setPleaseWaitVisible(true);
+
+                  GetLocalPromoItems(page - 1);
+
+                  setpage(page - 1);
+                }}
+                style={styles.fab2}>
+                <Text style={styles.fabIcon}> {'<'} </Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
         ) : (
-          <View style={{flex: 1, justifyContent: 'center', alignContent: 'center', alignItems: 'center'}}>
-        <Image
+          <View
             style={{
-              width: moderateScale(250),
-              height: moderateScale(250),
-              resizeMode: 'center',
-            }}
-            source={require('../../assets/wamilogo.png')}
-            // source={require('../../assets/coslorlogo.png')}
-          />
-          <Text style={{fontWeight: '800', fontSize: moderateScale(18)}}>Please Wait...</Text>
+              flex: 1,
+              justifyContent: 'center',
+              alignContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image
+              style={{
+                width: moderateScale(250),
+                height: moderateScale(250),
+                resizeMode: 'center',
+              }}
+              source={require('../../assets/wamilogo.png')}
+              // source={require('../../assets/coslorlogo.png')}
+            />
+            <Text style={{fontWeight: '800', fontSize: moderateScale(18)}}>
+              Please Wait...
+            </Text>
           </View>
         )}
-        
 
         {loading && (
           <View style={styles.loading}>
@@ -1543,66 +1707,73 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
         deviceHeight={height}
         transparent={true}
         onRequestClose={() => {
-          console.log(Math.floor(Number(currentIndex) / 2) )
+          var indexLast = Number(Number(currentIndex) - Number(4)) / Number(2);
+          if (indexLast < 1) {
+            indexLast = 0;
+          }
+          console.log(Math.floor(Number(currentIndex) / 2));
           setvisibleImageListModal(false);
-          if(refContainer.current){
-            refContainer.current.scrollToIndex({ animated: true, index: Number(Number(currentIndex) - Number(4)) / Number(2)  });
-
-        }  
+          //1
+          if (refContainer.current) {
+            refContainer.current.scrollToIndex({
+              animated: true,
+              index: Number(indexLast),
+            });
+          }
         }}>
-          <View style={{flex: 1,backgroundColor: '#E9E9E9'}}>
-        
-        
-          <View style={{zIndex: 0, width: '100%', height: '100%', opacity: 0.5,
-       position: 'absolute', backgroundColor: 'gray', justifyContent: 'center', alignContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: moderateScale(20)}}>Please wait...</Text>
-      </View>
-
-
+        <View style={{flex: 1, backgroundColor: '#E9E9E9'}}>
+          <View
+            style={{
+              zIndex: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0.5,
+              position: 'absolute',
+              backgroundColor: 'gray',
+              justifyContent: 'center',
+              alignContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text style={{fontSize: moderateScale(20)}}>Please wait...</Text>
+          </View>
 
           <Swiper
-          // ref={swiper}
-          
-          style={{zIndex: 1}}
-          onIndexChanged={(index) => {
-            // console.log(Number(index) + Number(1) + ' current image');
-            // console.log(Math.floor(Number(currentIndex) / 2));
-             setcurrentIndex(index);
+            // ref={swiper}
 
-             
-             if (Number(index) + Number(1) === (Number(end)-Number(200)) ){
-               
+            style={{zIndex: 1}}
+            onIndexChanged={(index) => {
+              // console.log(Number(index) + Number(1) + ' current image');
+              // console.log(Math.floor(Number(currentIndex) / 2));
+              setcurrentIndex(index);
 
+              //  if (Number(index) + Number(1) === (Number(end)-Number(200)) ){
 
+              //   // if(CurrentLocalItem.length > 0 ){
+              //   //   //  console.log(CurrentLocalItem);
+              //   //    console.log('this is end');
 
-              if(CurrentLocalItem.length > 0 ){
-                //  console.log(CurrentLocalItem);
-                 console.log('this is end');
-            
-           
-                // LoadinitialItem();
+              //   //   // LoadinitialItem();
 
-              }
+              //   // }
 
-             }
-          }}
-          //
-          index={currentIndex}
-          showsPagination={false}
-          loadMinimalSize={20}
-          loadMinimal={false}
-          autoplay={false}
-          pagingEnabled={true}
-          autoplayTimeout={2}
-          showsButtons={true}
-          loop={false}>
-          {ImageLoop}
-        </Swiper>
-          </View>
-        
+              //  }
+            }}
+            //
+            index={currentIndex}
+            showsPagination={false}
+            loadMinimalSize={20}
+            loadMinimal={false}
+            autoplay={false}
+            pagingEnabled={true}
+            autoplayTimeout={2}
+            showsButtons={true}
+            loop={false}>
+            {ImageLoop}
+          </Swiper>
+        </View>
       </Modal>
 
-      <Modal
+      {/* <Modal
       //PLEASE WAIT
        
         transparent={true}
@@ -1615,12 +1786,10 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
    <Text>afaf </Text>
 </View>
 
-      </Modal>
-
-
+      </Modal> */}
 
       <Modal
-      //FOT IMAGE VIEWER
+        //FOT IMAGE VIEWER
         visible={visibleMainModal}
         marginBottom={0}
         marginTop={0}
@@ -1687,7 +1856,6 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
                 : styles.FilterHeightMin,
             ]}>
             <View style={{padding: 5}}>
-
               {/* <Button title="chnage" onPress={() => setVariantPicker('')} /> */}
               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Vendor :</Text>
@@ -1882,6 +2050,34 @@ const [PleaseWaitVisible, setPleaseWaitVisible]= useState(false);
 }
 
 const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    width: 56,
+    height: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 20,
+    bottom: 20,
+    backgroundColor: '#03A9F4',
+    borderRadius: 30,
+    elevation: 8,
+  },
+  fab2: {
+    position: 'absolute',
+    width: 56,
+    height: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+    left: 20,
+    bottom: 20,
+    backgroundColor: '#03A9F4',
+    borderRadius: 30,
+    elevation: 8,
+  },
+  fabIcon: {
+    fontSize: 30,
+    color: 'white',
+  },
   loading: {
     position: 'absolute',
     left: 0,
