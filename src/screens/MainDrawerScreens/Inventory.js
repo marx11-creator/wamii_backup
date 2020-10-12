@@ -92,13 +92,13 @@ export default function Inventory(props) {
   ];
   var ImageLoop = [];
   var refContainer = useRef();
-
+  var swiper = useRef();
   const [
     onEndReachedCalledDuringMomentum,
     setonEndReachedCalledDuringMomentum,
   ] = useState(false);
 
-  const [isVisibleButton, setisVisibleButton] = useState(true);
+  const [isVisibleButton, setisVisibleButton] = useState(false);
 
   //   const onEndReached = () => {
   //     if (onEndReachedCalledDuringMomentum===false) {
@@ -121,18 +121,14 @@ export default function Inventory(props) {
   //     }
   //   };
 
-  const swiper = React.createRef();
-  // const onIndexChanged = (index) => {
-  //   if (Number(1) + Number(index) === ImageLoop.length) {
-  //     console.log(Number(index) + Number(1) + ' current image');
-  //     setstart(end);
-  //     setend(Number(end) + Number(9));
-  //     swiper.current.scrollTo(0);
-  //   } else {
-  //     console.log(Number(1) + Number(index));
-  //     console.log(ImageLoop.length);
-  //   }
-  // };
+  const onIndexChanged = (index) => {
+    swiper.current.scrollTo(9);
+  };
+
+  function MovedSwiper(inumber) {
+    swiper.current.scrollTo(inumber);
+  }
+
   const [globalState] = useContext(PageContextGlobalState);
   const [globalTimer] = useContext(PageContextGlobalTimer);
 
@@ -264,20 +260,14 @@ export default function Inventory(props) {
   const [visibleMainModal, setVisibleMainModal] = useState(false);
   const [visibleImageListModal, setvisibleImageListModal] = useState(false);
 
-  //   useEffect(()=>{
-  //     var temp = [];
-  //     if (CurrentItemCount === LocalPromoItemData.length) {
-
-  //       LocalPromoItemData.slice([start -1], [end]).map((item, i) => {
-  //           temp.push(item);
-  //       });
-
-  //     setCurrentLocalItem(temp);
-  //     setstart(Number(start) + Number(200));
-  //     setend(Number(end) + Number(200));
-
-  //      }
-  // },[LocalPromoItemData])
+  // useEffect(() => {
+  //   if (visibleImageListModal === true) {
+  //     MovedSwiper(20);
+  //     console.log(visibleImageListModal + ' true');
+  //   } else {
+  //     console.log(visibleImageListModal + ' false');
+  //   }
+  // }, [visibleImageListModal]);
 
   useEffect(() => {
     if (PleaseWaitVisible === false) {
@@ -531,20 +521,6 @@ export default function Inventory(props) {
 
           console.log('Successfully loaded Initial ' + temp.length + ' sku');
           setLocalPromoItemData(temp);
-
-          // if (name === 'next') {
-          //   console.log('next was clicked');
-          //   setstart(Number(start) + Number(50));
-          //   setend(Number(end) + Number(50));
-          // } else if (name === 'prev') {
-          //   console.log('prev was click');
-          //   setstart(Number(start) - Number(50));
-          //   setend(Number(end) - Number(50));
-          // } else {
-          //   console.log('name is blank');
-          //   setstart(Number(start) + Number(50));
-          //   setend(Number(end) + Number(50));
-          // }
 
           setPleaseWaitVisible(false);
         },
@@ -877,8 +853,10 @@ export default function Inventory(props) {
           }}>
           <TouchableHighlight
             onPress={() => {
-              setSelectedImage(item.img_url);
-              setVisibleMainModal(true);
+              MovedSwiper(20);
+              // setSelectedImage(item.img_url);
+              // setVisibleMainModal(true);
+              //  /zoomview
             }}>
             <Image
               style={{
@@ -1047,11 +1025,14 @@ export default function Inventory(props) {
           <View style={[styles.promoitemImageContainer]}>
             <TouchableOpacity
               onPress={() => {
-                console.log('trigger imagelistmodal');
+                var test11 = Number(index) + Number(1);
+                var setindexnow = Number(page) * Number(50) + Number(index);
+                console.log('PRESED imagelistmodal ON INDEX ' + test11);
 
-                setPleaseWaitVisible(true);
-                //   setvisibleImageListModal(true);
-                //   setcurrentIndex( (Number(page) * Number(200)) +  Number(index) );
+                setcurrentIndex(setindexnow);
+
+                setvisibleImageListModal(true);
+
                 // setSelectedImage(item.img_url);
                 // setVisibleMainModal(true);
               }}>
@@ -1208,27 +1189,34 @@ export default function Inventory(props) {
         <View
           style={{
             zIndex: 1,
-            width: '100%',
-            height: '100%',
-            opacity: 0.8,
+            flex: 1,
+            backgroundColor: 'rgba(71, 72, 61, 0.5)',
             position: 'absolute',
-            backgroundColor: '#ffffff',
             justifyContent: 'center',
             alignContent: 'center',
             alignItems: 'center',
+            width: '100%',
+            height: '100%',
           }}>
           <View
             style={{
-              backgroundColor: '#ffffff',
-              opacity: 1,
-              height: 100,
-              width: 200,
               borderRadius: 20,
+              backgroundColor: '#ffffff',
               justifyContent: 'center',
               alignContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: moderateScale(18)}}>Please wait...</Text>
+            <View
+              style={{
+                opacity: 1,
+                height: 50,
+                width: 200,
+                justifyContent: 'center',
+                alignContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text style={{fontSize: moderateScale(18)}}>Please wait...</Text>
+            </View>
           </View>
         </View>
       ) : null}
@@ -1359,7 +1347,7 @@ export default function Inventory(props) {
             style={{
               flexDirection: 'row',
               backgroundColor: 'transparent',
-              marginVertical: 10,
+              marginVertical: 5,
             }}>
             <View
               style={{
@@ -1539,12 +1527,12 @@ export default function Inventory(props) {
         LocalPromoItemData.length > 0 ? (
           <View style={{flexDirection: 'column'}}>
             <FlatList
-              onScrollEndDrag={() => {
-                setisVisibleButton(true);
-              }}
-              onScrollBeginDrag={() => {
-                setisVisibleButton(false);
-              }}
+              // onScrollEndDrag={() => {
+              //   setisVisibleButton(true);
+              // }}
+              // onScrollBeginDrag={() => {
+              //   setisVisibleButton(false);
+              // }}
               ref={refContainer}
               data={LocalPromoItemData}
               renderItem={renderItem}
@@ -1555,10 +1543,13 @@ export default function Inventory(props) {
               keyExtractor={(item) => item.product_id}
               numColumns={2}
               removeClippedSubviews={true}
-              // onEndReachedThreshold={0.01}
-              // onMomentumScrollBegin={() => { setonEndReachedCalledDuringMomentum(false)}}
+              //   onEndReachedThreshold={0.5}
+              // // onMomentumScrollBegin={() => { setonEndReachedCalledDuringMomentum(false)}}
 
-              // onEndReached={onEndReached}
+              // onEndReached={() => {
+              //   console.log('1dad')
+              //   setisVisibleButton(true);
+              // }}
 
               //           onEndReached={()=>{
 
@@ -1593,7 +1584,7 @@ export default function Inventory(props) {
 
               //           }
             />
-            {InventorySummary.TotalItems > 50 && isLastPage === false && isVisibleButton === true ? (
+            {InventorySummary.TotalItems > 50 && isLastPage === false ? (
               <TouchableOpacity
                 onPress={() => {
                   // var currentpageAdd = Number(page) * Number(50);
@@ -1616,7 +1607,7 @@ export default function Inventory(props) {
               </TouchableOpacity>
             ) : null}
 
-            {page > 0 && isVisibleButton === true  ? (
+            {page > 0 ? (
               <TouchableOpacity
                 //PREVIOUS PAGE
                 onPress={() => {
@@ -1709,40 +1700,23 @@ export default function Inventory(props) {
             }}>
             <Text style={{fontSize: moderateScale(20)}}>Please wait...</Text>
           </View>
-
-          <Swiper
-            // ref={swiper}
-
-            style={{zIndex: 1}}
-            onIndexChanged={(index) => {
-              // console.log(Number(index) + Number(1) + ' current image');
-              // console.log(Math.floor(Number(currentIndex) / 2));
-              setcurrentIndex(index);
-
-              //  if (Number(index) + Number(1) === (Number(end)-Number(200)) ){
-
-              //   // if(CurrentLocalItem.length > 0 ){
-              //   //   //  console.log(CurrentLocalItem);
-              //   //    console.log('this is end');
-
-              //   //   // LoadinitialItem();
-
-              //   // }
-
-              //  }
-            }}
-            //
-            index={currentIndex}
-            showsPagination={false}
-            loadMinimalSize={20}
-            loadMinimal={false}
-            autoplay={false}
-            pagingEnabled={true}
-            autoplayTimeout={2}
-            showsButtons={true}
-            loop={false}>
-            {ImageLoop}
-          </Swiper>
+          {PleaseWaitVisible === false ? (
+            <Swiper
+              ref={swiper}
+              style={{zIndex: 1}}
+              // onIndexChanged={onIndexChanged}
+              showsPagination={false}
+              loadMinimalSize={20}
+              loadMinimal={false}
+              autoplay={false}
+              pagingEnabled={true}
+              autoplayTimeout={2}
+              showsButtons={true}
+              index={currentIndex}
+              loop={false}>
+              {ImageLoop}
+            </Swiper>
+          ) : null}
         </View>
       </Modal>
 
@@ -2041,7 +2015,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#03A9F4',
     borderRadius: 30,
     elevation: 8,
-    opacity: 0.6,
+    opacity: 0.8,
   },
   fab2: {
     position: 'absolute',
@@ -2054,6 +2028,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#03A9F4',
     borderRadius: 30,
     elevation: 8,
+    opacity: 0.8,
   },
   fabIcon: {
     fontSize: 30,

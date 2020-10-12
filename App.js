@@ -4,9 +4,10 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 
 import StartLandingScreen from './src/screens/loginscreens/StartLandingScreen';
-import PageContextGlobalState  from './src/screens/MainDrawerScreens/pagecontextGlobalState';
+import PageContextGlobalState from './src/screens/MainDrawerScreens/pagecontextGlobalState';
 import PageContextGlobalTimer from './src/screens/MainDrawerScreens/pagecontextGlobalTimer';
 import PageContextAutoLogout from './src/screens/MainDrawerScreens/pagecontextAutoLogout';
+import PageContextDatas from './src/screens/MainDrawerScreens/pagecontextDatas';
 import moment from 'moment';
 const Stack = createStackNavigator();
 
@@ -42,22 +43,53 @@ const App = () => {
       moment().utcOffset('+08:00').format('MMMM') +
       '',
   });
+
+  const [datas, setdatas] = useState(
+    {
+      name: 'ARJAY',
+      lastname: 'DAVID',
+      age: '28',
+      sex: 'M',
+    },
+    {
+      name: 'JANE',
+      lastname: 'NALUS',
+      age: '27',
+      sex: 'F',
+    },
+    {
+      name: 'MARK',
+      lastname: 'MANGILA',
+      age: '27',
+      sex: 'F',
+    },
+  );
+
   return (
     <PageContextGlobalState.Provider value={[globalState, setglobalState]}>
       <PageContextGlobalTimer.Provider value={[globalTimer, setglobalTimer]}>
-        <PageContextAutoLogout.Provider value={[globalAutoLogout, setglobalAutoLogout]}>
-      <NavigationContainer>
-        <Stack.Navigator headerMode="none">
-          <Stack.Screen
-            name="StartLoginScreen"
-            component={StartLandingScreen}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-      </PageContextAutoLogout.Provider>
+        <PageContextAutoLogout.Provider
+          value={[globalAutoLogout, setglobalAutoLogout]}>
+
+<PageContextDatas.Provider
+          value={[datas, setdatas]}>
+
+
+          <NavigationContainer>
+            <Stack.Navigator headerMode="none">
+              <Stack.Screen
+                name="StartLoginScreen"
+                component={StartLandingScreen}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+          </PageContextDatas.Provider>
+
+
+          </PageContextDatas.Provider>
+        </PageContextAutoLogout.Provider>
       </PageContextGlobalTimer.Provider>
     </PageContextGlobalState.Provider>
-
   );
 };
 

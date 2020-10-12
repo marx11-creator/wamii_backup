@@ -1,27 +1,7 @@
 import React from 'react';
 import {Text, View, Image} from 'react-native';
 import Swiper from 'react-native-swiper';
-
-const datas = [
-  {
-    name: 'ARJAY',
-    lastname: 'DAVID',
-    age: '28',
-    sex: 'M',
-  },
-  {
-    name: 'JANE',
-    lastname: 'NALUS',
-    age: '27',
-    sex: 'F',
-  },
-  {
-    name: 'MARK',
-    lastname: 'MANGILA',
-    age: '27',
-    sex: 'F',
-  },
-];
+import {useState} from 'reactn';
 
 const colors = [
   '#F4568F',
@@ -48,8 +28,9 @@ var styles = {
 };
 
 export default function InventoryImageList() {
- 
   var ImageLoop = [];
+
+  const [currentIndex, setcurrentIndex] = useState(0);
 
   for (let i = 0; i < datas.length; i++) {
     ImageLoop.push(
@@ -77,19 +58,17 @@ export default function InventoryImageList() {
 
   return (
     <Swiper
-      style={styles.wrapper}
-      onIndexChanged={(index) => {
-        console.log(index);
-      }}
-      //
-
+      // ref={swiper}
+      style={{zIndex: 1}}
+      // onIndexChanged={onIndexChanged}
       showsPagination={false}
-      loadMinimalSize={10}
-      loadMinimal={true}
+      loadMinimalSize={20}
+      loadMinimal={false}
       autoplay={false}
       pagingEnabled={true}
       autoplayTimeout={2}
       showsButtons={true}
+      index={currentIndex}
       loop={false}>
       {ImageLoop}
     </Swiper>
