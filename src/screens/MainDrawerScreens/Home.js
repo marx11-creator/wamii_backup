@@ -309,7 +309,7 @@ export default function Home(props) {
       console.log('focus on per Home1');
       CurrentAppScreen.Screen = 'Home';
       UpdateYearMonthsFilter();
-   
+      props.navigation.navigate('Inventory');
     });
   }, []);
 

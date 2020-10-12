@@ -70,22 +70,15 @@ const App = () => {
       <PageContextGlobalTimer.Provider value={[globalTimer, setglobalTimer]}>
         <PageContextAutoLogout.Provider
           value={[globalAutoLogout, setglobalAutoLogout]}>
-
-<PageContextDatas.Provider
-          value={[datas, setdatas]}>
-
-
-          <NavigationContainer>
-            <Stack.Navigator headerMode="none">
-              <Stack.Screen
-                name="StartLoginScreen"
-                component={StartLandingScreen}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-          </PageContextDatas.Provider>
-
-
+          <PageContextDatas.Provider value={[datas, setdatas]}>
+            <NavigationContainer>
+              <Stack.Navigator headerMode="none">
+                <Stack.Screen
+                  name="StartLoginScreen"
+                  component={StartLandingScreen}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
           </PageContextDatas.Provider>
         </PageContextAutoLogout.Provider>
       </PageContextGlobalTimer.Provider>

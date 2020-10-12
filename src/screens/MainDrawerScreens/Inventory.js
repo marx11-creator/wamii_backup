@@ -52,7 +52,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import numbro from 'numbro';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons//MaterialIcons';
-
+import BackgroundTimer from 'react-native-background-timer';
 var CurrentItemCount = 0;
 var count = 0;
 var localItemcount = 0;
@@ -215,6 +215,7 @@ export default function Inventory(props) {
     },
   ];
   const [PleaseWaitVisible, setPleaseWaitVisible] = useState(false);
+  const [PleaseWaitImageList, setPleaseWaitImageList] = useState(false);
   const [currentIndex, setcurrentIndex] = useState(0);
   const [InventorySummary, setInventorySummary] = useState(
     InventorySummaryFields,
@@ -269,14 +270,14 @@ export default function Inventory(props) {
   //   }
   // }, [visibleImageListModal]);
 
-  useEffect(() => {
-    if (PleaseWaitVisible === false) {
-      if (refContainer.current) {
-        //2
-        refContainer.current.scrollToIndex({animated: true, index: 0});
-      }
-    }
-  }, [PleaseWaitVisible]);
+  // useEffect(() => {
+  //   if (PleaseWaitVisible === false) {
+  //     if (refContainer.current) {
+  //       //2
+  //       refContainer.current.scrollToIndex({animated: true, index: 0});
+  //     }
+  //   }
+  // }, [PleaseWaitVisible]);
 
   // function wait(timeout) {
   //   return new Promise((resolve) => {
@@ -821,523 +822,47 @@ export default function Inventory(props) {
     },
   ];
 
-  // function FlatListHeader() {
-  //   return (
-  //     <View
-  //       style={{
-  //         flexDirection: 'row',
-  //         justifyContent: 'center',
-  //         alignItems: 'center',
-  //       }}>
-  //       <Text style={{marginRight: moderateScale(10, 0.5)}}>Updating...</Text>
-  //       <ActivityIndicator size="large" color="green" />
-  //     </View>
-  //   );
-  // }
-
-  LocalPromoItemData.slice([0], [LocalPromoItemData.length]).map((item, i) => {
-    // placeIDs.push(item.place_id);
-    //zoom
-    ImageLoop.push(
+  function ShowPleaseWait() {
+    return (
       <View
-        testID="Hello"
-        style={{flex: 1, backgroundColor: '#ffffff', flexDirection: 'column'}}>
+        style={{
+          zIndex: 2,
+          flex: 1,
+          backgroundColor: 'rgba(71, 72, 61, 0.5)',
+          position: 'absolute',
+          justifyContent: 'center',
+          alignContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          height: '100%',
+        }}>
         <View
           style={{
-            backgroundColor: '#333333',
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            borderBottomColor: '#F5F5F5',
-            borderBottomWidth: 10,
-          }}>
-          <TouchableHighlight
-            onPress={() => {
-              MovedSwiper(20);
-              // setSelectedImage(item.img_url);
-              // setVisibleMainModal(true);
-              //  /zoomview
-            }}>
-            <Image
-              style={{
-                width: width,
-                height: 400,
-              }}
-              source={{
-                uri: item.img_url,
-              }}
-              onError={() => ({
-                uri:
-                  'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
-              })}
-            />
-          </TouchableHighlight>
-        </View>
-        <Text
-          style={{
-            color: 'red',
-            fontSize: moderateScale(20),
-            marginBottom: moderateScale(10),
-            marginTop: moderateScale(20),
-          }}>
-          {' '}
-          ₱
-          {numbro(Number(item.CASE_BOOKING)).format({
-            thousandSeparated: true,
-            mantissa: 2,
-          })}
-        </Text>
-
-        <View
-          style={{
+            borderRadius: 20,
             backgroundColor: '#ffffff',
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-          }}>
-          <Text> </Text>
-          <Image
-            style={{
-              width: moderateScale(40),
-              height: moderateScale(40),
-              resizeMode: 'center',
-            }}
-            source={require('../../assets/wamilogo.png')}
-            // source={require('../../assets/coslorlogo.png')}
-          />
-
-          <Text style={[styles.text, {marginLeft: moderateScale(20)}]}>
-            {item.product_name}
-          </Text>
-        </View>
-        <View
-          style={{
-            marginTop: 10,
-            backgroundColor: '#FDD6DB',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-          }}>
-          <View
-            style={{
-              marginVertical: 5,
-              flexDirection: 'row',
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <View style={{marginLeft: moderateScale(5)}}>
-              <Icon name="layers-outline" color={'#FF0F16'} size={19} />
-            </View>
-            <Text style={{color: 'red', fontSize: moderateScale(13)}}>
-              {' '}
-              Category {item.category}
-            </Text>
-            <Text style={styles.text}> Sardines{item.category}</Text>
-          </View>
-        </View>
-        <View>
-          <View style={{borderBottomColor: '#F5F5F5', borderBottomWidth: 8}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                alignContent: 'center',
-                marginVertical: moderateScale(8),
-              }}>
-              <Text
-                style={{
-                  color: '#333333',
-                  fontSize: moderateScale(15),
-                  marginBottom: 1,
-                }}>
-                {' '}
-                5{' '}
-              </Text>
-              <MaterialIcons
-                name="grade"
-                size={moderateScale(20)}
-                color="#F9C500"
-              />
-              <MaterialIcons
-                name="grade"
-                size={moderateScale(20)}
-                color="#F9C500"
-              />
-
-              <MaterialIcons
-                name="grade"
-                size={moderateScale(20)}
-                color="#F9C500"
-              />
-
-              <MaterialIcons
-                name="grade"
-                size={moderateScale(20)}
-                color="#F9C500"
-              />
-
-              <MaterialIcons
-                name="grade"
-                size={moderateScale(20)}
-                color="#F9C500"
-              />
-            </View>
-          </View>
-          <View
-            style={{
-              flexDirection: 'column',
-              marginLeft: moderateScale(5),
-              borderBottomWidth: 1,
-              borderBottomColor: '#C7CBC9',
-            }}>
-            <Text style={[styles.text, {marginTop: moderateScale(10)}]}>
-              Brand: Ligo {item.Brand}
-            </Text>
-            <Text style={[styles.text, {marginBottom: moderateScale(10)}]}>
-              Variant: {item.product_variant}
-            </Text>
-          </View>
-        </View>
-      </View>,
-    );
-  });
-
-  // for (let i = 0; i < LocalPromoItemData.length; i++) {}
-
-  const renderItem = ({item, index}) => (
-    <LinearGradient
-      start={{x: 0.3, y: 0.6}}
-      end={{x: 1, y: 1}}
-      style={{
-        margin: 2,
-        marginTop: 0,
-        borderColor: '#C6CDC8',
-        borderWidth: 0.9,
-      }}
-      colors={['white', '#F47F83']}>
-      <View style={[styles.promoItemDetailsNImage]}>
-        <View
-          style={{
-            backgroundColor: 'transparent',
-            flex: 1,
-            flexDirection: 'row',
-          }}>
-          <View style={[styles.promoitemImageContainer]}>
-            <TouchableOpacity
-              onPress={() => {
-                var test11 = Number(index) + Number(1);
-                var setindexnow = Number(page) * Number(50) + Number(index);
-                console.log('PRESED imagelistmodal ON INDEX ' + test11);
-
-                setcurrentIndex(setindexnow);
-
-                setvisibleImageListModal(true);
-
-                // setSelectedImage(item.img_url);
-                // setVisibleMainModal(true);
-              }}>
-              <Image
-                style={styles.promoitemImage}
-                source={{
-                  uri: item.img_url,
-                }}
-                onError={() => ({
-                  uri:
-                    'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
-                })}
-              />
-              {/* 
-<FastImage
-        style={styles.promoitemImage}
-        source={{
-            uri: item.img_url,
-            headers: { Authorization: 'someAuthToken' },
-            priority: FastImage.priority.normal,
-        }}
-        resizeMode={FastImage.resizeMode.contain}
-    /> */}
-            </TouchableOpacity>
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'transparent',
-              marginLeft: scale(15),
-              flexDirection: 'column',
-              justifyContent: 'space-evenly',
-              margin: scale(10),
-              alignItems: 'flex-end',
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                {
-                  unitPrice === 'CASE'
-                    ? setunitPrice('PCS')
-                    : setunitPrice('CASE');
-                }
-              }}>
-              <Text
-                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                {item.row_number} {' Price per '}
-                {unitPrice === 'CASE' ? 'CASE' : 'PCs'}
-              </Text>
-
-              <Text
-                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                {'BK: P'}
-
-                {unitPrice === 'CASE'
-                  ? numbro(Number(item.CASE_BOOKING)).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })
-                  : numbro(Number(item.PCS_BOOKING)).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })}
-              </Text>
-
-              <Text
-                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                {'VAN: P'}
-                {unitPrice === 'CASE'
-                  ? numbro(Number(item.CASE_EXTRUCK)).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })
-                  : numbro(Number(item.PCS_EXTRUCK)).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View
-          style={[
-            styles.promoitemDetails,
-            {backgroundColor: 'transparent', marginTop: 10},
-          ]}>
-          <Text style={styles.item2}>{item.product_variant}</Text>
-          <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
-            {item.product_name}
-          </Text>
-          <Text style={styles.item}>Stocks : {item.inventory}</Text>
-        </View>
-      </View>
-    </LinearGradient>
-  );
-
-  // //from array to section list format
-  // const result = [];
-  // let dayData = {title: '', data: []};
-
-  // LocalPromoItemData.map(function (item, i) {
-  //   const Sectiontitle = item.principal_name;
-
-  //   if (dayData.title === Sectiontitle) {
-  //     dayData.data.push(item);
-  //   } else {
-  //     dayData = {
-  //       title: Sectiontitle,
-  //       data: [item],
-  //     };
-  //     result.push(dayData);
-  //   }
-  // });
-
-  const SectionListItem = ({item}) =>
-    item.product_variant === '' ? null : (
-      <View style={styles.promoItemDetailsNImage}>
-        <View style={styles.promoitemImageContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              setSelectedImage(item.img_url);
-              setVisibleMainModal(true);
-            }}>
-            <Image
-              style={styles.promoitemImage}
-              source={{
-                uri: item.img_url,
-              }}
-              onError={() => ({
-                uri:
-                  'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
-              })}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.promoitemDetails}>
-          <Text style={styles.item2}>{item.product_variant}</Text>
-          <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
-            {item.product_name}
-          </Text>
-          <Text style={styles.item}>Stocks : {item.inventory}</Text>
-        </View>
-      </View>
-    );
-
-  // function  LoadinitialItem(){
-
-  // }
-
-  return (
-    <View style={styles.container}>
-      {PleaseWaitVisible ? (
-        <View
-          style={{
-            zIndex: 1,
-            flex: 1,
-            backgroundColor: 'rgba(71, 72, 61, 0.5)',
-            position: 'absolute',
             justifyContent: 'center',
             alignContent: 'center',
             alignItems: 'center',
-            width: '100%',
-            height: '100%',
           }}>
           <View
             style={{
-              borderRadius: 20,
-              backgroundColor: '#ffffff',
+              opacity: 1,
+              height: 50,
+              width: 200,
               justifyContent: 'center',
               alignContent: 'center',
               alignItems: 'center',
             }}>
-            <View
-              style={{
-                opacity: 1,
-                height: 50,
-                width: 200,
-                justifyContent: 'center',
-                alignContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Text style={{fontSize: moderateScale(18)}}>Please wait...</Text>
-            </View>
+            <Text style={{fontSize: moderateScale(18)}}>Please wait....</Text>
           </View>
         </View>
-      ) : null}
+      </View>
+    );
+  }
 
-      <View style={{flexDirection: 'column'}}>
-        <View style={styles.HeaderView}>
-          <View style={{flex: 1, marginLeft: scale(15)}}>
-            <View style={{width: 50}}>
-              <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-                <Icon name="md-filter" color={'#ffffff'} size={34} />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View
-            style={{
-              flex: 1.5,
-              justifyContent: 'center',
-              alignContent: 'center',
-              alignItems: 'flex-end',
-              alignSelf: 'center',
-            }}>
-            <FlatButton // MAIN
-              width={120}
-              text="Filter"
-              gradientFrom="#F9A7A8"
-              gradientTo="#D6171A"
-              onPress={() => {
-                // setarrVariantListfromPicker(arrVariantListfromPickerLocal);
-                GetPrincipalList();
-                setisModalVisible2(!isModalVisible2);
-                if (refContainer.current) {
-                  //2
-                  refContainer.current.scrollToIndex({
-                    animated: true,
-                    index: 0,
-                  });
-                }
-              }}
-            />
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-              width: scale(150),
-              marginRight: 10,
-              alignContent: 'flex-end',
-              alignItems: 'flex-end',
-              justifyContent: 'flex-end',
-            }}>
-            <Text
-              style={{
-                color: '#ffffff',
-                fontSize: moderateScale(12, 0.5),
-                alignContent: 'flex-end',
-                alignItems: 'flex-end',
-                justifyContent: 'flex-end',
-              }}>
-              Last Update
-            </Text>
-            <Text
-              style={{
-                color: '#ffffff',
-                fontSize: moderateScale(12, 0.5),
-                alignContent: 'flex-end',
-                alignItems: 'flex-end',
-                justifyContent: 'flex-end',
-              }}>
-              {globalTimer.lastUpdate}
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignContent: 'center',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: 5,
-              }}>
-              <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                <Icon name="refresh" color={'#ffffff'} size={10} />
-              </View>
-              <Text
-                style={{
-                  color: '#ffffff',
-                  fontSize: moderateScale(12, 0.5),
-                  alignContent: 'flex-end',
-                  alignItems: 'flex-end',
-                  justifyContent: 'flex-end',
-                }}>
-                {globalState.updateStatus === 'Updating' ||
-                globalState.updateStatus === 'Start' ? (
-                  <Text
-                    style={{
-                      color: '#ffffff',
-                      fontSize: moderateScale(12, 0.5),
-                      alignContent: 'flex-end',
-                      alignItems: 'flex-end',
-                      justifyContent: 'flex-end',
-                    }}>
-                    {'Updating...'}{' '}
-                    {globalState.updatePercentage > 0
-                      ? globalState.updatePercentage + ' %'
-                      : ''}
-                  </Text>
-                ) : null}
-
-                {/* <Text
-                        style={{
-                          color: 'white',
-                          fontSize: moderateScale(12, 0.5),
-                          alignContent: 'flex-end',
-                          alignItems: 'flex-end',
-                          justifyContent: 'flex-end',
-                        }}>
-                        {hhmmss(900 - globalStatus.CurrentSeconds)}
-                      </Text> */}
-              </Text>
-            </View>
-          </View>
-        </View>
-
+  function FlatListHeader() {
+    return (
+      <View style={{}}>
         <LinearGradient
           style={{zIndex: 0, margin: 0}}
           // start={{x: 1, y: 0.5}}
@@ -1520,6 +1045,496 @@ export default function Inventory(props) {
             </View>
           </View>
         </LinearGradient>
+
+        {/* <ActivityIndicator size="large" color="green" /> */}
+      </View>
+    );
+  }
+
+  LocalPromoItemData.slice([0], [LocalPromoItemData.length]).map((item, i) => {
+    // placeIDs.push(item.place_id);
+
+    ImageLoop.push(
+      <View
+        testID="Hello"
+        style={{flex: 1, backgroundColor: '#ffffff', flexDirection: 'column'}}>
+        <View
+          style={{
+            backgroundColor: '#333333',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            borderBottomColor: '#F5F5F5',
+            borderBottomWidth: 10,
+          }}>
+          <TouchableHighlight
+            onPress={() => {
+              //  console.log('ad');
+
+              setPleaseWaitImageList(true);
+
+              setSelectedImage(item.img_url);
+              setVisibleMainModal(true);
+              //  /zoomview
+            }}>
+            <Image
+              style={{
+                width: width,
+                height: 400,
+              }}
+              source={{
+                uri: item.img_url,
+              }}
+              onError={() => ({
+                uri:
+                  'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
+              })}
+            />
+          </TouchableHighlight>
+        </View>
+        <Text
+          style={{
+            color: 'red',
+            fontSize: moderateScale(20),
+            marginBottom: moderateScale(10),
+            marginTop: moderateScale(20),
+          }}>
+          {' '}
+          ₱
+          {numbro(Number(item.CASE_BOOKING)).format({
+            thousandSeparated: true,
+            mantissa: 2,
+          })}
+        </Text>
+
+        <View
+          style={{
+            backgroundColor: '#ffffff',
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+          }}>
+          <Text> </Text>
+          <Image
+            style={{
+              width: moderateScale(40),
+              height: moderateScale(40),
+              resizeMode: 'center',
+            }}
+            source={require('../../assets/wamilogo.png')}
+            // source={require('../../assets/coslorlogo.png')}
+          />
+
+          <Text style={[styles.text, {marginLeft: moderateScale(20)}]}>
+            {item.product_name}
+          </Text>
+        </View>
+        <View
+          style={{
+            marginTop: 10,
+            backgroundColor: '#FDD6DB',
+            justifyContent: 'center',
+            alignItems: 'flex-start',
+          }}>
+          <View
+            style={{
+              marginVertical: 5,
+              flexDirection: 'row',
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <View style={{marginLeft: moderateScale(5)}}>
+              <Icon name="layers-outline" color={'#FF0F16'} size={19} />
+            </View>
+            <Text style={{color: 'red', fontSize: moderateScale(13)}}>
+              {' '}
+              Category {item.category}
+            </Text>
+            <Text style={styles.text}> Sardines{item.category}</Text>
+          </View>
+        </View>
+        <View>
+          <View style={{borderBottomColor: '#F5F5F5', borderBottomWidth: 8}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                alignContent: 'center',
+                marginVertical: moderateScale(8),
+              }}>
+              <Text
+                style={{
+                  color: '#333333',
+                  fontSize: moderateScale(15),
+                  marginBottom: 1,
+                }}>
+                {' '}
+                5{' '}
+              </Text>
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(20)}
+                color="#F9C500"
+              />
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(20)}
+                color="#F9C500"
+              />
+
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(20)}
+                color="#F9C500"
+              />
+
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(20)}
+                color="#F9C500"
+              />
+
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(20)}
+                color="#F9C500"
+              />
+            </View>
+          </View>
+          <View
+            style={{
+              flexDirection: 'column',
+              marginLeft: moderateScale(5),
+              borderBottomWidth: 1,
+              borderBottomColor: '#C7CBC9',
+            }}>
+            <Text style={[styles.text, {marginTop: moderateScale(10)}]}>
+              Brand: Ligo {item.Brand}
+            </Text>
+            <Text style={[styles.text, {marginBottom: moderateScale(10)}]}>
+              Variant: {item.product_variant}
+            </Text>
+          </View>
+        </View>
+      </View>,
+    );
+  });
+
+  // for (let i = 0; i < LocalPromoItemData.length; i++) {}
+
+  const renderItem = ({item, index}) => (
+    <LinearGradient
+      start={{x: 0.3, y: 0.6}}
+      end={{x: 1, y: 1}}
+      style={{
+        margin: 2,
+        marginTop: 0,
+        borderColor: '#C6CDC8',
+        borderWidth: 0.9,
+      }}
+      colors={['white', '#F47F83']}>
+      <View style={[styles.promoItemDetailsNImage]}>
+        <View
+          style={{
+            backgroundColor: 'transparent',
+            flex: 1,
+            flexDirection: 'row',
+          }}>
+          <View style={[styles.promoitemImageContainer]}>
+            <TouchableOpacity
+              onPress={() => {
+                var setindexforImagelIst = Number(index);
+                console.log('PRESED imagelistmodal ON INDEX ' + Number(index));
+                setPleaseWaitVisible(true);
+                setcurrentIndex(setindexforImagelIst);
+                
+                var secs = 0;
+                const timerID = BackgroundTimer.setInterval(() => {
+                  secs = secs + 1;
+
+                 
+
+                  if (secs === 2) {
+                    setPleaseWaitVisible(false);
+                    setvisibleImageListModal(true);
+                    BackgroundTimer.clearInterval(timerID);
+                  }
+                }, 500);
+
+                //  setPleaseWaitVisible(true);
+
+                // setSelectedImage(item.img_url);
+                // setVisibleMainModal(true);
+              }}>
+              <Image
+                style={styles.promoitemImage}
+                source={{
+                  uri: item.img_url,
+                }}
+                onError={() => ({
+                  uri:
+                    'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
+                })}
+              />
+              {/* 
+<FastImage
+        style={styles.promoitemImage}
+        source={{
+            uri: item.img_url,
+            headers: { Authorization: 'someAuthToken' },
+            priority: FastImage.priority.normal,
+        }}
+        resizeMode={FastImage.resizeMode.contain}
+    /> */}
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'transparent',
+              marginLeft: scale(15),
+              flexDirection: 'column',
+              justifyContent: 'space-evenly',
+              margin: scale(10),
+              alignItems: 'flex-end',
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                {
+                  unitPrice === 'CASE'
+                    ? setunitPrice('PCS')
+                    : setunitPrice('CASE');
+                }
+              }}>
+              <Text
+                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                {item.row_number} {' Price per '}
+                {unitPrice === 'CASE' ? 'CASE' : 'PCs'}
+              </Text>
+
+              <Text
+                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                {'BK: P'}
+
+                {unitPrice === 'CASE'
+                  ? numbro(Number(item.CASE_BOOKING)).format({
+                      thousandSeparated: true,
+                      mantissa: 2,
+                    })
+                  : numbro(Number(item.PCS_BOOKING)).format({
+                      thousandSeparated: true,
+                      mantissa: 2,
+                    })}
+              </Text>
+
+              <Text
+                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                {'VAN: P'}
+                {unitPrice === 'CASE'
+                  ? numbro(Number(item.CASE_EXTRUCK)).format({
+                      thousandSeparated: true,
+                      mantissa: 2,
+                    })
+                  : numbro(Number(item.PCS_EXTRUCK)).format({
+                      thousandSeparated: true,
+                      mantissa: 2,
+                    })}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View
+          style={[
+            styles.promoitemDetails,
+            {backgroundColor: 'transparent', marginTop: 10},
+          ]}>
+          <Text style={styles.item2}>{item.product_variant}</Text>
+          <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
+            {item.product_name}
+          </Text>
+          <Text style={styles.item}>Stocks : {item.inventory}</Text>
+        </View>
+      </View>
+    </LinearGradient>
+  );
+
+  // //from array to section list format
+  // const result = [];
+  // let dayData = {title: '', data: []};
+
+  // LocalPromoItemData.map(function (item, i) {
+  //   const Sectiontitle = item.principal_name;
+
+  //   if (dayData.title === Sectiontitle) {
+  //     dayData.data.push(item);
+  //   } else {
+  //     dayData = {
+  //       title: Sectiontitle,
+  //       data: [item],
+  //     };
+  //     result.push(dayData);
+  //   }
+  // });
+
+  // const SectionListItem = ({item}) =>
+  //   item.product_variant === '' ? null : (
+  //     <View style={styles.promoItemDetailsNImage}>
+  //       <View style={styles.promoitemImageContainer}>
+  //         <TouchableOpacity
+  //           onPress={() => {
+  //             setSelectedImage(item.img_url);
+  //             setVisibleMainModal(true);
+  //           }}>
+  //           <Image
+  //             style={styles.promoitemImage}
+  //             source={{
+  //               uri: item.img_url,
+  //             }}
+  //             onError={() => ({
+  //               uri:
+  //                 'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
+  //             })}
+  //           />
+  //         </TouchableOpacity>
+  //       </View>
+  //       <View style={styles.promoitemDetails}>
+  //         <Text style={styles.item2}>{item.product_variant}</Text>
+  //         <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
+  //           {item.product_name}
+  //         </Text>
+  //         <Text style={styles.item}>Stocks : {item.inventory}</Text>
+  //       </View>
+  //     </View>
+  //   );
+
+  // function  LoadinitialItem(){
+
+  // }
+
+  return (
+    <View style={styles.container}>
+      {PleaseWaitVisible === true ? <ShowPleaseWait /> : null}
+
+      <View style={{flexDirection: 'column'}}>
+        <View style={styles.HeaderView}>
+          <View style={{flex: 1, marginLeft: scale(15)}}>
+            <View style={{width: 50}}>
+              <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+                <Icon name="md-filter" color={'#ffffff'} size={34} />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View
+            style={{
+              flex: 1.5,
+              justifyContent: 'center',
+              alignContent: 'center',
+              alignItems: 'flex-end',
+              alignSelf: 'center',
+            }}>
+            <FlatButton // MAIN
+              width={120}
+              text="Filter"
+              gradientFrom="#F9A7A8"
+              gradientTo="#D6171A"
+              onPress={() => {
+                console.log(currentIndex);
+
+                // GetPrincipalList();
+                // setisModalVisible2(!isModalVisible2);
+                // if (refContainer.current) {
+                //   //2
+                //   refContainer.current.scrollToIndex({
+                //     animated: true,
+                //     index: 0,
+                //   });
+                // }
+              }}
+            />
+          </View>
+
+          <View
+            style={{
+              flex: 1,
+              width: scale(150),
+              marginRight: 10,
+              alignContent: 'flex-end',
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+            }}>
+            <Text
+              style={{
+                color: '#ffffff',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              Last Update
+            </Text>
+            <Text
+              style={{
+                color: '#ffffff',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              {globalTimer.lastUpdate}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 5,
+              }}>
+              <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                <Icon name="refresh" color={'#ffffff'} size={10} />
+              </View>
+              <Text
+                style={{
+                  color: '#ffffff',
+                  fontSize: moderateScale(12, 0.5),
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                {globalState.updateStatus === 'Updating' ||
+                globalState.updateStatus === 'Start' ? (
+                  <Text
+                    style={{
+                      color: '#ffffff',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {'Updating...'}{' '}
+                    {globalState.updatePercentage > 0
+                      ? globalState.updatePercentage + ' %'
+                      : ''}
+                  </Text>
+                ) : null}
+
+                {/* <Text
+                        style={{
+                          color: 'white',
+                          fontSize: moderateScale(12, 0.5),
+                          alignContent: 'flex-end',
+                          alignItems: 'flex-end',
+                          justifyContent: 'flex-end',
+                        }}>
+                        {hhmmss(900 - globalStatus.CurrentSeconds)}
+                      </Text> */}
+              </Text>
+            </View>
+          </View>
+        </View>
       </View>
 
       <SafeAreaView style={[styles.container, {zIndex: 0}]}>
@@ -1543,6 +1558,7 @@ export default function Inventory(props) {
               keyExtractor={(item) => item.product_id}
               numColumns={2}
               removeClippedSubviews={true}
+              ListHeaderComponent={FlatListHeader}
               //   onEndReachedThreshold={0.5}
               // // onMomentumScrollBegin={() => { setonEndReachedCalledDuringMomentum(false)}}
 
@@ -1663,6 +1679,7 @@ export default function Inventory(props) {
 
       <Modal
         //MODAL FOR IMAGE LIST
+        style={{zIndex: 1}}
         visible={visibleImageListModal}
         marginBottom={0}
         marginTop={0}
@@ -1675,8 +1692,8 @@ export default function Inventory(props) {
           if (indexLast < 1) {
             indexLast = 0;
           }
-          console.log(Math.floor(Number(currentIndex) / 2));
           setvisibleImageListModal(false);
+          setPleaseWaitImageList(false);
           //1
           if (refContainer.current) {
             refContainer.current.scrollToIndex({
@@ -1685,10 +1702,11 @@ export default function Inventory(props) {
             });
           }
         }}>
-        <View style={{flex: 1, backgroundColor: '#E9E9E9'}}>
+        <View style={{flex: 1, backgroundColor: '#E9E9E9', zIndex: 1}}>
+          {PleaseWaitImageList === true ? <ShowPleaseWait /> : null}
+
           <View
             style={{
-              zIndex: 0,
               width: '100%',
               height: '100%',
               opacity: 0.5,
@@ -1698,13 +1716,14 @@ export default function Inventory(props) {
               alignContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: moderateScale(20)}}>Please wait...</Text>
+            {/* <Text style={{fontSize: moderateScale(20)}}>Please wait...</Text> */}
           </View>
           {PleaseWaitVisible === false ? (
             <Swiper
               ref={swiper}
-              style={{zIndex: 1}}
-              // onIndexChanged={onIndexChanged}
+              onIndexChanged={(index) => {
+                setcurrentIndex(index);
+              }}
               showsPagination={false}
               loadMinimalSize={20}
               loadMinimal={false}
@@ -1746,6 +1765,7 @@ export default function Inventory(props) {
         transparent={true}
         onRequestClose={() => {
           setVisibleMainModal(false);
+          setPleaseWaitImageList(false);
         }}>
         <ImageViewer
           imageUrls={images}
