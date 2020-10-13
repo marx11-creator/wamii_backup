@@ -1245,10 +1245,10 @@ export default function Inventory(props) {
               marginHorizontal: moderateScale(10),
             }}>
             <Text style={[styles.text, {marginTop: moderateScale(10)}]}>
-              Brand:     Ligo {item.Brand}
+              Brand: Ligo {item.Brand}
             </Text>
             <Text style={[styles.text, {marginBottom: moderateScale(10)}]}>
-              Variant:   {item.product_variant}
+              Variant: {item.product_variant}
             </Text>
           </View>
 
@@ -1319,6 +1319,50 @@ export default function Inventory(props) {
                 </Text>
               </View>
             </View>
+            <View
+              style={{
+                backgroundColor: '#F5F5F5',
+                height: 8,
+                width: '100%',
+              }}></View>
+
+            <View
+              style={{
+                backgroundColor: 'transparent',
+                borderBottomColor: '#F5F5F5',
+                borderBottomWidth: 8,
+                marginLeft: scale(15),
+              }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginTop: 10,
+                  backgroundColor: 'transparent',
+                  height:20,
+                }}>
+                <View style={{flex: 1}}>
+                  <Text style={{fontSize: moderateScale(15), fontWeight: 'bold'}}>Specifications</Text>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'flex-end',
+                    alignItems: 'flex-end',
+                  }}>
+                  <MaterialCommunityIcons
+                    name="chevron-right"
+                    size={moderateScale(32)}
+                    color="red"
+                  />
+                </View>
+              </View>
+
+              <View style={{marginBottom: 10}}>
+                <Text style={{fontSize: moderateScale(13), fontWeight: '800'}}>
+                  (Weight, Size, Material, Storage Type, Etc..)
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -1331,8 +1375,20 @@ export default function Inventory(props) {
             alignContent: 'space-around',
           }}>
           <View
-            style={{backgroundColor: 'transparent', flex: 1, flexDirection: 'row',justifyContent: 'space-around'}}>
-            <View style={{flex: 1,backgroundColor: 'transparent',justifyContent: 'center',alignItems: 'center',alignContent: 'center'}}>
+            style={{
+              backgroundColor: 'transparent',
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+            }}>
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'transparent',
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignContent: 'center',
+              }}>
               <MaterialCommunityIcons
                 name="storefront-outline"
                 size={moderateScale(30)}
@@ -1342,7 +1398,14 @@ export default function Inventory(props) {
                 VENDOR
               </Text>
             </View>
-            <View style={{flex: 1,backgroundColor: 'transparent',justifyContent: 'center',alignItems: 'center',alignContent: 'center'}}>
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'transparent',
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignContent: 'center',
+              }}>
               <MaterialCommunityIcons
                 name="message-text-outline"
                 size={moderateScale(30)}
@@ -1858,14 +1921,10 @@ export default function Inventory(props) {
         <View style={{flex: 1, backgroundColor: '#E9E9E9', zIndex: 1}}>
           {PleaseWaitImageList === true ? <ShowPleaseWait /> : null}
 
-
-
-
           <TouchableOpacity
             onPress={() => {
-            
-              
-              var indexLast = Number(Number(currentIndex) - Number(4)) / Number(2);
+              var indexLast =
+                Number(Number(currentIndex) - Number(4)) / Number(2);
               if (indexLast < 1) {
                 indexLast = 0;
               }
@@ -1878,8 +1937,6 @@ export default function Inventory(props) {
                   index: Number(indexLast),
                 });
               }
-
-              
             }}
             style={{
               flex: 1,
@@ -1902,9 +1959,6 @@ export default function Inventory(props) {
               marginBottom={8}
             />
           </TouchableOpacity>
-
-
-
 
           <View
             style={{

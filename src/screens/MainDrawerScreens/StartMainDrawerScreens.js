@@ -12,7 +12,7 @@ import ChangePassword from './ChangePassword';
 import BusinessCalendar from './BusinessCalendar';
 import ViewScreen from '../SalesmanReports/SalesmanNet';
 import InventoryImageList from './InventoryImageList';
-import FadingMessage from './test';
+import TEST2 from './TEST2';
 const Drawer = createDrawerNavigator();
 
 export default function StartMainDrawerScreen(props) {
@@ -34,7 +34,7 @@ export default function StartMainDrawerScreen(props) {
       <Drawer.Screen name="BusinessCalendar" component={BusinessCalendar} />
       <Drawer.Screen name="SalesmanNet" component={ViewScreen} />
       <Drawer.Screen name="InventoryImageList" component={InventoryImageList} />
-      <Drawer.Screen name="TEST" component={FadingMessage} />
+      <Drawer.Screen name="TEST2" component={TEST2} />
 
     </Drawer.Navigator>
   );

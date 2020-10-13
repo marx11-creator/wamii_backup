@@ -58,7 +58,9 @@ LogBox.ignoreAllLogs();
 
 export default function Home(props) {
   //  console.log(auth);
-  const [globalAutoLogout, setglobalAutoLogout] = useContext(PageContextAutoLogout);
+  const [globalAutoLogout, setglobalAutoLogout] = useContext(
+    PageContextAutoLogout,
+  );
   const [globalState, setglobalState] = useContext(PageContextGlobalState);
   const [globalTimer] = useContext(PageContextGlobalTimer);
   const [localSeconds, setlocalSeconds] = useState(0);
@@ -233,26 +235,24 @@ export default function Home(props) {
     }, []),
   );
 
-
   useEffect(() => {
-  if (globalAutoLogout === 'TRUE'){
-    setglobalAutoLogout('FALSE');
-    ResetModuleAccess();
-    ClearTeamAccess();
-    ClearDefaults();
+    if (globalAutoLogout === 'TRUE') {
+      setglobalAutoLogout('FALSE');
+      ResetModuleAccess();
+      ClearTeamAccess();
+      ClearDefaults();
 
-    setglobalState({
-      timerSeconds: 0,
-      timerMinute: 0,
-      updateStatus: 'Start',
-      dateTimeUpdated24hr: '',
-      updatePercentage: '',
-    });
- 
-    props.navigation.navigate('SplashScreen');
-  }
+      setglobalState({
+        timerSeconds: 0,
+        timerMinute: 0,
+        updateStatus: 'Start',
+        dateTimeUpdated24hr: '',
+        updatePercentage: '',
+      });
+
+      props.navigation.navigate('SplashScreen');
+    }
   }, [globalAutoLogout]);
-
 
   useEffect(() => {
     getWorkingDays();
@@ -309,12 +309,8 @@ export default function Home(props) {
       console.log('focus on per Home1');
       CurrentAppScreen.Screen = 'Home';
       UpdateYearMonthsFilter();
-      props.navigation.navigate('Inventory');
     });
   }, []);
-
-  
-
 
   return (
     <ImageOverlay
@@ -459,11 +455,11 @@ export default function Home(props) {
                 Wing An Marketing Inc.
               </Text>
               <Button
-              title="test"
-              onPress={() => {
-               props.navigation.navigate('InventoryImageList');
-              }}
-            />
+                title="test"
+                onPress={() => {
+                  props.navigation.navigate('TEST2');
+                }}
+              />
             </View>
 
             <View
@@ -579,7 +575,7 @@ export default function Home(props) {
           </Text>
         </View> */}
           </View>
-          {localSeconds === 2 ? <UpdateModal /> : null}
+          {localSeconds === 200 ? <UpdateModal /> : null}
         </View>
       </ScrollView>
     </ImageOverlay>
