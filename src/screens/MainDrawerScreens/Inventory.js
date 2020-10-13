@@ -52,6 +52,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import numbro from 'numbro';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from 'react-native-vector-icons//MaterialIcons';
+
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import BackgroundTimer from 'react-native-background-timer';
 var CurrentItemCount = 0;
 var count = 0;
@@ -820,6 +823,10 @@ export default function Inventory(props) {
       // Simplest usage.
       url: SelectedImage,
     },
+    {
+      // Simplest usage.
+      url: SelectedImage,
+    },
   ];
 
   function ShowPleaseWait() {
@@ -1067,11 +1074,33 @@ export default function Inventory(props) {
             borderBottomColor: '#F5F5F5',
             borderBottomWidth: 10,
           }}>
+          <View
+            style={{
+              flex: 1,
+              zIndex: 4,
+              position: 'absolute',
+              width: moderateScale(120),
+              height: moderateScale(120),
+              alignItems: 'center',
+              justifyContent: 'center',
+              right: -1,
+              top: 5,
+              backgroundColor: 'transparent',
+            }}>
+            <Image
+              style={{
+                width: scale(120),
+                height: scale(120),
+              }}
+              source={require('../../assets/companyname.png')}
+            />
+          </View>
+
           <TouchableHighlight
             onPress={() => {
               //  console.log('ad');
 
-              setPleaseWaitImageList(true);
+              //  setPleaseWaitImageList(true);
 
               setSelectedImage(item.img_url);
               setVisibleMainModal(true);
@@ -1094,6 +1123,7 @@ export default function Inventory(props) {
         </View>
         <Text
           style={{
+            marginHorizontal: moderateScale(10),
             color: 'red',
             fontSize: moderateScale(20),
             marginBottom: moderateScale(10),
@@ -1109,6 +1139,7 @@ export default function Inventory(props) {
 
         <View
           style={{
+            marginHorizontal: moderateScale(10),
             backgroundColor: '#ffffff',
             flexDirection: 'row',
             justifyContent: 'flex-start',
@@ -1131,10 +1162,12 @@ export default function Inventory(props) {
         </View>
         <View
           style={{
-            marginTop: 10,
-            backgroundColor: '#FDD6DB',
+            marginTop: moderateScale(12),
+            marginHorizontal: moderateScale(10),
+            backgroundColor: '#FBDEE0',
             justifyContent: 'center',
             alignItems: 'flex-start',
+            borderRadius: 7,
           }}>
           <View
             style={{
@@ -1151,13 +1184,17 @@ export default function Inventory(props) {
               {' '}
               Category {item.category}
             </Text>
-            <Text style={styles.text}> Sardines{item.category}</Text>
+            <Text style={[styles.text, {fontSize: moderateScale(17)}]}>
+              {' '}
+              Sardines{item.category}
+            </Text>
           </View>
         </View>
         <View>
           <View style={{borderBottomColor: '#F5F5F5', borderBottomWidth: 8}}>
             <View
               style={{
+                marginHorizontal: moderateScale(10),
                 flexDirection: 'row',
                 alignItems: 'center',
                 alignContent: 'center',
@@ -1205,17 +1242,148 @@ export default function Inventory(props) {
           <View
             style={{
               flexDirection: 'column',
-              marginLeft: moderateScale(5),
-              borderBottomWidth: 1,
-              borderBottomColor: '#C7CBC9',
+              marginHorizontal: moderateScale(10),
             }}>
             <Text style={[styles.text, {marginTop: moderateScale(10)}]}>
-              Brand: Ligo {item.Brand}
+              Brand:     Ligo {item.Brand}
             </Text>
             <Text style={[styles.text, {marginBottom: moderateScale(10)}]}>
-              Variant: {item.product_variant}
+              Variant:   {item.product_variant}
             </Text>
           </View>
+
+          <View style={{flexDirection: 'column'}}>
+            <View
+              style={{backgroundColor: '#DEDEDE', height: 1, width: '100%'}}>
+              <Text></Text>
+            </View>
+
+            <View
+              style={{
+                marginHorizontal: moderateScale(10),
+                marginVertical: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
+                alignContent: 'center',
+              }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  backgroundColor: '#ffffff',
+                }}>
+                <Icon
+                  name="shield-checkmark"
+                  color={'#28C719'}
+                  size={moderateScale(20)}
+                />
+                <Text style={{fontSize: moderateScale(14), fontStyle: '400'}}>
+                  {' '}
+                  100% Authentic
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  backgroundColor: '#ffffff',
+                }}>
+                <MaterialIcons
+                  name="assignment-return"
+                  size={moderateScale(20)}
+                  color="#28C719"
+                />
+
+                <Text style={{fontSize: moderateScale(14), fontStyle: '400'}}>
+                  {' '}
+                  Service Returns{' '}
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  backgroundColor: '#ffffff',
+                }}>
+                <MaterialCommunityIcons
+                  name="truck-delivery"
+                  size={moderateScale(23)}
+                  color="#28C719"
+                />
+
+                <Text style={{fontSize: moderateScale(14), fontStyle: '400'}}>
+                  {' '}
+                  Free Shipping{' '}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 5,
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignContent: 'space-around',
+          }}>
+          <View
+            style={{backgroundColor: 'transparent', flex: 1, flexDirection: 'row',justifyContent: 'space-around'}}>
+            <View style={{flex: 1,backgroundColor: 'transparent',justifyContent: 'center',alignItems: 'center',alignContent: 'center'}}>
+              <MaterialCommunityIcons
+                name="storefront-outline"
+                size={moderateScale(30)}
+                color="red"
+              />
+              <Text style={{fontSize: moderateScale(11), fontWeight: '200'}}>
+                VENDOR
+              </Text>
+            </View>
+            <View style={{flex: 1,backgroundColor: 'transparent',justifyContent: 'center',alignItems: 'center',alignContent: 'center'}}>
+              <MaterialCommunityIcons
+                name="message-text-outline"
+                size={moderateScale(30)}
+                color="red"
+              />
+              <Text style={{fontSize: moderateScale(11), fontWeight: '200'}}>
+                CONTACT
+              </Text>
+            </View>
+          </View>
+
+          <LinearGradient
+            start={{x: 0, y: 0.9}}
+            end={{x: 0.9, y: 0.1}}
+            colors={['#F2C123', '#F57F2C']}
+            style={{
+              flex: 1,
+              marginHorizontal: 5,
+              borderWidth: 0.01,
+              height: moderateScale(50),
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 10,
+            }}>
+            <Text>Add to Cart</Text>
+          </LinearGradient>
+          <LinearGradient
+            start={{x: 0, y: 0.9}}
+            end={{x: 0.9, y: 0.1}}
+            colors={['#FE6E0A', '#F85714']}
+            style={{
+              marginHorizontal: 5,
+              flex: 1,
+              borderWidth: 0.01,
+              height: moderateScale(50),
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 10,
+            }}>
+            <Text>Buy Now</Text>
+          </LinearGradient>
         </View>
       </View>,
     );
@@ -1224,49 +1392,51 @@ export default function Inventory(props) {
   // for (let i = 0; i < LocalPromoItemData.length; i++) {}
 
   const renderItem = ({item, index}) => (
-    <LinearGradient
-      start={{x: 0.3, y: 0.6}}
-      end={{x: 1, y: 1}}
-      style={{
-        margin: 2,
-        marginTop: 0,
-        borderColor: '#C6CDC8',
-        borderWidth: 0.9,
-      }}
-      colors={['white', '#F47F83']}>
-      <View style={[styles.promoItemDetailsNImage]}>
-        <View
-          style={{
-            backgroundColor: 'transparent',
-            flex: 1,
-            flexDirection: 'row',
-          }}>
-          <View style={[styles.promoitemImageContainer]}>
-            <TouchableOpacity
-              onPress={() => {
-                var setindexforImagelIst = Number(index);
-                console.log('PRESED imagelistmodal ON INDEX ' + Number(index));
-                setPleaseWaitVisible(true);
-                setcurrentIndex(setindexforImagelIst);
-                
-                var secs = 0;
-                const timerID = BackgroundTimer.setInterval(() => {
-                  secs = secs + 1;
+    <TouchableOpacity
+      onPress={() => {
+        var setindexforImagelIst = Number(index);
+        console.log('PRESED imagelistmodal ON INDEX ' + Number(index));
+        setPleaseWaitVisible(true);
+        setcurrentIndex(setindexforImagelIst);
 
-                 
+        var secs = 0;
+        const timerID = BackgroundTimer.setInterval(() => {
+          secs = secs + 1;
+          if (secs === 1) {
+            setPleaseWaitVisible(true);
+            setcurrentIndex(setindexforImagelIst);
+          }
 
-                  if (secs === 2) {
-                    setPleaseWaitVisible(false);
-                    setvisibleImageListModal(true);
-                    BackgroundTimer.clearInterval(timerID);
-                  }
-                }, 500);
+          if (secs === 2) {
+            setPleaseWaitVisible(false);
+            setvisibleImageListModal(true);
+            BackgroundTimer.clearInterval(timerID);
+          }
+        }, 200);
 
-                //  setPleaseWaitVisible(true);
+        //  setPleaseWaitVisible(true);
 
-                // setSelectedImage(item.img_url);
-                // setVisibleMainModal(true);
-              }}>
+        // setSelectedImage(item.img_url);
+        // setVisibleMainModal(true);
+      }}>
+      <LinearGradient
+        start={{x: 0.3, y: 0.6}}
+        end={{x: 1, y: 1}}
+        style={{
+          margin: 2,
+          marginTop: 0,
+          borderColor: '#C6CDC8',
+          borderWidth: 0.9,
+        }}
+        colors={['white', '#F47F83']}>
+        <View style={[styles.promoItemDetailsNImage]}>
+          <View
+            style={{
+              backgroundColor: 'transparent',
+              flex: 1,
+              flexDirection: 'row',
+            }}>
+            <View style={[styles.promoitemImageContainer]}>
               <Image
                 style={styles.promoitemImage}
                 source={{
@@ -1277,88 +1447,71 @@ export default function Inventory(props) {
                     'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
                 })}
               />
-              {/* 
-<FastImage
-        style={styles.promoitemImage}
-        source={{
-            uri: item.img_url,
-            headers: { Authorization: 'someAuthToken' },
-            priority: FastImage.priority.normal,
-        }}
-        resizeMode={FastImage.resizeMode.contain}
-    /> */}
-            </TouchableOpacity>
+            </View>
+
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'transparent',
+                marginLeft: scale(15),
+                flexDirection: 'column',
+                justifyContent: 'space-evenly',
+                margin: scale(10),
+                alignItems: 'flex-end',
+              }}>
+              <TouchableOpacity>
+                <Text
+                  style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                  {item.row_number} {' Price per '}
+                  {unitPrice === 'CASE' ? 'CASE' : 'PCs'}
+                </Text>
+
+                <Text
+                  style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                  {'BK: P'}
+
+                  {unitPrice === 'CASE'
+                    ? numbro(Number(item.CASE_BOOKING)).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })
+                    : numbro(Number(item.PCS_BOOKING)).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })}
+                </Text>
+
+                <Text
+                  style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
+                  {'VAN: P'}
+                  {unitPrice === 'CASE'
+                    ? numbro(Number(item.CASE_EXTRUCK)).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })
+                    : numbro(Number(item.PCS_EXTRUCK)).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View
-            style={{
-              flex: 1,
-              backgroundColor: 'transparent',
-              marginLeft: scale(15),
-              flexDirection: 'column',
-              justifyContent: 'space-evenly',
-              margin: scale(10),
-              alignItems: 'flex-end',
-            }}>
-            <TouchableOpacity
-              onPress={() => {
-                {
-                  unitPrice === 'CASE'
-                    ? setunitPrice('PCS')
-                    : setunitPrice('CASE');
-                }
-              }}>
-              <Text
-                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                {item.row_number} {' Price per '}
-                {unitPrice === 'CASE' ? 'CASE' : 'PCs'}
-              </Text>
-
-              <Text
-                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                {'BK: P'}
-
-                {unitPrice === 'CASE'
-                  ? numbro(Number(item.CASE_BOOKING)).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })
-                  : numbro(Number(item.PCS_BOOKING)).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })}
-              </Text>
-
-              <Text
-                style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                {'VAN: P'}
-                {unitPrice === 'CASE'
-                  ? numbro(Number(item.CASE_EXTRUCK)).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })
-                  : numbro(Number(item.PCS_EXTRUCK)).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })}
-              </Text>
-            </TouchableOpacity>
+            style={[
+              styles.promoitemDetails,
+              {backgroundColor: 'transparent', marginTop: 10},
+            ]}>
+            <Text style={styles.item2}>{item.product_variant}</Text>
+            <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
+              {item.product_name}
+            </Text>
+            <Text style={styles.item}>Stocks : {item.inventory}</Text>
           </View>
         </View>
-
-        <View
-          style={[
-            styles.promoitemDetails,
-            {backgroundColor: 'transparent', marginTop: 10},
-          ]}>
-          <Text style={styles.item2}>{item.product_variant}</Text>
-          <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
-            {item.product_name}
-          </Text>
-          <Text style={styles.item}>Stocks : {item.inventory}</Text>
-        </View>
-      </View>
-    </LinearGradient>
+      </LinearGradient>
+    </TouchableOpacity>
   );
 
   // //from array to section list format
@@ -1705,6 +1858,54 @@ export default function Inventory(props) {
         <View style={{flex: 1, backgroundColor: '#E9E9E9', zIndex: 1}}>
           {PleaseWaitImageList === true ? <ShowPleaseWait /> : null}
 
+
+
+
+          <TouchableOpacity
+            onPress={() => {
+            
+              
+              var indexLast = Number(Number(currentIndex) - Number(4)) / Number(2);
+              if (indexLast < 1) {
+                indexLast = 0;
+              }
+              setvisibleImageListModal(false);
+              setPleaseWaitImageList(false);
+              //1
+              if (refContainer.current) {
+                refContainer.current.scrollToIndex({
+                  animated: true,
+                  index: Number(indexLast),
+                });
+              }
+
+              
+            }}
+            style={{
+              flex: 1,
+              zIndex: 4,
+              position: 'absolute',
+              width: moderateScale(45),
+              height: moderateScale(45),
+              alignItems: 'center',
+              justifyContent: 'center',
+              left: 20,
+              top: 25,
+              backgroundColor: 'rgba(191, 190, 198, 1)',
+              borderRadius: 30,
+            }}>
+            <Icon
+              name="arrow-back"
+              color={'#ffffff'}
+              size={moderateScale(30)}
+              alignSelf={'center'}
+              marginBottom={8}
+            />
+          </TouchableOpacity>
+
+
+
+
           <View
             style={{
               width: '100%',
@@ -1739,21 +1940,6 @@ export default function Inventory(props) {
         </View>
       </Modal>
 
-      {/* <Modal
-      //PLEASE WAIT
-       
-        transparent={true}
-        visible={false}
-        onRequestClose={() => {
-          setPleaseWaitVisible(false);
-        }}>
-     
- <View style={{flex: 1, backgroundColor: 'red'}}>
-   <Text>afaf </Text>
-</View>
-
-      </Modal> */}
-
       <Modal
         //FOT IMAGE VIEWER
         visible={visibleMainModal}
@@ -1767,12 +1953,48 @@ export default function Inventory(props) {
           setVisibleMainModal(false);
           setPleaseWaitImageList(false);
         }}>
-        <ImageViewer
-          imageUrls={images}
-          onCancel={() => setVisibleMainModal(false)}
-          enableSwipeDown={true}
-          onSwipeDown={() => setVisibleMainModal(false)}
-        />
+        <View style={{flex: 1, backgroundColor: '#E9E9E9', zIndex: 3}}>
+          <TouchableOpacity
+            onPress={() => {
+              setVisibleMainModal(false);
+              setPleaseWaitImageList(false);
+            }}
+            style={{
+              flex: 1,
+              zIndex: 4,
+              position: 'absolute',
+              width: moderateScale(50),
+              height: moderateScale(50),
+              alignItems: 'center',
+              justifyContent: 'center',
+              right: 20,
+              top: 25,
+              backgroundColor: '#ffffff',
+              borderRadius: 30,
+              elevation: 8,
+              opacity: 1,
+            }}>
+            <Icon
+              name="close-outline"
+              color={'#000000'}
+              size={moderateScale(45)}
+              alignSelf={'center'}
+              marginBottom={8}
+            />
+          </TouchableOpacity>
+
+          <View style={{flex: 1, zIndex: 3}}>
+            <ImageViewer
+              imageUrls={images}
+              onCancel={() => setVisibleMainModal(false)}
+              enableSwipeDown={true}
+              onSwipeDown={() => {
+                setVisibleMainModal(false);
+                setPleaseWaitImageList(false);
+              }}
+            />
+          </View>
+        </View>
       </Modal>
       <Modal
         animationType="slide"
