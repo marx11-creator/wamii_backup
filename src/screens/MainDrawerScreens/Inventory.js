@@ -24,6 +24,7 @@ import {
   SectionList,
   Alert,
   Button,
+  Animated,
 } from 'react-native';
 import {dbinventory} from '../../database/sqliteSetup';
 import FlatButton from '../../sharedComponents/custombutton';
@@ -823,10 +824,6 @@ export default function Inventory(props) {
       // Simplest usage.
       url: SelectedImage,
     },
-    {
-      // Simplest usage.
-      url: SelectedImage,
-    },
   ];
 
   function ShowPleaseWait() {
@@ -1125,13 +1122,14 @@ export default function Inventory(props) {
           style={{
             marginHorizontal: moderateScale(10),
             color: 'red',
-            fontSize: moderateScale(20),
+            fontSize: moderateScale(22),
             marginBottom: moderateScale(10),
             marginTop: moderateScale(20),
+            fontFamily: 'Lato-Bold',
           }}>
           {' '}
           ₱
-          {numbro(Number(item.CASE_BOOKING)).format({
+          {numbro(Number(item.PCS_BOOKING)).format({
             thousandSeparated: true,
             mantissa: 2,
           })}
@@ -1186,7 +1184,7 @@ export default function Inventory(props) {
             </Text>
             <Text style={[styles.text, {fontSize: moderateScale(17)}]}>
               {' '}
-              Sardines{item.category}
+              Sardines (test){item.category}
             </Text>
           </View>
         </View>
@@ -1239,17 +1237,42 @@ export default function Inventory(props) {
               />
             </View>
           </View>
-          <View
-            style={{
-              flexDirection: 'column',
-              marginHorizontal: moderateScale(10),
-            }}>
-            <Text style={[styles.text, {marginTop: moderateScale(10)}]}>
-              Brand: Ligo {item.Brand}
-            </Text>
-            <Text style={[styles.text, {marginBottom: moderateScale(10)}]}>
-              Variant: {item.product_variant}
-            </Text>
+
+          <View style={{flexDirection: 'row'}}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'column',
+                marginHorizontal: moderateScale(10),
+              }}>
+              <Text style={[styles.text, {marginTop: moderateScale(10)}]}>
+                Brand: {'    '}Ligo (test) {item.Brand}
+              </Text>
+              <Text style={[styles.text, {marginBottom: moderateScale(10)}]}>
+                Variant: {'  '}
+                {item.product_variant}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignContent: 'center',
+                marginRight: 10,
+              }}>
+              <MaterialCommunityIcons
+                name="heart-multiple-outline"
+                size={moderateScale(30)}
+                color="#A0A0A0"
+                style={{marginRight: moderateScale(10)}}
+              />
+              <MaterialIcons
+                name="share"
+                size={moderateScale(30)}
+                color="#A0A0A0"
+              />
+            </View>
           </View>
 
           <View style={{flexDirection: 'column'}}>
@@ -1338,10 +1361,13 @@ export default function Inventory(props) {
                   flexDirection: 'row',
                   marginTop: 10,
                   backgroundColor: 'transparent',
-                  height:20,
+                  height: 20,
                 }}>
                 <View style={{flex: 1}}>
-                  <Text style={{fontSize: moderateScale(15), fontWeight: 'bold'}}>Specifications</Text>
+                  <Text
+                    style={{fontSize: moderateScale(15), fontWeight: 'bold'}}>
+                    Specifications
+                  </Text>
                 </View>
                 <View
                   style={{
@@ -1432,21 +1458,26 @@ export default function Inventory(props) {
             }}>
             <Text>Add to Cart</Text>
           </LinearGradient>
-          <LinearGradient
-            start={{x: 0, y: 0.9}}
-            end={{x: 0.9, y: 0.1}}
-            colors={['#FE6E0A', '#F85714']}
-            style={{
-              marginHorizontal: 5,
-              flex: 1,
-              borderWidth: 0.01,
-              height: moderateScale(50),
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 10,
+          <TouchableOpacity
+            onPress={() => {
+              FadingMessage();
             }}>
-            <Text>Buy Now</Text>
-          </LinearGradient>
+            <LinearGradient
+              start={{x: 0, y: 0.9}}
+              end={{x: 0.9, y: 0.1}}
+              colors={['#F0900D', '#F2300D']}
+              style={{
+                marginHorizontal: 5,
+                flex: 1,
+                borderWidth: 0.01,
+                height: moderateScale(50),
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 10,
+              }}>
+              <Text>Buy Now</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       </View>,
     );
@@ -1495,7 +1526,6 @@ export default function Inventory(props) {
         <View style={[styles.promoItemDetailsNImage]}>
           <View
             style={{
-              backgroundColor: 'transparent',
               flex: 1,
               flexDirection: 'row',
             }}>
@@ -1515,7 +1545,7 @@ export default function Inventory(props) {
             <View
               style={{
                 flex: 1,
-                backgroundColor: 'transparent',
+
                 marginLeft: scale(15),
                 flexDirection: 'column',
                 justifyContent: 'space-evenly',
@@ -1525,7 +1555,7 @@ export default function Inventory(props) {
               <TouchableOpacity>
                 <Text
                   style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                  {item.row_number} {' Price per '}
+                  {'Price per '}
                   {unitPrice === 'CASE' ? 'CASE' : 'PCs'}
                 </Text>
 
@@ -1564,13 +1594,86 @@ export default function Inventory(props) {
           <View
             style={[
               styles.promoitemDetails,
-              {backgroundColor: 'transparent', marginTop: 10},
+              {backgroundColor: 'transparent', marginTop: 5},
             ]}>
+            <View
+              style={{
+                marginHorizontal: moderateScale(-5),
+                flexDirection: 'row',
+                alignItems: 'center',
+                alignContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: '#333333',
+                  fontSize: moderateScale(11),
+                }}>
+                {' '}
+                5{' '}
+              </Text>
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(14)}
+                color="#F9C500"
+              />
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(14)}
+                color="#F9C500"
+              />
+
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(14)}
+                color="#F9C500"
+              />
+
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(14)}
+                color="#F9C500"
+              />
+
+              <MaterialIcons
+                name="grade"
+                size={moderateScale(14)}
+                color="#F9C500"
+              />
+            </View>
+
             <Text style={styles.item2}>{item.product_variant}</Text>
-            <Text style={[styles.item, {justifyContent: 'flex-start'}]}>
-              {item.product_name}
-            </Text>
-            <Text style={styles.item}>Stocks : {item.inventory}</Text>
+
+            <View style={{backgroundColor: 'transparent'}}>
+              <Text
+                style={[
+                  styles.item,
+                  {justifyContent: 'flex-start', height: scale(50)},
+                ]}>
+                {item.product_name}
+              </Text>
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                flex: 1,
+                width: '100%',
+              }}>
+              <Text style={styles.item}>Stocks : {item.inventory}</Text>
+
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'flex-end',
+                  marginRight: 10,
+                }}>
+                <MaterialCommunityIcons
+                  name="truck-delivery"
+                  size={moderateScale(23)}
+                  color="#21BA1E"
+                />
+              </View>
+            </View>
           </View>
         </View>
       </LinearGradient>
@@ -1630,10 +1733,67 @@ export default function Inventory(props) {
 
   // }
 
+  function FadingMessage() {
+    Animated.timing(fadeIn, {
+      toValue: 1,
+      duration: 500,
+    }).start(() =>
+      Animated.timing(fadeIn, {
+        toValue: 0,
+        delay: 1500,
+        duration: 700,
+      }).start(),
+    );
+  }
+
+  function ShowFadingMessage() {
+    return (
+      <View
+        style={{
+          flex: 1,
+          zIndex: 4,
+          width: moderateScale(50),
+          height: moderateScale(50),
+          alignItems: 'center',
+          justifyContent: 'center',
+
+          backgroundColor: 'rgba(0, 0, 0, 0)',
+
+          position: 'absolute',
+          top: height / 2,
+          left: width / 2 - 20,
+        }}>
+        <Animated.View
+          style={{
+            zIndex: 0,
+            opacity: fadeIn,
+            height: scale(60),
+            width: scale(200),
+            margin: 5,
+            borderRadius: 20,
+            backgroundColor: 'rgba(107, 107, 107, 0.9)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              fontSize: moderateScale(16),
+              color: '#ffffff',
+              fontWeight: '300',
+              textAlign: 'center',
+            }}>
+            Comming Soon...{' '}
+          </Text>
+        </Animated.View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {PleaseWaitVisible === true ? <ShowPleaseWait /> : null}
 
+<ShowFadingMessage />
       <View style={{flexDirection: 'column'}}>
         <View style={styles.HeaderView}>
           <View style={{flex: 1, marginLeft: scale(15)}}>
@@ -1657,17 +1817,8 @@ export default function Inventory(props) {
               gradientFrom="#F9A7A8"
               gradientTo="#D6171A"
               onPress={() => {
-                console.log(currentIndex);
-
-                // GetPrincipalList();
-                // setisModalVisible2(!isModalVisible2);
-                // if (refContainer.current) {
-                //   //2
-                //   refContainer.current.scrollToIndex({
-                //     animated: true,
-                //     index: 0,
-                //   });
-                // }
+                GetPrincipalList();
+                setisModalVisible2(!isModalVisible2);
               }}
             />
           </View>
@@ -1756,6 +1907,7 @@ export default function Inventory(props) {
       <SafeAreaView style={[styles.container, {zIndex: 0}]}>
         {LocalPromoItemData.length === CurrentItemCount &&
         LocalPromoItemData.length > 0 ? (
+          // {LocalPromoItemData.length !== 0 ? (
           <View style={{flexDirection: 'column'}}>
             <FlatList
               // onScrollEndDrag={() => {
@@ -2265,7 +2417,6 @@ export default function Inventory(props) {
                         setPleaseWaitVisible(true);
 
                         setpage(0);
-                        ('');
                         setisVisibleTypeDropdownPicker(false);
                         setisVisibleVariantDropdownPicker(false);
                         setisVisiblePrincipalDropdownPicker(false);

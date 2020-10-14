@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useEffect, useState, useContext, useRef} from 'react';
 import {useFocusEffect, CommonActions} from '@react-navigation/native';
 import {
   ScrollView,
@@ -14,6 +14,7 @@ import {
   Button,
   Linking,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 
 import ImageOverlay from 'react-native-image-overlay';
@@ -57,7 +58,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 LogBox.ignoreAllLogs();
 
 export default function Home(props) {
-  //  console.log(auth);
+  const fadeIn = useRef(new Animated.Value(0)).current;
   const [globalAutoLogout, setglobalAutoLogout] = useContext(
     PageContextAutoLogout,
   );
@@ -309,8 +310,92 @@ export default function Home(props) {
       console.log('focus on per Home1');
       CurrentAppScreen.Screen = 'Home';
       UpdateYearMonthsFilter();
+      //props.navigation.navigate('Inventory');
     });
   }, []);
+
+  function start() {
+    Animated.timing(fadeIn, {
+      toValue: 1,
+      duration: 500,
+    }).start(() =>
+      Animated.timing(fadeIn, {
+        toValue: 0,
+        delay: 1500,
+        duration: 700,
+      }).start(),
+    );
+  } 
+
+  function ShowPleaseWait() {
+    return (
+      <View
+        style={{
+          flex: 1,
+          zIndex: 4,
+          width: moderateScale(50),
+          height: moderateScale(50),
+          alignItems: 'center',
+          justifyContent: 'center',
+ 
+          backgroundColor: 'rgba(0, 0, 0, 0)',
+
+          position: 'absolute',
+          top: height / 2,
+          left: width / 2 - 20,
+        }}>
+        <Animated.View
+          style={{
+            zIndex: 0,
+            opacity: fadeIn,
+            height: scale(60),
+            width: scale(200),
+            margin: 5,
+            borderRadius: 20,
+            backgroundColor: 'rgba(107, 107, 107, 0.9)',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Text
+            style={{
+              fontSize: moderateScale(16),
+              color: '#ffffff',
+              fontWeight: '300',
+              textAlign: 'center',
+            }}>
+            Comming Soon...{' '}
+          </Text>
+        </Animated.View>
+  </View>
+
+      // <View
+      //   style={{
+      //     position: 'absolute',
+      //     top: 0,
+      //     left: 0,
+      //     right: 0,
+      //     bottom: 0,
+      //     justifyContent: 'center',
+      //     alignItems: 'center',
+      //     backgroundColor: 'rgba(0, 0, 0, 0)',
+      //     zIndex: 0,
+      //   }}>
+      //   <Animated.View
+      //     style={{
+      //       zIndex: 0,
+      //       opacity: 1,
+      //       height: scale(50),
+      //       width: scale(200),
+      //       margin: 5,
+      //       borderRadius: 12,
+      //       backgroundColor: 'red',
+      //       justifyContent: 'center',
+      //     }}>
+      //     <Text style={styles.text}>Comming Soon... </Text>
+      //   </Animated.View>
+      // </View>
+    );
+  }
 
   return (
     <ImageOverlay
@@ -319,8 +404,10 @@ export default function Home(props) {
       height={height}
       contentPosition="top">
       <ScrollView>
+        <ShowPleaseWait />
         <View
           style={{
+            zIndex: 0,
             flexDirection: 'column',
             flex: 1,
           }}>
@@ -454,16 +541,18 @@ export default function Home(props) {
                 {' '}
                 Wing An Marketing Inc.
               </Text>
-              <Button
+              {/* <Button
                 title="test"
                 onPress={() => {
-                  props.navigation.navigate('TEST2');
+                  start();
+                  console.log('test');
                 }}
-              />
+              /> */}
             </View>
 
             <View
               style={{
+                zIndex: 0,
                 marginTop: 80,
                 width: scale(190),
                 justifyContent: 'center',
