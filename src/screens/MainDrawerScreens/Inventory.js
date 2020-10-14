@@ -68,32 +68,8 @@ var longStrinfg = '';
 var test = 'aa';
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
-  const actions = [
-    {
-      text: 'Accessibility',
-      icon: require('../../assets/wamilogo.png'),
-      name: 'bt_accessibility',
-      position: 2,
-    },
-    {
-      text: 'Language',
-      icon: require('../../assets/wamilogo.png'),
-      name: 'bt_language',
-      position: 1,
-    },
-    {
-      text: 'Location',
-      icon: require('../../assets/wamilogo.png'),
-      name: 'bt_room',
-      position: 3,
-    },
-    {
-      text: 'Video',
-      icon: require('../../assets/wamilogo.png'),
-      name: 'bt_videocam',
-      position: 4,
-    },
-  ];
+  const fadeIn = useRef(new Animated.Value(0)).current;
+
   var ImageLoop = [];
   var refContainer = useRef();
   var swiper = useRef();
@@ -1407,40 +1383,53 @@ export default function Inventory(props) {
               flexDirection: 'row',
               justifyContent: 'space-around',
             }}>
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: 'transparent',
-                justifyContent: 'center',
-                alignItems: 'center',
-                alignContent: 'center',
+            <TouchableOpacity
+              onPress={() => {
+                FadingMessage();
+                console.log('a');
               }}>
-              <MaterialCommunityIcons
-                name="storefront-outline"
-                size={moderateScale(30)}
-                color="red"
-              />
-              <Text style={{fontSize: moderateScale(11), fontWeight: '200'}}>
-                VENDOR
-              </Text>
-            </View>
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: 'transparent',
-                justifyContent: 'center',
-                alignItems: 'center',
-                alignContent: 'center',
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: 'transparent',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                }}>
+                <MaterialCommunityIcons
+                  name="storefront-outline"
+                  size={moderateScale(30)}
+                  color="red"
+                />
+                <Text style={{fontSize: moderateScale(11), fontWeight: '200'}}>
+                  VENDOR
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                FadingMessage();
+                console.log('a');
               }}>
-              <MaterialCommunityIcons
-                name="message-text-outline"
-                size={moderateScale(30)}
-                color="red"
-              />
-              <Text style={{fontSize: moderateScale(11), fontWeight: '200'}}>
-                CONTACT
-              </Text>
-            </View>
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: 'transparent',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                }}>
+                <MaterialCommunityIcons
+                  name="message-text-outline"
+                  size={moderateScale(30)}
+                  color="red"
+                />
+
+                <Text style={{fontSize: moderateScale(11), fontWeight: '200'}}>
+                  CONTACT
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
 
           <LinearGradient
@@ -1448,36 +1437,68 @@ export default function Inventory(props) {
             end={{x: 0.9, y: 0.1}}
             colors={['#F2C123', '#F57F2C']}
             style={{
-              flex: 1,
               marginHorizontal: 5,
+              flex: 1,
               borderWidth: 0.01,
               height: moderateScale(50),
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: 10,
             }}>
-            <Text>Add to Cart</Text>
-          </LinearGradient>
-          <TouchableOpacity
-            onPress={() => {
-              FadingMessage();
-            }}>
-            <LinearGradient
-              start={{x: 0, y: 0.9}}
-              end={{x: 0.9, y: 0.1}}
-              colors={['#F0900D', '#F2300D']}
-              style={{
-                marginHorizontal: 5,
-                flex: 1,
-                borderWidth: 0.01,
-                height: moderateScale(50),
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 10,
+            <TouchableOpacity
+              onPress={() => {
+                FadingMessage();
+                console.log('a');
               }}>
-              <Text>Buy Now</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+              <View
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text>
+                  {' '}
+                  {'      '}Add to Cart{'         '}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </LinearGradient>
+
+          <LinearGradient
+            start={{x: 0, y: 0.9}}
+            end={{x: 0.9, y: 0.1}}
+            colors={['#F0900D', '#F2300D']}
+            style={{
+              marginHorizontal: 5,
+              flex: 1,
+              borderWidth: 0.01,
+              height: moderateScale(50),
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 10,
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                FadingMessage();
+                console.log('a');
+              }}>
+              <View
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text>
+                  {' '}
+                  {'        '}Buy Now{'         '}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </LinearGradient>
         </View>
       </View>,
     );
@@ -1740,7 +1761,7 @@ export default function Inventory(props) {
     }).start(() =>
       Animated.timing(fadeIn, {
         toValue: 0,
-        delay: 1500,
+        delay: 1000,
         duration: 700,
       }).start(),
     );
@@ -1765,7 +1786,7 @@ export default function Inventory(props) {
         }}>
         <Animated.View
           style={{
-            zIndex: 0,
+            zIndex: 4,
             opacity: fadeIn,
             height: scale(60),
             width: scale(200),
@@ -1793,7 +1814,6 @@ export default function Inventory(props) {
     <View style={styles.container}>
       {PleaseWaitVisible === true ? <ShowPleaseWait /> : null}
 
-<ShowFadingMessage />
       <View style={{flexDirection: 'column'}}>
         <View style={styles.HeaderView}>
           <View style={{flex: 1, marginLeft: scale(15)}}>
@@ -1905,9 +1925,9 @@ export default function Inventory(props) {
       </View>
 
       <SafeAreaView style={[styles.container, {zIndex: 0}]}>
-        {LocalPromoItemData.length === CurrentItemCount &&
-        LocalPromoItemData.length > 0 ? (
-          // {LocalPromoItemData.length !== 0 ? (
+        {/* {LocalPromoItemData.length === CurrentItemCount &&
+        LocalPromoItemData.length > 0 ? ( */}
+        {LocalPromoItemData.length !== 0 ? (
           <View style={{flexDirection: 'column'}}>
             <FlatList
               // onScrollEndDrag={() => {
@@ -2072,7 +2092,7 @@ export default function Inventory(props) {
         }}>
         <View style={{flex: 1, backgroundColor: '#E9E9E9', zIndex: 1}}>
           {PleaseWaitImageList === true ? <ShowPleaseWait /> : null}
-
+          <ShowFadingMessage />
           <TouchableOpacity
             onPress={() => {
               var indexLast =
