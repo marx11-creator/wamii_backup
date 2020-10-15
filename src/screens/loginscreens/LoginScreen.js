@@ -162,7 +162,7 @@ const SignScreen = (props) => {
     ClearUserLogin();
     ClearAppToken();
     setisLoadingActivityIndicator(true);
-    
+
     const unpw = data.user_name + '&' + data.password;
     // console.log(unpw);
     Promise.race([
@@ -184,7 +184,6 @@ const SignScreen = (props) => {
         return responseData.json();
       })
       .then((jsonData) => {
-       
         jsonData.map((key, index) => {
           if (global.device_id === key.device_id) {
             freshLogin = false;
@@ -418,10 +417,16 @@ const SignScreen = (props) => {
                 global.TeamAccessList + "'" + key.constant_value + "',";
             }
 
-            //GET SALES_POSITION_NAME
+            //GET SALES_POSITION_NAME - new
             if (key.constant_type === 'SALES_POSITION_NAME') {
-              global.sales_position_name = key.constant_value;
+              global.sales_position_name =
+                global.sales_position_name + "'" + key.constant_value + "',";
             }
+
+            // //GET SALES_POSITION_NAME
+            // if (key.constant_type === 'SALES_POSITION_NAME') {
+            //   global.sales_position_name = key.constant_value;
+            // }
 
             //GET AUTO_LOGOUT STATUS
             if (key.constant_type === 'ACCOUNT_VALIDITY') {
@@ -465,16 +470,31 @@ const SignScreen = (props) => {
                   console.log('user ACCOUT HAS VALIDITY AND NOT YET EXPIRED');
                   //IF USER HAS NO ACCOUNT VALIDITY PROCEED TO SAVING AND HOME
 
-                  //REMOVE LAST COMMA
-                  global.TeamAccessListForAPI = global.TeamAccessList.slice(
-                    0,
-                    -1,
-                  );
-                  global.TeamAccessList =
-                    '(' + global.TeamAccessList.slice(0, -1) + ')';
+                  //    'FOR API  USE TEAMACESS
+                  if (global.TeamAccessList === '') {
+                    global.TeamAccessListForAPI = 'ALLTEAM';
+                  } else {
+                    global.TeamAccessListForAPI = global.TeamAccessList.slice(
+                      0,
+                      -1,
+                    );
+                  }
+
+                  //    'FOR API  USE SALESMAN
+
                   if (global.sales_position_name === '') {
                     global.sales_position_name = 'ALLSALESMAN';
+                  } else {
+                    global.sales_position_name = global.sales_position_name.slice(
+                      0,
+                      -1,
+                    );
                   }
+
+                  //    'FOR LOCAL USE ONLY IN TABLET'
+                  global.TeamAccessList =
+                    '(' + global.TeamAccessList.slice(0, -1) + ')';
+
                   //SET GLOBAL USERNAME and NAME
                   global.user_name = key.user_name;
                   global.name = key.name;
@@ -482,6 +502,9 @@ const SignScreen = (props) => {
                   //HIDE ACTIVITY INDICATOR
                   setisLoadingActivityIndicator(false);
                   //NAVIGATE TO HOME PAGE
+
+                  console.log(global.sales_position_name);
+                  console.log(global.TeamAccessList);
                   props.navigation.navigate('StartMainDrawerScreen');
                 }
               } else {
@@ -489,16 +512,32 @@ const SignScreen = (props) => {
                 //IF USER HAS NO ACCOUNT VALIDITY PROCEED TO SAVING AND HOME
                 //SAVE USER CREDENTIALS
                 SaveUserLogin(key);
-                //REMOVE LAST COMMA
-                global.TeamAccessListForAPI = global.TeamAccessList.slice(
-                  0,
-                  -1,
-                );
-                global.TeamAccessList =
-                  '(' + global.TeamAccessList.slice(0, -1) + ')';
+
+                //    'FOR API  USE TEAMACESS
+                if (global.TeamAccessList === '') {
+                  global.TeamAccessListForAPI = 'ALLTEAM';
+                } else {
+                  global.TeamAccessListForAPI = global.TeamAccessList.slice(
+                    0,
+                    -1,
+                  );
+                }
+
+                //    'FOR API  USE SALESMAN
+
                 if (global.sales_position_name === '') {
                   global.sales_position_name = 'ALLSALESMAN';
+                } else {
+                  global.sales_position_name = global.sales_position_name.slice(
+                    0,
+                    -1,
+                  );
                 }
+
+                //    'FOR LOCAL USE ONLY IN TABLET'
+                global.TeamAccessList =
+                  '(' + global.TeamAccessList.slice(0, -1) + ')';
+
                 //SET GLOBAL USERNAME and NAME
                 global.user_name = key.user_name;
                 global.name = key.name;
@@ -506,6 +545,9 @@ const SignScreen = (props) => {
                 //HIDE ACTIVITY INDICATOR
                 setisLoadingActivityIndicator(false);
                 //NAVIGATE TO HOME PAGE
+
+                console.log(global.sales_position_name);
+                console.log(global.TeamAccessList);
                 props.navigation.navigate('StartMainDrawerScreen');
               }
             } else {
@@ -689,7 +731,7 @@ const SignScreen = (props) => {
               <Text style={styles.modalText}>{ModalErrorMessage}</Text>
 
               <FlatButton
-               width={160}
+                width={160}
                 text="Close"
                 // onPress={() => {
                 //   setisModalConnectionError(false);

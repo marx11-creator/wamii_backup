@@ -68,32 +68,33 @@ var longStrinfg = '';
 var test = 'aa';
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
-  const actions = [
-    {
-      text: 'Accessibility',
-      icon: require('../../assets/wamilogo.png'),
-      name: 'bt_accessibility',
-      position: 2,
-    },
-    {
-      text: 'Language',
-      icon: require('../../assets/wamilogo.png'),
-      name: 'bt_language',
-      position: 1,
-    },
-    {
-      text: 'Location',
-      icon: require('../../assets/wamilogo.png'),
-      name: 'bt_room',
-      position: 3,
-    },
-    {
-      text: 'Video',
-      icon: require('../../assets/wamilogo.png'),
-      name: 'bt_videocam',
-      position: 4,
-    },
-  ];
+  const fadeIn = useRef(new Animated.Value(0)).current;
+  // const actions = [
+  //   {
+  //     text: 'Accessibility',
+  //     icon: require('../../assets/wamilogo.png'),
+  //     name: 'bt_accessibility',
+  //     position: 2,
+  //   },
+  //   {
+  //     text: 'Language',
+  //     icon: require('../../assets/wamilogo.png'),
+  //     name: 'bt_language',
+  //     position: 1,
+  //   },
+  //   {
+  //     text: 'Location',
+  //     icon: require('../../assets/wamilogo.png'),
+  //     name: 'bt_room',
+  //     position: 3,
+  //   },
+  //   {
+  //     text: 'Video',
+  //     icon: require('../../assets/wamilogo.png'),
+  //     name: 'bt_videocam',
+  //     position: 4,
+  //   },
+  // ];
   var ImageLoop = [];
   var refContainer = useRef();
   var swiper = useRef();

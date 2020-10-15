@@ -364,7 +364,8 @@ export default function SplashScreen(props) {
 
             //GET SALES_POSITION_NAME
             if (key.constant_type === 'SALES_POSITION_NAME') {
-              global.sales_position_name = key.constant_value;
+              global.sales_position_name =
+                global.sales_position_name + "'" + key.constant_value + "',";
             }
 
             //GET AUTO_LOGOUT STATUS
@@ -411,18 +412,31 @@ export default function SplashScreen(props) {
                   ClearDefaults();
                 } else {
                   console.log('user ACCOUT HAS VALIDITY AND NOT YET EXPIRED');
+                  //    'FOR API  USE TEAMACESS
+                  if (global.TeamAccessList === '') {
+                    global.TeamAccessListForAPI = 'ALLTEAM';
+                  } else {
+                    global.TeamAccessListForAPI = global.TeamAccessList.slice(
+                      0,
+                      -1,
+                    );
+                  }
 
-                  global.TeamAccessListForAPI = global.TeamAccessList.slice(
-                    0,
-                    -1,
-                  );
-
-                  global.TeamAccessList =
-                    '(' + global.TeamAccessList.slice(0, -1) + ')';
+                  //    'FOR API  USE SALESMAN
 
                   if (global.sales_position_name === '') {
                     global.sales_position_name = 'ALLSALESMAN';
+                  } else {
+                    global.sales_position_name = global.sales_position_name.slice(
+                      0,
+                      -1,
+                    );
                   }
+
+                  //    'FOR LOCAL USE ONLY IN TABLET'
+                  global.TeamAccessList =
+                    '(' + global.TeamAccessList.slice(0, -1) + ')';
+
                   global.user_name = key.user_name;
                   global.name = key.name;
                   global.account_type = key.account_type;
@@ -433,17 +447,32 @@ export default function SplashScreen(props) {
                 }
               } else {
                 console.log('user has no validity');
-                global.TeamAccessListForAPI = global.TeamAccessList.slice(
-                  0,
-                  -1,
-                );
 
-                global.TeamAccessList =
-                  '(' + global.TeamAccessList.slice(0, -1) + ')';
+                //    'FOR API  USE TEAMACESS
+                if (global.TeamAccessList === '') {
+                  global.TeamAccessListForAPI = 'ALLTEAM';
+                } else {
+                  global.TeamAccessListForAPI = global.TeamAccessList.slice(
+                    0,
+                    -1,
+                  );
+                }
+
+                //    'FOR API  USE SALESMAN
 
                 if (global.sales_position_name === '') {
                   global.sales_position_name = 'ALLSALESMAN';
+                } else {
+                  global.sales_position_name = global.sales_position_name.slice(
+                    0,
+                    -1,
+                  );
                 }
+
+                //    'FOR LOCAL USE ONLY IN TABLET'
+                global.TeamAccessList =
+                  '(' + global.TeamAccessList.slice(0, -1) + ')';
+
                 global.user_name = key.user_name;
                 global.name = key.name;
                 global.account_type = key.account_type;
@@ -534,7 +563,7 @@ export default function SplashScreen(props) {
               <Text style={styles.modalText}>{ModalErrorMessage}</Text>
 
               <FlatButton
-               width={160}
+                width={160}
                 text="Close"
                 onPress={() => {
                   setisModalConnectionError(false);

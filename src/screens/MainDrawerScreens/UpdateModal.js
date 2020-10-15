@@ -45,7 +45,6 @@ import {
   ClearDefaults,
 } from '../../sharedComponents/globalCommands/globalCommands';
 
-
 import {APIUpdateVersion} from '../../sharedComponents/globalCommands/globalCommands';
 import PageContextGlobalState from './pagecontextGlobalState';
 import PageContextGlobalTimer from './pagecontextGlobalTimer';
@@ -79,7 +78,9 @@ var MarcStatus = '0';
 //marc
 
 export default function UpdateModal(props) {
- const [globalAutoLogout, setglobalAutoLogout] = useContext(PageContextAutoLogout);
+  const [globalAutoLogout, setglobalAutoLogout] = useContext(
+    PageContextAutoLogout,
+  );
   const [globalState, setglobalState] = useContext(PageContextGlobalState);
   const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
   const [localSeconds, setLocalSeconds] = useState(0);
@@ -795,18 +796,13 @@ export default function UpdateModal(props) {
 
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
-    var tempstr1 = teams + '&' + sales_position_name;
-    console.log(
-      server.server_address +
-        globalCompany.company +
-        'persalesmansalestarget/' +
-        tempstr1,
-    );
+    var tempstr1 =
+      'team=' + teams + '&' + 'sales_position_name=' + sales_position_name;
     Promise.race([
       fetch(
         server.server_address +
           globalCompany.company +
-          'persalesmansalestarget/' +
+          'persalesmansalestarget?' +
           tempstr1,
         {
           method: 'GET',
@@ -1007,12 +1003,19 @@ export default function UpdateModal(props) {
   const GetPerPrincipalAPIData = () => {
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
-    var tempstr3 = teams + '&' + sales_position_name;
+    var tempstr3 =
+      'team=' + teams + '&' + 'sales_position_name=' + sales_position_name;
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'perprincipalsalestargetuba?' +
+        tempstr3,
+    );
     Promise.race([
       fetch(
         server.server_address +
           globalCompany.company +
-          'perprincipalsalestargetuba/' +
+          'perprincipalsalestargetuba?' +
           tempstr3,
         {
           method: 'GET',
@@ -1524,95 +1527,88 @@ export default function UpdateModal(props) {
             console.log(key.auto_logout);
           });
 
+          if (APIUpdateVersion.APIForceLogout === 'TRUE') {
+            console.log('what to do');
+            setglobalAutoLogout('TRUE');
+            // ResetModuleAccess();
+            // ClearTeamAccess();
+            // ClearDefaults();
+            // setglobalState({
+            //   timerSeconds: 0,
+            //   timerMinute: 0,
+            //   updateStatus: 'Start',
+            //   dateTimeUpdated24hr: '',
+            //   updatePercentage: '',
+            // });
 
-        if(APIUpdateVersion.APIForceLogout === 'TRUE') {
-          console.log('what to do');
-          setglobalAutoLogout('TRUE');
-          // ResetModuleAccess();
-          // ClearTeamAccess();
-          // ClearDefaults();
-          // setglobalState({
-          //   timerSeconds: 0,
-          //   timerMinute: 0,
-          //   updateStatus: 'Start',
-          //   dateTimeUpdated24hr: '',
-          //   updatePercentage: '',
-          // });
+            // Alert.alert(
+            //   'Oops!',
+            //   'You have been automatically logout. Please Try again.' +
+            //     APIUpdateVersion.APIUpdateVersionField +
+            //     ' \n.',
+            //   [
+            //     {
+            //       text: 'OK',
+            //       onPress: () => {
+            //         BackHandler.exitApp();
+            //       },
+            //     },
+            //   ],
+            //   {cancelable: true},
+            // );
 
-          // Alert.alert(
-          //   'Oops!',
-          //   'You have been automatically logout. Please Try again.' +
-          //     APIUpdateVersion.APIUpdateVersionField +
-          //     ' \n.',
-          //   [
-          //     {
-          //       text: 'OK',
-          //       onPress: () => {
-          //         BackHandler.exitApp();
-          //       },
-          //     },
-          //   ],
-          //   {cancelable: true},
-          // );
+            // BackHandler.exitApp();
+          } else {
+            if (APIUpdateVersion.APIUpdateVersionStatus === 'ONLINE') {
+              StartUpdate();
 
-
-
-          // BackHandler.exitApp();
-        } else {
-
-          if (APIUpdateVersion.APIUpdateVersionStatus === 'ONLINE') {
-            StartUpdate();
-
-            updateProgress = Number(updateProgress) + Number(4);
-            setglobalState({
-              ...globalState,
-              updatePercentage: updateProgress,
-            });
-
-            console.log('11 ' + 'user update log saved in API');
-            setq3UserUpdateLog(true);
-          } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
-            //2
-            if (globalStatus.updateMode === 'manual') {
-              console.log('MANUAL');
-              globalStatus.updateMode = 'auto';
-              updateProgress = 0;
+              updateProgress = Number(updateProgress) + Number(4);
               setglobalState({
                 ...globalState,
                 updatePercentage: updateProgress,
-                updateStatus: 'Idle',
               });
 
-              globalStatus.updateStatus = 'Idle';
-
-              RunTimer();
-
-              //1
-
-              setisModalConnectionError(false);
-              setisLoadingActivityIndicator(false);
-              props.navigation.navigate('Home');
-              CheckSystemStatus(); //-1
-            } else {
-              // console.log(APIUpdateVersion.APIUpdateVersionStatus);
-              updateProgress = 0;
-              setglobalState({
-                ...globalState,
-                updatePercentage: updateProgress,
-                updateStatus: 'Idle',
-              });
-
-              globalStatus.updateStatus = 'Idle';
-
-              RunTimer();
+              console.log('11 ' + 'user update log saved in API');
+              setq3UserUpdateLog(true);
+            } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
               //2
-              CheckSystemStatus(); //-2
+              if (globalStatus.updateMode === 'manual') {
+                console.log('MANUAL');
+                globalStatus.updateMode = 'auto';
+                updateProgress = 0;
+                setglobalState({
+                  ...globalState,
+                  updatePercentage: updateProgress,
+                  updateStatus: 'Idle',
+                });
+
+                globalStatus.updateStatus = 'Idle';
+
+                RunTimer();
+
+                //1
+
+                setisModalConnectionError(false);
+                setisLoadingActivityIndicator(false);
+                props.navigation.navigate('Home');
+                CheckSystemStatus(); //-1
+              } else {
+                // console.log(APIUpdateVersion.APIUpdateVersionStatus);
+                updateProgress = 0;
+                setglobalState({
+                  ...globalState,
+                  updatePercentage: updateProgress,
+                  updateStatus: 'Idle',
+                });
+
+                globalStatus.updateStatus = 'Idle';
+
+                RunTimer();
+                //2
+                CheckSystemStatus(); //-2
+              }
             }
           }
-        }
-
-
-         
         }
       })
       .catch(function (error) {
@@ -1621,8 +1617,6 @@ export default function UpdateModal(props) {
       })
       .done();
   };
-
-
 
   function InsertUpdateDataInfo() {
     fetch(
@@ -1656,7 +1650,6 @@ export default function UpdateModal(props) {
       })
       .done();
   }
-
 
   const BusinessCalendarDownload = () => {
     var BusinessCalendarString = '';
@@ -2611,7 +2604,7 @@ export default function UpdateModal(props) {
               </Text>
 
               <FlatButton
-               width={160}
+                width={160}
                 text="Close"
                 // onPress={() => {
                 //   setisModalConnectionError(false);

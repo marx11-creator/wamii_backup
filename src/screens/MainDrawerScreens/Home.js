@@ -58,7 +58,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 LogBox.ignoreAllLogs();
 
 export default function Home(props) {
-  const fadeIn = useRef(new Animated.Value(0)).current;
+  // const fadeIn = useRef(new Animated.Value(0)).current;
   const [globalAutoLogout, setglobalAutoLogout] = useContext(
     PageContextAutoLogout,
   );
@@ -314,88 +314,88 @@ export default function Home(props) {
     });
   }, []);
 
-  function start() {
-    Animated.timing(fadeIn, {
-      toValue: 1,
-      duration: 500,
-    }).start(() =>
-      Animated.timing(fadeIn, {
-        toValue: 0,
-        delay: 1500,
-        duration: 700,
-      }).start(),
-    );
-  } 
+  // function FadingMessage() {
+  //   Animated.timing(fadeIn, {
+  //     toValue: 1,
+  //     duration: 500,
+  //   }).start(() =>
+  //     Animated.timing(fadeIn, {
+  //       toValue: 0,
+  //       delay: 1500,
+  //       duration: 700,
+  //     }).start(),
+  //   );
+  // }
 
-  function ShowPleaseWait() {
-    return (
-      <View
-        style={{
-          flex: 1,
-          zIndex: 4,
-          width: moderateScale(50),
-          height: moderateScale(50),
-          alignItems: 'center',
-          justifyContent: 'center',
- 
-          backgroundColor: 'rgba(0, 0, 0, 0)',
+  // function ShowFadingMessag() {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         zIndex: 4,
+  //         width: moderateScale(50),
+  //         height: moderateScale(50),
+  //         alignItems: 'center',
+  //         justifyContent: 'center',
 
-          position: 'absolute',
-          top: height / 2,
-          left: width / 2 - 20,
-        }}>
-        <Animated.View
-          style={{
-            zIndex: 0,
-            opacity: fadeIn,
-            height: scale(60),
-            width: scale(200),
-            margin: 5,
-            borderRadius: 20,
-            backgroundColor: 'rgba(107, 107, 107, 0.9)',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
-            style={{
-              fontSize: moderateScale(16),
-              color: '#ffffff',
-              fontWeight: '300',
-              textAlign: 'center',
-            }}>
-            Comming Soon...{' '}
-          </Text>
-        </Animated.View>
-  </View>
+  //         backgroundColor: 'rgba(0, 0, 0, 0)',
 
-      // <View
-      //   style={{
-      //     position: 'absolute',
-      //     top: 0,
-      //     left: 0,
-      //     right: 0,
-      //     bottom: 0,
-      //     justifyContent: 'center',
-      //     alignItems: 'center',
-      //     backgroundColor: 'rgba(0, 0, 0, 0)',
-      //     zIndex: 0,
-      //   }}>
-      //   <Animated.View
-      //     style={{
-      //       zIndex: 0,
-      //       opacity: 1,
-      //       height: scale(50),
-      //       width: scale(200),
-      //       margin: 5,
-      //       borderRadius: 12,
-      //       backgroundColor: 'red',
-      //       justifyContent: 'center',
-      //     }}>
-      //     <Text style={styles.text}>Comming Soon... </Text>
-      //   </Animated.View>
-      // </View>
-    );
-  }
+  //         position: 'absolute',
+  //         top: height / 2,
+  //         left: width / 2 - 20,
+  //       }}>
+  //       <Animated.View
+  //         style={{
+  //           zIndex: 0,
+  //           opacity: fadeIn,
+  //           height: scale(60),
+  //           width: scale(200),
+  //           margin: 5,
+  //           borderRadius: 20,
+  //           backgroundColor: 'rgba(107, 107, 107, 0.9)',
+  //           justifyContent: 'center',
+  //           alignItems: 'center',
+  //         }}>
+  //         <Text
+  //           style={{
+  //             fontSize: moderateScale(16),
+  //             color: '#ffffff',
+  //             fontWeight: '300',
+  //             textAlign: 'center',
+  //           }}>
+  //           Comming Soon...{' '}
+  //         </Text>
+  //       </Animated.View>
+  // </View>
+
+  // <View
+  //   style={{
+  //     position: 'absolute',
+  //     top: 0,
+  //     left: 0,
+  //     right: 0,
+  //     bottom: 0,
+  //     justifyContent: 'center',
+  //     alignItems: 'center',
+  //     backgroundColor: 'rgba(0, 0, 0, 0)',
+  //     zIndex: 0,
+  //   }}>
+  //   <Animated.View
+  //     style={{
+  //       zIndex: 0,
+  //       opacity: 1,
+  //       height: scale(50),
+  //       width: scale(200),
+  //       margin: 5,
+  //       borderRadius: 12,
+  //       backgroundColor: 'red',
+  //       justifyContent: 'center',
+  //     }}>
+  //     <Text style={styles.text}>Comming Soon... </Text>
+  //   </Animated.View>
+  // </View>
+  // );
+  // }
 
   return (
     <ImageOverlay
@@ -404,7 +404,6 @@ export default function Home(props) {
       height={height}
       contentPosition="top">
       <ScrollView>
-        <ShowPleaseWait />
         <View
           style={{
             zIndex: 0,
@@ -664,7 +663,7 @@ export default function Home(props) {
           </Text>
         </View> */}
           </View>
-          {localSeconds === 200 ? <UpdateModal /> : null}
+          {localSeconds === 2 ? <UpdateModal /> : null}
         </View>
       </ScrollView>
     </ImageOverlay>
