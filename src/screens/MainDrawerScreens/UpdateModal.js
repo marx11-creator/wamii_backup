@@ -2069,9 +2069,11 @@ export default function UpdateModal(props) {
     var tempstr1 = 'sales_position_name=' + sales_position_name;
 
     console.log('21 ' + 'fetching fetch_per_category_data start');
-    console.log(server.server_address + 'salesmanfilter?' + tempstr1);
+    console.log(
+      server.server_address + 'sales_category_tbl/salesmanfilter?' + tempstr1,
+    );
     Promise.race([
-      fetch(server.server_address + 'salesmanfilter?' + tempstr1, {
+      fetch(server.server_address + 'sales_category_tbl/salesmanfilter?' + tempstr1, {
         method: 'GET',
         headers: {
           Accept: 'application/json',

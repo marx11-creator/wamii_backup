@@ -228,7 +228,10 @@ export default function BusinessCalendar(props) {
     if (currIndex === selectedDays.length) {
       var YEAR_MONTH_FILTER =
         'year=' + YearToSearch + '&' + 'month=' + MonthToSearch;
-
+console.log(server.server_address +
+  globalCompany.company +
+  'business_calendar/update?' +
+  YEAR_MONTH_FILTER)
       Promise.race([
         fetch(
           server.server_address +
@@ -257,10 +260,9 @@ export default function BusinessCalendar(props) {
         .then((jsonData) => {
           setInitialSelectedDays(selectedDays.length);
           console.log('done');
-          console.log(SelectedDaysString.slice(0, -1));
         })
         .catch(function (error) {
-          console.log('error in SAVING ONLINE BUSINESS CALENDAR : ' + error);
+          console.log('1error in SAVING ONLINE BUSINESS CALENDAR : ' + error);
         })
         .done();
     }
@@ -764,7 +766,7 @@ export default function BusinessCalendar(props) {
               width={160}
               text={isEditing ? 'UPDATE' : 'EDIT'}
               onPress={() => {
-                if (global.account_type === 'Administrator') {
+                if (global.account_type === 'User') {
                   if (isEditing === false) {
                     setisMonthMoveEnabled(1);
                     console.log(BusinessCalendarField.update_version);
