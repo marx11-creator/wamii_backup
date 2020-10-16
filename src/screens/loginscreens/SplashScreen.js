@@ -323,6 +323,7 @@ export default function SplashScreen(props) {
           global.TeamAccessList = '';
           global.TeamAccessListForAPI = '';
           global.sales_position_name = '';
+          global.PrincipalAccessList = '';
           temp.map((key, index) => {
             if (
               key.constant_type === 'MODULE_ACCESS' &&
@@ -367,6 +368,12 @@ export default function SplashScreen(props) {
               global.sales_position_name =
                 global.sales_position_name + "'" + key.constant_value + "',";
             }
+
+                        //GET ACCESS PRINCIPAL
+                        if (key.constant_type === 'PRINCIPAL_ACCESS') {
+                          global.PrincipalAccessList =
+                            global.PrincipalAccessList + "'" + key.constant_value + "',";
+                        }
 
             //GET AUTO_LOGOUT STATUS
             if (key.constant_type === 'ACCOUNT_VALIDITY') {
@@ -433,6 +440,17 @@ export default function SplashScreen(props) {
                     );
                   }
 
+                                    //    'FOR API  USE PRINCIPAL
+
+                                    if (global.PrincipalAccessList === '') {
+                                      global.PrincipalAccessList = 'ALLPRINCIPAL';
+                                    } else {
+                                      global.PrincipalAccessList = global.PrincipalAccessList.slice(
+                                        0,
+                                        -1,
+                                      );
+                                    }
+
                   //    'FOR LOCAL USE ONLY IN TABLET'
                   global.TeamAccessList =
                     '(' + global.TeamAccessList.slice(0, -1) + ')';
@@ -468,6 +486,19 @@ export default function SplashScreen(props) {
                     -1,
                   );
                 }
+
+
+                
+                                //    'FOR API  USE PRINCIPAL
+
+                                if (global.PrincipalAccessList === '') {
+                                  global.PrincipalAccessList = 'ALLSALESMAN';
+                                } else {
+                                  global.PrincipalAccessList = global.PrincipalAccessList.slice(
+                                    0,
+                                    -1,
+                                  );
+                                }
 
                 //    'FOR LOCAL USE ONLY IN TABLET'
                 global.TeamAccessList =

@@ -285,7 +285,16 @@ const SignScreen = (props) => {
           SaveAppToken(jsonData);
         } else {
           //USER LOGIN IS FRESH, ASSIGNING DEVICE
-          InsertLoginInfo(jsonData);
+
+          if (
+            global.device_id === '69b761866cb11621' ||
+            global.device_id === 'ede7b31a387e8c30'
+          ) {
+            cons;
+          } else {
+            InsertLoginInfo(jsonData);
+          }
+
           SaveAppToken(jsonData);
         }
       })
@@ -377,6 +386,7 @@ const SignScreen = (props) => {
           global.TeamAccessList = '';
           global.TeamAccessListForAPI = '';
           global.sales_position_name = '';
+          global.PrincipalAccessList = '';
 
           jsonData.map((key, index) => {
             if (
@@ -423,10 +433,11 @@ const SignScreen = (props) => {
                 global.sales_position_name + "'" + key.constant_value + "',";
             }
 
-            // //GET SALES_POSITION_NAME
-            // if (key.constant_type === 'SALES_POSITION_NAME') {
-            //   global.sales_position_name = key.constant_value;
-            // }
+            //GET ACCESS PRINCIPAL
+            if (key.constant_type === 'PRINCIPAL_ACCESS') {
+              global.PrincipalAccessList =
+                global.PrincipalAccessList + "'" + key.constant_value + "',";
+            }
 
             //GET AUTO_LOGOUT STATUS
             if (key.constant_type === 'ACCOUNT_VALIDITY') {
@@ -491,6 +502,17 @@ const SignScreen = (props) => {
                     );
                   }
 
+                  //    'FOR API  USE PRINCIPAL
+
+                  if (global.PrincipalAccessList === '') {
+                    global.PrincipalAccessList = 'ALLPRINCIPAL';
+                  } else {
+                    global.PrincipalAccessList = global.PrincipalAccessList.slice(
+                      0,
+                      -1,
+                    );
+                  }
+
                   //    'FOR LOCAL USE ONLY IN TABLET'
                   global.TeamAccessList =
                     '(' + global.TeamAccessList.slice(0, -1) + ')';
@@ -505,6 +527,7 @@ const SignScreen = (props) => {
 
                   console.log(global.sales_position_name);
                   console.log(global.TeamAccessList);
+                  console.log(global.PrincipalAccessList);
                   props.navigation.navigate('StartMainDrawerScreen');
                 }
               } else {
@@ -534,6 +557,20 @@ const SignScreen = (props) => {
                   );
                 }
 
+
+                                //    'FOR API  USE SALESMAN
+
+                                if (global.PrincipalAccessList === '') {
+                                  global.PrincipalAccessList = 'ALLSALESMAN';
+                                } else {
+                                  global.PrincipalAccessList = global.PrincipalAccessList.slice(
+                                    0,
+                                    -1,
+                                  );
+                                }
+
+
+
                 //    'FOR LOCAL USE ONLY IN TABLET'
                 global.TeamAccessList =
                   '(' + global.TeamAccessList.slice(0, -1) + ')';
@@ -548,6 +585,7 @@ const SignScreen = (props) => {
 
                 console.log(global.sales_position_name);
                 console.log(global.TeamAccessList);
+                console.log(global.PrincipalAccessList);
                 props.navigation.navigate('StartMainDrawerScreen');
               }
             } else {

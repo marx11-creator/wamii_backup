@@ -68,6 +68,7 @@ var longStrinfg = '';
 var test = 'aa';
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
+  const [refreshing, setRefreshing] = React.useState(false);
   const fadeIn = useRef(new Animated.Value(0)).current;
   var ImageLoop = [];
   var refContainer = useRef();
@@ -78,7 +79,23 @@ export default function Inventory(props) {
   ] = useState(false);
 
   const [isVisibleButton, setisVisibleButton] = useState(false);
+  const wait = (timeout) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, timeout);
+    });
+  };
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
 
+    wait(2000).then(() => {
+      setRefreshing(false);
+      console.log('refreshed');
+
+      GetPrincipalList();
+      GetLocalPromoItems(page);
+
+    });
+  }, []);
   //   const onEndReached = () => {
   //     if (onEndReachedCalledDuringMomentum===false) {
   //       console.log('reach edndadad')
@@ -1946,6 +1963,9 @@ export default function Inventory(props) {
               numColumns={2}
               removeClippedSubviews={true}
               ListHeaderComponent={FlatListHeader}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
               //   onEndReachedThreshold={0.5}
               // // onMomentumScrollBegin={() => { setonEndReachedCalledDuringMomentum(false)}}
 

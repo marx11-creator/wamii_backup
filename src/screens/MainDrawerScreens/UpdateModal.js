@@ -797,8 +797,23 @@ export default function UpdateModal(props) {
 
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
+    var principal_id = global.PrincipalAccessList;
     var tempstr1 =
-      'team=' + teams + '&' + 'sales_position_name=' + sales_position_name;
+      'team=' +
+      teams +
+      '&' +
+      'sales_position_name=' +
+      sales_position_name +
+      '&' +
+      'principal_id=' +
+      principal_id;
+
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'persalesmansalestarget?' +
+        tempstr1,
+    );
     Promise.race([
       fetch(
         server.server_address +
@@ -1981,7 +1996,7 @@ export default function UpdateModal(props) {
   //done
   let fetch_net_data = () => {
     var sales_position_name = global.sales_position_name;
- 
+
     var tempstr1 = 'sales_position_name=' + sales_position_name;
 
     console.log('18 ' + 'fetching fetch_net_data');
@@ -2005,12 +2020,11 @@ export default function UpdateModal(props) {
         return responseData.json();
       })
       .then((jsonData) => {
-      
         setnet_data(jsonData);
 
         setLoading(true);
         setload_n(1);
-     
+
         setloadname('Downloading ' + 'Net Sales');
 
         console.log('19 ' + 'fetching fetch_net_data DONE');
@@ -2024,7 +2038,6 @@ export default function UpdateModal(props) {
 
   //done
   let fetch_per_vendor_data = () => {
- 
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr1 =
@@ -2047,7 +2060,6 @@ export default function UpdateModal(props) {
         return responseData.json();
       })
       .then((jsonData) => {
-       
         setvendor_data(jsonData);
         setLoading(true);
         setload_v(1);
@@ -2064,7 +2076,7 @@ export default function UpdateModal(props) {
 
   //done
   let fetch_per_category_data = () => {
-    console.log('103 start')
+    console.log('103 start');
     var sales_position_name = global.sales_position_name;
     var tempstr1 = 'sales_position_name=' + sales_position_name;
 
@@ -2073,14 +2085,17 @@ export default function UpdateModal(props) {
       server.server_address + 'sales_category_tbl/salesmanfilter?' + tempstr1,
     );
     Promise.race([
-      fetch(server.server_address + 'sales_category_tbl/salesmanfilter?' + tempstr1, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + APIToken.access_token,
+      fetch(
+        server.server_address + 'sales_category_tbl/salesmanfilter?' + tempstr1,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + APIToken.access_token,
+          },
         },
-      }),
+      ),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
@@ -2090,7 +2105,7 @@ export default function UpdateModal(props) {
       })
       .then((jsonData) => {
         setcategory_data(jsonData);
-        console.log('103 success')
+        console.log('103 success');
         console.log('21 ' + 'fetching fetch_per_category_data success');
         setcount_c_json(Object.keys(jsonData).length);
 
@@ -2349,6 +2364,7 @@ export default function UpdateModal(props) {
 
   const [ApiPromoItemData, setApiPromoItemData] = useState(ApiFields);
   const [ItemsDeleted, setItemsDeleted] = useState(false);
+
   const DownloadPromoItems = () => {
     Promise.race([
       fetch(server.server_address + globalCompany.company + 'promo_item', {
@@ -2367,8 +2383,13 @@ export default function UpdateModal(props) {
         return responseData.json();
       })
       .then((jsonData) => {
-        setApiPromoItemData(jsonData);
-        ApiRowsCount = jsonData.length;
+        if (jsonData.length > 0) {
+          setApiPromoItemData(jsonData);
+          ApiRowsCount = jsonData.length;
+        } else {
+          // NO ITEM, SET TRU TO END UPDATE
+          setq6Inventory(true);
+        }
       })
       .catch(function (error) {
         console.log('Error 1:' + error.message);
