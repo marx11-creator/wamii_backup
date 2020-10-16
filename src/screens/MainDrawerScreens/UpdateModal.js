@@ -938,24 +938,17 @@ export default function UpdateModal(props) {
             "'" +
             '),';
 
+          // SELECT * FROM (
 
+          //   SELECT business_year, business_month, SUM(sales) AS test FROM (
 
+          //    SELECT business_year, business_month,salesman_name , sales_position_name , SUM(`total_gross_amount`) AS sales, SUM(`total_target`) AS target,
+          //              SUM(`total_target`) AS achievement FROM `sales_net_tbl`   GROUP BY business_year, business_month,  `salesman_name`
+          //              ORDER BY CAST((`total_gross_amount`) AS UNSIGNED)   DESC ) AS q11
+          //              WHERE business_year = '2020'
 
-            SELECT * FROM (
+          //               GROUP BY business_year, business_month
 
-              SELECT business_year, business_month, SUM(sales) AS test FROM (
-               
-               SELECT business_year, business_month,salesman_name , sales_position_name , SUM(`total_gross_amount`) AS sales, SUM(`total_target`) AS target,  
-                         SUM(`total_target`) AS achievement FROM `sales_net_tbl`   GROUP BY business_year, business_month,  `salesman_name`
-                         ORDER BY CAST((`total_gross_amount`) AS UNSIGNED)   DESC ) AS q11
-                         WHERE business_year = '2020'
-                         
-                          GROUP BY business_year, business_month
-
-           
-                          
-
-                          
           if (runningIndexCount === 500) {
             var stringnow = perymtsatString;
             perymtsatString = '';
@@ -1225,18 +1218,22 @@ export default function UpdateModal(props) {
   const GetPerAreaAPIData = () => {
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
-    var tempstr2 = teams + '&' + sales_position_name;
+    // var tempstr2 = teams + '&' + sales_position_name;
+
+    var tempstr2 =
+      'team=' + teams + '&' + 'sales_position_name=' + sales_position_name;
+
     console.log(
       server.server_address +
         globalCompany.company +
-        'perareasalesuba/' +
+        'perareasalesuba?' +
         tempstr2,
     );
     Promise.race([
       fetch(
         server.server_address +
           globalCompany.company +
-          'perareasalesuba/' +
+          'perareasalesuba?' +
           tempstr2,
         {
           method: 'GET',
