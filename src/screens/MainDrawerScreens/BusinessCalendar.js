@@ -226,14 +226,15 @@ export default function BusinessCalendar(props) {
         '),';
     });
     if (currIndex === selectedDays.length) {
+      var YEAR_MONTH_FILTER =
+        'year=' + YearToSearch + '&' + 'month=' + MonthToSearch;
+
       Promise.race([
         fetch(
           server.server_address +
             globalCompany.company +
-            'business_calendar/update/' +
-            YearToSearch +
-            '&' +
-            MonthToSearch,
+            'business_calendar/update?' +
+            YEAR_MONTH_FILTER,
           {
             method: 'POST',
             headers: {
@@ -298,25 +299,22 @@ export default function BusinessCalendar(props) {
       BusinessCalendarField.update_version = 'XX';
     }
 
-    var YMU =
+    var YEAR_MONTH_UPDATE_VERSION_FILTER =
+      'year=' +
       BusinessCalendarField.year +
       '&' +
+      'month=' +
       BusinessCalendarField.month +
       '&' +
+      'update_version=' +
       BusinessCalendarField.update_version;
 
-    console.log(
-      server.server_address +
-        globalCompany.company +
-        'business_calendar/edit/' +
-        YMU,
-    );
     Promise.race([
       fetch(
         server.server_address +
           globalCompany.company +
-          'business_calendar/edit/' +
-          YMU,
+          'business_calendar/edit?' +
+          YEAR_MONTH_UPDATE_VERSION_FILTER,
         {
           method: 'GET',
           headers: {
@@ -763,7 +761,7 @@ export default function BusinessCalendar(props) {
           }}>
           <View style={{marginRight: 20}}>
             <FlatButton
-             width={160}
+              width={160}
               text={isEditing ? 'UPDATE' : 'EDIT'}
               onPress={() => {
                 if (global.account_type === 'Administrator') {

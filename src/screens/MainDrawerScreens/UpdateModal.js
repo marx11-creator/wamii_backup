@@ -765,6 +765,7 @@ export default function UpdateModal(props) {
   }
 
   function StartUpdate() {
+    console.log('START START.................');
     setq1Principal(false); //update status of function to false
     setq2Perymtsat(false); //update status of function to false
     setq3UserUpdateLog(false); //update status of function to false
@@ -1911,16 +1912,40 @@ export default function UpdateModal(props) {
       var get_date_to = year + '-' + cur_month + '-' + '31';
     }
 
-    console.log('16 ' + 'fetching fetch_per_customer_data');
+    var sales_position_name = global.sales_position_name;
 
+    var tempstr1 =
+      'sales_position_name=' +
+      sales_position_name +
+      '&' +
+      'date_from=' +
+      get_date_from +
+      '&' +
+      'date_to=' +
+      get_date_to;
+
+    console.log('16 ' + 'fetching fetch_per_customer_data');
+    // console.log(
+    //   server.server_address + 'sales_tbl/salesmanfilterddaterange?' + tempstr1,
+    // );
+    // fetch(
+    //   server.server_address +
+    //     'business_calendar/sales_tbl/salesmanfilterddaterange?' +
+    //     tempstr1,
+    //   {
+    //     method: 'GET',
+    //     headers: {
+    //       Accept: 'application/json',
+    //       'Content-Type': 'application/json',
+    //       Authorization: 'Bearer ' + APIToken.access_token,
+    //     },
+    //   },
+    // ),
     Promise.race([
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/sales_tbl/salesmanfilterddaterange/' +
-          global.sales_position_name +
-          '&' +
-          get_date_from +
-          '&' +
-          get_date_to,
+        server.server_address +
+          'sales_tbl/salesmanfilterddaterange?' +
+          tempstr1,
         {
           method: 'GET',
           headers: {
@@ -1953,12 +1978,16 @@ export default function UpdateModal(props) {
       .done();
   };
 
+  //done
   let fetch_net_data = () => {
+    var sales_position_name = global.sales_position_name;
+ 
+    var tempstr1 = 'sales_position_name=' + sales_position_name;
+
     console.log('18 ' + 'fetching fetch_net_data');
     Promise.race([
       fetch(
-        'https://boiling-atoll-20376.herokuapp.com/sales_net_tbl/salesmanfilter/' +
-          global.sales_position_name,
+        server.server_address + 'sales_net_tbl/salesmanfilter?' + tempstr1,
         {
           method: 'GET',
           headers: {
@@ -1976,11 +2005,12 @@ export default function UpdateModal(props) {
         return responseData.json();
       })
       .then((jsonData) => {
+      
         setnet_data(jsonData);
 
         setLoading(true);
         setload_n(1);
-
+     
         setloadname('Downloading ' + 'Net Sales');
 
         console.log('19 ' + 'fetching fetch_net_data DONE');
@@ -1992,22 +2022,23 @@ export default function UpdateModal(props) {
       .done();
   };
 
+  //done
   let fetch_per_vendor_data = () => {
+ 
+    var teams = global.TeamAccessListForAPI;
+    var sales_position_name = global.sales_position_name;
+    var tempstr1 =
+      'team=' + teams + '&' + 'sales_position_name=' + sales_position_name;
+
     Promise.race([
-      fetch(
-        'https://boiling-atoll-20376.herokuapp.com/perprincipalsalestargetuba/' +
-          global.TeamAccessListForAPI +
-          '&' +
-          global.sales_position_name,
-        {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + APIToken.access_token,
-          },
+      fetch(server.server_address + 'perprincipalsalestargetuba?' + tempstr1, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + APIToken.access_token,
         },
-      ),
+      }),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
@@ -2016,6 +2047,7 @@ export default function UpdateModal(props) {
         return responseData.json();
       })
       .then((jsonData) => {
+       
         setvendor_data(jsonData);
         setLoading(true);
         setload_v(1);
@@ -2030,21 +2062,23 @@ export default function UpdateModal(props) {
       .done();
   };
 
+  //done
   let fetch_per_category_data = () => {
-    console.log('21 ' + 'fetching fetch_per_category_data');
+    console.log('103 start')
+    var sales_position_name = global.sales_position_name;
+    var tempstr1 = 'sales_position_name=' + sales_position_name;
+
+    console.log('21 ' + 'fetching fetch_per_category_data start');
+    console.log(server.server_address + 'salesmanfilter?' + tempstr1);
     Promise.race([
-      fetch(
-        'https://boiling-atoll-20376.herokuapp.com/sales_category_tbl/salesmanfilter/' +
-          global.sales_position_name,
-        {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + APIToken.access_token,
-          },
+      fetch(server.server_address + 'salesmanfilter?' + tempstr1, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + APIToken.access_token,
         },
-      ),
+      }),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
@@ -2054,7 +2088,8 @@ export default function UpdateModal(props) {
       })
       .then((jsonData) => {
         setcategory_data(jsonData);
-        // console.log(jsonData);
+        console.log('103 success')
+        console.log('21 ' + 'fetching fetch_per_category_data success');
         setcount_c_json(Object.keys(jsonData).length);
 
         setLoading(true);
