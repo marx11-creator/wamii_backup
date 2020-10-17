@@ -808,12 +808,7 @@ export default function UpdateModal(props) {
       'principal_id=' +
       principal_id;
 
-    console.log(
-      server.server_address +
-        globalCompany.company +
-        'persalesmansalestarget?' +
-        tempstr1,
-    );
+    //DONE1
     Promise.race([
       fetch(
         server.server_address +
@@ -1030,8 +1025,16 @@ export default function UpdateModal(props) {
   const GetPerPrincipalAPIData = () => {
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
+    var principal_id = global.PrincipalAccessList;
     var tempstr3 =
-      'team=' + teams + '&' + 'sales_position_name=' + sales_position_name;
+      'team=' +
+      teams +
+      '&' +
+      'sales_position_name=' +
+      sales_position_name +
+      '&' +
+      'principal_id=' +
+      principal_id;
     console.log(
       server.server_address +
         globalCompany.company +
@@ -1234,10 +1237,19 @@ export default function UpdateModal(props) {
   const GetPerAreaAPIData = () => {
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
+    var principal_id = global.PrincipalAccessList;
+
     // var tempstr2 = teams + '&' + sales_position_name;
 
     var tempstr2 =
-      'team=' + teams + '&' + 'sales_position_name=' + sales_position_name;
+      'team=' +
+      teams +
+      '&' +
+      'sales_position_name=' +
+      sales_position_name +
+      '&' +
+      'principal_id=' +
+      principal_id;
 
     console.log(
       server.server_address +
@@ -2366,15 +2378,21 @@ export default function UpdateModal(props) {
   const [ItemsDeleted, setItemsDeleted] = useState(false);
 
   const DownloadPromoItems = () => {
+    var principal_id = global.PrincipalAccessList;
+
+    var tempstr = 'principal_id=' + principal_id;
     Promise.race([
-      fetch(server.server_address + globalCompany.company + 'promo_item', {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + APIToken.access_token,
+      fetch(
+        server.server_address + globalCompany.company + 'promo_item?' + tempstr,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + APIToken.access_token,
+          },
         },
-      }),
+      ),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout')), 160000),
       ),
