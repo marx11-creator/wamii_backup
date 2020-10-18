@@ -1,6 +1,6 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -19,6 +19,7 @@ import {
   DashboardMonths,
   DashboardYears,
   DashboardTeams,
+  DashboardVendor,
   PageVisited,
 } from '../../sharedComponents/globalCommands/globalCommands';
 
@@ -34,10 +35,10 @@ import FlatButton from '../../sharedComponents/custombutton';
 import moment from 'moment';
 import {dbperymtsat} from '../../database/sqliteSetup';
 export default function DashboardModal(props) {
-  
   const [isVisibleYear, setisVisibleYear] = useState(false);
   const [isVisibleMonth, setisVisibleMonth] = useState(false);
   const [isVisibleTeam, setisVisibleTeam] = useState(false);
+  const [isVisibleVendor, setisVisibleVendor] = useState(false);
 
   function GetMonthsforFilter() {
     var YearQuery = '';
@@ -96,6 +97,8 @@ export default function DashboardModal(props) {
         FilterListMirror.DashboardFilterYear = FilterList.DashboardFilterYear;
         FilterListMirror.DashboardFilterMonth = FilterList.DashboardFilterMonth;
         FilterListMirror.DashboardFilterTeam = FilterList.DashboardFilterTeam;
+        FilterListMirror.DashboardFilterVendor =
+          FilterList.DashboardFilterVendor;
       }}>
       <TouchableWithoutFeedback>
         <View style={[styles.FilterMainView]}>
@@ -147,11 +150,13 @@ export default function DashboardModal(props) {
                     setisVisibleYear(true);
                     setisVisibleMonth(false);
                     setisVisibleTeam(false);
+                    setisVisibleVendor(false);
                   }}
                   onClose={() => {
                     setisVisibleYear(false);
                     setisVisibleMonth(false);
                     setisVisibleTeam(false);
+                    setisVisibleVendor(false);
                   }}
                   placeholder="Select Year"
                   dropDownMaxHeight={scale(290)}
@@ -209,22 +214,19 @@ export default function DashboardModal(props) {
                     setisVisibleYear(false);
                     setisVisibleMonth(true);
                     setisVisibleTeam(false);
+                    setisVisibleVendor(false);
                   }}
                   onClose={() => {
                     setisVisibleYear(false);
                     setisVisibleMonth(false);
                     setisVisibleTeam(false);
+                    setisVisibleVendor(false);
                   }}
                   placeholder="Select Month"
                   dropDownMaxHeight={scale(290)}
                   containerStyle={{height: 50}}
                   isVisible={isVisibleMonth}
                   items={DashboardMonths}
-                  // defaultValue={
-                  //   FilterList.DashboardFilterMonth === ''
-                  //     ? moment().utcOffset('+08:00').format('MMMM')
-                  //     : FilterList.DashboardFilterMonth
-                  // }
                   onChangeItem={(itemValue) => {
                     FilterListMirror.DashboardFilterMonth = itemValue.value;
                   }} //                                                MONTH >>>>>>>>>>>>>>>>
@@ -239,42 +241,84 @@ export default function DashboardModal(props) {
                   justifyContent: 'space-around',
                   alignContent: 'space-between',
                 }}>
-                {CurrentDashboardScreen.Screen === 'PERSALESMAN' ? (
-                  <Text>Team :</Text>
-                ) : null}
+                <Text>Vendor :</Text>
 
-                {CurrentDashboardScreen.Screen === 'PERSALESMAN' ? (
-                  <DropDownPicker
-                    style={{backgroundColor: '#F1F8F5', marginTop: 10}} // TEAM>>>>>>>>>>>>>>>>
-                    dropDownStyle={{backgroundColor: '#F1F8F5'}}
-                    labelStyle={{
-                      fontSize: 14,
-                      textAlign: 'left',
-                      color: '#000',
-                    }}
-                    itemStyle={{
-                      justifyContent: 'flex-start',
-                    }}
-                    onOpen={() => {
-                      setisVisibleYear(false);
-                      setisVisibleMonth(false);
-                      setisVisibleTeam(true);
-                    }}
-                    onClose={() => {
-                      setisVisibleYear(false);
-                      setisVisibleMonth(false);
-                      setisVisibleTeam(false);
-                    }}
-                    placeholder="Select Team"
-                    dropDownMaxHeight={scale(290)}
-                    containerStyle={{height: 50}}
-                    isVisible={isVisibleTeam}
-                    items={DashboardTeams}
-                    onChangeItem={(itemValue) => {
-                      FilterListMirror.DashboardFilterTeam = itemValue.value;
-                    }} //                                               TEAM>>>>>>>>>>>>>>>>
-                  />
-                ) : null}
+                <DropDownPicker
+                  style={{backgroundColor: '#F1F8F5', marginTop: 10}} // TEAM>>>>>>>>>>>>>>>>
+                  dropDownStyle={{backgroundColor: '#F1F8F5'}}
+                  labelStyle={{
+                    fontSize: 14,
+                    textAlign: 'left',
+                    color: '#000',
+                  }}
+                  itemStyle={{
+                    justifyContent: 'flex-start',
+                  }}
+                  onOpen={() => {
+                    setisVisibleYear(false);
+                    setisVisibleMonth(false);
+                    setisVisibleTeam(false);
+                    setisVisibleVendor(true);
+                  }}
+                  onClose={() => {
+                    setisVisibleYear(false);
+                    setisVisibleMonth(false);
+                    setisVisibleTeam(false);
+                    setisVisibleVendor(false);
+                  }}
+                  placeholder="Select Vendor"
+                  dropDownMaxHeight={scale(290)}
+                  containerStyle={{height: 50}}
+                  isVisible={isVisibleVendor}
+                  items={DashboardVendor}
+                  onChangeItem={(itemValue) => {
+                    FilterListMirror.DashboardFilterVendor = itemValue.value;
+                  }} //                                               TEAM>>>>>>>>>>>>>>>>
+                />
+              </View>
+
+              <View
+                style={{
+                  //                                                 TEAM>>>>>>>>>>>>>>>>
+                  marginHorizontal: 5,
+                  marginBottom: 25,
+                  justifyContent: 'space-around',
+                  alignContent: 'space-between',
+                }}>
+                <Text>Team :</Text>
+
+                <DropDownPicker
+                  style={{backgroundColor: '#F1F8F5', marginTop: 10}} // TEAM>>>>>>>>>>>>>>>>
+                  dropDownStyle={{backgroundColor: '#F1F8F5'}}
+                  labelStyle={{
+                    fontSize: 14,
+                    textAlign: 'left',
+                    color: '#000',
+                  }}
+                  itemStyle={{
+                    justifyContent: 'flex-start',
+                  }}
+                  onOpen={() => {
+                    setisVisibleYear(false);
+                    setisVisibleMonth(false);
+                    setisVisibleTeam(true);
+                    setisVisibleVendor(false);
+                  }}
+                  onClose={() => {
+                    setisVisibleYear(false);
+                    setisVisibleMonth(false);
+                    setisVisibleTeam(false);
+                    setisVisibleVendor(false);
+                  }}
+                  placeholder="Select Team"
+                  dropDownMaxHeight={scale(290)}
+                  containerStyle={{height: 50}}
+                  isVisible={isVisibleTeam}
+                  items={DashboardTeams}
+                  onChangeItem={(itemValue) => {
+                    FilterListMirror.DashboardFilterTeam = itemValue.value;
+                  }} //                                               TEAM>>>>>>>>>>>>>>>>
+                />
               </View>
 
               <View
@@ -282,9 +326,10 @@ export default function DashboardModal(props) {
                   alignItems: 'flex-end',
                 }}>
                 <FlatButton
-                width={160}
+                  width={160}
                   text="Filter"
                   onPress={() => {
+                 
                     if (FilterListMirror.DashboardFilterMonth === '') {
                       Alert.alert(
                         'NOTE:',
@@ -310,6 +355,11 @@ export default function DashboardModal(props) {
                           FilterList.DashboardFilterTeam;
                       }
 
+                      if (FilterListMirror.DashboardFilterVendor === '') {
+                        FilterListMirror.DashboardFilterVendor =
+                          FilterList.DashboardFilterVendor;
+                      }
+
                       // setglobalState({
                       //   ...globalState,
                       //   DashboardFilterYearNMonthTeam: FilterListMirror.DashboardFilterYear +
@@ -325,17 +375,19 @@ export default function DashboardModal(props) {
                       FilterList.DashboardFilterYearNMonthTeam =
                         FilterListMirror.DashboardFilterYear +
                         FilterListMirror.DashboardFilterMonth +
-                        FilterListMirror.DashboardFilterTeam;
+                        FilterListMirror.DashboardFilterTeam +
+                        FilterListMirror.DashboardFilterVendor;
 
                       FilterList.DashboardFilterYear =
                         FilterListMirror.DashboardFilterYear;
                       FilterList.DashboardFilterMonth =
                         FilterListMirror.DashboardFilterMonth;
 
-
-
                       FilterList.DashboardFilterTeam =
                         FilterListMirror.DashboardFilterTeam;
+
+                      FilterList.DashboardFilterVendor =
+                        FilterListMirror.DashboardFilterVendor;
 
                       props.closeDisplay();
                     }

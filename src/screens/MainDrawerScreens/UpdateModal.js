@@ -175,6 +175,7 @@ export default function UpdateModal(props) {
       business_year: '',
       business_month: '',
       invoice_date: '',
+      principal_name: '',
       team: '',
       salesman_name: '',
       position_name: '',
@@ -193,6 +194,7 @@ export default function UpdateModal(props) {
       business_month: '',
       principal_name: '',
       principal_acronym: '',
+      team: '',
       sales: '',
       target: '',
       uba: '',
@@ -612,7 +614,10 @@ export default function UpdateModal(props) {
         lastUpdate: MinutesDiff + 'ago',
       });
     } else {
-      console.log('5');
+      console.log(MonthDiff);
+      console.log(DaysDiff);
+      console.log(HoursDiff);
+      console.log(MinutesDiff)
       setglobalTimer({
         ...globalTimer,
         lastUpdate: '0 minutes ago',
@@ -835,6 +840,7 @@ export default function UpdateModal(props) {
         if (jsonData.length > 0) {
           lineChartAPIdatalength = jsonData.length;
           setlineChartLocalData(jsonData);
+           
           updateProgress = Number(updateProgress) + Number(6);
           setglobalState({
             ...globalState,
@@ -909,7 +915,6 @@ export default function UpdateModal(props) {
         runningIndexCount = runningIndexCount + 1;
 
         if (runningIndexCount < 501) {
-          // console.log('saved on ' + currIndex + ' indexxxxxx');
           perymtsatString =
             perymtsatString +
             "('" +
@@ -922,6 +927,10 @@ export default function UpdateModal(props) {
             ',' +
             "'" +
             item.invoice_date +
+            "'" +
+            ',' +
+            "'" +
+            item.principal_name +
             "'" +
             ',' +
             "'" +
@@ -949,17 +958,6 @@ export default function UpdateModal(props) {
             "'" +
             '),';
 
-          // SELECT * FROM (
-
-          //   SELECT business_year, business_month, SUM(sales) AS test FROM (
-
-          //    SELECT business_year, business_month,salesman_name , sales_position_name , SUM(`total_gross_amount`) AS sales, SUM(`total_target`) AS target,
-          //              SUM(`total_target`) AS achievement FROM `sales_net_tbl`   GROUP BY business_year, business_month,  `salesman_name`
-          //              ORDER BY CAST((`total_gross_amount`) AS UNSIGNED)   DESC ) AS q11
-          //              WHERE business_year = '2020'
-
-          //               GROUP BY business_year, business_month
-
           if (runningIndexCount === 500) {
             var stringnow = perymtsatString;
             perymtsatString = '';
@@ -967,7 +965,7 @@ export default function UpdateModal(props) {
             dbperymtsat.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
+                'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,principal_name,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -988,7 +986,7 @@ export default function UpdateModal(props) {
             dbperymtsat.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
+                'INSERT INTO perymtsat_tbl (business_year, business_month,invoice_date,principal_name,team,salesman_name, position_name, amount,target,datetimeupdated) VALUES ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -1021,6 +1019,7 @@ export default function UpdateModal(props) {
     }
   }
 
+// !!!ADD TEAM USE IN FILTER IN DASHBOARD
   //PER PRINCIPAL
   const GetPerPrincipalAPIData = () => {
     var teams = global.TeamAccessListForAPI;
@@ -1035,12 +1034,11 @@ export default function UpdateModal(props) {
       '&' +
       'principal_id=' +
       principal_id;
-    console.log(
-      server.server_address +
+
+      console.log(server.server_address +
         globalCompany.company +
         'perprincipalsalestargetuba?' +
-        tempstr3,
-    );
+        tempstr3)
     Promise.race([
       fetch(
         server.server_address +
@@ -1153,6 +1151,10 @@ export default function UpdateModal(props) {
             "'" +
             ',' +
             "'" +
+            item.team +
+            "'" +
+            ',' +
+            "'" +
             item.sales +
             "'" +
             ',' +
@@ -1177,7 +1179,7 @@ export default function UpdateModal(props) {
             dbperprincipal.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, sales, target, uba, dateTimeUpdated) VALUES   ' +
+                'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, team, sales, target, uba, dateTimeUpdated) VALUES   ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -1198,7 +1200,7 @@ export default function UpdateModal(props) {
             dbperprincipal.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, sales, target, uba, dateTimeUpdated) VALUES   ' +
+                'INSERT INTO perprincipalpermonth_tbl (business_year, business_month, invoice_date,principal_name, principal_acronym, team, sales, target, uba, dateTimeUpdated) VALUES   ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -2053,7 +2055,7 @@ export default function UpdateModal(props) {
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr1 =
-      'team=' + teams + '&' + 'sales_position_name=' + sales_position_name;
+      'team=' + teams + '&' + 'sales_position_name=' + sales_position_name +  '&' + 'principal_id=' + global.PrincipalAccessList;
 
     Promise.race([
       fetch(server.server_address + 'perprincipalsalestargetuba?' + tempstr1, {

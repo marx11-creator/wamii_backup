@@ -369,11 +369,11 @@ export default function SplashScreen(props) {
                 global.sales_position_name + "'" + key.constant_value + "',";
             }
 
-                        //GET ACCESS PRINCIPAL
-                        if (key.constant_type === 'PRINCIPAL_ACCESS') {
-                          global.PrincipalAccessList =
-                            global.PrincipalAccessList + "'" + key.constant_value + "',";
-                        }
+            //GET ACCESS PRINCIPAL
+            if (key.constant_type === 'PRINCIPAL_ACCESS') {
+              global.PrincipalAccessList =
+                global.PrincipalAccessList + "'" + key.constant_value + "',";
+            }
 
             //GET AUTO_LOGOUT STATUS
             if (key.constant_type === 'ACCOUNT_VALIDITY') {
@@ -440,16 +440,16 @@ export default function SplashScreen(props) {
                     );
                   }
 
-                                    //    'FOR API  USE PRINCIPAL
+                  //    'FOR API  USE PRINCIPAL
 
-                                    if (global.PrincipalAccessList === '') {
-                                      global.PrincipalAccessList = 'ALLPRINCIPAL';
-                                    } else {
-                                      global.PrincipalAccessList = global.PrincipalAccessList.slice(
-                                        0,
-                                        -1,
-                                      );
-                                    }
+                  if (global.PrincipalAccessList === '') {
+                    global.PrincipalAccessList = 'ALLPRINCIPAL';
+                  } else {
+                    global.PrincipalAccessList = global.PrincipalAccessList.slice(
+                      0,
+                      -1,
+                    );
+                  }
 
                   //    'FOR LOCAL USE ONLY IN TABLET'
                   global.TeamAccessList =
@@ -487,18 +487,16 @@ export default function SplashScreen(props) {
                   );
                 }
 
+                //    'FOR API  USE PRINCIPAL
 
-                
-                                //    'FOR API  USE PRINCIPAL
-
-                                if (global.PrincipalAccessList === '') {
-                                  global.PrincipalAccessList = 'ALLSALESMAN';
-                                } else {
-                                  global.PrincipalAccessList = global.PrincipalAccessList.slice(
-                                    0,
-                                    -1,
-                                  );
-                                }
+                if (global.PrincipalAccessList === '') {
+                  global.PrincipalAccessList = 'ALLPRINCIPAL';
+                } else {
+                  global.PrincipalAccessList = global.PrincipalAccessList.slice(
+                    0,
+                    -1,
+                  );
+                }
 
                 //    'FOR LOCAL USE ONLY IN TABLET'
                 global.TeamAccessList =

@@ -313,6 +313,7 @@ export default function PerPrincipalDashboard(props) {
       business_month: '',
       principal_name: '',
       principal_acronym: '',
+      team: '',
       sales: '',
       target: '',
       uba: '',
@@ -623,13 +624,47 @@ export default function PerPrincipalDashboard(props) {
       MonthQuery =
         ' and business_month = ' + "'" + FilterList.DashboardFilterMonth + "'";
     }
+    var VendorQuery = '';
+    if (
+      FilterList.DashboardFilterVendor === '' ||
+      FilterList.DashboardFilterVendor === 'ALL'
+    ) {
+      VendorQuery = ' and   principal_name  like ' + "'%%' ";
+    } else {
+      VendorQuery =
+        ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
+    }
 
+
+    
+    var TeamQuery = '';
+    if (
+      FilterList.DashboardFilterTeam === '' ||
+      FilterList.DashboardFilterTeam === 'ALL'
+    ) {
+      TeamQuery = ' and   team IN ' + global.TeamAccessList;
+    } else {
+      TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
+    }
+
+    
+
+    console.log('SELECT business_year, business_month, principal_name, principal_acronym, ' +
+    ' sum(sales) as sales, sum(target) as target, sum(uba) as uba FROM perprincipalpermonth_tbl  where ' +
+    YearQuery +
+    MonthQuery +
+    VendorQuery +
+    TeamQuery +
+    ' group by business_year, business_month,  principal_name' +
+    ' order by CAST((sales) AS UNSIGNED)   desc ')
     dbperprincipal.transaction((tx) => {
       tx.executeSql(
         'SELECT business_year, business_month, principal_name, principal_acronym, ' +
           ' sum(sales) as sales, sum(target) as target, sum(uba) as uba FROM perprincipalpermonth_tbl  where ' +
           YearQuery +
           MonthQuery +
+          VendorQuery +
+          TeamQuery +
           ' group by business_year, business_month,  principal_name' +
           ' order by CAST((sales) AS UNSIGNED)   desc ',
         [],
@@ -651,19 +686,19 @@ export default function PerPrincipalDashboard(props) {
             business_year: 'TOTAL',
             principal_acronym: 'TOTAL',
             principal_name: 'TOTAL',
+            team: 'TOTAL',
             sales: tempSales,
             target: tempTarget,
             uba: tempUBA,
           });
           if (temp.length > 0) {
-            console.log(
-              'SELECT business_year, business_month, principal_name, principal_acronym, ' +
-                ' sum(sales) as sales, sum(target) as target, sum(uba) as uba FROM perprincipalpermonth_tbl  where ' +
-                YearQuery +
-                MonthQuery +
-                ' group by business_year, business_month,  principal_name' +
-                ' order by CAST((sales) AS UNSIGNED)   desc ',
-            );
+            console.log(temp)
+            setPerPrincipal(temp);
+            setperPrincipalforFlatlist(temp2);
+            setTotalSales(tempSales);
+            setTotalTeamANimation(true);
+          } else {
+            
             setPerPrincipal(temp);
             setperPrincipalforFlatlist(temp2);
             setTotalSales(tempSales);

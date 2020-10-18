@@ -295,29 +295,23 @@ export default function PerSalesmanDashboard(props) {
 
   //USE EFFECT PART
 
-
   useEffect(() => {
     console.log('focus on per team from update'); //
 
-
-      SearchPerSalesman();
- 
+    SearchPerSalesman();
   }, [globalState.dateTimeUpdated24hr]);
-
-
 
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per salesman focus');
-     
+
       CurrentAppScreen.Screen = 'PerSalesman';
 
       if (PageVisited.PerSalesmanPAGE === 'NO') {
         PageVisited.PerSalesmanPAGE = 'YES';
-         console.log('focus on per salesman with changes')
-         SearchPerSalesman();
-    
-       }
+        console.log('focus on per salesman with changes');
+        SearchPerSalesman();
+      }
     });
   }, []);
 
@@ -329,9 +323,6 @@ export default function PerSalesmanDashboard(props) {
     }
   }, [FilterList.DashboardFilterYearNMonthTeam]);
 
-
-
-
   useEffect(() => {
     setsummaryPercentage((totalSales / totalTarget) * 100);
     setsummaryBaltoSell(totalSales - totalTarget);
@@ -339,7 +330,6 @@ export default function PerSalesmanDashboard(props) {
     //  console.log(ProgressPercentage);
   }, [totalSales]);
 
-  
   useEffect(() => {
     settotalAchivementAnimation(true);
     setProgressPercentage(summaryPercentage / 100);
@@ -350,7 +340,6 @@ export default function PerSalesmanDashboard(props) {
   }, [totalTarget]);
 
   const SearchPerSalesman = () => {
-
     setisLoadingActivityIndicator(true);
     GetlineChartColLocalData();
     GetlineChartBottomLocalData();
@@ -382,11 +371,31 @@ export default function PerSalesmanDashboard(props) {
       TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
     }
 
+    var VendorQuery = '';
+    if (
+      FilterList.DashboardFilterVendor === '' ||
+      FilterList.DashboardFilterVendor === 'ALL'
+    ) {
+      VendorQuery = ' and   principal_name  like ' + "'%%' ";
+    } else {
+      VendorQuery =
+        ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
+    }
+
+    console.log(
+      'SELECT (sum(amount) / 1000000) as amount FROM perymtsat_tbl ' +
+        YearQuery +
+        TeamQuery +
+        VendorQuery +
+        ' GROUP BY business_month  ORDER BY invoice_date asc',
+    );
+
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT (sum(amount) / 1000000) as amount FROM perymtsat_tbl ' +
           YearQuery +
           TeamQuery +
+          VendorQuery +
           ' GROUP BY business_month  ORDER BY invoice_date asc',
         [],
         (tx, results) => {
@@ -431,11 +440,23 @@ export default function PerSalesmanDashboard(props) {
       TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
     }
 
+    var VendorQuery = '';
+    if (
+      FilterList.DashboardFilterVendor === '' ||
+      FilterList.DashboardFilterVendor === 'ALL'
+    ) {
+      VendorQuery = ' and   principal_name  like ' + "'%%' ";
+    } else {
+      VendorQuery =
+        ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
+    }
+
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT distinct  business_month FROM perymtsat_tbl where ' +
           YearQuery +
           TeamQuery +
+          VendorQuery +
           ' order by invoice_date asc ',
         [],
         (tx, results) => {
@@ -487,12 +508,25 @@ export default function PerSalesmanDashboard(props) {
     } else {
       TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
     }
+
+    var VendorQuery = '';
+    if (
+      FilterList.DashboardFilterVendor === '' ||
+      FilterList.DashboardFilterVendor === 'ALL'
+    ) {
+      VendorQuery = ' and   principal_name  like ' + "'%%' ";
+    } else {
+      VendorQuery =
+        ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
+    }
+
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT  SUM(amount) as amount , SUM(target)   as target FROM perymtsat_tbl  where ' +
           YearQuery +
           MonthQuery +
           TeamQuery +
+          VendorQuery +
           ' order by invoice_date asc ',
         [],
         (tx, results) => {
@@ -559,6 +593,27 @@ export default function PerSalesmanDashboard(props) {
       TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
     }
 
+    var VendorQuery = '';
+    if (
+      FilterList.DashboardFilterVendor === '' ||
+      FilterList.DashboardFilterVendor === 'ALL'
+    ) {
+      VendorQuery = ' and   principal_name  like ' + "'%%' ";
+    } else {
+      VendorQuery =
+        ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
+    }
+
+    console.log(
+      'SELECT salesman_name , position_name , sum(amount) as sales, sum(target) as target,  ' +
+        ' sum(target) as achievement FROM perymtsat_tbl  where ' +
+        YearQuery +
+        MonthQuery +
+        TeamQuery +
+        VendorQuery +
+        ' group by business_year, business_month, salesman_name' +
+        ' order by CAST((sales) AS UNSIGNED)   DEsc ',
+    );
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT salesman_name , position_name , sum(amount) as sales, sum(target) as target,  ' +
@@ -566,6 +621,7 @@ export default function PerSalesmanDashboard(props) {
           YearQuery +
           MonthQuery +
           TeamQuery +
+          VendorQuery +
           ' group by business_year, business_month, salesman_name' +
           ' order by CAST((sales) AS UNSIGNED)   DEsc ',
         [],
@@ -578,10 +634,11 @@ export default function PerSalesmanDashboard(props) {
             setperSalesman(temp);
             setTotalTeamANimation(true);
             setisLoadingActivityIndicator(false);
-            // console.log(
-            //   results.rows.length +
-            //     ' BottomPerTeam4LocalData Successfully read on local',
-            // );
+            // console.log(temp);
+          } else {
+            setperSalesman(temp);
+            setTotalTeamANimation(true);
+            setisLoadingActivityIndicator(false);
           }
         },
         SQLerror,
@@ -589,11 +646,79 @@ export default function PerSalesmanDashboard(props) {
     });
   }
 
-  // function getCurrentMonthFilterDefault() {
-  //   var date = moment().utcOffset('+08:00').format('MMMM');
-  //   setFilterList.DashboardFilterMonth(date);
-  //   if
-  // }
+  function PerSalsemanFilter() {
+    return (
+      <View style={{}}>
+        <LinearGradient
+          style={{
+            zIndex: 0,
+            marginLeft: scale(8),
+            borderRadius: 7,
+            marginTop: 3,
+            width: scale(290),
+            height: scale(70),
+          }}
+          // start={{x: 1, y: 0.5}}
+          // end={{x: 1, y: 4}}
+          colors={['#1AD661', '#065223']}>
+          <View
+            style={{
+              flexDirection: 'column',
+              backgroundColor: 'transparent',
+              marginVertical: 0,
+              marginLeft: 5,
+            }}>
+            <View style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
+              <View style={{flex: 1, backgroundColor: 'transparnt'}}>
+                <Text
+                  style={{
+                    fontSize: moderateScale(12, 0.5),
+                    color: '#ffffff',
+                  }}>
+                  Vendor :
+                </Text>
+              </View>
+
+              <View style={{flex: 2, backgroundColor: 'transparent'}}>
+                <Text
+                  style={{
+                    fontSize: moderateScale(12, 0.5),
+                    color: '#ffffff',
+                  }}>
+                {FilterList.DashboardFilterVendor === '' ? 'ALL': 
+               FilterList.DashboardFilterVendor }
+                </Text>
+              </View>
+            </View>
+            <View style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
+              <View style={{flex: 1, backgroundColor: 'transparent'}}>
+                <Text
+                  style={{
+                    fontSize: moderateScale(12, 0.5),
+                    color: '#ffffff',
+                  }}>
+                  Team :
+                </Text>
+              </View>
+
+              <View style={{flex: 2, backgroundColor: 'transparent'}}>
+                <Text
+                  style={{
+                    fontSize: moderateScale(12, 0.5),
+                    color: '#ffffff',
+                  }}>
+                  {FilterList.DashboardFilterTeam === '' ? 'ALL': 
+               FilterList.DashboardFilterTeam }
+                </Text>
+              </View>
+            </View>
+          </View>
+        </LinearGradient>
+
+        {/* <ActivityIndicator size="large" color="green" /> */}
+      </View>
+    );
+  }
 
   return (
     // ===================================================================================================================
@@ -609,8 +734,12 @@ export default function PerSalesmanDashboard(props) {
         style={styles.backgroundVideo}
       />
       <ScrollView>
-        <View style={{flexDirection: 'row', height: scale(70), alignItems: 'center'}}>
- 
+        <View
+          style={{
+            flexDirection: 'row',
+            height: scale(70),
+            alignItems: 'center',
+          }}>
           <View style={{width: 50}}>
             <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
               <Icon name="md-filter" color={'#ffffff'} size={34} />
@@ -665,18 +794,28 @@ export default function PerSalesmanDashboard(props) {
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
               }}>
-                {globalTimer.lastUpdate}
+              {globalTimer.lastUpdate}
             </Text>
             <View
-                  style={{
-                    flexDirection: 'row',
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                    <Icon name="refresh" color={'#ffffff'} size={10} />
-                  </View>
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                <Icon name="refresh" color={'#ffffff'} size={10} />
+              </View>
+              <Text
+                style={{
+                  color: 'white',
+                  fontSize: moderateScale(12, 0.5),
+                  alignContent: 'flex-end',
+                  alignItems: 'flex-end',
+                  justifyContent: 'flex-end',
+                }}>
+                {globalState.updateStatus === 'Updating' ||
+                globalState.updateStatus === 'Start' ? (
                   <Text
                     style={{
                       color: 'white',
@@ -685,24 +824,14 @@ export default function PerSalesmanDashboard(props) {
                       alignItems: 'flex-end',
                       justifyContent: 'flex-end',
                     }}>
-                    {globalState.updateStatus === 'Updating' ||
-                    globalState.updateStatus === 'Start' ? (
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: moderateScale(12, 0.5),
-                          alignContent: 'flex-end',
-                          alignItems: 'flex-end',
-                          justifyContent: 'flex-end',
-                        }}>
-                        {'Updating...'}{' '}
-                        {globalState.updatePercentage > 0
-                          ? globalState.updatePercentage + ' %'
-                          : ''}
-                      </Text>
-                    ) : null}
+                    {'Updating...'}{' '}
+                    {globalState.updatePercentage > 0
+                      ? globalState.updatePercentage + ' %'
+                      : ''}
+                  </Text>
+                ) : null}
 
-                    {/* <Text
+                {/* <Text
                         style={{
                           color: 'white',
                           fontSize: moderateScale(12, 0.5),
@@ -712,8 +841,8 @@ export default function PerSalesmanDashboard(props) {
                         }}>
                         {hhmmss(900 - globalStatus.CurrentSeconds)}
                       </Text> */}
-                  </Text>
-                </View>
+              </Text>
+            </View>
           </View>
           {/* <View style={styles.textLastUpdateView}>
             <Text style={styles.textLastUpdate}>Last Update</Text>
@@ -774,6 +903,7 @@ export default function PerSalesmanDashboard(props) {
             showValuesOnTopOfBars={false}
           />
         </Animatable.View>
+        <PerSalsemanFilter />
 
         <View style={{flexDirection: 'row'}}>
           <View>
@@ -791,7 +921,6 @@ export default function PerSalesmanDashboard(props) {
                   style={SUmmaryStyle}>
                   <View style={styles.LinearTextView}>
                     <Text style={styles.LinearTopBottomText}>
-                      {FilterList.DashboardFilterTeam}{' '}
                       {FilterList.DashboardFilterMonth === ''
                         ? moment().utcOffset('+08:00').format('MMMM')
                         : FilterList.DashboardFilterMonth}{' '}
@@ -825,7 +954,6 @@ export default function PerSalesmanDashboard(props) {
                   style={SUmmaryStyle}>
                   <View style={styles.LinearTextView}>
                     <Text style={styles.LinearTopBottomText}>
-                      {FilterList.DashboardFilterTeam}{' '}
                       {FilterList.DashboardFilterMonth === ''
                         ? moment().utcOffset('+08:00').format('MMMM')
                         : FilterList.DashboardFilterMonth}{' '}
@@ -846,6 +974,7 @@ export default function PerSalesmanDashboard(props) {
               </Animatable.View>
             </View>
           </View>
+
           <Animatable.View
             style={{flex: 1, justifyContent: 'center'}}
             useNativeDriver={true}

@@ -63,21 +63,25 @@ export var PageVisited = {
 export var DashboardMonths = [];
 export var DashboardYears = [];
 export var DashboardTeams = [];
+export var DashboardVendor = [];
 
 export var FilterList = {
   DashboardFilterMonth: moment().utcOffset('+08:00').format('MMMM'),
   DashboardFilterYear: moment().utcOffset('+08:00').format('YYYY'),
   DashboardFilterTeam: '',
-  DashboardFilterYearNMonthTeam:
+  DashboardFilterVendor: '',
+  
+  DashboardFilterYearNMonthTeamVendor:
     moment().utcOffset('+08:00').format('YYYY') +
     moment().utcOffset('+08:00').format('MMMM') +
-    ' ',
+    ' ' + ' ',
 };
 
 export var FilterListMirror = {
   DashboardFilterMonth: '',
   DashboardFilterYear: '',
   DashboardFilterTeam: '',
+  DashboardFilterVendor: '',
 };
 
 export var globalStatus = {
@@ -138,6 +142,7 @@ export function ClearDefaults() {
   DeletePerPrincipalAPIData();
   DeleteCalendar();
   DeleteItems();
+  DeletelastDateTimeUpdated();
   DeleteSystemUser();
   delete_per_customer_tbl();
   delete_net_tbl();
@@ -191,24 +196,28 @@ function DeleteSystemUser() {
 
 
 
+
+
+function DeletelastDateTimeUpdated() {
+  dblastdatetimeupdated.transaction(function (tx) {
+    tx.executeSql(
+      'Delete from lastdatetimeupdated_tbl ',
+      [],
+      (tx, results) => {
+      
+      },
+      SQLerror,
+    );
+  });
+}
+
 function DeleteItems() {
   dbinventory.transaction(function (tx) {
     tx.executeSql(
       'Delete from promo_items_tbl ',
       [],
       (tx, results) => {
-        // console.log('Results', results.rowsAffected);
-        // if (results.rowsAffected > 0) {
-        //   setupdateMessage('Current inventory cleared..');
-        //   setItemsDeleted(true);
-        // } else {
-        //   if (LocalPromoItemData.length > 1) {
-        //     console.log('error deleting');
-        //   } else {
-        //     console.log('nothing to delete, set true to save fetch sku');
-        //     setItemsDeleted(true);
-        //   }
-        // }
+      
       },
       SQLerror,
     );
@@ -263,11 +272,46 @@ function DeleteCalendar() {
 }
 
 export function UpdateYearMonthsFilter() {
+  GetVendorsforFilter();
   GetTeamsforFilter();
   GetYearforFilter();
   GetMonthsforFilter();
   GetDateTime();
   // console.log('GLOBAL YEARS MONTHS TEAM  LOADED');
+}
+
+function GetVendorsforFilter() {
+  DashboardVendor.length = 0;
+  dbperprincipal.transaction((tx) => {
+
+ 
+
+    tx.executeSql(
+      'SELECT Distinct principal_name as label, principal_name as value FROM perprincipalpermonth_tbl ' +
+        ' where  business_year = 2020 ' +
+        ' order  by principal_name  ',
+      [],
+      (tx, results) => {
+        var len = results.rows.length;
+
+        if (len > 1) {
+          DashboardVendor.push({
+            label: 'ALL',
+            value: 'ALL',
+          });
+        }
+
+        if (len > 0) {
+          for (let i = 0; i < results.rows.length; ++i) {
+            DashboardVendor.push({
+              label: results.rows.item(i).label,
+              value: results.rows.item(i).value,
+            });
+          }
+        }
+      },
+    );
+  });
 }
 
 function GetTeamsforFilter() {

@@ -117,7 +117,7 @@ export default function CreateDatabase() {
           txn.executeSql('DROP TABLE IF EXISTS perprincipalpermonth_tbl', []);
           txn.executeSql(
             // 'CREATE TABLE IF NOT EXISTS perymia_tbl_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, principal_name VARCHAR(255), product_id VARCHAR(255),product_variant VARCHAR(255), product_name VARCHAR(255), inventory VARCHAR(255), img_url VARCHAR(255), DateandTimeUpdated VARCHAR(255))',
-            'CREATE TABLE IF NOT EXISTS perprincipalpermonth_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255),invoice_date VARCHAR(255), principal_name VARCHAR(255),principal_acronym VARCHAR(255), sales VARCHAR(255), target VARCHAR(255), dateTimeUpdated VARCHAR(255))',
+            'CREATE TABLE IF NOT EXISTS perprincipalpermonth_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255),invoice_date VARCHAR(255), principal_name VARCHAR(255),principal_acronym VARCHAR(255), sales VARCHAR(255), target VARCHAR(255), dateTimeUpdated VARCHAR(255),  team VARCHAR(255))',
             [],
             // 'CREATE TABLE IF NOT EXISTS table_user(user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_name VARCHAR(20), user_contact INT(10), user_address VARCHAR(255))',[],
           );
@@ -135,7 +135,7 @@ export default function CreateDatabase() {
           txn.executeSql('DROP TABLE IF EXISTS perymtsat_tbl', []);
           txn.executeSql(
             // 'CREATE TABLE IF NOT EXISTS perymia_tbl_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, principal_name VARCHAR(255), product_id VARCHAR(255),product_variant VARCHAR(255), product_name VARCHAR(255), inventory VARCHAR(255), img_url VARCHAR(255), DateandTimeUpdated VARCHAR(255))',
-            'CREATE TABLE IF NOT EXISTS perymtsat_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255),invoice_date VARCHAR(255), team VARCHAR(255), salesman_name VARCHAR(255), position_name VARCHAR(255), amount VARCHAR(255), target VARCHAR(255), dateTimeUpdated VARCHAR(255))',
+            'CREATE TABLE IF NOT EXISTS perymtsat_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255),invoice_date VARCHAR(255), team VARCHAR(255), salesman_name VARCHAR(255), position_name VARCHAR(255), amount VARCHAR(255), target VARCHAR(255), dateTimeUpdated VARCHAR(255), principal_name VARCHAR(255))',
             [],
             // 'CREATE TABLE IF NOT EXISTS table_user(user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_name VARCHAR(20), user_contact INT(10), user_address VARCHAR(255))',[],
           );
