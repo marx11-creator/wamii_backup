@@ -321,7 +321,7 @@ export default function PerSalesmanDashboard(props) {
       PageVisited.PerSalesmanPAGE = 'YES';
       SearchPerSalesman();
     }
-  }, [FilterList.DashboardFilterYearNMonthTeam]);
+  }, [FilterList.DashboardFilterYearNMonthTeamVendor]);
 
   useEffect(() => {
     setsummaryPercentage((totalSales / totalTarget) * 100);
@@ -382,13 +382,7 @@ export default function PerSalesmanDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
-    console.log(
-      'SELECT (sum(amount) / 1000000) as amount FROM perymtsat_tbl ' +
-        YearQuery +
-        TeamQuery +
-        VendorQuery +
-        ' GROUP BY business_month  ORDER BY invoice_date asc',
-    );
+  
 
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
@@ -604,16 +598,7 @@ export default function PerSalesmanDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
-    console.log(
-      'SELECT salesman_name , position_name , sum(amount) as sales, sum(target) as target,  ' +
-        ' sum(target) as achievement FROM perymtsat_tbl  where ' +
-        YearQuery +
-        MonthQuery +
-        TeamQuery +
-        VendorQuery +
-        ' group by business_year, business_month, salesman_name' +
-        ' order by CAST((sales) AS UNSIGNED)   DEsc ',
-    );
+ 
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT salesman_name , position_name , sum(amount) as sales, sum(target) as target,  ' +

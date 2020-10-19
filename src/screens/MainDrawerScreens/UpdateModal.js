@@ -210,6 +210,8 @@ export default function UpdateModal(props) {
       business_year: '',
       business_month: '',
       provice: '',
+      principal_name: '',
+      team: '',
       sales: '',
       uba: '',
     },
@@ -226,7 +228,7 @@ export default function UpdateModal(props) {
       updateProgress = 0;
       setisModalConnectionError(false);
       setisLoadingActivityIndicator(false);
-      console.log(globalStatus.updateMode);
+      // console.log(globalStatus.updateMode);
       globalStatus.updateMode = 'auto';
 
       globalStatus.updateStatus = 'Idle';
@@ -243,7 +245,7 @@ export default function UpdateModal(props) {
       //5
     } else {
       updateProgress = 0;
-      console.log(globalStatus.updateMode);
+      //globalStatus.updateMode);
       globalStatus.updateStatus = 'Idle';
 
       setglobalState({
@@ -270,7 +272,7 @@ export default function UpdateModal(props) {
         Number(CurrentAppVersionUpdate.CurrentAppVersionUpdateField) ===
         Number(APIUpdateVersion.APIUpdateVersionField)
       ) {
-        console.log('app is updated');
+        //    console.log('app is updated');
       } else {
         if (updateDifference > 1) {
           Alert.alert(
@@ -342,7 +344,7 @@ export default function UpdateModal(props) {
         {cancelable: true},
       );
     } else {
-      console.log('asd');
+      //  console.log('asd');
     }
   }
 
@@ -355,10 +357,10 @@ export default function UpdateModal(props) {
         'Delete from lastdatetimeupdated_tbl ',
         [],
         (tx, results) => {
-          console.log('last datetimeupdatedtbl cleared');
+          //    console.log('last datetimeupdatedtbl cleared');
         },
         (tx, err) => {
-          console.log('ADDED HERE6' + err);
+          //   console.log('ADDED HERE6' + err);
         },
       );
 
@@ -376,14 +378,14 @@ export default function UpdateModal(props) {
           ComputeLastDateTimeUpdate();
         },
         (tx, err) => {
-          console.log('ADDED HERE7' + err);
+          //  console.log('ADDED HERE7' + err);
         },
       );
     });
   }
 
   function RunTimer() {
-    console.log('timer triggered');
+    //  console.log('timer triggered');
     var secs = 0;
     const intervalId2 = BackgroundTimer.setInterval(() => {
       secs = secs + 1;
@@ -396,7 +398,7 @@ export default function UpdateModal(props) {
       }
 
       if (globalStatus.updateMode === 'manual') {
-        console.log('auto update stopped, manual update clicked');
+        //  console.log('auto update stopped, manual update clicked');
         BackgroundTimer.clearInterval(intervalId2);
       }
     }, 1000);
@@ -536,14 +538,14 @@ export default function UpdateModal(props) {
       globalStatus.updateMode === 'manual'
         ? props.navigation.addListener('focus', () => {
             ManualUpdate();
-            console.log('focused');
+            // console.log('focused');
           })
         : AutoUpdate();
     }
   }, []);
 
   function ComputeLastDateTimeUpdate() {
-    console.log('compute running');
+    //console.log('compute running');
     var now = moment().format('DD/MM/YYYY HH:mm:ss');
     var then = globalStatus.dateTimeUpdated24hr;
     var ms = moment(now, 'DD/MM/YYYY HH:mm:ss').diff(
@@ -554,10 +556,6 @@ export default function UpdateModal(props) {
     DaysDiff = '';
     HoursDiff = '';
     MinutesDiff = '';
-
-    console.log(now);
-
-    console.log(then);
 
     if (d.months() > 0) {
       MonthDiff = d.months() + ' month ';
@@ -590,34 +588,26 @@ export default function UpdateModal(props) {
     }
 
     if (MonthDiff !== '') {
-      console.log('1');
       setglobalTimer({
         ...globalTimer,
         lastUpdate: MonthDiff + 'ago',
       });
     } else if (DaysDiff !== '') {
-      console.log('2');
       setglobalTimer({
         ...globalTimer,
         lastUpdate: DaysDiff + 'ago',
       });
     } else if (HoursDiff !== '') {
-      console.log('3');
       setglobalTimer({
         ...globalTimer,
         lastUpdate: HoursDiff + 'ago',
       });
     } else if (MinutesDiff !== '') {
-      console.log('4');
       setglobalTimer({
         ...globalTimer,
         lastUpdate: MinutesDiff + 'ago',
       });
     } else {
-      console.log(MonthDiff);
-      console.log(DaysDiff);
-      console.log(HoursDiff);
-      console.log(MinutesDiff)
       setglobalTimer({
         ...globalTimer,
         lastUpdate: '0 minutes ago',
@@ -649,13 +639,13 @@ export default function UpdateModal(props) {
   }
 
   function AutoUpdate() {
-    console.log('Auto Update started');
+    //  console.log('Auto Update started');
     if (
       globalStatus.updateStatus === 'Updating' &&
       globalStatus.updateMode === 'auto'
     ) {
       updateProgress = 0;
-      console.log('focus on update');
+      //   console.log('focus on update');
 
       // if (globalStatus.updateMode === 'manual') {
       //   setisLoadingActivityIndicator(true); //ENABLEE ActivityIndicator
@@ -724,11 +714,6 @@ export default function UpdateModal(props) {
 
       lineChartAPIdatalength = 0;
       DeletePerymtsatAPIData();
-      console.log(
-        '28 ' +
-          lineChartLocalData.length +
-          'effect delete line chart initialize',
-      );
     } else {
     }
   }, [lineChartLocalData]);
@@ -759,9 +744,6 @@ export default function UpdateModal(props) {
 
       PerAreaAPIdatalength = 0;
       DeletePerAreaAPIData();
-      console.log(
-        '2 ' + PerAreaLocalData.length + 'effect delete  perarea initialize',
-      );
     }
   }, [PerAreaLocalData]);
 
@@ -779,9 +761,8 @@ export default function UpdateModal(props) {
     setq6Inventory(false); //update Inventory
     if (global.sales_position_name === 'ALLSALESMAN') {
       setq5Marc(true);
-      console.log('3 ' + 'ALL SALSMAN 123');
+      console.log('3 4 5 6 initiate bypass');
     } else {
-      console.log('3 ' + 'SINGLE SALSMAN 123');
       initiate();
     }
 
@@ -794,6 +775,7 @@ export default function UpdateModal(props) {
   }
 
   const GetPerymtsatAPIData = () => {
+
     updateProgress = Number(updateProgress) + Number(9);
     setglobalState({
       ...globalState,
@@ -814,6 +796,11 @@ export default function UpdateModal(props) {
       principal_id;
 
     //DONE1
+    //8
+    console.log(server.server_address +
+      globalCompany.company +
+      'persalesmansalestarget?' +
+      tempstr1)
     Promise.race([
       fetch(
         server.server_address +
@@ -830,17 +817,18 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
+        setTimeout(() => reject(new Error('Timeout')), 15000),
       ),
     ])
       .then((responseData) => {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 8 DONE');
         if (jsonData.length > 0) {
           lineChartAPIdatalength = jsonData.length;
           setlineChartLocalData(jsonData);
-           
+
           updateProgress = Number(updateProgress) + Number(6);
           setglobalState({
             ...globalState,
@@ -890,20 +878,14 @@ export default function UpdateModal(props) {
             updatePercentage: updateProgress,
           });
 
-          console.log('4 ' + 'deleted local perymtsat');
           SavePerymtsatAPIData();
         },
-        (tx, err) => {
-          console.log('ADDED HERE8' + err);
-        },
+        (tx, err) => {},
       );
     });
   }
 
   function SavePerymtsatAPIData() {
-    console.log(
-      lineChartLocalData.length + ' is the length of lineChartLocalData',
-    );
     var perymtsatString = '';
     var currIndex = 0;
     var runningIndexCount = 0;
@@ -969,7 +951,7 @@ export default function UpdateModal(props) {
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
-                  console.log('SAVED 500X500 SavePerymtsatAPIData');
+                  //   console.log('SAVED 500X500 SavePerymtsatAPIData');
                 },
                 SQLerror,
               );
@@ -990,10 +972,10 @@ export default function UpdateModal(props) {
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
-                  console.log(
-                    'SAVED 500X500 SavePerymtsatAPIData < 500 ' +
-                      runningIndexCount,
-                  );
+                  // console.log(
+                  //   'SAVED 500X500 SavePerymtsatAPIData < 500 ' +
+                  //     runningIndexCount,
+                  // );
                   runningIndexCount = 0;
                 },
                 SQLerror,
@@ -1004,7 +986,7 @@ export default function UpdateModal(props) {
       });
 
       if (currIndex === lineChartLocalData.length) {
-        console.log('5 ' + 'SavePerymtsatAPIData done concatenating, saved..');
+        /// console.log('5 ' + 'SavePerymtsatAPIData done concatenating, saved..');
         updateProgress = Number(updateProgress) + Number(10);
         setglobalState({
           ...globalState,
@@ -1014,12 +996,12 @@ export default function UpdateModal(props) {
         UpdateYearMonthsFilter();
 
         setq1Principal(true);
-        console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
+        // console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
       }
     }
   }
 
-// !!!ADD TEAM USE IN FILTER IN DASHBOARD
+  // !!!ADD TEAM USE IN FILTER IN DASHBOARD
   //PER PRINCIPAL
   const GetPerPrincipalAPIData = () => {
     var teams = global.TeamAccessListForAPI;
@@ -1034,11 +1016,7 @@ export default function UpdateModal(props) {
       '&' +
       'principal_id=' +
       principal_id;
-
-      console.log(server.server_address +
-        globalCompany.company +
-        'perprincipalsalestargetuba?' +
-        tempstr3)
+    //9
     Promise.race([
       fetch(
         server.server_address +
@@ -1055,13 +1033,14 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
+        setTimeout(() => reject(new Error('Timeout')), 15000),
       ),
     ])
       .then((responseData) => {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 9 DONE');
         if (jsonData.length > 0) {
           ///  console.log(jsonData.length);
           PerPrincipalAPIdatalength = jsonData.length;
@@ -1183,7 +1162,7 @@ export default function UpdateModal(props) {
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
-                  console.log('SAVED 500X500 SavePerPrincipalAPIData');
+                  //  console.log('SAVED 500X500 SavePerPrincipalAPIData');
                 },
                 SQLerror,
               );
@@ -1204,10 +1183,10 @@ export default function UpdateModal(props) {
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
-                  console.log(
-                    'SAVED 500X500  SavePerPrincipalAPIData < 500 ' +
-                      runningIndexCount,
-                  );
+                  // console.log(
+                  //   'SAVED 500X500  SavePerPrincipalAPIData < 500 ' +
+                  //     runningIndexCount,
+                  // );
                   runningIndexCount = 0;
                 },
                 SQLerror,
@@ -1217,9 +1196,9 @@ export default function UpdateModal(props) {
         }
 
         if (currIndex === PerPrincipalLocalData.length) {
-          console.log(
-            '5.1 ' + ' SavePerPrincipalAPIData done concatenating, saved..',
-          );
+          // console.log(
+          //   '5.1 ' + ' SavePerPrincipalAPIData done concatenating, saved..',
+          // );
           updateProgress = Number(updateProgress) + Number(7);
           setglobalState({
             ...globalState,
@@ -1227,7 +1206,7 @@ export default function UpdateModal(props) {
           });
 
           setq2Perymtsat(true);
-          console.log('6.1 ' + 'DONE SAVING SavePerPrincipalAPIData ');
+          //  console.log('6.1 ' + 'DONE SAVING SavePerPrincipalAPIData ');
         }
       });
     }
@@ -1252,13 +1231,8 @@ export default function UpdateModal(props) {
       '&' +
       'principal_id=' +
       principal_id;
+    //10
 
-    console.log(
-      server.server_address +
-        globalCompany.company +
-        'perareasalesuba?' +
-        tempstr2,
-    );
     Promise.race([
       fetch(
         server.server_address +
@@ -1275,13 +1249,14 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
+        setTimeout(() => reject(new Error('Timeout')), 15000),
       ),
     ])
       .then((responseData) => {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 10 DONE');
         if (jsonData.length > 0) {
           PerAreaAPIdatalength = jsonData.length;
           setPerAreaLocalData(jsonData);
@@ -1291,7 +1266,7 @@ export default function UpdateModal(props) {
             updatePercentage: updateProgress,
           });
         } else {
-          console.log('Please check code, no perarea found');
+          // console.log('Please check code, no perarea found');
           if (globalStatus.updateMode === 'manual') {
             Alert.alert(
               'Error',
@@ -1323,18 +1298,16 @@ export default function UpdateModal(props) {
         'Delete from perareapermonth_tbl ',
         [],
         (tx, results) => {
-          console.log('4.1' + ' deleted local perareapermonth_tbl');
+          //   console.log('4.1' + ' deleted local perareapermonth_tbl');
           SavePerAreaAPIData();
         },
         (tx, err) => {
-          console.log('ADDED HERE12' + err);
+          // console.log('ADDED HERE12' + err);
         },
       );
     });
   }
   function SavePerAreaAPIData() {
-    console.log(' 0.1 SavePerAreaAPIData');
-    console.log(PerAreaLocalData.length);
     var currIndex = 0;
     var perareapermonthString = '';
     var runningIndexCount = 0;
@@ -1366,6 +1339,14 @@ export default function UpdateModal(props) {
             "'" +
             ',' +
             "'" +
+            item.principal_name +
+            "'" +
+            ',' +
+            "'" +
+            item.team +
+            "'" +
+            ',' +
+            "'" +
             item.sales +
             "'" +
             ',' +
@@ -1385,7 +1366,7 @@ export default function UpdateModal(props) {
             dbperarea.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
+                'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province, principal_name, team, sales, uba, dateTimeUpdated) VALUES ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -1406,14 +1387,14 @@ export default function UpdateModal(props) {
             dbperarea.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  sales, uba, dateTimeUpdated) VALUES ' +
+                'INSERT INTO perareapermonth_tbl (business_year, business_month, invoice_date,province,  principal_name, team, sales, uba, dateTimeUpdated) VALUES ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
-                  console.log(
-                    'SAVED 500X500 SavePerAreaAPIData < 500 ' +
-                      runningIndexCount,
-                  );
+                  // console.log(
+                  //   'SAVED 500X500 SavePerAreaAPIData < 500 ' +
+                  //     runningIndexCount,
+                  // );
                   runningIndexCount = 0;
                 },
                 SQLerror,
@@ -1424,14 +1405,14 @@ export default function UpdateModal(props) {
       });
 
       if (currIndex === PerAreaLocalData.length) {
-        console.log('5.2 ' + 'SavePerAreaAPIData done concatenating, saved..');
+        // console.log('5.2 ' + 'SavePerAreaAPIData done concatenating, saved..');
         updateProgress = Number(updateProgress) + Number(6);
         setglobalState({
           ...globalState,
           updatePercentage: updateProgress,
         });
 
-        console.log('7 ' + 'Query completed SavePerAreaAPIData');
+        //    console.log('7 ' + 'Query completed SavePerAreaAPIData');
         setq4Area(true);
       }
     }
@@ -1479,7 +1460,7 @@ export default function UpdateModal(props) {
   //       }),
   //     }),
   //     new Promise((_, reject) =>
-  //       setTimeout(() => reject(new Error('Timeout')), 160000),
+  //       setTimeout(() => reject(new Error('Timeout')), 15000),
   //     ),
   //   ])
   //     .then((responseData) => {
@@ -1520,22 +1501,22 @@ export default function UpdateModal(props) {
 
   const GETUpdateVersionAPI = () => {
     InsertUpdateDataInfo();
-    console.log('9 ' + 'run GETUpdateVersionAPI');
+    //  console.log('9 ' + 'run GETUpdateVersionAPI');
     var user_name = global.user_name;
     var dateTimeUpdated = moment()
       .utcOffset('+08:00')
       .format('YYYY-MM-DD hh:mm:ss a');
-    console.log(
-      server.server_address +
-        globalCompany.company +
-        'updateversion2/' +
-        user_name +
-        '&' +
-        dateTimeUpdated,
-    );
+    // console.log(
+    //   server.server_address +
+    //     globalCompany.company +
+    //     'updateversion2/' +
+    //     user_name +
+    //     '&' +
+    //     dateTimeUpdated,
+    // );
     // console.log(APIToken.access_token);
+    //1
     Promise.race([
-      //---------------------------------------------------------------first command
       fetch(
         server.server_address +
           globalCompany.company +
@@ -1553,15 +1534,16 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
+        setTimeout(() => reject(new Error('Timeout')), 15000),
       ),
     ])
       .then((responseData) => {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 1 DONE');
         if (jsonData.length > 0) {
-          console.log('10 ' + 'successfully get updateversion test');
+          //  console.log('10 ' + 'successfully get updateversion test');
           jsonData.map((key, index) => {
             APIUpdateVersion.APIUpdateVersionField = key.version;
             APIUpdateVersion.APIUpdateVersionDateTimeRelease =
@@ -1569,40 +1551,11 @@ export default function UpdateModal(props) {
             APIUpdateVersion.APIUpdateVersionStatus = key.status;
             APIUpdateVersion.APIUpdateVersionNotice = key.notice;
             APIUpdateVersion.APIForceLogout = key.auto_logout;
-            console.log(key.auto_logout);
+            //   console.log(key.auto_logout);
           });
 
           if (APIUpdateVersion.APIForceLogout === 'TRUE') {
-            console.log('what to do');
             setglobalAutoLogout('TRUE');
-            // ResetModuleAccess();
-            // ClearTeamAccess();
-            // ClearDefaults();
-            // setglobalState({
-            //   timerSeconds: 0,
-            //   timerMinute: 0,
-            //   updateStatus: 'Start',
-            //   dateTimeUpdated24hr: '',
-            //   updatePercentage: '',
-            // });
-
-            // Alert.alert(
-            //   'Oops!',
-            //   'You have been automatically logout. Please Try again.' +
-            //     APIUpdateVersion.APIUpdateVersionField +
-            //     ' \n.',
-            //   [
-            //     {
-            //       text: 'OK',
-            //       onPress: () => {
-            //         BackHandler.exitApp();
-            //       },
-            //     },
-            //   ],
-            //   {cancelable: true},
-            // );
-
-            // BackHandler.exitApp();
           } else {
             if (APIUpdateVersion.APIUpdateVersionStatus === 'ONLINE') {
               StartUpdate();
@@ -1613,12 +1566,12 @@ export default function UpdateModal(props) {
                 updatePercentage: updateProgress,
               });
 
-              console.log('11 ' + 'user update log saved in API');
+              //   console.log('11 ' + 'user update log saved in API');
               setq3UserUpdateLog(true);
             } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
               //2
               if (globalStatus.updateMode === 'manual') {
-                console.log('MANUAL');
+                //   console.log('MANUAL');
                 globalStatus.updateMode = 'auto';
                 updateProgress = 0;
                 setglobalState({
@@ -1664,6 +1617,7 @@ export default function UpdateModal(props) {
   };
 
   function InsertUpdateDataInfo() {
+    //11
     fetch(
       server.server_address + globalCompany.company + 'InsertUpdateDataInfo',
       {
@@ -1686,8 +1640,9 @@ export default function UpdateModal(props) {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 11 DONE');
         if (jsonData.affectedRows > 0) {
-          console.log('user update log saved');
+          //  console.log('user update log saved');
         }
       })
       .catch(function (error) {
@@ -1699,7 +1654,7 @@ export default function UpdateModal(props) {
   const BusinessCalendarDownload = () => {
     var BusinessCalendarString = '';
     var CurrIndex = 0;
-
+    //2
     Promise.race([
       fetch(server.server_address + 'business_calendar/get/', {
         method: 'GET',
@@ -1710,13 +1665,14 @@ export default function UpdateModal(props) {
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
+        setTimeout(() => reject(new Error('Timeout')), 15000),
       ),
     ])
       .then((responseData) => {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 2 DONE');
         if (jsonData.length > 0) {
           jsonData.map((item, index) => {
             // if (index < 1) {
@@ -1754,7 +1710,7 @@ export default function UpdateModal(props) {
                 [],
                 (tx, results) => {
                   // if (results.rowsAffected > 0) {}
-                  console.log('13 ' + 'deleted local business_calendar_tbl');
+                  //  console.log('13 ' + 'deleted local business_calendar_tbl');
                   dbBusinessCalendar.transaction(function (tx) {
                     tx.executeSql(
                       'INSERT INTO business_calendar_tbl (date, year, month, day, update_version) VALUES ' +
@@ -1762,13 +1718,13 @@ export default function UpdateModal(props) {
                       [],
                       (tx, results) => {},
                       (tx, err) => {
-                        console.log('ADDED HERE14' + err);
+                        //     console.log('ADDED HERE14' + err);
                       },
                     );
                   });
                 },
                 (tx, err) => {
-                  console.log('ADDED HERE15' + err);
+                  //  console.log('ADDED HERE15' + err);
                 },
               );
             });
@@ -1790,7 +1746,7 @@ export default function UpdateModal(props) {
       MarcStatus === '0'
     ) {
       MarcStatus = '1';
-      console.log('14 ' + 'concat run');
+      //   console.log('14 ' + 'concat run');
       concat_data_per_customer();
       concat_data_per_vendor();
       concat_data_net();
@@ -1805,7 +1761,7 @@ export default function UpdateModal(props) {
       MarcStatus === '1'
     ) {
       MarcStatus = '2';
-      console.log('15 ' + 'upload to local run');
+      //   console.log('15 ' + 'upload to local run');
       upload_data_per_customer();
       upload_data_per_vendor();
       upload_data_net();
@@ -1876,6 +1832,7 @@ export default function UpdateModal(props) {
   // };
 
   let initiate = () => {
+    console.log('initiate here');
     delete_net_tbl();
     delete_per_customer_tbl();
     delete_per_vendor_tbl();
@@ -1929,6 +1886,9 @@ export default function UpdateModal(props) {
   };
 
   let fetch_per_customer_data = () => {
+    console.log(
+      server.server_address + 'sales_tbl/salesmanfilterddaterange?' + tempstr1,
+    );
     if (Object.keys(prev_month.toString()).length === 1) {
       var get_date_from = year + '-0' + prev_month + '-' + '01';
     } else if (Object.keys(prev_month.toString()).length === 2) {
@@ -1952,24 +1912,7 @@ export default function UpdateModal(props) {
       '&' +
       'date_to=' +
       get_date_to;
-
-    console.log('16 ' + 'fetching fetch_per_customer_data');
-    // console.log(
-    //   server.server_address + 'sales_tbl/salesmanfilterddaterange?' + tempstr1,
-    // );
-    // fetch(
-    //   server.server_address +
-    //     'business_calendar/sales_tbl/salesmanfilterddaterange?' +
-    //     tempstr1,
-    //   {
-    //     method: 'GET',
-    //     headers: {
-    //       Accept: 'application/json',
-    //       'Content-Type': 'application/json',
-    //       Authorization: 'Bearer ' + APIToken.access_token,
-    //     },
-    //   },
-    // ),
+    //3
     Promise.race([
       fetch(
         server.server_address +
@@ -1985,20 +1928,21 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
+        setTimeout(() => reject(new Error('Timeout')), 15000),
       ),
     ])
       .then((responseData) => {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 3 DONE');
         setcustomer_data(jsonData);
 
         setLoading(true);
         setload_pc(1);
 
         setloadname('Downloading ' + 'Customers');
-        console.log('17 ' + 'fetching fetch_per_customer_data DONE');
+        //  console.log('17 ' + 'fetching fetch_per_customer_data DONE');
       })
       .catch(function (error) {
         console.log('1Customer: ' + error);
@@ -2013,7 +1957,8 @@ export default function UpdateModal(props) {
 
     var tempstr1 = 'sales_position_name=' + sales_position_name;
 
-    console.log('18 ' + 'fetching fetch_net_data');
+    //   console.log('18 ' + 'fetching fetch_net_data');
+    //4
     Promise.race([
       fetch(
         server.server_address + 'sales_net_tbl/salesmanfilter?' + tempstr1,
@@ -2027,13 +1972,14 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
+        setTimeout(() => reject(new Error('Timeout')), 15000),
       ),
     ])
       .then((responseData) => {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 4 DONE');
         setnet_data(jsonData);
 
         setLoading(true);
@@ -2041,7 +1987,7 @@ export default function UpdateModal(props) {
 
         setloadname('Downloading ' + 'Net Sales');
 
-        console.log('19 ' + 'fetching fetch_net_data DONE');
+        //  console.log('19 ' + 'fetching fetch_net_data DONE');
       })
       .catch(function (error) {
         console.log('Net: ' + error);
@@ -2055,8 +2001,15 @@ export default function UpdateModal(props) {
     var teams = global.TeamAccessListForAPI;
     var sales_position_name = global.sales_position_name;
     var tempstr1 =
-      'team=' + teams + '&' + 'sales_position_name=' + sales_position_name +  '&' + 'principal_id=' + global.PrincipalAccessList;
-
+      'team=' +
+      teams +
+      '&' +
+      'sales_position_name=' +
+      sales_position_name +
+      '&' +
+      'principal_id=' +
+      global.PrincipalAccessList;
+    //5
     Promise.race([
       fetch(server.server_address + 'perprincipalsalestargetuba?' + tempstr1, {
         method: 'GET',
@@ -2067,19 +2020,21 @@ export default function UpdateModal(props) {
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
+        setTimeout(() => reject(new Error('Timeout')), 15000),
       ),
     ])
       .then((responseData) => {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 5 DONE');
         setvendor_data(jsonData);
         setLoading(true);
         setload_v(1);
 
         setloadname('Downloading ' + 'Vendors');
-        console.log('20 ' + 'fetching fetch_per_vendor_data DONE');
+
+        //  console.log('20 ' + 'fetching fetch_per_vendor_data DONE');
       })
       .catch(function (error) {
         console.log('Vendor1' + error);
@@ -2090,14 +2045,12 @@ export default function UpdateModal(props) {
 
   //done
   let fetch_per_category_data = () => {
-    console.log('103 start');
+    // console.log('103 start');
     var sales_position_name = global.sales_position_name;
     var tempstr1 = 'sales_position_name=' + sales_position_name;
 
-    console.log('21 ' + 'fetching fetch_per_category_data start');
-    console.log(
-      server.server_address + 'sales_category_tbl/salesmanfilter?' + tempstr1,
-    );
+    //console.log('21 ' + 'fetching fetch_per_category_data start');
+    //6
     Promise.race([
       fetch(
         server.server_address + 'sales_category_tbl/salesmanfilter?' + tempstr1,
@@ -2111,15 +2064,16 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
+        setTimeout(() => reject(new Error('Timeout')), 15000),
       ),
     ])
       .then((responseData) => {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 6 DONE');
         setcategory_data(jsonData);
-        console.log('103 success');
+        //  console.log('103 success');
         console.log('21 ' + 'fetching fetch_per_category_data success');
         setcount_c_json(Object.keys(jsonData).length);
 
@@ -2127,7 +2081,7 @@ export default function UpdateModal(props) {
         setload_c(1);
 
         setloadname('Downloading ' + 'Categories');
-        console.log('22 ' + 'fetching fetch_per_category_data DONE');
+        // console.log('22 ' + 'fetching fetch_per_category_data DONE');
       })
       .catch(function (error) {
         console.log('category' + error);
@@ -2283,7 +2237,7 @@ export default function UpdateModal(props) {
           setmodalvisible(true);
           //setload_pc(i++);
           setload_pc(3);
-          console.log('23.0' + ' upload upload_data_per_customer');
+          //  console.log('23.0' + ' upload upload_data_per_customer');
         },
       );
     });
@@ -2300,14 +2254,14 @@ export default function UpdateModal(props) {
           setmodalvisible(true);
           setload_n(3);
           // setload_n(i++);
-          console.log('23 ' + 'DONE upload_data_net');
+          //  console.log('23 ' + 'DONE upload_data_net');
         },
       );
     });
   };
 
   let upload_data_per_vendor = () => {
-    console.log('24 ' + 'initial upload_data_per_vendor');
+    //console.log('24 ' + 'initial upload_data_per_vendor');
     // console.log(c_vendor_data);
     dbSalesmanNet.transaction(function (tx) {
       tx.executeSql(
@@ -2319,7 +2273,7 @@ export default function UpdateModal(props) {
           setmodalvisible(true);
           // setload_v(i++);
           setload_v(3);
-          console.log('25 ' + 'DONE upload_data_per_vendor');
+          //  console.log('25 ' + 'DONE upload_data_per_vendor');
         },
         (tx, err) => {
           console.log('ADDED HERE1' + err);
@@ -2343,7 +2297,7 @@ export default function UpdateModal(props) {
           setmodalvisible(true);
           // setload_v(i++);
           setload_c(3);
-          console.log('26 ' + 'DONE upload_data_per_category');
+          //   console.log('26 ' + 'DONE upload_data_per_category');
         },
         (tx, err) => {
           console.log('ADDED HERE2' + err);
@@ -2383,6 +2337,7 @@ export default function UpdateModal(props) {
     var principal_id = global.PrincipalAccessList;
 
     var tempstr = 'principal_id=' + principal_id;
+    //7
     Promise.race([
       fetch(
         server.server_address + globalCompany.company + 'promo_item?' + tempstr,
@@ -2396,13 +2351,14 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 160000),
+        setTimeout(() => reject(new Error('Timeout')), 15000),
       ),
     ])
       .then((responseData) => {
         return responseData.json();
       })
       .then((jsonData) => {
+        console.log('FETCH 7 DONE');
         if (jsonData.length > 0) {
           setApiPromoItemData(jsonData);
           ApiRowsCount = jsonData.length;
@@ -2410,6 +2366,7 @@ export default function UpdateModal(props) {
           // NO ITEM, SET TRU TO END UPDATE
           setq6Inventory(true);
         }
+        //console.log('AD');
       })
       .catch(function (error) {
         console.log('Error 1:' + error.message);
@@ -2419,7 +2376,7 @@ export default function UpdateModal(props) {
 
   useEffect(() => {
     if (ApiPromoItemData.length === ApiRowsCount) {
-      console.log('PROMO RUN');
+      // console.log('PROMO RUN');
       DeleteItems();
     }
   });
@@ -2434,12 +2391,12 @@ export default function UpdateModal(props) {
           if (results.rowsAffected > 0) {
             setItemsDeleted(true);
           } else {
-            console.log('nothing to delete, set true to save fetch sku');
+            // console.log('nothing to delete, set true to save fetch sku');
             setItemsDeleted(true);
           }
         },
         (tx, err) => {
-          console.log('ADDED HERE3' + err);
+          // console.log('ADDED HERE3' + err);
         },
       );
     });
@@ -2559,7 +2516,7 @@ export default function UpdateModal(props) {
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
-                  console.log('SAVED 500X500 SavePromoItems');
+                  //    console.log('SAVED 500X500 SavePromoItems');
                 },
                 SQLerror,
               );
@@ -2580,9 +2537,9 @@ export default function UpdateModal(props) {
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
-                  console.log(
-                    'SAVED 500X500 SavePromoItems < 500 ' + runningIndexCount,
-                  );
+                  // console.log(
+                  //   'SAVED 500X500 SavePromoItems < 500 ' + runningIndexCount,
+                  // );
                   runningIndexCount = 0;
                 },
                 SQLerror,
@@ -2593,7 +2550,7 @@ export default function UpdateModal(props) {
       });
 
       if (currIndex === ApiPromoItemData.length) {
-        console.log('5.5 ' + 'SavePromoItems done concatenating, saved..');
+        //  console.log('5.5 ' + 'SavePromoItems done concatenating, saved..');
         setq6Inventory(true);
       }
     }
@@ -2724,7 +2681,7 @@ export default function UpdateModal(props) {
 
       {isLoadingActivityIndicator && (
         <View style={[styles.loading, {backgroundColor: '#2C302E'}]}>
-          {/* <Button
+          <Button
             title="Test"
             onPress={() => {
               console.log(q1Principal + ' q1Principal');
@@ -2732,9 +2689,10 @@ export default function UpdateModal(props) {
               console.log(q4Area + ' q4Area');
               console.log(q3UserUpdateLog + ' q3UserUpdateLog');
               console.log(q5Marc + ' q5Marc');
+              console.log(q6Inventory + ' Inventory');
               console.log(globalStatus.updateStatus);
             }}
-          /> */}
+          />
           <Text style={{color: 'white', fontSize: moderateScale(17)}}>
             Updating... {updateProgress} %{' '}
           </Text>

@@ -372,7 +372,7 @@ export default function DashboardModal(props) {
                       PageVisited.PerSalesmanPAGE = 'NO';
                       PageVisited.PerPrincipalPAGE = 'NO';
 
-                      FilterList.DashboardFilterYearNMonthTeam =
+                      FilterList.DashboardFilterYearNMonthTeamVendor =
                         FilterListMirror.DashboardFilterYear +
                         FilterListMirror.DashboardFilterMonth +
                         FilterListMirror.DashboardFilterTeam +
@@ -380,6 +380,7 @@ export default function DashboardModal(props) {
 
                       FilterList.DashboardFilterYear =
                         FilterListMirror.DashboardFilterYear;
+                        
                       FilterList.DashboardFilterMonth =
                         FilterListMirror.DashboardFilterMonth;
 
@@ -429,8 +430,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   FilterCenteredView: {
-    height: scale(700),
-    width: scale(400),
+    height: height - 50,
+    width: width -40,
     margin: scale(20),
     backgroundColor: '#ffffff',
     borderRadius: 20,

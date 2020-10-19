@@ -349,7 +349,7 @@ export default function PerAreaDashboard(props) {
         }
       }
     }
-  }, [FilterList.DashboardFilterYearNMonthTeam]);
+  }, [FilterList.DashboardFilterYearNMonthTeamVendor]);
 
   useEffect(() => {
     //SETUP DYNAMIC PIE CHART LIST AND PERCENTAGE
@@ -506,6 +506,7 @@ export default function PerAreaDashboard(props) {
   //CENTER 4 SUMMARY                     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   function GetBottomPerAreaLocalData() {
+console.log('BOTTOM ')
     var YearQuery = '';
     if (FilterList.DashboardFilterYear === '') {
       YearQuery =
@@ -529,12 +530,39 @@ export default function PerAreaDashboard(props) {
       MonthQuery =
         ' and  business_month = ' + "'" + FilterList.DashboardFilterMonth + "'";
     }
+ 
+    var TeamQuery = '';
+    if (
+      FilterList.DashboardFilterTeam === '' ||
+      FilterList.DashboardFilterTeam === 'ALL'
+    ) {
+      TeamQuery = ' and   team IN ' + global.TeamAccessList;
+    } else {
+      TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
+    }
+
+    var VendorQuery = '';
+    if (
+      FilterList.DashboardFilterVendor === '' ||
+      FilterList.DashboardFilterVendor === 'ALL'
+    ) {
+      VendorQuery = ' and   principal_name  like ' + "'%%' ";
+    } else {
+      VendorQuery =
+        ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
+    }
+
 
     dbperarea.transaction((tx) => {
+      console.log('SELECT business_year, business_month, province,   sum(sales) as sales1, sum(uba)  as uba FROM perareapermonth_tbl  where ' +
+      YearQuery +
+      MonthQuery + TeamQuery + VendorQuery +
+      ' group by business_year, business_month,  province' +
+      ' ORDER BY CAST(sales1 AS UNSIGNED) desc  ')
       tx.executeSql(
         'SELECT business_year, business_month, province,   sum(sales) as sales1, sum(uba)  as uba FROM perareapermonth_tbl  where ' +
           YearQuery +
-          MonthQuery +
+          MonthQuery + TeamQuery + VendorQuery +
           ' group by business_year, business_month,  province' +
           ' ORDER BY CAST(sales1 AS UNSIGNED) desc  ',
         [],

@@ -436,7 +436,7 @@ export default function PerPrincipalDashboard(props) {
       }
       PageVisited.PerPrincipalPAGE = 'YES';
     }
-  }, [FilterList.DashboardFilterYearNMonthTeam]);
+  }, [FilterList.DashboardFilterYearNMonthTeamVendor]);
 
   useEffect(() => {
     //SETUP DYNAMIC PIE CHART LIST AND PERCENTAGE
@@ -648,15 +648,7 @@ export default function PerPrincipalDashboard(props) {
     }
 
     
-
-    console.log('SELECT business_year, business_month, principal_name, principal_acronym, ' +
-    ' sum(sales) as sales, sum(target) as target, sum(uba) as uba FROM perprincipalpermonth_tbl  where ' +
-    YearQuery +
-    MonthQuery +
-    VendorQuery +
-    TeamQuery +
-    ' group by business_year, business_month,  principal_name' +
-    ' order by CAST((sales) AS UNSIGNED)   desc ')
+ 
     dbperprincipal.transaction((tx) => {
       tx.executeSql(
         'SELECT business_year, business_month, principal_name, principal_acronym, ' +
@@ -692,7 +684,7 @@ export default function PerPrincipalDashboard(props) {
             uba: tempUBA,
           });
           if (temp.length > 0) {
-            console.log(temp)
+        
             setPerPrincipal(temp);
             setperPrincipalforFlatlist(temp2);
             setTotalSales(tempSales);

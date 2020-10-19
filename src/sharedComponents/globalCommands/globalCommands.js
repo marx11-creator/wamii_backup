@@ -28,7 +28,7 @@ export var server = {
   //http://172.16.0.150:3003/
   //https://boiling-atoll-20376.herokuapp.com/
   //http://178.128.217.246/
-  server_address: 'http://178.128.217.246:81/',
+  server_address: 'http://172.16.0.53:81/',
 };
 
 export var CurrentAppVersionUpdate = {
@@ -148,6 +148,16 @@ export function ClearDefaults() {
   delete_net_tbl();
   delete_per_vendor_tbl();
   delete_per_category_tbl();
+  FilterListMirror.DashboardYears = '';
+  FilterListMirror.DashboardFilterMonth = '';
+  FilterListMirror.DashboardFilterTeam = '';
+  FilterListMirror.DashboardFilterVendor = '';
+
+  FilterList.DashboardYears = '';
+  FilterList.DashboardFilterMonth = '';
+  FilterList.DashboardFilterTeam = '';
+  FilterList.DashboardFilterVendor = '';
+
 }
 
 let delete_per_customer_tbl = () => {
@@ -229,7 +239,12 @@ function DeletePerAreaAPIData() {
     tx.executeSql(
       'Delete from perareapermonth_tbl ',
       [],
-      (tx, results) => {},
+      (tx, results) => {
+        if (results.rowsAffected > 0) {
+          console.log('DeletePerAreaAPIData DONE');
+        }
+
+      },
       SQLerror,
     );
   });
@@ -409,7 +424,7 @@ export function GetDateTime() {
             0,
           ).dateTimeUpdated24hr;
           // ComputeLastDateTimeUpdate();
-          console.log('called');
+     //     console.log('called');
           // console.log(results.rows.item(0).dateTimeUpdated24hr);
           //  console.log(results.rows.item(0).dateTimeUpdated24hr);
         } else {

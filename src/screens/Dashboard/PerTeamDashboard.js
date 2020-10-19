@@ -268,7 +268,7 @@ export default function PerTeamDashboard(props) {
       PageVisited.PerTeamPAGE = 'YES';
       LoadPerTeamFiltered();
     }
-  }, [FilterList.DashboardFilterYearNMonthTeam]);
+  }, [FilterList.DashboardFilterYearNMonthTeamVendor]);
 
   useEffect(() => {
     settotalSalesAnimation(true);
@@ -312,11 +312,38 @@ export default function PerTeamDashboard(props) {
         ' business_year = ' + "'" + FilterList.DashboardFilterYear + "'";
     }
 
+
+
+    
+    var TeamQuery = '';
+    if (
+      FilterList.DashboardFilterTeam === '' ||
+      FilterList.DashboardFilterTeam === 'ALL'
+    ) {
+      TeamQuery = ' and   team IN ' + global.TeamAccessList;
+    } else {
+      TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
+    }
+
+    var VendorQuery = '';
+    if (
+      FilterList.DashboardFilterVendor === '' ||
+      FilterList.DashboardFilterVendor === 'ALL'
+    ) {
+      VendorQuery = ' and   principal_name  like ' + "'%%' ";
+    } else {
+      VendorQuery =
+        ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
+    }
+
+
+
+
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT (sum(amount) / 1000000) as amount FROM perymtsat_tbl ' +
           ' where  ' +
-          YearQuery +
+          YearQuery + TeamQuery + VendorQuery +
           ' GROUP BY business_month  ORDER BY invoice_date asc',
         [],
         (tx, results) => {
@@ -351,11 +378,37 @@ export default function PerTeamDashboard(props) {
         ' business_year = ' + "'" + FilterList.DashboardFilterYear + "'";
     }
 
+
+    
+    
+    var TeamQuery = '';
+    if (
+      FilterList.DashboardFilterTeam === '' ||
+      FilterList.DashboardFilterTeam === 'ALL'
+    ) {
+      TeamQuery = ' and   team IN ' + global.TeamAccessList;
+    } else {
+      TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
+    }
+
+    var VendorQuery = '';
+    if (
+      FilterList.DashboardFilterVendor === '' ||
+      FilterList.DashboardFilterVendor === 'ALL'
+    ) {
+      VendorQuery = ' and   principal_name  like ' + "'%%' ";
+    } else {
+      VendorQuery =
+        ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
+    }
+
+
+
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT distinct  business_month FROM perymtsat_tbl ' +
           ' where  ' +
-          YearQuery +
+          YearQuery + TeamQuery + VendorQuery +
           ' order by invoice_date asc ',
         [],
         (tx, results) => {
@@ -398,11 +451,39 @@ export default function PerTeamDashboard(props) {
         ' and business_month = ' + "'" + FilterList.DashboardFilterMonth + "'";
     }
 
+
+    
+    
+    var TeamQuery = '';
+    if (
+      FilterList.DashboardFilterTeam === '' ||
+      FilterList.DashboardFilterTeam === 'ALL'
+    ) {
+      TeamQuery = ' and   team IN ' + global.TeamAccessList;
+    } else {
+      TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
+    }
+
+    var VendorQuery = '';
+    if (
+      FilterList.DashboardFilterVendor === '' ||
+      FilterList.DashboardFilterVendor === 'ALL'
+    ) {
+      VendorQuery = ' and   principal_name  like ' + "'%%' ";
+    } else {
+      VendorQuery =
+        ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
+    }
+
+
+
+
+
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT  SUM(amount) as amount , SUM(target)   as target FROM perymtsat_tbl  where  ' +
           YearQuery +
-          MonthQuery +
+          MonthQuery + TeamQuery + VendorQuery +
           ' order by invoice_date asc ',
         [],
         (tx, results) => {
@@ -446,12 +527,38 @@ export default function PerTeamDashboard(props) {
         ' and business_month = ' + "'" + FilterList.DashboardFilterMonth + "'";
     }
 
+    
+    
+    var TeamQuery = '';
+    if (
+      FilterList.DashboardFilterTeam === '' ||
+      FilterList.DashboardFilterTeam === 'ALL'
+    ) {
+      TeamQuery = ' and   team IN ' + global.TeamAccessList;
+    } else {
+      TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
+    }
+
+    var VendorQuery = '';
+    if (
+      FilterList.DashboardFilterVendor === '' ||
+      FilterList.DashboardFilterVendor === 'ALL'
+    ) {
+      VendorQuery = ' and   principal_name  like ' + "'%%' ";
+    } else {
+      VendorQuery =
+        ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
+    }
+
+
+
+
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT team, sum(amount) as sales, sum(target) as target, sum(target) as achievement ' +
           ' FROM perymtsat_tbl  where  ' +
           YearQuery +
-          MonthQuery +
+          MonthQuery + TeamQuery + VendorQuery +
           ' group by business_year, business_month, team' +
           ' order by CAST((sales) AS UNSIGNED)   DEsc ',
         [],
@@ -503,6 +610,7 @@ export default function PerTeamDashboard(props) {
 
               <TouchableOpacity
                 onPress={() => {
+                
                   {
                     DashboardYears.length > 0
                       ? (setisVisibleModalFilter(true),

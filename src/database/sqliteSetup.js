@@ -100,7 +100,7 @@ export default function CreateDatabase() {
         if (res.rows.length == 0) {
           txn.executeSql('DROP TABLE IF EXISTS perareapermonth_tbl', []);
           txn.executeSql(
-            'CREATE TABLE IF NOT EXISTS perareapermonth_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255),invoice_date VARCHAR(255), province VARCHAR(255), sales VARCHAR(255), uba VARCHAR(255), dateTimeUpdated VARCHAR(255))',
+            'CREATE TABLE IF NOT EXISTS perareapermonth_tbl(ref_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255),invoice_date VARCHAR(255), province VARCHAR(255), sales VARCHAR(255), uba VARCHAR(255), dateTimeUpdated VARCHAR(255),principal_name VARCHAR(255),team VARCHAR(255))',
             [],
           );
         }
