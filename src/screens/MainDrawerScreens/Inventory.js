@@ -60,14 +60,58 @@ import BackgroundTimer from 'react-native-background-timer';
 var CurrentItemCount = 0;
 var count = 0;
 var localItemcount = 0;
+//
 var PrincipalPickerCatcher = '';
-var VariantListfromPicker = '';
-var TypeListfromPicker = '';
+var CategoryPickerCatcher = '';
+var BrandPickerCatcher = '';
+var VariantPickerCatcher = '';
+var ProductTypePickerCatcher = '';
+var PriceOptionPickerCatcher = '';
+
+//
+
+// var VariantListfromPicker = '';
+// var TypeListfromPicker = '';
 var longStrinfg = '';
 
 var test = 'aa';
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
+
+
+  const arrProductTypefromPickerFields = [
+    {
+      label: 'Promo',
+      value: 'Promo',
+    },
+    {
+      label: 'Regular',
+      value: 'Regular',
+    },
+  ];
+
+
+  const arrPriceOptionfromPickerFields = [
+    {
+      label: 'Booking',
+      value: 'Booking',
+    },
+    {
+      label: 'Van',
+      value: 'Van',
+    },
+  ];
+
+
+  //
+  const [arrPrincipalfromPicker, setarrPrincipalfromPicker] = useState('');
+  const [arrCategoryfromPicker, setarrCategoryfromPicker] = useState([]);
+  const [arrBrandfromPicker, setarrBrandfromPicker] = useState([]);
+  const [arrPriceOptionfromPicker, setarrPriceOptionfromPicker] = useState(arrPriceOptionfromPickerFields);
+  const [arrVariantfromPicker, setarrVariantfromPicker] = useState([]);
+  const [arrProductTypefromPicker, setarrProductTypefromPicker] = useState(arrProductTypefromPickerFields);
+  //
+
   const [refreshing, setRefreshing] = React.useState(false);
   const fadeIn = useRef(new Animated.Value(0)).current;
   var ImageLoop = [];
@@ -93,7 +137,6 @@ export default function Inventory(props) {
 
       GetPrincipalList();
       GetLocalPromoItems(page);
-
     });
   }, []);
   //   const onEndReached = () => {
@@ -176,20 +219,22 @@ export default function Inventory(props) {
       value: '',
     },
   ];
-  const VariantListFields = [
+  const CategoryListFields = [
     {
       label: '',
       value: '',
     },
   ];
-  const TypeListFields = [
+  const BrandListFields = [
     {
-      label: 'Promo',
-      value: 'Promo',
+      label: '',
+      value: '',
     },
+  ];
+  const VariantListFields = [
     {
-      label: 'Regular',
-      value: 'Regular',
+      label: '',
+      value: '',
     },
   ];
 
@@ -219,13 +264,13 @@ export default function Inventory(props) {
   const [unitPrice, setunitPrice] = useState('PCS');
   const [updateMessage, setupdateMessage] = useState('Updating...');
   const [page, setpage] = useState(0);
-  const [principalPicker, setPrincipalPicker] = useState('');
+
   const [PrincipalList, setPrincipalList] = useState(PrincipalListFields);
+  const [CategoryList, setCategoryList] = useState(CategoryListFields);
+  const [BrandList, setBrandList] = useState(BrandListFields);
   const [VariantList, setVariantList] = useState(VariantListFields);
-  const [arrVariantListfromPicker, setarrVariantListfromPicker] = useState([]);
-  const [arrTypeListfromPicker, setarrTypeListfromPicker] = useState([]);
+
   const [isModalVisible2, setisModalVisible2] = useState(false);
-  const [TypeList, setTypeList] = useState(TypeListFields);
 
   const [loading, setLoading] = useState(false);
 
@@ -246,6 +291,21 @@ export default function Inventory(props) {
   const [
     isVisibleTypeDropdownPicker,
     setisVisibleTypeDropdownPicker,
+  ] = useState(false);
+
+  const [
+    isVisibleCategoryDropdownPicker,
+    setisVisibleCategoryDropdownPicker,
+  ] = useState(false);
+
+  const [
+    isVisibleBrandDropdownPicker,
+    setisVisibleBrandDropdownPicker,
+  ] = useState(false);
+
+  const [
+    isVisiblePriceOptionDropdownPicker,
+    setisVisiblePriceOptionDropdownPicker,
   ] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -334,7 +394,7 @@ export default function Inventory(props) {
     props.navigation.addListener('focus', () => {
       console.log('focus on per per item');
       CurrentAppScreen.Screen = 'Inventory';
-      GetPrincipalList();
+       GetPrincipalList();
       GetLocalPromoItems(page);
     });
   }, []);
@@ -448,33 +508,48 @@ export default function Inventory(props) {
         ' principal_name = ' + "'" + PrincipalPickerCatcher + "'";
     }
 
+    var CategoryQuery = '';
+
+    if (CategoryPickerCatcher === '' || CategoryPickerCatcher === 'ALL') {
+      CategoryQuery = '  and product_category like ' + "'%%' ";
+    } else {
+      CategoryQuery =
+        ' and product_category = ' + "'" + CategoryPickerCatcher + "'";
+    }
+
+    var BrandQuery = '';
+
+    if (BrandPickerCatcher === '' || BrandPickerCatcher === 'ALL') {
+      BrandQuery = '  and product_brand like ' + "'%%' ";
+    } else {
+      BrandQuery =
+        ' and product_brand = ' + "'" + BrandPickerCatcher + "'";
+    }
+
     var VariantQuery = '';
 
-    if (VariantListfromPicker === '' || VariantListfromPicker === 'ALL') {
+    if (VariantPickerCatcher === '' || VariantPickerCatcher === 'ALL') {
       VariantQuery = '  and product_variant like ' + "'%%' ";
     } else {
       VariantQuery =
-        ' and  product_variant in ' +
-        '(' +
-        VariantListfromPicker.slice(0, -1) +
-        ')';
+        ' and product_variant = ' + "'" + VariantPickerCatcher + "'";
     }
 
     var PromoProductQuery = '';
-    if (TypeListfromPicker === '') {
-      PromoProductQuery = '  ';
+
+    if (ProductTypePickerCatcher === '' || ProductTypePickerCatcher === 'ALL') {
+      PromoProductQuery = '  and promo_product like ' + "'%%' ";
     } else {
       PromoProductQuery =
-        ' and  promo_product in   ' +
-        '(' +
-        TypeListfromPicker.slice(0, -1) +
-        ')';
+        ' and promo_product = ' + "'" + ProductTypePickerCatcher + "'";
     }
 
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM promo_items_tbl where ' +
           PrincipalQuery +
+          CategoryQuery +
+          BrandQuery +
           VariantQuery +
           PromoProductQuery +
           ' order by principal_name, product_variant, product_name ',
@@ -557,12 +632,14 @@ export default function Inventory(props) {
         (tx, results) => {
           var len = results.rows.length;
           if (len > 0) {
+            
             var temp = [];
             temp.push(AllPrincipal);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
+             
             }
-            setPrincipalList(temp);
+            setarrPrincipalfromPicker(temp);
           } else {
             console.log('error getting principal list');
           }
@@ -571,32 +648,136 @@ export default function Inventory(props) {
     });
   }
 
-  function GetVariantList() {
+  function GetCategoryList() {
+    const AllCategory = {
+      label: 'ALL',
+      value: 'ALL',
+    };
     var PrincipalQuery = '';
     if (PrincipalPickerCatcher === 'ALL') {
-      console.log('1');
       PrincipalQuery = '  principal_name like ' + "'%%' ";
     } else {
-      console.log(PrincipalPickerCatcher);
       PrincipalQuery =
         ' principal_name = ' + "'" + PrincipalPickerCatcher + "'";
+    }
+
+   
+    dbinventory.transaction((tx) => {
+      tx.executeSql(
+        'SELECT Distinct product_category as label, product_category as value FROM promo_items_tbl where ' +
+          PrincipalQuery +
+          ' order by product_category',
+        [],
+        (tx, results) => {
+          var len = results.rows.length;
+          if (len > 0) {
+            var temp = [];
+            temp.push(AllCategory);
+            for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+              console.log(results.rows.item(i));
+            }
+            setarrCategoryfromPicker(temp);
+          } else {
+            console.log('error on GetCategoryList');
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+
+  function GetBrandList() {
+    const AllBrand = {
+      label: 'ALL',
+      value: 'ALL',
+    };
+    var PrincipalQuery = '';
+    if (PrincipalPickerCatcher === 'ALL') {
+      PrincipalQuery = '  principal_name like ' + "'%%' ";
+    } else {
+      PrincipalQuery =
+        ' principal_name = ' + "'" + PrincipalPickerCatcher + "'";
+    }
+
+    var CategoryQuery = '';
+    if (CategoryPickerCatcher === 'ALL') {
+      CategoryQuery = ' and  product_category like ' + "'%%' ";
+    } else {
+      CategoryQuery =
+        ' and  product_category = ' + "'" + CategoryPickerCatcher + "'";
+    }
+
+    dbinventory.transaction((tx) => {
+      tx.executeSql(
+        'SELECT Distinct product_brand as label, product_brand as value FROM promo_items_tbl where ' +
+          PrincipalQuery +
+          CategoryQuery +
+          ' order by product_brand',
+        [],
+        (tx, results) => {
+          var len = results.rows.length;
+          if (len > 0) {
+            var temp = [];
+            temp.push(AllBrand);
+            for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+            }
+            setarrBrandfromPicker(temp);
+          } else {
+            console.log('error on GetBrandList');
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+
+  function GetVariantList() {
+    const AllVariant = {
+      label: 'ALL',
+      value: 'ALL',
+    };
+    var PrincipalQuery = '';
+    if (PrincipalPickerCatcher === 'ALL') {
+      PrincipalQuery = '  principal_name like ' + "'%%' ";
+    } else {
+      PrincipalQuery =
+        ' principal_name = ' + "'" + PrincipalPickerCatcher + "'";
+    }
+
+    var CategoryQuery = '';
+    if (CategoryPickerCatcher === 'ALL') {
+      CategoryQuery = ' and  product_category like ' + "'%%' ";
+    } else {
+      CategoryQuery =
+        ' and  product_category = ' + "'" + CategoryPickerCatcher + "'";
+    }
+
+    var BrandQuery = '';
+    if (BrandPickerCatcher === 'ALL') {
+      BrandQuery = ' and  product_brand like ' + "'%%' ";
+    } else {
+      BrandQuery = ' and  product_brand = ' + "'" + BrandPickerCatcher + "'";
     }
 
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct product_variant as label, product_variant as value FROM promo_items_tbl where ' +
           PrincipalQuery +
-          ' order by product_variant',
+          CategoryQuery +
+          BrandQuery +
+          ' order by product_brand',
         [],
         (tx, results) => {
           var len = results.rows.length;
           if (len > 0) {
-            console.log('variants found');
             var temp = [];
+            temp.push(AllVariant);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
             }
-            setVariantList(temp);
+            setarrVariantfromPicker(temp);
           } else {
             console.log('error on GetVariantList');
           }
@@ -1853,7 +2034,7 @@ export default function Inventory(props) {
               gradientFrom="#F9A7A8"
               gradientTo="#D6171A"
               onPress={() => {
-                GetPrincipalList();
+                
                 setisModalVisible2(!isModalVisible2);
               }}
             />
@@ -2274,23 +2455,24 @@ export default function Inventory(props) {
         onRequestClose={() => {
           setisVisiblePrincipalDropdownPicker(false);
           setisVisibleVariantDropdownPicker(false);
+          setisVisibleTypeDropdownPicker(false);
+          setisVisibleCategoryDropdownPicker(false);
+          setisVisibleBrandDropdownPicker(false);
+          setisVisiblePriceOptionDropdownPicker(false);
           setisModalVisible2(!isModalVisible2);
         }}>
         <TouchableWithoutFeedback
           onPress={() => {
-            console.log('asd');
+            console.log('TOUCHED WHOTE');
             setisVisiblePrincipalDropdownPicker(false);
             setisVisibleVariantDropdownPicker(false);
             setisVisibleTypeDropdownPicker(false);
+            setisVisibleCategoryDropdownPicker(false);
+            setisVisibleBrandDropdownPicker(false);
+            setisVisiblePriceOptionDropdownPicker(false);
           }}>
-          <View
-            style={[
-              isVisibleVariantDropdownPicker
-                ? styles.FilterHeightMax
-                : styles.FilterHeightMin,
-            ]}>
+          <View style={styles.FilterHeightMax}>
             <View style={{padding: 5}}>
-              {/* <Button title="chnage" onPress={() => setVariantPicker('')} /> */}
               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Vendor :</Text>
                 <DropDownPicker //  -----------------------------------------------//// VENDOR
@@ -2298,7 +2480,7 @@ export default function Inventory(props) {
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(490)}
                   dropDownStyle={{backgroundColor: '#F1F8F5'}}
-                  containerStyle={{height: moderateScale(50, 0.5)}}
+                  containerStyle={{height: moderateScale(40, 0.5)}}
                   labelStyle={{
                     fontSize: 14,
                     textAlign: 'left',
@@ -2309,45 +2491,167 @@ export default function Inventory(props) {
                     setisVisiblePrincipalDropdownPicker(true);
                     setisVisibleVariantDropdownPicker(false);
                     setisVisibleTypeDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(false);
                   }}
                   onClose={() => {
                     setisVisiblePrincipalDropdownPicker(false);
-                    setisVisibleTypeDropdownPicker(false);
                     setisVisibleVariantDropdownPicker(false);
+                    setisVisibleTypeDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(false);
                   }}
                   itemStyle={{
                     justifyContent: 'flex-start',
                   }}
                   activeLabelStyle={{color: 'red'}}
-                  items={PrincipalList}
-                  defaultValue={principalPicker}
+                  items={arrPrincipalfromPicker}
+                  defaultValue={PrincipalPickerCatcher}
                   onChangeItem={(itemValue) => {
-                    setarrVariantListfromPicker([]);
-                    VariantListfromPicker = '';
-                    setPrincipalPicker(itemValue.value);
+                    setarrCategoryfromPicker([]);
+                    setarrBrandfromPicker([]);
+                    setarrVariantfromPicker([]);
+
+                    CategoryPickerCatcher = '';
+                    BrandPickerCatcher = '';
+                    VariantPickerCatcher = '';
+
                     PrincipalPickerCatcher = itemValue.value;
+                    GetCategoryList();
+                  }}
+                />
+              </View>
+
+              {/* // ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+              <View style={{marginTop: moderateScale(20, 0.5)}}>
+                <Text>Category :</Text>
+                <DropDownPicker //  -----------------------------------------------//// VENDOR
+                  placeholder={'Select Category'}
+                  style={{backgroundColor: '#F1F8F5'}}
+                  dropDownMaxHeight={scale(490)}
+                  dropDownStyle={{backgroundColor: '#F1F8F5'}}
+                  containerStyle={{height: moderateScale(40, 0.5)}}
+                  labelStyle={{
+                    fontSize: 14,
+                    textAlign: 'left',
+                    color: '#000',
+                  }}
+                  isVisible={isVisibleCategoryDropdownPicker}
+                  onOpen={() => {
+                    setisVisiblePrincipalDropdownPicker(false);
+                    setisVisibleVariantDropdownPicker(false);
+                    setisVisibleTypeDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(true);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(false);
+                  }}
+                  onClose={() => {
+                    setisVisiblePrincipalDropdownPicker(false);
+                    setisVisibleVariantDropdownPicker(false);
+                    setisVisibleTypeDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(false);
+                  }}
+                  itemStyle={{
+                    justifyContent: 'flex-start',
+                  }}
+                  activeLabelStyle={{color: 'red'}}
+                  items={arrCategoryfromPicker}
+                  defaultValue={CategoryPickerCatcher}
+                  onChangeItem={(itemValue) => {
+                 
+                    setarrBrandfromPicker([]);
+                    setarrVariantfromPicker([]);
+
+              
+                    BrandPickerCatcher = '';
+                    VariantPickerCatcher = '';
+
+                    CategoryPickerCatcher = itemValue.value;
+                    GetBrandList();
+                  }}
+                />
+              </View>
+
+                     {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+              <View style={{marginTop: moderateScale(20, 0.5)}}>
+                <Text>Brand :</Text>
+                <DropDownPicker //  -----------------------------------------------//// VENDOR
+                  placeholder={'Select Brand'}
+                  style={{backgroundColor: '#F1F8F5'}}
+                  dropDownMaxHeight={scale(490)}
+                  dropDownStyle={{backgroundColor: '#F1F8F5'}}
+                  containerStyle={{height: moderateScale(40, 0.5)}}
+                  labelStyle={{
+                    fontSize: 14,
+                    textAlign: 'left',
+                    color: '#000',
+                  }}
+                  isVisible={isVisibleBrandDropdownPicker}
+                  onOpen={() => {
+                    setisVisiblePrincipalDropdownPicker(false);
+                    setisVisibleVariantDropdownPicker(false);
+                    setisVisibleTypeDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(true);
+                    setisVisiblePriceOptionDropdownPicker(false);
+                  }}
+                  onClose={() => {
+                    setisVisiblePrincipalDropdownPicker(false);
+                    setisVisibleVariantDropdownPicker(false);
+                    setisVisibleTypeDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(false);
+                  }}
+                  itemStyle={{
+                    justifyContent: 'flex-start',
+                  }}
+                  activeLabelStyle={{color: 'red'}}
+                  items={arrBrandfromPicker}
+                  defaultValue={BrandPickerCatcher}
+                  onChangeItem={(itemValue) => {
+                    
+                    setarrVariantfromPicker([]);
+
+              
+                    
+                    VariantPickerCatcher = '';
+
+                    BrandPickerCatcher = itemValue.value;
                     GetVariantList();
                   }}
                 />
               </View>
-              <View style={{marginTop: moderateScale(20, 0.5)}}>
+  {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+
+               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Variant :</Text>
                 <DropDownPicker //  -----------------------------------------------//// VARIANT
                   placeholder={'Select Variant'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(530)}
                   dropDownStyle={{backgroundColor: '#F1F8F5'}}
-                  containerStyle={{height: moderateScale(50, 0.5)}}
+                  containerStyle={{height: moderateScale(40, 0.5)}}
                   isVisible={isVisibleVariantDropdownPicker}
                   onOpen={() => {
+                    setisVisiblePrincipalDropdownPicker(false);
                     setisVisibleVariantDropdownPicker(true);
                     setisVisibleTypeDropdownPicker(false);
-                    setisVisiblePrincipalDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(false);
                   }}
                   onClose={() => {
-                    setisVisibleVariantDropdownPicker(false);
                     setisVisiblePrincipalDropdownPicker(false);
+                    setisVisibleVariantDropdownPicker(false);
                     setisVisibleTypeDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(false);
                   }}
                   labelStyle={{
                     fontSize: 14,
@@ -2359,48 +2663,42 @@ export default function Inventory(props) {
                     justifyContent: 'flex-start',
                   }}
                   activeLabelStyle={{color: 'red'}}
-                  items={VariantList} //-----------------------------
-                  defaultValue={arrVariantListfromPicker}
+                  items={arrVariantfromPicker} //-----------------------------
+                  defaultValue={VariantPickerCatcher}
                   onChangeItem={(itemValue) => {
-                    setarrVariantListfromPicker(itemValue);
-                    // arrVariantListfromPickerLocal = itemValue;
-
-                    VariantListfromPicker = '';
-                    itemValue.map(function (item, i) {
-                      VariantListfromPicker =
-                        VariantListfromPicker + "'" + item + "',";
-                    });
-                    // console.log(VariantListfromPicker);
+              
+                    
+                    VariantPickerCatcher = itemValue.value;
+                   
                   }}
-                  // searchable={true}
-                  // searchablePlaceholder="Search for an item"
-                  // searchablePlaceholderTextColor="gray"
-                  multiple={true}
-                  multipleText="%d items have been selected."
-                  min={0}
-                  max={100}
                 />
               </View>
-              <View style={{marginTop: moderateScale(20, 0.5)}}>
+              
+                {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Product Type :</Text>
                 <DropDownPicker //  -----------------------------------------------//// TYPE
                   placeholder={'Select Type'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(430)}
                   dropDownStyle={{backgroundColor: '#F1F8F5'}}
-                  containerStyle={{height: moderateScale(50, 0.5)}}
+                  containerStyle={{height: moderateScale(40, 0.5)}}
                   isVisible={isVisibleTypeDropdownPicker}
                   onOpen={() => {
-                    setisVisibleTypeDropdownPicker(true);
-                    setisVisibleVariantDropdownPicker(false);
                     setisVisiblePrincipalDropdownPicker(false);
+                    setisVisibleVariantDropdownPicker(false);
+                    setisVisibleTypeDropdownPicker(true);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(false);
                   }}
                   onClose={() => {
-                    setisVisibleTypeDropdownPicker(false);
-
                     setisVisiblePrincipalDropdownPicker(false);
-
                     setisVisibleVariantDropdownPicker(false);
+                    setisVisibleTypeDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(false);
                   }}
                   labelStyle={{
                     fontSize: 14,
@@ -2412,28 +2710,61 @@ export default function Inventory(props) {
                     justifyContent: 'flex-start',
                   }}
                   activeLabelStyle={{color: 'red'}}
-                  items={TypeList} //-----------------------------
-                  defaultValue={arrTypeListfromPicker}
+                  items={arrProductTypefromPicker} //-----------------------------
+                  defaultValue={ProductTypePickerCatcher}
                   onChangeItem={(itemValue) => {
-                    setarrTypeListfromPicker(itemValue);
-                    // arrVariantListfromPickerLocal = itemValue;
-
-                    TypeListfromPicker = '';
-                    itemValue.map(function (item, i) {
-                      TypeListfromPicker =
-                        TypeListfromPicker + "'" + item + "',";
-                    });
-                    // console.log(VariantListfromPicker);
+                    console.log('aa')
                   }}
-                  // searchable={true}
-                  // searchablePlaceholder="Search for an item"
-                  // searchablePlaceholderTextColor="gray"
-                  multiple={true}
-                  multipleText="%d items have been selected."
-                  min={0}
-                  max={100}
                 />
               </View>
+              {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+               <View style={{marginTop: moderateScale(20, 0.5)}}>
+                <Text>Price Option :</Text>
+                <DropDownPicker //  -----------------------------------------------//// TYPE
+                  placeholder={'Select Price Option'}
+                  style={{backgroundColor: '#F1F8F5'}}
+                  dropDownMaxHeight={scale(430)}
+                  dropDownStyle={{backgroundColor: '#F1F8F5'}}
+                  containerStyle={{height: moderateScale(40, 0.5)}}
+                  isVisible={isVisiblePriceOptionDropdownPicker}
+                  onOpen={() => {
+                    setisVisiblePrincipalDropdownPicker(false);
+                    setisVisibleVariantDropdownPicker(false);
+                    setisVisibleTypeDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(true);
+                  }}
+                  onClose={() => {
+                    setisVisiblePrincipalDropdownPicker(false);
+                    setisVisibleVariantDropdownPicker(false);
+                    setisVisibleTypeDropdownPicker(false);
+                    setisVisibleCategoryDropdownPicker(false);
+                    setisVisibleBrandDropdownPicker(false);
+                    setisVisiblePriceOptionDropdownPicker(false);
+                  }}
+                  labelStyle={{
+                    fontSize: 14,
+                    // eslint-disable-next-line prettier/prettier
+                  textAlign: 'left',            //VARIANT
+                    color: '#000',
+                  }}
+                  itemStyle={{
+                    justifyContent: 'flex-start',
+                  }}
+                  activeLabelStyle={{color: 'red'}}
+                  items={arrPriceOptionfromPicker} //-----------------------------
+                  defaultValue={PriceOptionPickerCatcher}
+                  onChangeItem={(itemValue) => {
+                      console.log('bb');
+                  }}
+                  // multiple={true}
+                  // multipleText="%d items have been selected."
+                  // min={0}
+                  // max={100}
+                />
+              </View>
+
               <View>
                 <View
                   style={{
@@ -2451,18 +2782,27 @@ export default function Inventory(props) {
                       width={140}
                       gradientFrom="red"
                       gradientTo="pink"
-                      text="Go"
+                      text="Filter"
                       onPress={() => {
                         setPleaseWaitVisible(true);
 
                         setpage(0);
-                        setisVisibleTypeDropdownPicker(false);
-                        setisVisibleVariantDropdownPicker(false);
                         setisVisiblePrincipalDropdownPicker(false);
+                        setisVisibleVariantDropdownPicker(false);
+                        setisVisibleTypeDropdownPicker(false);
+                        setisVisibleCategoryDropdownPicker(false);
+                        setisVisibleBrandDropdownPicker(false);
+                        setisVisiblePriceOptionDropdownPicker(false);
+                       
 
                         GetLocalPromoItems(page * 0);
                         setisModalVisible2(false);
-                        setarrVariantListfromPicker([]);
+                        
+
+
+
+
+                        
                       }}
                     />
                   </View>
@@ -2641,8 +2981,9 @@ const styles = StyleSheet.create({
   FilterHeightMax: {
     backgroundColor: '#FFFFFF',
     width: width - scale(90),
-    height: scale(850),
+    height: height - 120,
     alignSelf: 'center',
+    borderRadius: 20,
   },
   slide1: {
     flex: 1,

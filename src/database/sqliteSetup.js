@@ -153,7 +153,7 @@ export default function CreateDatabase() {
         if (res.rows.length == 0) {
           txn.executeSql('DROP TABLE IF EXISTS promo_items_tbl', []);
           txn.executeSql(
-            'CREATE TABLE IF NOT EXISTS promo_items_tbl (ref_id INTEGER PRIMARY KEY AUTOINCREMENT, principal_name VARCHAR(255), product_id VARCHAR(255),product_variant VARCHAR(255), product_name VARCHAR(255), inventory VARCHAR(255), img_url VARCHAR(255), DateandTimeUpdated VARCHAR(255),  total_case VARCHAR(255), total_pieces VARCHAR(255), effective_price_date VARCHAR(255), CASE_COMPANY VARCHAR(255), CASE_BOOKING VARCHAR(255), CASE_EXTRUCK VARCHAR(255), PCS_COMPANY VARCHAR(255), PCS_BOOKING VARCHAR(255), PCS_EXTRUCK VARCHAR(255))',
+            'CREATE TABLE IF NOT EXISTS promo_items_tbl (ref_id INTEGER PRIMARY KEY AUTOINCREMENT, principal_name VARCHAR(255), product_id VARCHAR(255),product_variant VARCHAR(255), product_name VARCHAR(255), inventory VARCHAR(255), img_url VARCHAR(255), DateandTimeUpdated VARCHAR(255),  total_case VARCHAR(255), total_pieces VARCHAR(255), effective_price_date VARCHAR(255), CASE_COMPANY VARCHAR(255), CASE_BOOKING VARCHAR(255), CASE_EXTRUCK VARCHAR(255), PCS_COMPANY VARCHAR(255), PCS_BOOKING VARCHAR(255), PCS_EXTRUCK VARCHAR(255),product_category VARCHAR(255),product_brand VARCHAR(255))',
             [],
             // 'CREATE TABLE IF NOT EXISTS table_user(user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_name VARCHAR(20), user_contact INT(10), user_address VARCHAR(255))',[],
           );

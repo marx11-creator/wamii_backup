@@ -280,7 +280,7 @@ export default function Home(props) {
 
         globalStatus.updateMode = 'auto';
 
-        // props.navigation.navigate('UpdateModal');
+         props.navigation.navigate('Inventory');
         // props.navigation.navigate(screenname);
 
         BackgroundTimer.clearInterval(intervalId);

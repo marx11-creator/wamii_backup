@@ -28,7 +28,8 @@ export var server = {
   //http://172.16.0.150:3003/
   //https://boiling-atoll-20376.herokuapp.com/
   //http://178.128.217.246/
-  server_address: 'http://172.16.0.53:81/',
+  //http://172.16.0.53:81//
+  server_address: 'http://178.128.217.246:81/',
 };
 
 export var CurrentAppVersionUpdate = {

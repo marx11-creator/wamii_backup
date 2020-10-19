@@ -817,7 +817,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 15000),
+        setTimeout(() => reject(new Error('Timeout')), 80000),
       ),
     ])
       .then((responseData) => {
@@ -1033,7 +1033,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 15000),
+        setTimeout(() => reject(new Error('Timeout')), 80000),
       ),
     ])
       .then((responseData) => {
@@ -1249,7 +1249,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 15000),
+        setTimeout(() => reject(new Error('Timeout')), 80000),
       ),
     ])
       .then((responseData) => {
@@ -1460,7 +1460,7 @@ export default function UpdateModal(props) {
   //       }),
   //     }),
   //     new Promise((_, reject) =>
-  //       setTimeout(() => reject(new Error('Timeout')), 15000),
+  //       setTimeout(() => reject(new Error('Timeout')), 80000),
   //     ),
   //   ])
   //     .then((responseData) => {
@@ -1534,7 +1534,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 15000),
+        setTimeout(() => reject(new Error('Timeout')), 80000),
       ),
     ])
       .then((responseData) => {
@@ -1665,7 +1665,7 @@ export default function UpdateModal(props) {
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 15000),
+        setTimeout(() => reject(new Error('Timeout')), 80000),
       ),
     ])
       .then((responseData) => {
@@ -1928,7 +1928,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 15000),
+        setTimeout(() => reject(new Error('Timeout')), 80000),
       ),
     ])
       .then((responseData) => {
@@ -1972,7 +1972,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 15000),
+        setTimeout(() => reject(new Error('Timeout')), 80000),
       ),
     ])
       .then((responseData) => {
@@ -2020,7 +2020,7 @@ export default function UpdateModal(props) {
         },
       }),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 15000),
+        setTimeout(() => reject(new Error('Timeout')), 80000),
       ),
     ])
       .then((responseData) => {
@@ -2064,7 +2064,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 15000),
+        setTimeout(() => reject(new Error('Timeout')), 80000),
       ),
     ])
       .then((responseData) => {
@@ -2351,7 +2351,7 @@ export default function UpdateModal(props) {
         },
       ),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), 15000),
+        setTimeout(() => reject(new Error('Timeout')), 80000),
       ),
     ])
       .then((responseData) => {
@@ -2445,6 +2445,14 @@ export default function UpdateModal(props) {
             "'" +
             ',' +
             "'" +
+            item.product_category +
+            "'" +
+            ',' +
+            "'" +
+            item.product_brand +
+            "'" +
+            ',' +
+            "'" +
             item.product_variant +
             "'" +
             ',' +
@@ -2512,7 +2520,7 @@ export default function UpdateModal(props) {
             dbinventory.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, total_case, total_pieces, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_category,product_brand,product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, total_case, total_pieces, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -2533,7 +2541,7 @@ export default function UpdateModal(props) {
             dbinventory.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, total_case, total_pieces, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_category,product_brand,product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, total_case, total_pieces, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
