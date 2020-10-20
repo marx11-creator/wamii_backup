@@ -321,7 +321,7 @@ export default function PerPrincipalDashboard(props) {
   ];
 
   //const for bottom per team report
-  const [perPrincipal, setPerPrincipal] = useState(perPrincipalfield);
+  const [PerPrincipal, setPerPrincipal] = useState(perPrincipalfield);
   const [perPrincipalforFlatlist, setperPrincipalforFlatlist] = useState(
     perPrincipalfieldforFlatlist,
   );
@@ -338,15 +338,18 @@ export default function PerPrincipalDashboard(props) {
 
     SearchPrincipal();
 
-    if (perPrincipal.length > 1 && totalSales > 1) {
+    if (PerPrincipal.length > 1 && totalSales > 1) {
+      // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
       var temp = [];
-      perPrincipal.map((item, index) => {
+      PerPrincipal.map((item, index) => {
+        //BUILD PRINCIPAL ACONYM
         temp.push(item.principal_acronym);
       });
 
       var tempSales = [];
       var firstContribution = 1;
-      perPrincipal.map((item, index) => {
+      PerPrincipal.map((item, index) => {
+        // BUILD PRINCIPAL SALES
         tempSales.push(((item.sales / totalSales) * 100).toFixed(2) * 1);
         if (firstContribution === 1) {
           setCurrentContribution(
@@ -357,9 +360,9 @@ export default function PerPrincipalDashboard(props) {
       });
 
       if (temp.length === tempSales.length) {
+        //  POPULATE NEEDED DATA
         setDynamicPrincipalList(temp);
         setDynamicPrincipalSales(tempSales);
-        // console.log('matched!');
       }
     }
   }, [globalState.dateTimeUpdated24hr]);
@@ -368,22 +371,25 @@ export default function PerPrincipalDashboard(props) {
     props.navigation.addListener('focus', () => {
       console.log('focus on per principal focus');
 
-      CurrentAppScreen.Screen = 'PerPrincipal';
+      CurrentAppScreen.Screen = 'PerVendor';
+
       if (PageVisited.PerPrincipalPAGE === 'NO') {
         PageVisited.PerPrincipalPAGE = 'YES';
-        console.log('focus on per principal with changes');
 
         SearchPrincipal();
-        
-        if (perPrincipal.length > 1 && totalSales > 1) {
+
+        if (PerPrincipal.length > 1 && totalSales > 1) {
+          // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
           var temp = [];
-          perPrincipal.map((item, index) => {
+          PerPrincipal.map((item, index) => {
+            //BUILD PRINCIPAL ACONYM
             temp.push(item.principal_acronym);
           });
 
           var tempSales = [];
           var firstContribution = 1;
-          perPrincipal.map((item, index) => {
+          PerPrincipal.map((item, index) => {
+            // BUILD PRINCIPAL SALES
             tempSales.push(((item.sales / totalSales) * 100).toFixed(2) * 1);
             if (firstContribution === 1) {
               setCurrentContribution(
@@ -394,9 +400,9 @@ export default function PerPrincipalDashboard(props) {
           });
 
           if (temp.length === tempSales.length) {
+            //  POPULATE NEEDED DATA
             setDynamicPrincipalList(temp);
             setDynamicPrincipalSales(tempSales);
-            // console.log('matched!');
           }
         }
       }
@@ -405,18 +411,23 @@ export default function PerPrincipalDashboard(props) {
 
   useEffect(() => {
     if (CurrentDashboardScreen.Screen === 'PERVENDOR') {
-      console.log('focus on per principal from dashboard global'); //
+      console.log('focus on per area from dashboard global'); //
+      PageVisited.PerPrincipalPAGE = 'YES';
+      // LOAD PER PRINCIPAL     >>>>>>>>>>>>>>>>>
       SearchPrincipal();
 
-      if (perPrincipal.length > 1 && totalSales > 1) {
+      if (PerPrincipal.length > 1 && totalSales > 1) {
+        // IF SEARCHING  FOR MONTH AND AMOUNT IS DONE
         var temp = [];
-        perPrincipal.map((item, index) => {
+        PerPrincipal.map((item, index) => {
+          //BUILD PRINCIPAL ACONYM
           temp.push(item.principal_acronym);
         });
 
         var tempSales = [];
         var firstContribution = 1;
-        perPrincipal.map((item, index) => {
+        PerPrincipal.map((item, index) => {
+          // BUILD PRINCIPAL SALES
           tempSales.push(((item.sales / totalSales) * 100).toFixed(2) * 1);
           if (firstContribution === 1) {
             setCurrentContribution(
@@ -427,28 +438,25 @@ export default function PerPrincipalDashboard(props) {
         });
 
         if (temp.length === tempSales.length) {
+          //  POPULATE NEEDED DATA
           setDynamicPrincipalList(temp);
           setDynamicPrincipalSales(tempSales);
-          // console.log('matched!');
         }
-      } else {
-        // console.log(perPrincipal.length + ' zzz  ' + totalSales.length);
       }
-      PageVisited.PerPrincipalPAGE = 'YES';
     }
   }, [FilterList.DashboardFilterYearNMonthTeamVendor]);
 
   useEffect(() => {
     //SETUP DYNAMIC PIE CHART LIST AND PERCENTAGE
-    if (perPrincipal.length > 1 && totalSales > 1) {
+    if (PerPrincipal.length > 1 && totalSales > 1) {
       var temp = [];
-      perPrincipal.map((item, index) => {
+      PerPrincipal.map((item, index) => {
         temp.push(item.principal_acronym);
       });
 
       var tempSales = [];
       var firstContribution = 1;
-      perPrincipal.map((item, index) => {
+      PerPrincipal.map((item, index) => {
         tempSales.push(((item.sales / totalSales) * 100).toFixed(2) * 1);
         if (firstContribution === 1) {
           setCurrentContribution(
@@ -463,21 +471,19 @@ export default function PerPrincipalDashboard(props) {
         setDynamicPrincipalSales(tempSales);
         // console.log('matched!');
       }
-    } else {
-      // console.log(perPrincipal.length + ' zzz  ' + totalSales.length);
     }
-  }, [perPrincipal]);
+  }, [PerPrincipal]);
 
   useEffect(() => {
-    if (perPrincipal.length > 1 && totalSales > 1) {
+    if (PerPrincipal.length > 1 && totalSales > 1) {
       var temp = [];
-      perPrincipal.map((item, index) => {
+      PerPrincipal.map((item, index) => {
         temp.push(item.principal_acronym);
       });
 
       var tempSales = [];
       var firstContribution = 1;
-      perPrincipal.map((item, index) => {
+      PerPrincipal.map((item, index) => {
         tempSales.push(((item.sales / totalSales) * 100).toFixed(2) * 1);
         if (firstContribution === 1) {
           setCurrentContribution(
@@ -492,8 +498,6 @@ export default function PerPrincipalDashboard(props) {
         setDynamicPrincipalSales(tempSales);
         // console.log('matched!');
       }
-    } else {
-      // console.log(perPrincipal.length + ' ' + totalSales);
     }
   }, [totalSales]);
 
@@ -508,27 +512,18 @@ export default function PerPrincipalDashboard(props) {
   const keys = DynamicPrincipalList;
   const values = DynamicPrincipalSales;
   const colors = [
-    '#600080',
     '#9900cc',
     '#c61aff',
     '#d966ff',
     '#ecb3ff',
-    '#600080',
     '#9900cc',
     '#c61aff',
     '#d966ff',
     '#ecb3ff',
-    '#600080',
     '#9900cc',
     '#c61aff',
     '#d966ff',
     '#ecb3ff',
-    '#600080',
-    '#9900cc',
-    '#c61aff',
-    '#d966ff',
-    '#ecb3ff',
-    '#600080',
     '#9900cc',
     '#c61aff',
     '#d966ff',
@@ -563,12 +558,8 @@ export default function PerPrincipalDashboard(props) {
       amount: pieLabel,
       svg: {fill: colors[index]},
       arc: {
-        outerRadius: 90 + values[index] + '%',
         padAngle: label === key ? 0.1 : 0,
       },
-
-      // onPress: () => this.setState({ selectedSlice: { label: key, value: values[index] } })
-      onPress: () => setCurrentContribution(values[index]),
     };
   });
 
@@ -583,7 +574,7 @@ export default function PerPrincipalDashboard(props) {
           fill={'white'}
           textAnchor={'middle'}
           alignmentBaseline={'middle'}
-          fontSize={moderateScale(19)}
+          fontSize={moderateScale(16)}
           fontWeight={'bold'}
           stroke={'black'}
           strokeWidth={0.2}>
@@ -635,8 +626,6 @@ export default function PerPrincipalDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
-
-    
     var TeamQuery = '';
     if (
       FilterList.DashboardFilterTeam === '' ||
@@ -647,8 +636,6 @@ export default function PerPrincipalDashboard(props) {
       TeamQuery = ' and team = ' + "'" + FilterList.DashboardFilterTeam + "'";
     }
 
-    
- 
     dbperprincipal.transaction((tx) => {
       tx.executeSql(
         'SELECT business_year, business_month, principal_name, principal_acronym, ' +
@@ -658,7 +645,7 @@ export default function PerPrincipalDashboard(props) {
           VendorQuery +
           TeamQuery +
           ' group by business_year, business_month,  principal_name' +
-          ' order by CAST((sales) AS UNSIGNED)   desc ',
+          ' order by sales  desc ',
         [],
         (tx, results) => {
           var temp = [];
@@ -684,31 +671,11 @@ export default function PerPrincipalDashboard(props) {
             uba: tempUBA,
           });
           if (temp.length > 0) {
-        
-
-
-            if ( temp.length >= 1 && temp.length <= 1) {
-              setpiePercentage('90%')
-            } else if ( temp.length >= 2 && temp.length <= 2) {
-              setpiePercentage('45%')
-            } else if ( temp.length >= 3 && temp.length <= 5) {
-              setpiePercentage('75%')
-            } else if ( temp.length >= 6 && temp.length <= 8) {
-              setpiePercentage('80%')
-            } else if ( temp.length >= 9 && temp.length <= 15) {
-              setpiePercentage('90%')
-            } else if ( temp.length >= 9 && temp.length <= 100) {
-              setpiePercentage('100%')
-            }
-
-
-            
             setPerPrincipal(temp);
             setperPrincipalforFlatlist(temp2);
             setTotalSales(tempSales);
             setTotalTeamANimation(true);
           } else {
-            
             setPerPrincipal(temp);
             setperPrincipalforFlatlist(temp2);
             setTotalSales(tempSales);
@@ -740,7 +707,12 @@ export default function PerPrincipalDashboard(props) {
       <ScrollView>
         <View style={{flexDirection: 'column'}}>
           <View style={{margin: moderateScale(5)}}>
-          <View style={{flexDirection: 'row', height: scale(70), alignItems: 'center'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                height: scale(70),
+                alignItems: 'center',
+              }}>
               {/* <Image
                 style={styles.CompanyLogo}
                 source={{
@@ -883,14 +855,13 @@ export default function PerPrincipalDashboard(props) {
                   style={{
                     position: 'absolute',
                     alignSelf: 'center',
-                    fontSize: moderateScale(10),
-                    color: '#ffffff',
+                    fontSize: moderateScale(25),
+                    color: '#FFFFFF',
                     fontWeight: 'bold',
-                    top: scale(190),
                   }}>
-                  Contribution
+                  {numFormatter(totalSales)}
                 </Text>
-                <Text
+                {/* <Text
                   style={{
                     position: 'absolute',
                     alignSelf: 'center',
@@ -899,11 +870,11 @@ export default function PerPrincipalDashboard(props) {
                     fontWeight: 'bold',
                   }}>
                   {CurrentContribution} %
-                </Text>
+                </Text> */}
                 <PieChart
-                  style={{height: scale(470), opacity: 0.9}}
-                  outerRadius={piePercentage}
-                  innerRadius={'30%'}
+                  style={{height: scale(400), opacity: 1}}
+                  outerRadius={'100%'}
+                  innerRadius={'40%'}
                   data={data}>
                   <Labels />
                 </PieChart>
@@ -941,7 +912,7 @@ export default function PerPrincipalDashboard(props) {
             </View>
             <View
               style={{
-                height: perPrincipal.length * moderateScale(75, 0.5) + 10,
+                height: PerPrincipal.length * moderateScale(75, 0.5) + 10,
               }}>
               <FlatList
                 data={perPrincipalforFlatlist}

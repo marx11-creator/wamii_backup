@@ -520,8 +520,8 @@ export default function Inventory(props) {
     var pageNumber = page * 50;
     var endofPagenumber = pageNumber + 50;
 
-    console.log(pageNumber);
-    console.log(pageNumber + 50);
+    // console.log(pageNumber);
+    // console.log(pageNumber + 50);
     var TotalItems1 = 0;
     var TotalCase1 = 0;
     var TotalAmount1 = 0;
@@ -1739,7 +1739,7 @@ export default function Inventory(props) {
             <TouchableOpacity
               onPress={() => {
                 FadingMessage();
-                console.log('a');
+              //  console.log('a');
               }}>
               <View
                 style={{

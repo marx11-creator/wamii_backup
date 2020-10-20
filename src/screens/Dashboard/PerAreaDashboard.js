@@ -506,7 +506,6 @@ export default function PerAreaDashboard(props) {
   //CENTER 4 SUMMARY                     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   function GetBottomPerAreaLocalData() {
-console.log('BOTTOM ')
     var YearQuery = '';
     if (FilterList.DashboardFilterYear === '') {
       YearQuery =
@@ -554,11 +553,7 @@ console.log('BOTTOM ')
 
 
     dbperarea.transaction((tx) => {
-      console.log('SELECT business_year, business_month, province,   sum(sales) as sales1, sum(uba)  as uba FROM perareapermonth_tbl  where ' +
-      YearQuery +
-      MonthQuery + TeamQuery + VendorQuery +
-      ' group by business_year, business_month,  province' +
-      ' ORDER BY CAST(sales1 AS UNSIGNED) desc  ')
+       
       tx.executeSql(
         'SELECT business_year, business_month, province,   sum(sales) as sales1, sum(uba)  as uba FROM perareapermonth_tbl  where ' +
           YearQuery +

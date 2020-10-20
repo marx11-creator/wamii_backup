@@ -550,7 +550,7 @@ export default function PerTeamDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
-
+ 
 
 
     dbperymtsat.transaction((tx) => {

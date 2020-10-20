@@ -296,7 +296,7 @@ export default function PerSalesmanDashboard(props) {
   //USE EFFECT PART
 
   useEffect(() => {
-    console.log('focus on per team from update'); //
+    console.log('focus on per salesman from update'); //
 
     SearchPerSalesman();
   }, [globalState.dateTimeUpdated24hr]);
@@ -888,7 +888,7 @@ export default function PerSalesmanDashboard(props) {
             showValuesOnTopOfBars={false}
           />
         </Animatable.View>
-        <PerSalsemanFilter />
+        {/* <PerSalsemanFilter /> */}
 
         <View style={{flexDirection: 'row'}}>
           <View>

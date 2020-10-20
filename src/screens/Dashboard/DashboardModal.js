@@ -1,6 +1,6 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -35,12 +35,20 @@ import FlatButton from '../../sharedComponents/custombutton';
 import moment from 'moment';
 import {dbperymtsat} from '../../database/sqliteSetup';
 export default function DashboardModal(props) {
+
   const [isVisibleYear, setisVisibleYear] = useState(false);
   const [isVisibleMonth, setisVisibleMonth] = useState(false);
   const [isVisibleTeam, setisVisibleTeam] = useState(false);
   const [isVisibleVendor, setisVisibleVendor] = useState(false);
 
+  const [arrMonth, setarrMonth] = useState(DashboardMonths);
+  const [MonthState, setMonthState] = useState('');
+  // useEffect(() => {
+  //   GetMonthsforFilter();
+  // }, []);
   function GetMonthsforFilter() {
+    var month1 = '';
+
     var YearQuery = '';
     if (FilterListMirror.DashboardFilterYear === '') {
       YearQuery =
@@ -68,7 +76,16 @@ export default function DashboardModal(props) {
           if (len > 0) {
             var temp = [];
             for (let i = 0; i < results.rows.length; ++i) {
+              if (i === 0) {
+                month1 = results.rows.item(i).label;
+              }
               temp.push(results.rows.item(i));
+
+              setarrMonth(temp);
+
+              setMonthState(month1);
+
+              FilterListMirror.DashboardFilterMonth = month1;
 
               DashboardMonths.push({
                 label: results.rows.item(i).label,
@@ -169,6 +186,7 @@ export default function DashboardModal(props) {
                       : FilterList.DashboardFilterYear
                   }
                   onChangeItem={(itemValue) => {
+                    setarrMonth([]);
                     FilterListMirror.DashboardFilterMonth = '';
                     FilterListMirror.DashboardFilterYear = itemValue.value;
                     GetMonthsforFilter();
@@ -222,13 +240,15 @@ export default function DashboardModal(props) {
                     setisVisibleTeam(false);
                     setisVisibleVendor(false);
                   }}
-                  placeholder="Select Month"
+                  placeholder={moment().utcOffset('+08:00').format('MMMM')}
                   dropDownMaxHeight={scale(290)}
                   containerStyle={{height: 50}}
                   isVisible={isVisibleMonth}
-                  items={DashboardMonths}
+                  defaultValue={MonthState}
+                  items={arrMonth}
                   onChangeItem={(itemValue) => {
                     FilterListMirror.DashboardFilterMonth = itemValue.value;
+                    setMonthState(itemValue.value);
                   }} //                                                MONTH >>>>>>>>>>>>>>>>
                 />
               </View>
@@ -270,6 +290,7 @@ export default function DashboardModal(props) {
                   dropDownMaxHeight={scale(290)}
                   containerStyle={{height: 50}}
                   isVisible={isVisibleVendor}
+                  defaultValue={FilterList.DashboardFilterVendor}
                   items={DashboardVendor}
                   onChangeItem={(itemValue) => {
                     FilterListMirror.DashboardFilterVendor = itemValue.value;
@@ -315,6 +336,7 @@ export default function DashboardModal(props) {
                   containerStyle={{height: 50}}
                   isVisible={isVisibleTeam}
                   items={DashboardTeams}
+                  defaultValue={FilterList.DashboardFilterTeam}
                   onChangeItem={(itemValue) => {
                     FilterListMirror.DashboardFilterTeam = itemValue.value;
                   }} //                                               TEAM>>>>>>>>>>>>>>>>
@@ -329,69 +351,48 @@ export default function DashboardModal(props) {
                   width={160}
                   text="Filter"
                   onPress={() => {
-                 
-                    if (FilterListMirror.DashboardFilterMonth === '') {
-                      Alert.alert(
-                        'NOTE:',
-                        'Please select month first. ',
-                        [
-                          {
-                            text: 'OK',
-                          },
-                        ],
-                        {cancelable: true},
-                      );
-                    } else {
-                      if (FilterListMirror.DashboardFilterYear === '') {
-                        FilterListMirror.DashboardFilterYear =
-                          FilterList.DashboardFilterYear;
-                      }
-                      if (FilterListMirror.DashboardFilterMonth === '') {
-                        FilterListMirror.DashboardFilterMonth =
-                          FilterList.DashboardFilterMonth;
-                      }
-                      if (FilterListMirror.DashboardFilterTeam === '') {
-                        FilterListMirror.DashboardFilterTeam =
-                          FilterList.DashboardFilterTeam;
-                      }
-
-                      if (FilterListMirror.DashboardFilterVendor === '') {
-                        FilterListMirror.DashboardFilterVendor =
-                          FilterList.DashboardFilterVendor;
-                      }
-
-                      // setglobalState({
-                      //   ...globalState,
-                      //   DashboardFilterYearNMonthTeam: FilterListMirror.DashboardFilterYear +
-                      //   FilterListMirror.DashboardFilterMonth +
-                      //   FilterListMirror.DashboardFilterTeam,
-                      // })
-
-                      PageVisited.PerTeamPAGE = 'NO';
-                      PageVisited.PerAreaPAGE = 'NO';
-                      PageVisited.PerSalesmanPAGE = 'NO';
-                      PageVisited.PerPrincipalPAGE = 'NO';
-
-                      FilterList.DashboardFilterYearNMonthTeamVendor =
-                        FilterListMirror.DashboardFilterYear +
-                        FilterListMirror.DashboardFilterMonth +
-                        FilterListMirror.DashboardFilterTeam +
-                        FilterListMirror.DashboardFilterVendor;
-
-                      FilterList.DashboardFilterYear =
-                        FilterListMirror.DashboardFilterYear;
-                        
-                      FilterList.DashboardFilterMonth =
-                        FilterListMirror.DashboardFilterMonth;
-
-                      FilterList.DashboardFilterTeam =
-                        FilterListMirror.DashboardFilterTeam;
-
-                      FilterList.DashboardFilterVendor =
-                        FilterListMirror.DashboardFilterVendor;
-
-                      props.closeDisplay();
+                    if (FilterListMirror.DashboardFilterYear === '') {
+                      FilterListMirror.DashboardFilterYear =
+                        FilterList.DashboardFilterYear;
                     }
+                    if (FilterListMirror.DashboardFilterMonth === '') {
+                      FilterListMirror.DashboardFilterMonth =
+                        FilterList.DashboardFilterMonth;
+                    }
+                    if (FilterListMirror.DashboardFilterTeam === '') {
+                      FilterListMirror.DashboardFilterTeam =
+                        FilterList.DashboardFilterTeam;
+                    }
+
+                    if (FilterListMirror.DashboardFilterVendor === '') {
+                      FilterListMirror.DashboardFilterVendor =
+                        FilterList.DashboardFilterVendor;
+                    }
+
+                    PageVisited.PerTeamPAGE = 'NO';
+                    PageVisited.PerAreaPAGE = 'NO';
+                    PageVisited.PerSalesmanPAGE = 'NO';
+                    PageVisited.PerPrincipalPAGE = 'NO';
+
+                    FilterList.DashboardFilterYearNMonthTeamVendor =
+                      FilterListMirror.DashboardFilterYear +
+                      FilterListMirror.DashboardFilterMonth +
+                      FilterListMirror.DashboardFilterTeam +
+                      FilterListMirror.DashboardFilterVendor;
+
+                    FilterList.DashboardFilterYear =
+                      FilterListMirror.DashboardFilterYear;
+
+                    FilterList.DashboardFilterMonth =
+                      FilterListMirror.DashboardFilterMonth;
+
+                    FilterList.DashboardFilterTeam =
+                      FilterListMirror.DashboardFilterTeam;
+
+                    FilterList.DashboardFilterVendor =
+                      FilterListMirror.DashboardFilterVendor;
+
+                    props.closeDisplay();
                   }}
                   gradientFrom="red"
                   gradientTo="pink"
@@ -431,7 +432,7 @@ const styles = StyleSheet.create({
   },
   FilterCenteredView: {
     height: height - 50,
-    width: width -40,
+    width: width - 40,
     margin: scale(20),
     backgroundColor: '#ffffff',
     borderRadius: 20,

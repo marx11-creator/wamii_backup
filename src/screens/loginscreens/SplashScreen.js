@@ -220,7 +220,7 @@ export default function SplashScreen(props) {
           //console.log(
           //   'before update' + LocalAppVersionUpdate.LocalAppVersionUpdateField,
           // );
-          console.log('focus on Splash123');
+       //   console.log('focus on Splash123');
           Update1008();
           CheckUserifLogin(); //moved tihs when u have new update to load check user on last update
         }
@@ -266,7 +266,7 @@ export default function SplashScreen(props) {
           var dateTimeObtained = '';
           if (len > 0) {
             APIToken.access_token = results.rows.item(0).access_token;
-            console.log(results.rows.item(0).access_token);
+           // console.log(results.rows.item(0).access_token);
             // console.log(results.rows.item(0).dateTimeObtained);
             dateTimeObtained = results.rows.item(0).dateTimeObtained;
             // console.log(moment(currentdate).diff(dateTimeObtained, 'days'));
@@ -382,9 +382,9 @@ export default function SplashScreen(props) {
 
             //if loop reach last record ------------------------------------------------------->
             if (index === temp.length - 1) {
-              console.log(
-                'index and json datamatched or last record reached, checking account validity...',
-              );
+              // console.log(
+              //   'index and json datamatched or last record reached, checking account validity...',
+              // );
 
               if (OtherSettings.AccountValidity !== '') {
                 var currentdate = moment()
