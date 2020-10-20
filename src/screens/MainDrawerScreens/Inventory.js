@@ -77,8 +77,6 @@ var longStrinfg = '';
 var test = 'aa';
 // var arrVariantListfromPickerLocal = [];
 export default function Inventory(props) {
-
-
   const arrProductTypefromPickerFields = [
     {
       label: 'Promo',
@@ -89,7 +87,6 @@ export default function Inventory(props) {
       value: 'Regular',
     },
   ];
-
 
   const arrPriceOptionfromPickerFields = [
     {
@@ -102,15 +99,20 @@ export default function Inventory(props) {
     },
   ];
 
-
   //
   const [arrPrincipalfromPicker, setarrPrincipalfromPicker] = useState('');
   const [arrCategoryfromPicker, setarrCategoryfromPicker] = useState([]);
   const [arrBrandfromPicker, setarrBrandfromPicker] = useState([]);
-  const [arrPriceOptionfromPicker, setarrPriceOptionfromPicker] = useState(arrPriceOptionfromPickerFields);
+  const [arrPriceOptionfromPicker, setarrPriceOptionfromPicker] = useState(
+    arrPriceOptionfromPickerFields,
+  );
   const [arrVariantfromPicker, setarrVariantfromPicker] = useState([]);
-  const [arrProductTypefromPicker, setarrProductTypefromPicker] = useState(arrProductTypefromPickerFields);
+  const [arrProductTypefromPicker, setarrProductTypefromPicker] = useState(
+    arrProductTypefromPickerFields,
+  );
   //
+
+  const [CategoryfromPickerState, setCategoryfromPickerState] = useState('');
 
   const [refreshing, setRefreshing] = React.useState(false);
   const fadeIn = useRef(new Animated.Value(0)).current;
@@ -318,13 +320,11 @@ export default function Inventory(props) {
   const [visibleImageListModal, setvisibleImageListModal] = useState(false);
 
   // useEffect(() => {
-  //   if (visibleImageListModal === true) {
-  //     MovedSwiper(20);
-  //     console.log(visibleImageListModal + ' true');
-  //   } else {
-  //     console.log(visibleImageListModal + ' false');
+  //   if (arrCategoryfromPicker.length > 0) {
+  //     console.log('category updated');
+  //     setCategoryfromPickerState('ALL');
   //   }
-  // }, [visibleImageListModal]);
+  // }, [arrCategoryfromPicker]);
 
   // useEffect(() => {
   //   if (PleaseWaitVisible === false) {
@@ -394,7 +394,7 @@ export default function Inventory(props) {
     props.navigation.addListener('focus', () => {
       console.log('focus on per per item');
       CurrentAppScreen.Screen = 'Inventory';
-       GetPrincipalList();
+      GetPrincipalList();
       GetLocalPromoItems(page);
     });
   }, []);
@@ -522,8 +522,7 @@ export default function Inventory(props) {
     if (BrandPickerCatcher === '' || BrandPickerCatcher === 'ALL') {
       BrandQuery = '  and product_brand like ' + "'%%' ";
     } else {
-      BrandQuery =
-        ' and product_brand = ' + "'" + BrandPickerCatcher + "'";
+      BrandQuery = ' and product_brand = ' + "'" + BrandPickerCatcher + "'";
     }
 
     var VariantQuery = '';
@@ -552,7 +551,7 @@ export default function Inventory(props) {
           BrandQuery +
           VariantQuery +
           PromoProductQuery +
-          ' order by principal_name, product_variant, product_name ',
+          ' order by principal_name, product_variant, product_name  limit 5',
         [],
         (tx, results) => {
           if (Number(pageNumber) + Number(50) > Number(results.rows.length)) {
@@ -632,12 +631,10 @@ export default function Inventory(props) {
         (tx, results) => {
           var len = results.rows.length;
           if (len > 0) {
-            
             var temp = [];
             temp.push(AllPrincipal);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
-             
             }
             setarrPrincipalfromPicker(temp);
           } else {
@@ -661,7 +658,6 @@ export default function Inventory(props) {
         ' principal_name = ' + "'" + PrincipalPickerCatcher + "'";
     }
 
-   
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct product_category as label, product_category as value FROM promo_items_tbl where ' +
@@ -671,13 +667,18 @@ export default function Inventory(props) {
         (tx, results) => {
           var len = results.rows.length;
           if (len > 0) {
+            setarrCategoryfromPicker([]);
+         
+
             var temp = [];
             temp.push(AllCategory);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
-              console.log(results.rows.item(i));
             }
             setarrCategoryfromPicker(temp);
+            setCategoryfromPickerState('ALL');
+
+
           } else {
             console.log('error on GetCategoryList');
           }
@@ -2034,7 +2035,6 @@ export default function Inventory(props) {
               gradientFrom="#F9A7A8"
               gradientTo="#D6171A"
               onPress={() => {
-                
                 setisModalVisible2(!isModalVisible2);
               }}
             />
@@ -2443,6 +2443,7 @@ export default function Inventory(props) {
               <Text style={styles.textStyle}> Close </Text>
             </TouchableHighlight>
           </View>
+          
         </View>
       </Modal>
       {/* MODAL FOR FILTER =---------------------------------------------------> */}
@@ -2510,13 +2511,12 @@ export default function Inventory(props) {
                   items={arrPrincipalfromPicker}
                   defaultValue={PrincipalPickerCatcher}
                   onChangeItem={(itemValue) => {
-                    setarrCategoryfromPicker([]);
+                  
                     setarrBrandfromPicker([]);
                     setarrVariantfromPicker([]);
-
-                    CategoryPickerCatcher = '';
-                    BrandPickerCatcher = '';
-                    VariantPickerCatcher = '';
+                  
+                    // BrandPickerCatcher = '';
+                    // VariantPickerCatcher = '';
 
                     PrincipalPickerCatcher = itemValue.value;
                     GetCategoryList();
@@ -2560,13 +2560,11 @@ export default function Inventory(props) {
                   }}
                   activeLabelStyle={{color: 'red'}}
                   items={arrCategoryfromPicker}
-                  defaultValue={CategoryPickerCatcher}
+                  defaultValue={CategoryfromPickerState}
                   onChangeItem={(itemValue) => {
-                 
                     setarrBrandfromPicker([]);
                     setarrVariantfromPicker([]);
 
-              
                     BrandPickerCatcher = '';
                     VariantPickerCatcher = '';
 
@@ -2576,7 +2574,7 @@ export default function Inventory(props) {
                 />
               </View>
 
-                     {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+              {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Brand :</Text>
                 <DropDownPicker //  -----------------------------------------------//// VENDOR
@@ -2614,11 +2612,8 @@ export default function Inventory(props) {
                   items={arrBrandfromPicker}
                   defaultValue={BrandPickerCatcher}
                   onChangeItem={(itemValue) => {
-                    
                     setarrVariantfromPicker([]);
 
-              
-                    
                     VariantPickerCatcher = '';
 
                     BrandPickerCatcher = itemValue.value;
@@ -2626,9 +2621,9 @@ export default function Inventory(props) {
                   }}
                 />
               </View>
-  {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+              {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
-               <View style={{marginTop: moderateScale(20, 0.5)}}>
+              <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Variant :</Text>
                 <DropDownPicker //  -----------------------------------------------//// VARIANT
                   placeholder={'Select Variant'}
@@ -2666,16 +2661,13 @@ export default function Inventory(props) {
                   items={arrVariantfromPicker} //-----------------------------
                   defaultValue={VariantPickerCatcher}
                   onChangeItem={(itemValue) => {
-              
-                    
                     VariantPickerCatcher = itemValue.value;
-                   
                   }}
                 />
               </View>
-              
-                {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-               <View style={{marginTop: moderateScale(20, 0.5)}}>
+
+              {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+              <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Product Type :</Text>
                 <DropDownPicker //  -----------------------------------------------//// TYPE
                   placeholder={'Select Type'}
@@ -2713,12 +2705,12 @@ export default function Inventory(props) {
                   items={arrProductTypefromPicker} //-----------------------------
                   defaultValue={ProductTypePickerCatcher}
                   onChangeItem={(itemValue) => {
-                    console.log('aa')
+                    console.log('aa');
                   }}
                 />
               </View>
               {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-               <View style={{marginTop: moderateScale(20, 0.5)}}>
+              <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Price Option :</Text>
                 <DropDownPicker //  -----------------------------------------------//// TYPE
                   placeholder={'Select Price Option'}
@@ -2756,7 +2748,7 @@ export default function Inventory(props) {
                   items={arrPriceOptionfromPicker} //-----------------------------
                   defaultValue={PriceOptionPickerCatcher}
                   onChangeItem={(itemValue) => {
-                      console.log('bb');
+                    console.log('bb');
                   }}
                   // multiple={true}
                   // multipleText="%d items have been selected."
@@ -2793,16 +2785,9 @@ export default function Inventory(props) {
                         setisVisibleCategoryDropdownPicker(false);
                         setisVisibleBrandDropdownPicker(false);
                         setisVisiblePriceOptionDropdownPicker(false);
-                       
 
                         GetLocalPromoItems(page * 0);
                         setisModalVisible2(false);
-                        
-
-
-
-
-                        
                       }}
                     />
                   </View>
@@ -2816,6 +2801,27 @@ export default function Inventory(props) {
                         setisVisiblePrincipalDropdownPicker(false);
                         setisVisibleVariantDropdownPicker(false);
                         setisModalVisible2(false);
+                      }}
+                    />
+                  </View>
+                  <View>
+                    <FlatButton
+                      width={140}
+                      gradientFrom="red"
+                      gradientTo="pink"
+                      text="TEST"
+                      onPress={() => {
+                        console.log(arrCategoryfromPicker)
+                     console.log(CategoryfromPickerState)
+                      }}
+                    />
+                    <FlatButton
+                      width={140}
+                      gradientFrom="red"
+                      gradientTo="pink"
+                      text="TEST"
+                      onPress={() => {
+                        setCategoryfromPickerState('ALL');
                       }}
                     />
                   </View>
