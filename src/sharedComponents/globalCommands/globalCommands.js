@@ -288,6 +288,7 @@ function DeleteCalendar() {
 }
 
 export function UpdateYearMonthsFilter() {
+ 
   GetVendorsforFilter();
   GetTeamsforFilter();
   GetYearforFilter();
@@ -301,7 +302,6 @@ function GetVendorsforFilter() {
   dbperprincipal.transaction((tx) => {
 
  
-
     tx.executeSql(
       'SELECT Distinct principal_name as label, principal_name as value FROM perprincipalpermonth_tbl ' +
         ' where  business_year = 2020 ' +

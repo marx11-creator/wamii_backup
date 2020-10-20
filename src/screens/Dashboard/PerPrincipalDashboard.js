@@ -265,7 +265,7 @@ export default function PerPrincipalDashboard(props) {
 
   const [globalState, setglobalState] = useContext(PageContextGlobalState);
   const [globalTimer, setglobalTimer] = useContext(PageContextGlobalTimer);
-  const [dateTime, setDateTime] = useState('');
+  const [piePercentage, setpiePercentage] = useState('');
 
   const [isVisibleModalFilter, setisVisibleModalFilter] = useState(false);
   const [isVisibleFilterModal, setisVisibleFilterModal] = useState(false);
@@ -563,7 +563,7 @@ export default function PerPrincipalDashboard(props) {
       amount: pieLabel,
       svg: {fill: colors[index]},
       arc: {
-        outerRadius: 70 + values[index] + '%',
+        outerRadius: 90 + values[index] + '%',
         padAngle: label === key ? 0.1 : 0,
       },
 
@@ -685,6 +685,24 @@ export default function PerPrincipalDashboard(props) {
           });
           if (temp.length > 0) {
         
+
+
+            if ( temp.length >= 1 && temp.length <= 1) {
+              setpiePercentage('90%')
+            } else if ( temp.length >= 2 && temp.length <= 2) {
+              setpiePercentage('45%')
+            } else if ( temp.length >= 3 && temp.length <= 5) {
+              setpiePercentage('75%')
+            } else if ( temp.length >= 6 && temp.length <= 8) {
+              setpiePercentage('80%')
+            } else if ( temp.length >= 9 && temp.length <= 15) {
+              setpiePercentage('90%')
+            } else if ( temp.length >= 9 && temp.length <= 100) {
+              setpiePercentage('100%')
+            }
+
+
+            
             setPerPrincipal(temp);
             setperPrincipalforFlatlist(temp2);
             setTotalSales(tempSales);
@@ -884,9 +902,7 @@ export default function PerPrincipalDashboard(props) {
                 </Text>
                 <PieChart
                   style={{height: scale(470), opacity: 0.9}}
-                  outerRadius={
-                    globalCompany.company === 'coslor/' ? '80%' : '100%'
-                  }
+                  outerRadius={piePercentage}
                   innerRadius={'30%'}
                   data={data}>
                   <Labels />
