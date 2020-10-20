@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import moment from 'moment';
 import {
+  ScrollView,
   View,
   Text,
   TouchableOpacity,
@@ -57,6 +58,7 @@ import MaterialIcons from 'react-native-vector-icons//MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import BackgroundTimer from 'react-native-background-timer';
+import {getBrand} from 'react-native-device-info';
 var CurrentItemCount = 0;
 var count = 0;
 var localItemcount = 0;
@@ -99,6 +101,7 @@ export default function Inventory(props) {
     },
   ];
 
+  const [pleaseWaitMessage, setpleaseWaitMessage] = useState('Please wait...');
   //
   const [arrPrincipalfromPicker, setarrPrincipalfromPicker] = useState('');
   const [arrCategoryfromPicker, setarrCategoryfromPicker] = useState([]);
@@ -113,8 +116,23 @@ export default function Inventory(props) {
   //
 
   const [CategoryPickerCatcherState, setCategoryPickerCatcherState] = useState(
-    'ALL',
+    '',
   );
+  const [BrandPickerCatcherState, setBrandPickerCatcherState] = useState('');
+
+  const [VariantPickerCatcherState, setVariantPickerCatcherState] = useState(
+    '',
+  );
+
+  const [
+    ProductTypePickerCatcherState,
+    setProductTypePickerCatcherState,
+  ] = useState('');
+
+  const [
+    PriceOptionPickerCatcherState,
+    setPriceOptionPickerCatcherState,
+  ] = useState('');
 
   const [refreshing, setRefreshing] = React.useState(false);
   const fadeIn = useRef(new Animated.Value(0)).current;
@@ -403,6 +421,13 @@ export default function Inventory(props) {
     });
   }, []);
 
+  useEffect(() => {
+    console.log('focus on per sku after update'); //
+    CurrentAppScreen.Screen = 'Inventory';
+    GetPrincipalList();
+    GetLocalPromoItems(page);
+  }, [globalState.dateTimeUpdated24hr]);
+
   // useEffect(() => {
   //   setInventorySummary({
   //     ...InventorySummary,
@@ -555,72 +580,62 @@ export default function Inventory(props) {
           BrandQuery +
           VariantQuery +
           PromoProductQuery +
-          ' order by principal_name, product_variant, product_name ',
+          ' order by principal_name, product_variant, product_name    ',
         [],
         (tx, results) => {
-          if (Number(pageNumber) + Number(50) > Number(results.rows.length)) {
-            endofPagenumber = results.rows.length;
-            setisLastPage(true);
+          var len = results.rows.length;
+
+          if (len > 0) {
+            if (Number(pageNumber) + Number(50) > Number(results.rows.length)) {
+              endofPagenumber = results.rows.length;
+              setisLastPage(true);
+            } else {
+              setisLastPage(false);
+            }
+
+            var temp = [];
+            CurrentItemCount = 0;
+            for (let i = pageNumber; i < endofPagenumber; ++i) {
+              CurrentItemCount = CurrentItemCount + 1;
+
+              temp.push(results.rows.item(i));
+            }
+
+            for (let i = 0; i < results.rows.length; ++i) {
+              TotalItems1 = TotalItems1 + 1;
+              TotalCase1 = TotalCase1 + Number(results.rows.item(i).total_case);
+              TotalAmount1 =
+                TotalAmount1 +
+                Number(
+                  Number(results.rows.item(i).total_case) *
+                    Number(results.rows.item(i).CASE_COMPANY),
+                );
+            }
+
+            setInventorySummary({
+              ...InventorySummary,
+              TotalItems: TotalItems1,
+              TotalCase: TotalCase1,
+              TotalAmount: TotalAmount1,
+              VendorName: 'ALL',
+              Category: 'ALL',
+              Brand: 'ALL',
+            });
+
+            console.log('Successfully loaded Initial ' + temp.length + ' sku');
+            setLocalPromoItemData(temp);
+
+            setPleaseWaitVisible(false);
           } else {
-            setisLastPage(false);
+            setLocalPromoItemData([]);
+            setpleaseWaitMessage('No items found.');
+            setPleaseWaitVisible(false);
           }
-
-          var temp = [];
-          CurrentItemCount = 0;
-          for (let i = pageNumber; i < endofPagenumber; ++i) {
-            CurrentItemCount = CurrentItemCount + 1;
-
-            temp.push(results.rows.item(i));
-          }
-
-          for (let i = 0; i < results.rows.length; ++i) {
-            TotalItems1 = TotalItems1 + 1;
-            TotalCase1 = TotalCase1 + Number(results.rows.item(i).total_case);
-            TotalAmount1 =
-              TotalAmount1 +
-              Number(
-                Number(results.rows.item(i).total_case) *
-                  Number(results.rows.item(i).CASE_COMPANY),
-              );
-          }
-
-          setInventorySummary({
-            ...InventorySummary,
-            TotalItems: TotalItems1,
-            TotalCase: TotalCase1,
-            TotalAmount: TotalAmount1,
-            VendorName: 'ALL',
-            Category: 'ALL',
-            Brand: 'ALL',
-          });
-
-          console.log('Successfully loaded Initial ' + temp.length + ' sku');
-          setLocalPromoItemData(temp);
-
-          setPleaseWaitVisible(false);
         },
         SQLerror,
       );
     });
   }
-
-  // function GetDateTime() {
-  //   dbinventory.transaction((tx) => {
-  //     tx.executeSql(
-  //       'SELECT DateandTimeUpdated FROM promo_items_tbl limit 1',
-  //       [],
-  //       (tx, results) => {
-  //         var len = results.rows.length;
-  //         if (len > 0) {
-  //           // console.log(results.rows.item(0).DateandTimeUpdated);
-  //           setDateTime(results.rows.item(0).DateandTimeUpdated);
-  //         } else {
-  //           console.log('No date and time in local db found');
-  //         }
-  //       },
-  //     );``
-  //   });
-  // }
 
   function GetPrincipalList() {
     const AllPrincipal = {
@@ -650,12 +665,26 @@ export default function Inventory(props) {
   }
 
   function GetCategoryList() {
+    var category1 = '';
+
     const AllCategory = {
       label: 'ALL',
       value: 'ALL',
     };
+
+    var TwoRow = [];
+    const AllRow = {
+      label: 'ALL',
+      value: 'ALL',
+    };
+
+    const BlankRow = {
+      label: '--',
+      value: '--',
+    };
+
     var PrincipalQuery = '';
-    if (PrincipalPickerCatcher === 'ALL') {
+    if (PrincipalPickerCatcher === 'ALL' || PrincipalPickerCatcher === '') {
       PrincipalQuery = '  principal_name like ' + "'%%' ";
     } else {
       PrincipalQuery =
@@ -675,12 +704,31 @@ export default function Inventory(props) {
             temp.push(AllCategory);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
-              console.log(results.rows.item(i));
+
+              if (i === 0) {
+                category1 = results.rows.item(i).label;
+              }
             }
             setarrCategoryfromPicker(temp);
+            setCategoryPickerCatcherState(category1);
             setCategoryPickerCatcherState('ALL');
+            //////////////////////////////////
+
+            TwoRow.push(AllRow);
+            TwoRow.push(BlankRow);
+
+            setarrBrandfromPicker(TwoRow);
+
+            setBrandPickerCatcherState('--');
+            setBrandPickerCatcherState('ALL');
+            //////////////////////////////////
+
+            setarrVariantfromPicker(TwoRow);
+
+            setVariantPickerCatcherState('--');
+            setVariantPickerCatcherState('ALL');
           } else {
-            console.log('error on GetCategoryList');
+            console.log('error on 1G2tCategoryList');
           }
         },
         SQLerror,
@@ -689,12 +737,26 @@ export default function Inventory(props) {
   }
 
   function GetBrandList() {
+    var brand1 = '';
+
     const AllBrand = {
       label: 'ALL',
       value: 'ALL',
     };
+
+    var TwoRow = [];
+    const AllRow = {
+      label: 'ALL',
+      value: 'ALL',
+    };
+
+    const BlankRow = {
+      label: '--',
+      value: '--',
+    };
+
     var PrincipalQuery = '';
-    if (PrincipalPickerCatcher === 'ALL') {
+    if (PrincipalPickerCatcher === 'ALL' || PrincipalPickerCatcher === '') {
       PrincipalQuery = '  principal_name like ' + "'%%' ";
     } else {
       PrincipalQuery =
@@ -702,7 +764,7 @@ export default function Inventory(props) {
     }
 
     var CategoryQuery = '';
-    if (CategoryPickerCatcher === 'ALL') {
+    if (CategoryPickerCatcher === 'ALL' || CategoryPickerCatcher === '') {
       CategoryQuery = ' and  product_category like ' + "'%%' ";
     } else {
       CategoryQuery =
@@ -723,8 +785,24 @@ export default function Inventory(props) {
             temp.push(AllBrand);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
+
+              if (i === 0) {
+                brand1 = results.rows.item(i).label;
+              }
             }
             setarrBrandfromPicker(temp);
+
+            setBrandPickerCatcherState(brand1);
+            setBrandPickerCatcherState('ALL');
+            //////////////////////////////////
+
+            TwoRow.push(AllRow);
+            TwoRow.push(BlankRow);
+
+            setarrVariantfromPicker(TwoRow);
+
+            setVariantPickerCatcherState('--');
+            setVariantPickerCatcherState('ALL');
           } else {
             console.log('error on GetBrandList');
           }
@@ -820,7 +898,7 @@ export default function Inventory(props) {
   // };
 
   function SQLerror(err) {
-    console.log('SQL Error: ' + err.message);
+    console.log('SQL Error: ' + err);
   }
 
   // function SavePromoItems() {
@@ -1031,7 +1109,7 @@ export default function Inventory(props) {
               alignContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: moderateScale(18)}}>Please wait....</Text>
+            <Text style={{fontSize: moderateScale(18)}}>Please wait...</Text>
           </View>
         </View>
       </View>
@@ -1183,43 +1261,45 @@ export default function Inventory(props) {
                 </View>
               </View>
 
-              <View
-                style={{
-                  backgroundColor: 'transparent',
-                  flexDirection: 'row',
-                  marginBottom: 3,
-                }}>
-                <View style={{flex: 1, backgroundColor: 'transparent'}}>
-                  <Text
-                    style={{
-                      fontSize: moderateScale(15, 0.5),
-                      color: '#ffffff',
-                    }}>
-                    Total Amount :
-                  </Text>
-                </View>
-
+              {global.sales_position_name === 'ALLSALESMAN' ? (
                 <View
                   style={{
-                    flex: 1,
                     backgroundColor: 'transparent',
-                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    marginBottom: 3,
                   }}>
-                  <Text
+                  <View style={{flex: 1, backgroundColor: 'transparent'}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(15, 0.5),
+                        color: '#ffffff',
+                      }}>
+                      Total Amount :
+                    </Text>
+                  </View>
+
+                  <View
                     style={{
-                      fontSize: moderateScale(13, 0.5),
-                      color: '#ffffff',
+                      flex: 1,
+                      backgroundColor: 'transparent',
+                      justifyContent: 'center',
                     }}>
-                    P{' '}
-                    {InventorySummary.TotalAmount > 0
-                      ? numbro(Number(InventorySummary.TotalAmount)).format({
-                          thousandSeparated: true,
-                          mantissa: 0,
-                        })
-                      : null}
-                  </Text>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(13, 0.5),
+                        color: '#ffffff',
+                      }}>
+                      P{' '}
+                      {InventorySummary.TotalAmount > 0
+                        ? numbro(Number(InventorySummary.TotalAmount)).format({
+                            thousandSeparated: true,
+                            mantissa: 0,
+                          })
+                        : null}
+                    </Text>
+                  </View>
                 </View>
-              </View>
+              ) : null}
             </View>
           </View>
         </LinearGradient>
@@ -1236,343 +1316,418 @@ export default function Inventory(props) {
       <View
         testID="Hello"
         style={{flex: 1, backgroundColor: '#ffffff', flexDirection: 'column'}}>
-        <View
-          style={{
-            backgroundColor: '#333333',
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            borderBottomColor: '#F5F5F5',
-            borderBottomWidth: 10,
-          }}>
+        <ScrollView>
           <View
             style={{
-              flex: 1,
-              zIndex: 4,
-              position: 'absolute',
-              width: moderateScale(120),
-              height: moderateScale(120),
-              alignItems: 'center',
-              justifyContent: 'center',
-              right: -1,
-              top: 5,
-              backgroundColor: 'transparent',
-            }}>
-            <Image
-              style={{
-                width: scale(120),
-                height: scale(120),
-              }}
-              source={require('../../assets/companyname.png')}
-            />
-          </View>
-
-          <TouchableHighlight
-            onPress={() => {
-              //  console.log('ad');
-
-              //  setPleaseWaitImageList(true);
-
-              setSelectedImage(item.img_url);
-              setVisibleMainModal(true);
-              //  /zoomview
-            }}>
-            <Image
-              style={{
-                width: width,
-                height: 400,
-              }}
-              source={{
-                uri: item.img_url,
-              }}
-              onError={() => ({
-                uri:
-                  'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
-              })}
-            />
-          </TouchableHighlight>
-        </View>
-        <Text
-          style={{
-            marginHorizontal: moderateScale(10),
-            color: 'red',
-            fontSize: moderateScale(22),
-            marginBottom: moderateScale(10),
-            marginTop: moderateScale(20),
-            fontFamily: 'Lato-Bold',
-          }}>
-          {' '}
-          ₱
-          {numbro(Number(item.PCS_BOOKING)).format({
-            thousandSeparated: true,
-            mantissa: 2,
-          })}
-        </Text>
-
-        <View
-          style={{
-            marginHorizontal: moderateScale(10),
-            backgroundColor: '#ffffff',
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-          }}>
-          <Text> </Text>
-          <Image
-            style={{
-              width: moderateScale(40),
-              height: moderateScale(40),
-              resizeMode: 'center',
-            }}
-            source={require('../../assets/wamilogo.png')}
-            // source={require('../../assets/coslorlogo.png')}
-          />
-
-          <Text style={[styles.text, {marginLeft: moderateScale(20)}]}>
-            {item.product_name}
-          </Text>
-        </View>
-        <View
-          style={{
-            marginTop: moderateScale(12),
-            marginHorizontal: moderateScale(10),
-            backgroundColor: '#FBDEE0',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-            borderRadius: 7,
-          }}>
-          <View
-            style={{
-              marginVertical: 5,
+              backgroundColor: 'red',
               flexDirection: 'row',
-              alignContent: 'center',
+              justifyContent: 'flex-start',
               alignItems: 'center',
-              justifyContent: 'center',
+              borderBottomColor: '#F5F5F5',
+              borderBottomWidth: 10,
             }}>
-            <View style={{marginLeft: moderateScale(5)}}>
-              <Icon name="layers-outline" color={'#FF0F16'} size={19} />
-            </View>
-            <Text style={{color: 'red', fontSize: moderateScale(13)}}>
-              {' '}
-              Category {item.category}
-            </Text>
-            <Text style={[styles.text, {fontSize: moderateScale(17)}]}>
-              {' '}
-              Sardines (test){item.category}
-            </Text>
-          </View>
-        </View>
-        <View>
-          <View style={{borderBottomColor: '#F5F5F5', borderBottomWidth: 8}}>
-            <View
-              style={{
-                marginHorizontal: moderateScale(10),
-                flexDirection: 'row',
-                alignItems: 'center',
-                alignContent: 'center',
-                marginVertical: moderateScale(8),
-              }}>
-              <Text
-                style={{
-                  color: '#333333',
-                  fontSize: moderateScale(15),
-                  marginBottom: 1,
-                }}>
-                {' '}
-                5{' '}
-              </Text>
-              <MaterialIcons
-                name="grade"
-                size={moderateScale(20)}
-                color="#F9C500"
-              />
-              <MaterialIcons
-                name="grade"
-                size={moderateScale(20)}
-                color="#F9C500"
-              />
-
-              <MaterialIcons
-                name="grade"
-                size={moderateScale(20)}
-                color="#F9C500"
-              />
-
-              <MaterialIcons
-                name="grade"
-                size={moderateScale(20)}
-                color="#F9C500"
-              />
-
-              <MaterialIcons
-                name="grade"
-                size={moderateScale(20)}
-                color="#F9C500"
-              />
-            </View>
-          </View>
-
-          <View style={{flexDirection: 'row'}}>
             <View
               style={{
                 flex: 1,
-                flexDirection: 'column',
-                marginHorizontal: moderateScale(10),
+                zIndex: 4,
+                position: 'absolute',
+                width: moderateScale(120),
+                height: moderateScale(120),
+                alignItems: 'center',
+                justifyContent: 'center',
+                right: -1,
+                top: 5,
+                backgroundColor: 'transparent',
               }}>
-              <Text style={[styles.text, {marginTop: moderateScale(10)}]}>
-                Brand: {'    '}Ligo (test) {item.Brand}
-              </Text>
-              <Text style={[styles.text, {marginBottom: moderateScale(10)}]}>
-                Variant: {'  '}
-                {item.product_variant}
-              </Text>
+              <Image
+                style={{
+                  width: scale(120),
+                  height: scale(120),
+                }}
+                source={require('../../assets/companyname.png')}
+              />
             </View>
+
+            <TouchableHighlight
+              onPress={() => {
+                //  console.log('ad');
+
+                //  setPleaseWaitImageList(true);
+
+                setSelectedImage(item.img_url);
+                setVisibleMainModal(true);
+                //  /zoomview
+              }}>
+              <Image
+                style={{
+                  width: width,
+                  height: 400,
+                }}
+                source={{
+                  uri: item.img_url,
+                }}
+                onError={() => ({
+                  uri:
+                    'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/noimage.png',
+                })}
+              />
+            </TouchableHighlight>
+          </View>
+          <Text
+            style={{
+              // FOR IMAGE SLIDE
+              marginHorizontal: moderateScale(10),
+              color: 'red',
+              fontSize: moderateScale(22),
+              marginBottom: moderateScale(10),
+              marginTop: moderateScale(20),
+              fontFamily: 'Lato-Bold',
+            }}>
+            {PriceOptionPickerCatcherState === '' ||
+            PriceOptionPickerCatcherState === 'Booking'
+              ? '₱' +
+                numbro(Number(item.PCS_BOOKING)).format({
+                  thousandSeparated: true,
+                  mantissa: 2,
+                })
+              : '₱' +
+                numbro(Number(item.PCS_EXTRUCK)).format({
+                  thousandSeparated: true,
+                  mantissa: 2,
+                })}
+          </Text>
+
+          <View
+            style={{
+              marginHorizontal: moderateScale(10),
+              backgroundColor: '#ffffff',
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+            }}>
+            <Text> </Text>
+            <Image
+              style={{
+                width: moderateScale(40),
+                height: moderateScale(40),
+                resizeMode: 'center',
+              }}
+              source={require('../../assets/wamilogo.png')}
+              // source={require('../../assets/coslorlogo.png')}
+            />
+
+            <Text style={[styles.text, {marginLeft: moderateScale(20)}]}>
+              {item.product_name}
+            </Text>
+          </View>
+          <View
+            style={{
+              marginTop: moderateScale(12),
+              marginHorizontal: moderateScale(10),
+              backgroundColor: '#FBDEE0',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+              borderRadius: 7,
+            }}>
             <View
               style={{
+                marginVertical: 5,
                 flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
                 alignContent: 'center',
-                marginRight: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
               }}>
-              <MaterialCommunityIcons
-                name="heart-multiple-outline"
-                size={moderateScale(30)}
-                color="#A0A0A0"
-                style={{marginRight: moderateScale(10)}}
-              />
-              <MaterialIcons
-                name="share"
-                size={moderateScale(30)}
-                color="#A0A0A0"
-              />
+              <View style={{marginLeft: moderateScale(5)}}>
+                <Icon name="layers-outline" color={'#FF0F16'} size={19} />
+              </View>
+              <Text style={{color: 'red', fontSize: moderateScale(13)}}>
+                {' '}
+                Category{' '}
+              </Text>
+              <Text style={[styles.text, {fontSize: moderateScale(17)}]}>
+                {item.product_category}
+              </Text>
             </View>
           </View>
+          <View>
+            <View style={{borderBottomColor: '#F5F5F5', borderBottomWidth: 8}}>
+              <View
+                style={{
+                  marginHorizontal: moderateScale(10),
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  marginVertical: moderateScale(8),
+                }}>
+                <Text
+                  style={{
+                    color: '#333333',
+                    fontSize: moderateScale(15),
+                    marginBottom: 1,
+                  }}>
+                  {' '}
+                  5{' '}
+                </Text>
+                <MaterialIcons
+                  name="grade"
+                  size={moderateScale(20)}
+                  color="#F9C500"
+                />
+                <MaterialIcons
+                  name="grade"
+                  size={moderateScale(20)}
+                  color="#F9C500"
+                />
 
-          <View style={{flexDirection: 'column'}}>
-            <View
-              style={{backgroundColor: '#DEDEDE', height: 1, width: '100%'}}>
-              <Text></Text>
+                <MaterialIcons
+                  name="grade"
+                  size={moderateScale(20)}
+                  color="#F9C500"
+                />
+
+                <MaterialIcons
+                  name="grade"
+                  size={moderateScale(20)}
+                  color="#F9C500"
+                />
+
+                <MaterialIcons
+                  name="grade"
+                  size={moderateScale(20)}
+                  color="#F9C500"
+                />
+              </View>
             </View>
 
-            <View
-              style={{
-                marginHorizontal: moderateScale(10),
-                marginVertical: 10,
-                flexDirection: 'row',
-                alignItems: 'center',
-                alignContent: 'center',
-              }}>
+            <View style={{flexDirection: 'row'}}>
               <View
                 style={{
                   flex: 1,
-                  flexDirection: 'row',
-                  backgroundColor: '#ffffff',
+                  flexDirection: 'column',
+                  marginHorizontal: moderateScale(10),
                 }}>
-                <Icon
-                  name="shield-checkmark"
-                  color={'#28C719'}
-                  size={moderateScale(20)}
-                />
-                <Text style={{fontSize: moderateScale(14), fontStyle: '400'}}>
-                  {' '}
-                  100% Authentic
+                <Text style={[styles.text, {marginTop: moderateScale(10)}]}>
+                  Brand: {'    '}
+                  {item.product_brand}
+                </Text>
+                <Text style={[styles.text, {marginBottom: moderateScale(10)}]}>
+                  Variant: {'  '}
+                  {item.product_variant}
                 </Text>
               </View>
-
               <View
                 style={{
-                  flex: 1,
                   flexDirection: 'row',
-                  backgroundColor: '#ffffff',
-                }}>
-                <MaterialIcons
-                  name="assignment-return"
-                  size={moderateScale(20)}
-                  color="#28C719"
-                />
-
-                <Text style={{fontSize: moderateScale(14), fontStyle: '400'}}>
-                  {' '}
-                  Service Returns{' '}
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  backgroundColor: '#ffffff',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  marginRight: 10,
                 }}>
                 <MaterialCommunityIcons
-                  name="truck-delivery"
-                  size={moderateScale(23)}
-                  color="#28C719"
+                  name="heart-multiple-outline"
+                  size={moderateScale(30)}
+                  color="#A0A0A0"
+                  style={{marginRight: moderateScale(10)}}
                 />
-
-                <Text style={{fontSize: moderateScale(14), fontStyle: '400'}}>
-                  {' '}
-                  Free Shipping{' '}
-                </Text>
+                <MaterialIcons
+                  name="share"
+                  size={moderateScale(30)}
+                  color="#A0A0A0"
+                />
               </View>
             </View>
-            <View
-              style={{
-                backgroundColor: '#F5F5F5',
-                height: 8,
-                width: '100%',
-              }}></View>
 
-            <View
-              style={{
-                backgroundColor: 'transparent',
-                borderBottomColor: '#F5F5F5',
-                borderBottomWidth: 8,
-                marginLeft: scale(15),
-              }}>
+            <View style={{flexDirection: 'column'}}>
+              <View
+                style={{backgroundColor: '#DEDEDE', height: 1, width: '100%'}}>
+                <Text></Text>
+              </View>
+
               <View
                 style={{
+                  marginHorizontal: moderateScale(10),
+                  marginVertical: 10,
                   flexDirection: 'row',
-                  marginTop: 10,
-                  backgroundColor: 'transparent',
-                  height: 20,
+                  alignItems: 'center',
+                  alignContent: 'center',
                 }}>
-                <View style={{flex: 1}}>
-                  <Text
-                    style={{fontSize: moderateScale(15), fontWeight: 'bold'}}>
-                    Specifications
-                  </Text>
-                </View>
                 <View
                   style={{
                     flex: 1,
-                    justifyContent: 'flex-end',
-                    alignItems: 'flex-end',
+                    flexDirection: 'row',
+                    backgroundColor: '#ffffff',
+                  }}>
+                  <Icon
+                    name="shield-checkmark"
+                    color={'#28C719'}
+                    size={moderateScale(20)}
+                  />
+                  <Text style={{fontSize: moderateScale(14), fontStyle: '400'}}>
+                    {' '}
+                    100% Authentic
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    backgroundColor: '#ffffff',
+                  }}>
+                  <MaterialIcons
+                    name="assignment-return"
+                    size={moderateScale(20)}
+                    color="#28C719"
+                  />
+
+                  <Text style={{fontSize: moderateScale(14), fontStyle: '400'}}>
+                    {' '}
+                    Service Returns{' '}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    backgroundColor: '#ffffff',
                   }}>
                   <MaterialCommunityIcons
-                    name="chevron-right"
-                    size={moderateScale(32)}
-                    color="red"
+                    name="truck-delivery"
+                    size={moderateScale(23)}
+                    color="#28C719"
                   />
+
+                  <Text style={{fontSize: moderateScale(14), fontStyle: '400'}}>
+                    {' '}
+                    Free Shipping{' '}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  backgroundColor: '#F5F5F5',
+                  height: 8,
+                  width: '100%',
+                }}></View>
+
+              <View
+                style={{
+                  backgroundColor: 'transparent',
+                  borderBottomColor: '#F5F5F5',
+                  borderBottomWidth: 8,
+                  marginLeft: scale(15),
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: 10,
+                    backgroundColor: 'transparent',
+                    height: 20,
+                  }}>
+                  <View style={{flex: 1}}>
+                    <Text
+                      style={{fontSize: moderateScale(15), fontWeight: 'bold'}}>
+                      Specifications
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'flex-end',
+                      alignItems: 'flex-end',
+                    }}>
+                    <MaterialCommunityIcons
+                      name="chevron-right"
+                      size={moderateScale(32)}
+                      color="red"
+                    />
+                  </View>
+                </View>
+
+                <View style={{marginBottom: 10}}>
+                  <Text
+                    style={{fontSize: moderateScale(13), fontWeight: '800'}}>
+                    (Weight, Size, Material, Storage Type, Etc..)
+                  </Text>
                 </View>
               </View>
 
-              <View style={{marginBottom: 10}}>
-                <Text style={{fontSize: moderateScale(13), fontWeight: '800'}}>
-                  (Weight, Size, Material, Storage Type, Etc..)
-                </Text>
+              <View
+                style={{
+                  backgroundColor: 'transparent',
+                  borderBottomColor: '#F5F5F5',
+                  borderBottomWidth: 8,
+                  marginLeft: scale(15),
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: 10,
+                    backgroundColor: 'transparent',
+                    height: 20,
+                  }}>
+                  <View style={{flex: 1}}>
+                    <Text
+                      style={{fontSize: moderateScale(15), fontWeight: 'bold'}}>
+                      Other Details
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'flex-end',
+                      alignItems: 'flex-end',
+                    }}>
+                    {/* <MaterialCommunityIcons
+                      name="chevron-right"
+                      size={moderateScale(32)}
+                      color="red"
+                    /> */}
+                  </View>
+                </View>
+
+                <View style={{marginBottom: 10}}>
+                  <Text
+                    style={{fontSize: moderateScale(13), fontWeight: '800'}}>
+                    Pcs Price :{' '}
+                    {numbro(Number(item.PCS_BOOKING)).format({
+                      thousandSeparated: true,
+                      mantissa: 2,
+                    })}
+                  </Text>
+                  <Text
+                    style={{fontSize: moderateScale(13), fontWeight: '800'}}>
+                    Case Price :{' '}
+                    {numbro(Number(item.CASE_BOOKING)).format({
+                      thousandSeparated: true,
+                      mantissa: 2,
+                    })}
+                  </Text>
+                  <Text
+                    style={{fontSize: moderateScale(13), fontWeight: '800'}}>
+                    Pcs per Case :{' '}
+                    {numbro(Number(item.CASE_UNIT_PER_PCS)).format({
+                      thousandSeparated: true,
+                      mantissa: 0,
+                    })}
+                  </Text>
+                </View>
               </View>
+              <View style={{height: 100}}></View>
             </View>
           </View>
-        </View>
-
+        </ScrollView>
         <View
           style={{
             position: 'absolute',
-            bottom: 5,
+            left: 0,
+            right: 0,
+            bottom: 0,
             flexDirection: 'row',
             justifyContent: 'space-around',
             alignContent: 'space-around',
+            backgroundColor: '#ffffff',
           }}>
           <View
             style={{
@@ -1779,29 +1934,17 @@ export default function Inventory(props) {
                 </Text>
 
                 <Text
+                  //FOR FLATLIST
                   style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                  {'BK: P'}
-
-                  {unitPrice === 'CASE'
-                    ? numbro(Number(item.CASE_BOOKING)).format({
+                  {PriceOptionPickerCatcherState === '' ||
+                  PriceOptionPickerCatcherState === 'Booking'
+                    ? '₱' +
+                      numbro(Number(item.PCS_BOOKING)).format({
                         thousandSeparated: true,
                         mantissa: 2,
                       })
-                    : numbro(Number(item.PCS_BOOKING)).format({
-                        thousandSeparated: true,
-                        mantissa: 2,
-                      })}
-                </Text>
-
-                <Text
-                  style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                  {'VAN: P'}
-                  {unitPrice === 'CASE'
-                    ? numbro(Number(item.CASE_EXTRUCK)).format({
-                        thousandSeparated: true,
-                        mantissa: 2,
-                      })
-                    : numbro(Number(item.PCS_EXTRUCK)).format({
+                    : '₱' +
+                      numbro(Number(item.PCS_EXTRUCK)).format({
                         thousandSeparated: true,
                         mantissa: 2,
                       })}
@@ -2122,9 +2265,9 @@ export default function Inventory(props) {
       </View>
 
       <SafeAreaView style={[styles.container, {zIndex: 0}]}>
-        {/* {LocalPromoItemData.length === CurrentItemCount &&
-        LocalPromoItemData.length > 0 ? ( */}
-        {LocalPromoItemData.length !== 0 ? (
+        {LocalPromoItemData.length === CurrentItemCount &&
+        LocalPromoItemData.length > 0 ? (
+          // {LocalPromoItemData.length !== 0 ? (
           <View style={{flexDirection: 'column'}}>
             <FlatList
               // onScrollEndDrag={() => {
@@ -2250,7 +2393,7 @@ export default function Inventory(props) {
               // source={require('../../assets/coslorlogo.png')}
             />
             <Text style={{fontWeight: '800', fontSize: moderateScale(18)}}>
-              Please Wait...
+              {pleaseWaitMessage}
             </Text>
           </View>
         )}
@@ -2476,13 +2619,13 @@ export default function Inventory(props) {
               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Vendor :</Text>
                 <DropDownPicker //  -----------------------------------------------//// VENDOR
-                  placeholder={'Select Vendor'}
+                  placeholder={'ALL'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(490)}
                   dropDownStyle={{backgroundColor: '#F1F8F5'}}
                   containerStyle={{height: moderateScale(40, 0.5)}}
                   labelStyle={{
-                    fontSize: 14,
+                    fontSize: 13,
                     textAlign: 'left',
                     color: '#000',
                   }}
@@ -2510,16 +2653,15 @@ export default function Inventory(props) {
                   items={arrPrincipalfromPicker}
                   defaultValue={PrincipalPickerCatcher}
                   onChangeItem={(itemValue) => {
-                    setarrCategoryfromPicker({
-                      label: 'ALL',
-                      value: 'ALL',
-                    });
-                  
+                    setarrCategoryfromPicker([]);
+                    setarrBrandfromPicker([]);
+                    setarrVariantfromPicker([]);
                     CategoryPickerCatcher = '';
-                 
-                   
+                    BrandPickerCatcher = '';
+                    VariantPickerCatcher = '';
 
                     PrincipalPickerCatcher = itemValue.value;
+
                     GetCategoryList();
                   }}
                 />
@@ -2529,7 +2671,7 @@ export default function Inventory(props) {
               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Category :</Text>
                 <DropDownPicker //  -----------------------------------------------//// VENDOR
-                  placeholder={'Select Category'}
+                  placeholder={'ALL'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(490)}
                   dropDownStyle={{backgroundColor: '#F1F8F5'}}
@@ -2568,7 +2710,7 @@ export default function Inventory(props) {
 
                     BrandPickerCatcher = '';
                     VariantPickerCatcher = '';
-
+                    setCategoryPickerCatcherState(itemValue.value);
                     CategoryPickerCatcher = itemValue.value;
                     GetBrandList();
                   }}
@@ -2579,7 +2721,7 @@ export default function Inventory(props) {
               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Brand :</Text>
                 <DropDownPicker //  -----------------------------------------------//// VENDOR
-                  placeholder={'Select Brand'}
+                  placeholder={'ALL'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(490)}
                   dropDownStyle={{backgroundColor: '#F1F8F5'}}
@@ -2611,12 +2753,12 @@ export default function Inventory(props) {
                   }}
                   activeLabelStyle={{color: 'red'}}
                   items={arrBrandfromPicker}
-                  defaultValue={BrandPickerCatcher}
+                  defaultValue={BrandPickerCatcherState}
                   onChangeItem={(itemValue) => {
                     setarrVariantfromPicker([]);
 
                     VariantPickerCatcher = '';
-
+                    setBrandPickerCatcherState(itemValue.value);
                     BrandPickerCatcher = itemValue.value;
                     GetVariantList();
                   }}
@@ -2627,7 +2769,7 @@ export default function Inventory(props) {
               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Variant :</Text>
                 <DropDownPicker //  -----------------------------------------------//// VARIANT
-                  placeholder={'Select Variant'}
+                  placeholder={'ALL'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(530)}
                   dropDownStyle={{backgroundColor: '#F1F8F5'}}
@@ -2660,9 +2802,10 @@ export default function Inventory(props) {
                   }}
                   activeLabelStyle={{color: 'red'}}
                   items={arrVariantfromPicker} //-----------------------------
-                  defaultValue={VariantPickerCatcher}
+                  defaultValue={VariantPickerCatcherState}
                   onChangeItem={(itemValue) => {
                     VariantPickerCatcher = itemValue.value;
+                    setVariantPickerCatcherState(itemValue.value);
                   }}
                 />
               </View>
@@ -2671,7 +2814,7 @@ export default function Inventory(props) {
               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Product Type :</Text>
                 <DropDownPicker //  -----------------------------------------------//// TYPE
-                  placeholder={'Select Type'}
+                  placeholder={'ALL'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(430)}
                   dropDownStyle={{backgroundColor: '#F1F8F5'}}
@@ -2704,60 +2847,64 @@ export default function Inventory(props) {
                   }}
                   activeLabelStyle={{color: 'red'}}
                   items={arrProductTypefromPicker} //-----------------------------
-                  defaultValue={ProductTypePickerCatcher}
+                  defaultValue={ProductTypePickerCatcherState}
                   onChangeItem={(itemValue) => {
-                    console.log('aa');
+                    ProductTypePickerCatcher = itemValue.value;
+                    setProductTypePickerCatcherState(itemValue.value);
                   }}
                 />
               </View>
               {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-              <View style={{marginTop: moderateScale(20, 0.5)}}>
-                <Text>Price Option :</Text>
-                <DropDownPicker //  -----------------------------------------------//// TYPE
-                  placeholder={'Select Price Option'}
-                  style={{backgroundColor: '#F1F8F5'}}
-                  dropDownMaxHeight={scale(430)}
-                  dropDownStyle={{backgroundColor: '#F1F8F5'}}
-                  containerStyle={{height: moderateScale(40, 0.5)}}
-                  isVisible={isVisiblePriceOptionDropdownPicker}
-                  onOpen={() => {
-                    setisVisiblePrincipalDropdownPicker(false);
-                    setisVisibleVariantDropdownPicker(false);
-                    setisVisibleTypeDropdownPicker(false);
-                    setisVisibleCategoryDropdownPicker(false);
-                    setisVisibleBrandDropdownPicker(false);
-                    setisVisiblePriceOptionDropdownPicker(true);
-                  }}
-                  onClose={() => {
-                    setisVisiblePrincipalDropdownPicker(false);
-                    setisVisibleVariantDropdownPicker(false);
-                    setisVisibleTypeDropdownPicker(false);
-                    setisVisibleCategoryDropdownPicker(false);
-                    setisVisibleBrandDropdownPicker(false);
-                    setisVisiblePriceOptionDropdownPicker(false);
-                  }}
-                  labelStyle={{
-                    fontSize: 14,
-                    // eslint-disable-next-line prettier/prettier
-                  textAlign: 'left',            //VARIANT
-                    color: '#000',
-                  }}
-                  itemStyle={{
-                    justifyContent: 'flex-start',
-                  }}
-                  activeLabelStyle={{color: 'red'}}
-                  items={arrPriceOptionfromPicker} //-----------------------------
-                  defaultValue={PriceOptionPickerCatcher}
-                  onChangeItem={(itemValue) => {
-                    console.log('bb');
-                  }}
-                  // multiple={true}
-                  // multipleText="%d items have been selected."
-                  // min={0}
-                  // max={100}
-                />
-              </View>
 
+              {global.sales_position_name === 'ALLSALESMAN' ? (
+                <View style={{marginTop: moderateScale(20, 0.5)}}>
+                  <Text>Price Option :</Text>
+                  <DropDownPicker //  -----------------------------------------------//// TYPE
+                    placeholder={'ALL'}
+                    style={{backgroundColor: '#F1F8F5'}}
+                    dropDownMaxHeight={scale(430)}
+                    dropDownStyle={{backgroundColor: '#F1F8F5'}}
+                    containerStyle={{height: moderateScale(40, 0.5)}}
+                    isVisible={isVisiblePriceOptionDropdownPicker}
+                    onOpen={() => {
+                      setisVisiblePrincipalDropdownPicker(false);
+                      setisVisibleVariantDropdownPicker(false);
+                      setisVisibleTypeDropdownPicker(false);
+                      setisVisibleCategoryDropdownPicker(false);
+                      setisVisibleBrandDropdownPicker(false);
+                      setisVisiblePriceOptionDropdownPicker(true);
+                    }}
+                    onClose={() => {
+                      setisVisiblePrincipalDropdownPicker(false);
+                      setisVisibleVariantDropdownPicker(false);
+                      setisVisibleTypeDropdownPicker(false);
+                      setisVisibleCategoryDropdownPicker(false);
+                      setisVisibleBrandDropdownPicker(false);
+                      setisVisiblePriceOptionDropdownPicker(false);
+                    }}
+                    labelStyle={{
+                      fontSize: 14,
+                      // eslint-disable-next-line prettier/prettier
+                  textAlign: 'left',            //VARIANT
+                      color: '#000',
+                    }}
+                    itemStyle={{
+                      justifyContent: 'flex-start',
+                    }}
+                    activeLabelStyle={{color: 'red'}}
+                    items={arrPriceOptionfromPicker} //-----------------------------
+                    defaultValue={PriceOptionPickerCatcherState}
+                    onChangeItem={(itemValue) => {
+                      PriceOptionPickerCatcher = itemValue.value;
+                      setPriceOptionPickerCatcherState(itemValue.value);
+                    }}
+                    // multiple={true}
+                    // multipleText="%d items have been selected."
+                    // min={0}
+                    // max={100}
+                  />
+                </View>
+              ) : null}
               <View>
                 <View
                   style={{
@@ -2769,7 +2916,7 @@ export default function Inventory(props) {
                   <View
                     style={{
                       marginBottom: moderateScale(20, 0.5),
-                      marginTop: moderateScale(120, 0.5),
+                      marginTop: moderateScale(20, 0.5),
                     }}>
                     <FlatButton
                       width={140}

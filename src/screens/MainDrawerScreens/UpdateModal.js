@@ -639,6 +639,7 @@ export default function UpdateModal(props) {
   }
 
   function AutoUpdate() {
+    console.log('focus on Auto update');
     //  console.log('Auto Update started');
     if (
       globalStatus.updateStatus === 'Updating' &&
@@ -1233,6 +1234,10 @@ export default function UpdateModal(props) {
       principal_id;
     //10
 
+    console.log( server.server_address +
+      globalCompany.company +
+      'perareasalesuba?' +
+      tempstr2)
     Promise.race([
       fetch(
         server.server_address +
@@ -2489,6 +2494,10 @@ export default function UpdateModal(props) {
             "'" +
             ',' +
             "'" +
+            item.CASE_UNIT_PER_PCS +
+            "'" +
+            ',' +
+            "'" +
             item.CASE_COMPANY +
             "'" +
             ',' +
@@ -2520,7 +2529,7 @@ export default function UpdateModal(props) {
             dbinventory.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_category,product_brand,product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, total_case, total_pieces, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_category,product_brand,product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, total_case, total_pieces, effective_price_date,CASE_UNIT_PER_PCS, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -2541,7 +2550,7 @@ export default function UpdateModal(props) {
             dbinventory.transaction(function (tx) {
               // done concat
               tx.executeSql(
-                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_category,product_brand,product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, total_case, total_pieces, effective_price_date, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
+                ' INSERT INTO promo_items_tbl (principal_name, product_id, product_category,product_brand,product_variant, product_name, promo_product, inventory, img_url, DateandTimeUpdated, total_case, total_pieces, effective_price_date,CASE_UNIT_PER_PCS, CASE_COMPANY, CASE_BOOKING, CASE_EXTRUCK, PCS_COMPANY, PCS_BOOKING, PCS_EXTRUCK) values ' +
                   stringnow.slice(0, -1),
                 [],
                 (tx, results) => {
@@ -2689,7 +2698,7 @@ export default function UpdateModal(props) {
 
       {isLoadingActivityIndicator && (
         <View style={[styles.loading, {backgroundColor: '#2C302E'}]}>
-          <Button
+          {/* <Button
             title="Test"
             onPress={() => {
               console.log(q1Principal + ' q1Principal');
@@ -2700,7 +2709,7 @@ export default function UpdateModal(props) {
               console.log(q6Inventory + ' Inventory');
               console.log(globalStatus.updateStatus);
             }}
-          />
+          /> */}
           <Text style={{color: 'white', fontSize: moderateScale(17)}}>
             Updating... {updateProgress} %{' '}
           </Text>

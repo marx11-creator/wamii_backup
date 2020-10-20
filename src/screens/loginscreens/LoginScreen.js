@@ -290,7 +290,7 @@ const SignScreen = (props) => {
             global.device_id === '69b761866cb11621' ||
             global.device_id === 'ede7b31a387e8c30'
           ) {
-            cons;
+            console.log('GODMODE DETECTED NOT SAVING')
           } else {
             InsertLoginInfo(jsonData);
           }

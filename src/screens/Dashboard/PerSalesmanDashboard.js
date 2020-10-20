@@ -641,7 +641,7 @@ export default function PerSalesmanDashboard(props) {
             borderRadius: 7,
             marginTop: 3,
             width: scale(290),
-            height: scale(70),
+            height: scale(50),
           }}
           // start={{x: 1, y: 0.5}}
           // end={{x: 1, y: 4}}
