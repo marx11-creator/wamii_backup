@@ -51,6 +51,7 @@ import {
   LastDateTimeUpdated,
   globalStatus,
   PageVisited,
+  UpdateYearMonthsFilter,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
@@ -240,6 +241,7 @@ export default function PerAreaDashboard(props) {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per area focus'); //
+ 
       CurrentAppScreen.Screen = 'PerArea';
       if (PageVisited.PerAreaPAGE === 'NO') {
         PageVisited.PerAreaPAGE = 'YES';
@@ -292,6 +294,7 @@ export default function PerAreaDashboard(props) {
         //BUILD PRINCIPAL ACONYM
         temp.push(item.principal_acronym);
       });
+      UpdateYearMonthsFilter();
 
       var tempSales = [];
       var firstContribution = 1;

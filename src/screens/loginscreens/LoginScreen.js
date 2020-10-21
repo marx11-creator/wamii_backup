@@ -195,12 +195,14 @@ const SignScreen = (props) => {
             GetToken();
           } else if (
             global.device_id === '69b761866cb11621' ||
-            global.device_id === 'ede7b31a387e8c30'
+            global.device_id === 'ede7b31a387e8c30'||
+            global.device_id === 'bc60fd695d01c3da'
           ) {
             freshLogin = false;
             console.log('ARJAY AND MARC TESTING UNIT, GODMODE');
             GetToken();
           } else {
+            console.log(global.device_id);
             console.log('New Device Detected');
             setModalErrorMessage(
               'New login from another device detected. You may only login on one device. \n \n Please contact support team.\n \n',
@@ -288,9 +290,10 @@ const SignScreen = (props) => {
 
           if (
             global.device_id === '69b761866cb11621' ||
-            global.device_id === 'ede7b31a387e8c30'
+            global.device_id === 'ede7b31a387e8c30' ||
+            global.device_id === 'bc60fd695d01c3da'
           ) {
-            console.log('GODMODE DETECTED NOT SAVING')
+            console.log('GODMODE DETECTED NOT SAVING');
           } else {
             InsertLoginInfo(jsonData);
           }
@@ -557,19 +560,16 @@ const SignScreen = (props) => {
                   );
                 }
 
+                //    'FOR API  USE SALESMAN
 
-                                //    'FOR API  USE SALESMAN
-
-                                if (global.PrincipalAccessList === '') {
-                                  global.PrincipalAccessList = 'ALLSALESMAN';
-                                } else {
-                                  global.PrincipalAccessList = global.PrincipalAccessList.slice(
-                                    0,
-                                    -1,
-                                  );
-                                }
-
-
+                if (global.PrincipalAccessList === '') {
+                  global.PrincipalAccessList = 'ALLSALESMAN';
+                } else {
+                  global.PrincipalAccessList = global.PrincipalAccessList.slice(
+                    0,
+                    -1,
+                  );
+                }
 
                 //    'FOR LOCAL USE ONLY IN TABLET'
                 global.TeamAccessList =

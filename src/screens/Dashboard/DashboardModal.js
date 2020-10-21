@@ -125,7 +125,7 @@ export default function DashboardModal(props) {
                 flex: 1,
                 padding: 5,
                 backgroundColor: '##EBFAEB',
-                width: scale(350),
+                width: scale(450),
                 alignSelf: 'center',
               }}>
               {/* <Button
@@ -267,7 +267,7 @@ export default function DashboardModal(props) {
                   style={{backgroundColor: '#F1F8F5', marginTop: 10}} // TEAM>>>>>>>>>>>>>>>>
                   dropDownStyle={{backgroundColor: '#F1F8F5'}}
                   labelStyle={{
-                    fontSize: 14,
+                    fontSize: 12,
                     textAlign: 'left',
                     color: '#000',
                   }}

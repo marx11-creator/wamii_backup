@@ -21,6 +21,7 @@ import {
   height,
 } from '../../sharedComponents/scaling';
 import {
+  UpdateYearMonthsFilter,
   CurrentDashboardScreen,
   FilterList,
   DashboardYears,
@@ -85,7 +86,8 @@ export default function ViewScreen(props) {
   }, [FilterList.DashboardFilterYearNMonthTeam]);
 
   useEffect(() => {
-    console.log('focus on per MARC'); //
+    console.log('focus on per MARC from update'); //
+    UpdateYearMonthsFilter();
     push_sales_net();
     push_sales_per_vendor();
     push_sales_per_customer();

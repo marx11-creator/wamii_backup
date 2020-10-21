@@ -43,6 +43,7 @@ import {Text as Text2} from 'react-native-svg';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
 import {
+  UpdateYearMonthsFilter,
   CurrentDashboardScreen,
   FilterList,
   DashboardYears,
@@ -361,6 +362,7 @@ export default function PerPrincipalDashboard(props) {
 
       if (temp.length === tempSales.length) {
         //  POPULATE NEEDED DATA
+        UpdateYearMonthsFilter();
         setDynamicPrincipalList(temp);
         setDynamicPrincipalSales(tempSales);
       }
@@ -370,7 +372,7 @@ export default function PerPrincipalDashboard(props) {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per principal focus');
-
+ 
       CurrentAppScreen.Screen = 'PerVendor';
 
       if (PageVisited.PerPrincipalPAGE === 'NO') {

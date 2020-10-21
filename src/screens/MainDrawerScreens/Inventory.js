@@ -427,94 +427,7 @@ export default function Inventory(props) {
     GetPrincipalList();
     GetLocalPromoItems(page);
   }, [globalState.dateTimeUpdated24hr]);
-
-  // useEffect(() => {
-  //   setInventorySummary({
-  //     ...InventorySummary,
-  //     VendorName: 'ALL',
-  //   });
-  // },[])
-
-  // WHERE IN OPRATOR
-  // 'SELECT * FROM promo_items_tbl where principal_name IN (' +
-  // testqq +
-  // ') order by principal_name asc ',
-  // [],
-
-  //= OPERATOR
-  // 'SELECT * FROM promo_items_tbl where principal_name = ' + testqq + ' ',
-  // [],
-
-  // function GetLocalPromoItemsOLD(page) {
-  //   var pageNumber = page * 50;
-  //   console.log(pageNumber);
-  //   console.log(pageNumber + 50);
-  //   var TotalItems1 = 0;
-  //   var TotalCase1 = 0;
-  //   var TotalAmount1 = 0;
-
-  //   dbinventory.transaction((tx) => {
-  //     LocalPromoItemData.length = 0;
-  //     tx.executeSql(
-  //       'SELECT    promo_items_tbl.* FROM promo_items_tbl ' +
-  //         ' order by principal_name, product_variant, product_name limit 1000  ',
-  //       [],
-  //       (tx, results) => {
-  //         var temp = [];
-  //         for (let i = pageNumber; i < pageNumber + 50; ++i) {
-  //           temp.push(results.rows.item(i));
-  //         }
-
-  //         for (let i = 0; i < results.rows.length; ++i) {
-  //           TotalItems1 = TotalItems1 + 1;
-  //           TotalCase1 = TotalCase1 + Number(results.rows.item(i).total_case);
-  //           TotalAmount1 =
-  //             TotalAmount1 +
-  //             Number(
-  //               Number(results.rows.item(i).total_case) *
-  //                 Number(results.rows.item(i).CASE_COMPANY),
-  //             );
-  //         }
-
-  //         setInventorySummary({
-  //           ...InventorySummary,
-  //           TotalItems: TotalItems1,
-  //           TotalCase: TotalCase1,
-  //           TotalAmount: TotalAmount1,
-  //           VendorName: 'ALL',
-  //           Category: 'ALL',
-  //           Brand: 'ALL',
-  //         });
-
-  //         CurrentItemCount = results.rows.length;
-  //         console.log('Successfully loaded Initial ' + temp.length + ' sku');
-  //         setLocalPromoItemData(temp);
-
-  //         if (refContainer.current) {
-  //           //2
-  //           refContainer.current.scrollToIndex({animated: true, index: 0});
-  //         }
-
-  //         // if (name === 'next') {
-  //         //   console.log('next was clicked');
-  //         //   setstart(Number(start) + Number(50));
-  //         //   setend(Number(end) + Number(50));
-  //         // } else if (name === 'prev') {
-  //         //   console.log('prev was click');
-  //         //   setstart(Number(start) - Number(50));
-  //         //   setend(Number(end) - Number(50));
-  //         // } else {
-  //         //   console.log('name is blank');
-  //         //   setstart(Number(start) + Number(50));
-  //         //   setend(Number(end) + Number(50));
-  //         // }
-
-  //         setPleaseWaitVisible(false);
-  //       },
-  //       SQLerror,
-  //     );
-  //   });
-  // }
+ 
 
   function GetLocalPromoItems(page) {
     var pageNumber = page * 50;
@@ -572,6 +485,16 @@ export default function Inventory(props) {
         ' and promo_product = ' + "'" + ProductTypePickerCatcher + "'";
     }
 
+    console.log(
+      'SELECT * FROM promo_items_tbl where ' +
+        PrincipalQuery +
+        CategoryQuery +
+        BrandQuery +
+        VariantQuery +
+        PromoProductQuery +
+        ' order by principal_name, product_variant, product_name   ',
+    );
+
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM promo_items_tbl where ' +
@@ -580,7 +503,7 @@ export default function Inventory(props) {
           BrandQuery +
           VariantQuery +
           PromoProductQuery +
-          ' order by principal_name, product_variant, product_name    ',
+          ' order by principal_name, product_variant, product_name   ',
         [],
         (tx, results) => {
           var len = results.rows.length;
@@ -612,14 +535,41 @@ export default function Inventory(props) {
                 );
             }
 
+            var VendorShow = '';
+            if (
+              PrincipalPickerCatcher === '' ||
+              PrincipalPickerCatcher === 'ALL'
+            ) {
+              VendorShow = 'ALL';
+            } else {
+              VendorShow = results.rows.item(0).principal_name;
+            }
+
+            var CategoryShow = '';
+            if (
+              CategoryPickerCatcher === '' ||
+              CategoryPickerCatcher === 'ALL'
+            ) {
+              CategoryShow = 'ALL';
+            } else {
+              CategoryShow = results.rows.item(0).product_category;
+            }
+
+            var BrandShow = '';
+            if (BrandPickerCatcher === '' || BrandPickerCatcher === 'ALL') {
+              BrandShow = 'ALL';
+            } else {
+              BrandShow = results.rows.item(0).product_brand;
+            }
+
             setInventorySummary({
               ...InventorySummary,
               TotalItems: TotalItems1,
               TotalCase: TotalCase1,
               TotalAmount: TotalAmount1,
-              VendorName: 'ALL',
-              Category: 'ALL',
-              Brand: 'ALL',
+              VendorName: VendorShow,
+              Category: CategoryShow,
+              Brand: BrandShow,
             });
 
             console.log('Successfully loaded Initial ' + temp.length + ' sku');
@@ -813,12 +763,13 @@ export default function Inventory(props) {
   }
 
   function GetVariantList() {
+    var variant1 = '';
     const AllVariant = {
       label: 'ALL',
       value: 'ALL',
     };
     var PrincipalQuery = '';
-    if (PrincipalPickerCatcher === 'ALL') {
+    if (PrincipalPickerCatcher === 'ALL' || PrincipalPickerCatcher === '') {
       PrincipalQuery = '  principal_name like ' + "'%%' ";
     } else {
       PrincipalQuery =
@@ -826,7 +777,7 @@ export default function Inventory(props) {
     }
 
     var CategoryQuery = '';
-    if (CategoryPickerCatcher === 'ALL') {
+    if (CategoryPickerCatcher === 'ALL' || CategoryPickerCatcher === '') {
       CategoryQuery = ' and  product_category like ' + "'%%' ";
     } else {
       CategoryQuery =
@@ -834,7 +785,7 @@ export default function Inventory(props) {
     }
 
     var BrandQuery = '';
-    if (BrandPickerCatcher === 'ALL') {
+    if (BrandPickerCatcher === 'ALL' || BrandPickerCatcher === '') {
       BrandQuery = ' and  product_brand like ' + "'%%' ";
     } else {
       BrandQuery = ' and  product_brand = ' + "'" + BrandPickerCatcher + "'";
@@ -855,8 +806,15 @@ export default function Inventory(props) {
             temp.push(AllVariant);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
+
+              if (i === 0) {
+                variant1 = results.rows.item(i).label;
+              }
             }
             setarrVariantfromPicker(temp);
+
+            setVariantPickerCatcherState(variant1);
+            setVariantPickerCatcherState('ALL');
           } else {
             console.log('error on GetVariantList');
           }
@@ -1739,7 +1697,7 @@ export default function Inventory(props) {
             <TouchableOpacity
               onPress={() => {
                 FadingMessage();
-              //  console.log('a');
+                //  console.log('a');
               }}>
               <View
                 style={{
@@ -2758,8 +2716,14 @@ export default function Inventory(props) {
                     setarrVariantfromPicker([]);
 
                     VariantPickerCatcher = '';
-                    setBrandPickerCatcherState(itemValue.value);
-                    BrandPickerCatcher = itemValue.value;
+                    if (itemValue.value === '--') {
+                      setBrandPickerCatcherState('ALL');
+                      BrandPickerCatcher = 'ALL';
+                    } else {
+                      setBrandPickerCatcherState(itemValue.value);
+                      BrandPickerCatcher = itemValue.value;
+                    }
+
                     GetVariantList();
                   }}
                 />
@@ -2804,8 +2768,13 @@ export default function Inventory(props) {
                   items={arrVariantfromPicker} //-----------------------------
                   defaultValue={VariantPickerCatcherState}
                   onChangeItem={(itemValue) => {
-                    VariantPickerCatcher = itemValue.value;
-                    setVariantPickerCatcherState(itemValue.value);
+                    if (itemValue.value === '--') {
+                      setVariantPickerCatcherState('ALL');
+                      VariantPickerCatcher = 'ALL';
+                    } else {
+                      VariantPickerCatcher = itemValue.value;
+                      setVariantPickerCatcherState(itemValue.value);
+                    }
                   }}
                 />
               </View>

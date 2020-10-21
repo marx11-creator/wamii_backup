@@ -47,6 +47,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import moment from 'moment';
 import {locales} from 'moment';
 import {
+  UpdateYearMonthsFilter,
   CurrentDashboardScreen,
   FilterList,
   DashboardYears,
@@ -246,6 +247,7 @@ export default function PerTeamDashboard(props) {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per team focus');
+
       CurrentAppScreen.Screen = 'PerTeam';
 
       if (PageVisited.PerTeamPAGE === 'NO') {
@@ -259,6 +261,7 @@ export default function PerTeamDashboard(props) {
 
   useEffect(() => {
     console.log('focus on per team from update'); //
+    UpdateYearMonthsFilter();
     LoadPerTeam();
   }, [globalState.dateTimeUpdated24hr]);
 
@@ -312,9 +315,6 @@ export default function PerTeamDashboard(props) {
         ' business_year = ' + "'" + FilterList.DashboardFilterYear + "'";
     }
 
-
-
-    
     var TeamQuery = '';
     if (
       FilterList.DashboardFilterTeam === '' ||
@@ -336,14 +336,13 @@ export default function PerTeamDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
-
-
-
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT (sum(amount) / 1000000) as amount FROM perymtsat_tbl ' +
           ' where  ' +
-          YearQuery + TeamQuery + VendorQuery +
+          YearQuery +
+          TeamQuery +
+          VendorQuery +
           ' GROUP BY business_month  ORDER BY invoice_date asc',
         [],
         (tx, results) => {
@@ -378,9 +377,6 @@ export default function PerTeamDashboard(props) {
         ' business_year = ' + "'" + FilterList.DashboardFilterYear + "'";
     }
 
-
-    
-    
     var TeamQuery = '';
     if (
       FilterList.DashboardFilterTeam === '' ||
@@ -402,13 +398,13 @@ export default function PerTeamDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
-
-
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT distinct  business_month FROM perymtsat_tbl ' +
           ' where  ' +
-          YearQuery + TeamQuery + VendorQuery +
+          YearQuery +
+          TeamQuery +
+          VendorQuery +
           ' order by invoice_date asc ',
         [],
         (tx, results) => {
@@ -451,9 +447,6 @@ export default function PerTeamDashboard(props) {
         ' and business_month = ' + "'" + FilterList.DashboardFilterMonth + "'";
     }
 
-
-    
-    
     var TeamQuery = '';
     if (
       FilterList.DashboardFilterTeam === '' ||
@@ -475,15 +468,13 @@ export default function PerTeamDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
-
-
-
-
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT  SUM(amount) as amount , SUM(target)   as target FROM perymtsat_tbl  where  ' +
           YearQuery +
-          MonthQuery + TeamQuery + VendorQuery +
+          MonthQuery +
+          TeamQuery +
+          VendorQuery +
           ' order by invoice_date asc ',
         [],
         (tx, results) => {
@@ -527,8 +518,6 @@ export default function PerTeamDashboard(props) {
         ' and business_month = ' + "'" + FilterList.DashboardFilterMonth + "'";
     }
 
-    
-    
     var TeamQuery = '';
     if (
       FilterList.DashboardFilterTeam === '' ||
@@ -550,15 +539,14 @@ export default function PerTeamDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
- 
-
-
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT team, sum(amount) as sales, sum(target) as target, sum(target) as achievement ' +
           ' FROM perymtsat_tbl  where  ' +
           YearQuery +
-          MonthQuery + TeamQuery + VendorQuery +
+          MonthQuery +
+          TeamQuery +
+          VendorQuery +
           ' group by business_year, business_month, team' +
           ' order by CAST((sales) AS UNSIGNED)   DEsc ',
         [],
@@ -594,7 +582,12 @@ export default function PerTeamDashboard(props) {
       <ScrollView>
         <View style={{flexDirection: 'column'}}>
           <View style={{margin: moderateScale(5), flex: 1}}>
-            <View style={{flexDirection: 'row', height: scale(70), alignItems: 'center'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                height: scale(70),
+                alignItems: 'center',
+              }}>
               {/* <Image
                 style={styles.CompanyLogo}
                 source={{
@@ -610,7 +603,6 @@ export default function PerTeamDashboard(props) {
 
               <TouchableOpacity
                 onPress={() => {
-                
                   {
                     DashboardYears.length > 0
                       ? (setisVisibleModalFilter(true),
