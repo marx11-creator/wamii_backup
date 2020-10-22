@@ -38,6 +38,8 @@ import {
 import {dbsystem_users, dbAppToken} from '../../database/sqliteSetup';
 import moment from 'moment';
 import {APIToken} from '../../sharedComponents/globalCommands/globalCommands';
+import {sha1} from 'react-native-sha1';
+import {set} from 'react-native-reanimated';
 
 var freshLogin = false;
 
@@ -56,6 +58,7 @@ const SignScreen = (props) => {
   const [data, setData] = useState({
     user_name: '',
     password: '',
+    hashed_password: '',
     check_textInputChange: false,
     secureTextEntry: true,
   });
@@ -101,9 +104,12 @@ const SignScreen = (props) => {
   };
 
   const handlePasswordChange = (val) => {
-    setData({
-      ...data,
-      password: val,
+    sha1(val).then((hash) => {
+      setData({
+        ...data,
+        password: val,
+        hashed_password: hash,
+      });
     });
   };
 
@@ -163,8 +169,8 @@ const SignScreen = (props) => {
     ClearAppToken();
     setisLoadingActivityIndicator(true);
 
-    const unpw = data.user_name + '&' + data.password;
-    // console.log(unpw);
+    const unpw = data.user_name + '&' + data.hashed_password;
+    console.log(unpw);
     Promise.race([
       fetch(
         server.server_address + globalCompany.company + 'users/search/' + unpw,
@@ -290,7 +296,7 @@ const SignScreen = (props) => {
             global.device_id === '69b761866cb11621' ||
             global.device_id === 'ede7b31a387e8c30'
           ) {
-            console.log('GODMODE DETECTED NOT SAVING')
+            console.log('GODMODE DETECTED NOT SAVING');
           } else {
             InsertLoginInfo(jsonData);
           }
@@ -344,7 +350,7 @@ const SignScreen = (props) => {
   }
 
   const GetUserAccess = () => {
-    const unpw = data.user_name + '&' + data.password;
+    const unpw = data.user_name + '&' + data.hashed_password;
     console.log(
       server.server_address +
         globalCompany.company +
@@ -557,19 +563,16 @@ const SignScreen = (props) => {
                   );
                 }
 
+                //    'FOR API  USE SALESMAN
 
-                                //    'FOR API  USE SALESMAN
-
-                                if (global.PrincipalAccessList === '') {
-                                  global.PrincipalAccessList = 'ALLSALESMAN';
-                                } else {
-                                  global.PrincipalAccessList = global.PrincipalAccessList.slice(
-                                    0,
-                                    -1,
-                                  );
-                                }
-
-
+                if (global.PrincipalAccessList === '') {
+                  global.PrincipalAccessList = 'ALLSALESMAN';
+                } else {
+                  global.PrincipalAccessList = global.PrincipalAccessList.slice(
+                    0,
+                    -1,
+                  );
+                }
 
                 //    'FOR LOCAL USE ONLY IN TABLET'
                 global.TeamAccessList =

@@ -24,8 +24,14 @@ import {
   width,
   height,
 } from '../../sharedComponents/scaling';
-import {APIToken, globalCompany, server} from '../../sharedComponents/globalCommands/globalCommands';
+import {
+  APIToken,
+  globalCompany,
+  server,
+} from '../../sharedComponents/globalCommands/globalCommands';
 import {dbsystem_users} from '../../database/sqliteSetup';
+
+import {sha1} from 'react-native-sha1';
 
 const SignScreen = (props) => {
   function SQLerror(err) {
@@ -36,6 +42,7 @@ const SignScreen = (props) => {
     user_name: global.user_name,
     password: '',
     confirm_password: '',
+    hashed_password: '',
     check_user_name: false,
     secureTextEntry: true,
   });
@@ -69,9 +76,13 @@ const SignScreen = (props) => {
 
   const handleConfirmPasswordChange = (val) => {
     setErrorMessage('');
-    setAccount({
-      ...data,
-      confirm_password: val,
+
+    sha1(val).then((hash) => {
+      setAccount({
+        ...data,
+        confirm_password: val,
+        hashed_password: hash,
+      });
     });
   };
 
@@ -89,6 +100,7 @@ const SignScreen = (props) => {
   };
 
   const UpdateAccount = () => {
+    console.log(data.hashed_password);
     fetch(server.server_address + globalCompany.company + 'UpdateAccount', {
       method: 'PUT',
       headers: {
@@ -98,7 +110,7 @@ const SignScreen = (props) => {
       },
       body: JSON.stringify({
         user_name: data.user_name,
-        password: data.password,
+        password: data.hashed_password,
       }),
     })
       .then((responseData) => {
