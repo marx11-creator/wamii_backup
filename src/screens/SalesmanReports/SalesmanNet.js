@@ -10,6 +10,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Button,
+  SectionList,
 } from 'react-native';
 import {openDatabase} from 'react-native-sqlite-storage';
 import {useFocusEffect} from '@react-navigation/native';
@@ -69,6 +70,7 @@ export default function ViewScreen(props) {
       push_sales_per_vendor();
       push_sales_per_customer();
       push_sales_per_category();
+      update_formatted_sectionlist();
       setfocus_int(1);
     });
   }, []);
@@ -80,6 +82,7 @@ export default function ViewScreen(props) {
       push_sales_per_vendor();
       push_sales_per_customer();
       push_sales_per_category();
+      update_formatted_sectionlist();
       setfocus_int(1);
     }
   }, [FilterList.DashboardFilterYearNMonthTeam]);
@@ -90,10 +93,13 @@ export default function ViewScreen(props) {
     push_sales_per_vendor();
     push_sales_per_customer();
     push_sales_per_category();
+    update_formatted_sectionlist();
     setfocus_int(1);
   }, [globalState.dateTimeUpdated24hr]);
 
   let [FlatListItems, setFlatListItems] = useState([]);
+  let [SectionListItems, setSectionListItems] = useState([]);
+  let [Formatted_SL, setFormatted_SL] = useState([]);
   let [FlatVendor, setFlatVendor] = useState([]);
   let [FlatCategory, setFlatCategory] = useState([]);
 
@@ -262,15 +268,15 @@ export default function ViewScreen(props) {
       var DateTo = YearQuery + '-' + MonthQuery + '-' + '31';
 
       tx.executeSql(
-        'SELECT invoice_date, account_customer_name, SUM(sales) AS sales, invoice_status_final FROM tbl_sales_per_customer WHERE invoice_date BETWEEN  ' +
+        'SELECT invoice_date, account_customer_name, principal_name, SUM(sales) AS sales, invoice_status_final FROM tbl_sales_per_customer WHERE invoice_date BETWEEN  ' +
           "'" +
-          DateFrom +
+          '2020-10-05' +
           "'" +
           '  AND   ' +
           "'" +
-          DateTo +
+          '2020-10-05' +
           "'" +
-          '  GROUP BY invoice_date, account_customer_name ORDER BY invoice_date DESC',
+          '  GROUP BY invoice_date, account_customer_name, principal_name ORDER BY invoice_date DESC',
         [],
         (tx, results) => {
           var temp = [];
@@ -278,10 +284,42 @@ export default function ViewScreen(props) {
             temp.push(results.rows.item(i));
           }
 
-          setFlatListItems(temp);
+          //console.log(temp);
+
+          setSectionListItems(temp);
+
+          //setFlatListItems(temp);
         },
       );
     });
+  }
+
+  //console.log(SectionListItems);
+
+  const postsByCustomer = SectionListItems.reduce((acc, post) => {
+    const foundIndex = acc.findIndex(
+      (Element) => Element.key === post.account_customer_name,
+    );
+    if (foundIndex === -1) {
+      return [
+        ...acc,
+        {
+          key: post.account_customer_name,
+          data: [{principal_name: post.principal_name, sales: post.sales}],
+        },
+      ];
+    }
+    acc[foundIndex].data = [
+      ...acc[foundIndex].data,
+      {principal_name: post.principal_name, sales: post.sales},
+    ];
+    return acc;
+  }, []);
+
+  console.log(postsByCustomer);
+
+  function update_formatted_sectionlist() {
+    setFormatted_SL(postsByCustomer);
   }
 
   function push_sales_per_category() {
@@ -648,6 +686,23 @@ export default function ViewScreen(props) {
               Last Update {LastDateTimeUpdated.value} {' ||   '}
             </Text>
             <Text
+              style={{
+                color: 'white',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              {globalTimer.lastUpdate}{' '}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
                 style={{
                   color: 'white',
                   fontSize: moderateScale(12, 0.5),
@@ -655,42 +710,25 @@ export default function ViewScreen(props) {
                   alignItems: 'flex-end',
                   justifyContent: 'flex-end',
                 }}>
-                {globalTimer.lastUpdate}{' '}
-              </Text>
-            <View
-                style={{
-                  flexDirection: 'row',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
- 
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                  }}>
-                  {globalState.updateStatus === 'Updating' ||
-                  globalState.updateStatus === 'Start' ? (
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: moderateScale(12, 0.5),
-                        alignContent: 'flex-end',
-                        alignItems: 'flex-end',
-                        justifyContent: 'flex-end',
-                      }}>
-                      {'>> '}{'Updating...'}{' '}
-                      {globalState.updatePercentage > 0
-                        ? globalState.updatePercentage + ' %'
-                        : ''}
-                    </Text>
-                  ) : null}
+                {globalState.updateStatus === 'Updating' ||
+                globalState.updateStatus === 'Start' ? (
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {'>> '}
+                    {'Updating...'}{' '}
+                    {globalState.updatePercentage > 0
+                      ? globalState.updatePercentage + ' %'
+                      : ''}
+                  </Text>
+                ) : null}
 
-                  {/* <Text
+                {/* <Text
                         style={{
                           color: 'white',
                           fontSize: moderateScale(12, 0.5),
@@ -700,8 +738,8 @@ export default function ViewScreen(props) {
                         }}>
                         {hhmmss(900 - globalStatus.CurrentSeconds)}
                       </Text> */}
-                </Text>
-              </View>
+              </Text>
+            </View>
           </View>
           <View style={{flex: 1.5, flexDirection: 'row', padding: 10}}>
             <View style={{flex: 1, flexDirection: 'column'}}>
@@ -1554,155 +1592,28 @@ export default function ViewScreen(props) {
                 </Text>
               </View>
             </TouchableOpacity>
-
             {/* <Button title="Minimize" onPress={() => All_shown()} /> */}
-            <FlatList
-              data={FlatListItems}
-              ItemSeparatorComponent={listViewItemSeparator}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item}) => {
-                return (
-                  <TouchableOpacity onPress={() => console.log(item.user_id)}>
-                    <View
-                      key={item.user_id}
-                      style={{padding: 5, flexDirection: 'row'}}>
-                      <View style={{flex: 2.5}}>
-                        <Text
-                          style={{
-                            fontSize: moderateScale(13, 0.5),
-                            color: 'white',
-                            fontFamily: 'serif',
-                            alignSelf: 'flex-start',
-                          }}>
-                          {item.invoice_date}{' '}
-                        </Text>
-                      </View>
-                      <View style={{flex: 6}}>
-                        <Text
-                          style={{
-                            fontSize: moderateScale(13, 0.5),
-                            color: 'white',
-                            fontFamily: 'serif',
-                            alignSelf: 'flex-start',
-                          }}>
-                          {item.account_customer_name}
-                        </Text>
-                      </View>
-                      <View style={{flex: 2}}>
-                        <Text
-                          style={{
-                            fontSize: moderateScale(13, 0.5),
-                            color: 'white',
-                            fontFamily: 'serif',
-                            alignSelf: 'center',
-                          }}>
-                          {numFormatter(item.sales)}{' '}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flex: 2,
-                          justifyContent: 'center',
-                          alignContent: 'center',
-                          alignItems: 'center',
-                        }}>
-                        {/* <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text> */}
-                        {item.invoice_status_final === 'null' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#F8A4AF',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'SAVED' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#F8A4AF',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'PREPARING' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#F8A4AF',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'PREPARED' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#F8A4AF',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'CONFIRMED' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#09F67F',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'LOADING' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#09F67F',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'LOADED' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#09F67F',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'DISPATCH' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#09F67F',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'DELIVERED' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#09F67F',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                );
-              }}
+
+            <SectionList
+              sections={Formatted_SL}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({item}) => (
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{flex: 1}}>
+                    <Text style={{fontSize: 10}}>{item.principal_name}</Text>
+                  </View>
+                  <View style={{flex: 1}}>
+                    <Text style={{fontSize: 10}}>{item.sales}</Text>
+                  </View>
+                </View>
+              )}
+              renderSectionHeader={({section: {key}}) => (
+                <View style={{flex: 1}}>
+                  <Text style={{fontSize: 20}}>{key}</Text>
+                </View>
+              )}
             />
+            {/* sectionlist here */}
           </View>
         </View>
       </SafeAreaView>

@@ -169,7 +169,9 @@ const SignScreen = (props) => {
     ClearAppToken();
     setisLoadingActivityIndicator(true);
 
+    //*Enable Hashed Password
     const unpw = data.user_name + '&' + data.hashed_password;
+    //const unpw = data.user_name + '&' + data.password;
     console.log(unpw);
     Promise.race([
       fetch(
@@ -350,7 +352,9 @@ const SignScreen = (props) => {
   }
 
   const GetUserAccess = () => {
+    //*Enabled Hashed Password
     const unpw = data.user_name + '&' + data.hashed_password;
+    //const unpw = data.user_name + '&' + data.password;
     console.log(
       server.server_address +
         globalCompany.company +
