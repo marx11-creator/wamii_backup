@@ -276,7 +276,7 @@ export default function ViewScreen(props) {
           "'" +
           DateTo +
           "'" +
-          '  GROUP BY invoice_date, account_customer_name, principal_name ORDER BY invoice_date DESC',
+          '  GROUP BY invoice_date, account_customer_name, principal_name ORDER BY account_customer_name ASC',
         [],
         (tx, results) => {
           var temp = [];
