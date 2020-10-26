@@ -46,59 +46,59 @@ export default function DashboardModal(props) {
   // useEffect(() => {
   //   GetMonthsforFilter();
   // }, []);
-  function GetMonthsforFilter() {
-    var month1 = '';
+  // function GetMonthsforFilter() {
+  //   var month1 = '';
 
-    var YearQuery = '';
-    if (FilterListMirror.DashboardFilterYear === '') {
-      YearQuery =
-        '  business_year =  ' +
-        "'" +
-        moment().utcOffset('+08:00').format('YYYY') +
-        "'";
-    } else {
-      YearQuery =
-        ' business_year = ' + "'" + FilterListMirror.DashboardFilterYear + "'";
-    }
+  //   var YearQuery = '';
+  //   if (FilterListMirror.DashboardFilterYear === '') {
+  //     YearQuery =
+  //       '  business_year =  ' +
+  //       "'" +
+  //       moment().utcOffset('+08:00').format('YYYY') +
+  //       "'";
+  //   } else {
+  //     YearQuery =
+  //       ' business_year = ' + "'" + FilterListMirror.DashboardFilterYear + "'";
+  //   }
 
-    DashboardMonths.length = 0;
+  //   DashboardMonths.length = 0;
 
-    console.log('from dashboard months adding..');
-    dbperymtsat.transaction((tx) => {
-      tx.executeSql(
-        'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
-          ' where  ' +
-          YearQuery +
-          'order  by invoice_date desc ',
-        [],
-        (tx, results) => {
-          var len = results.rows.length;
-          if (len > 0) {
-            var temp = [];
-            for (let i = 0; i < results.rows.length; ++i) {
-              if (i === 0) {
-                month1 = results.rows.item(i).label;
-              }
-              temp.push(results.rows.item(i));
+  //   console.log('from dashboard months adding..');
+  //   dbperymtsat.transaction((tx) => {
+  //     tx.executeSql(
+  //       'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
+  //         ' where  ' +
+  //         YearQuery +
+  //         'order  by invoice_date desc ',
+  //       [],
+  //       (tx, results) => {
+  //         var len = results.rows.length;
+  //         if (len > 0) {
+  //           var temp = [];
+  //           for (let i = 0; i < results.rows.length; ++i) {
+  //             if (i === 0) {
+  //               month1 = results.rows.item(i).label;
+  //             }
+  //             temp.push(results.rows.item(i));
 
-              setarrMonth(temp);
+  //             setarrMonth(temp);
 
-              setMonthState(month1);
+  //             setMonthState(month1);
 
-              FilterListMirror.DashboardFilterMonth = month1;
+  //             FilterListMirror.DashboardFilterMonth = month1;
 
-              DashboardMonths.push({
-                label: results.rows.item(i).label,
-                value: results.rows.item(i).value,
-              });
-            }
+  //             DashboardMonths.push({
+  //               label: results.rows.item(i).label,
+  //               value: results.rows.item(i).value,
+  //             });
+  //           }
 
-            // TRANSFER TO GLOBAL MONTH-AO
-          }
-        },
-      );
-    });
-  }
+  //           // TRANSFER TO GLOBAL MONTH-AO
+  //         }
+  //       },
+  //     );
+  //   });
+  // }
 
   return (
     <Modal
@@ -186,10 +186,10 @@ export default function DashboardModal(props) {
                       : FilterList.DashboardFilterYear
                   }
                   onChangeItem={(itemValue) => {
-                    setarrMonth([]);
+                    // setarrMonth([]);
                     FilterListMirror.DashboardFilterMonth = '';
                     FilterListMirror.DashboardFilterYear = itemValue.value;
-                    GetMonthsforFilter();
+                    // GetMonthsforFilter();
                   }} //                                                YEAR >>>>>>>>>>>>>>>>
                 />
               </View>
@@ -244,11 +244,11 @@ export default function DashboardModal(props) {
                   dropDownMaxHeight={scale(290)}
                   containerStyle={{height: 50}}
                   isVisible={isVisibleMonth}
-                  defaultValue={MonthState}
-                  items={arrMonth}
+                  defaultValue={FilterList.DashboardFilterMonth}
+                  items={DashboardMonths}
                   onChangeItem={(itemValue) => {
                     FilterListMirror.DashboardFilterMonth = itemValue.value;
-                    setMonthState(itemValue.value);
+                    //setMonthState(itemValue.value);
                   }} //                                                MONTH >>>>>>>>>>>>>>>>
                 />
               </View>

@@ -232,14 +232,14 @@ export default function UpdateModal(props) {
       globalStatus.updateMode = 'auto';
 
       globalStatus.updateStatus = 'Idle';
-
+ 
       setglobalState({
         ...globalState,
         updateStatus: 'Idle',
         updatePercentage: updateProgress,
         dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss'),
       });
-      props.navigation.navigate(CurrentAppScreen.Screen);
+      props.navigation.navigate('Home');
       CheckSystemStatus(); //3.3
       // RunTimer();
       //5
@@ -995,7 +995,6 @@ export default function UpdateModal(props) {
         });
 
         UpdateYearMonthsFilter();
-
         setq1Principal(true);
         // console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
       }

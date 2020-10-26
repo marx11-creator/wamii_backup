@@ -47,7 +47,6 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import moment from 'moment';
 import {locales} from 'moment';
 import {
-  UpdateYearMonthsFilter,
   CurrentDashboardScreen,
   FilterList,
   DashboardYears,
@@ -261,7 +260,6 @@ export default function PerTeamDashboard(props) {
 
   useEffect(() => {
     console.log('focus on per team from update'); //
-    UpdateYearMonthsFilter();
     LoadPerTeam();
   }, [globalState.dateTimeUpdated24hr]);
 
