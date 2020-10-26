@@ -485,16 +485,7 @@ export default function Inventory(props) {
         ' and promo_product = ' + "'" + ProductTypePickerCatcher + "'";
     }
 
-    console.log(
-      'SELECT * FROM promo_items_tbl where ' +
-        PrincipalQuery +
-        CategoryQuery +
-        BrandQuery +
-        VariantQuery +
-        PromoProductQuery +
-        ' order by principal_name, product_variant, product_name   ',
-    );
-
+ 
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM promo_items_tbl where ' +
@@ -1060,6 +1051,7 @@ export default function Inventory(props) {
           }}>
           <View
             style={{
+              flexDirection: 'row',
               opacity: 1,
               height: 50,
               width: 200,
@@ -1067,7 +1059,8 @@ export default function Inventory(props) {
               alignContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: moderateScale(18)}}>Please wait...</Text>
+            <Text style={{fontSize: moderateScale(18)}}>Please wait...  </Text>
+             <ActivityIndicator size="large" color="green" />
           </View>
         </View>
       </View>
@@ -1824,16 +1817,14 @@ export default function Inventory(props) {
         console.log('PRESED imagelistmodal ON INDEX ' + Number(index));
         setPleaseWaitVisible(true);
         setcurrentIndex(setindexforImagelIst);
+ 
 
         var secs = 0;
         const timerID = BackgroundTimer.setInterval(() => {
           secs = secs + 1;
-          if (secs === 1) {
-            setPleaseWaitVisible(true);
-            setcurrentIndex(setindexforImagelIst);
-          }
+     
 
-          if (secs === 2) {
+          if (secs === 1) {
             setPleaseWaitVisible(false);
             setvisibleImageListModal(true);
             BackgroundTimer.clearInterval(timerID);

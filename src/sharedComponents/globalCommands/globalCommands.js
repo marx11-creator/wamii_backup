@@ -61,8 +61,66 @@ export var PageVisited = {
   PerAreaPAGE: 'YES',
 };
 
-export var DashboardMonths = [];
-export var DashboardYears = [];
+export var DashboardMonths = [
+  {
+    label: 'December',
+    value: 'December',
+  },
+  {
+    label: 'November',
+    value: 'November',
+  },
+  {
+    label: 'October',
+    value: 'October',
+  },
+  {
+    label: 'September',
+    value: 'September',
+  },
+  {
+    label: 'August',
+    value: 'August',
+  },
+  {
+    label: 'July',
+    value: 'July',
+  },
+  {
+    label: 'June',
+    value: 'June',
+  },
+  {
+    label: 'May',
+    value: 'May',
+  },
+  {
+    label: 'April',
+    value: 'April',
+  },
+  {
+    label: 'March',
+    value: 'March',
+  },
+  {
+    label: 'February',
+    value: 'February',
+  },
+  {
+    label: 'January',
+    value: 'January',
+  },
+];
+export var DashboardYears = [
+  {
+    label: '2020',
+    value: '2020',
+  },
+  {
+    label: '2019',
+    value: '2019',
+  },
+];
 export var DashboardTeams = [];
 export var DashboardVendor = [];
 
@@ -71,11 +129,12 @@ export var FilterList = {
   DashboardFilterYear: moment().utcOffset('+08:00').format('YYYY'),
   DashboardFilterTeam: '',
   DashboardFilterVendor: '',
-  
+
   DashboardFilterYearNMonthTeamVendor:
     moment().utcOffset('+08:00').format('YYYY') +
     moment().utcOffset('+08:00').format('MMMM') +
-    ' ' + ' ',
+    ' ' +
+    ' ',
 };
 
 export var FilterListMirror = {
@@ -158,7 +217,6 @@ export function ClearDefaults() {
   FilterList.DashboardFilterMonth = '';
   FilterList.DashboardFilterTeam = '';
   FilterList.DashboardFilterVendor = '';
-
 }
 
 let delete_per_customer_tbl = () => {
@@ -193,7 +251,6 @@ let delete_per_category_tbl = () => {
   });
 };
 
-
 function DeleteSystemUser() {
   dbsystem_users.transaction(function (tx) {
     tx.executeSql(
@@ -205,18 +262,12 @@ function DeleteSystemUser() {
   });
 }
 
-
-
-
-
 function DeletelastDateTimeUpdated() {
   dblastdatetimeupdated.transaction(function (tx) {
     tx.executeSql(
       'Delete from lastdatetimeupdated_tbl ',
       [],
-      (tx, results) => {
-      
-      },
+      (tx, results) => {},
       SQLerror,
     );
   });
@@ -227,9 +278,7 @@ function DeleteItems() {
     tx.executeSql(
       'Delete from promo_items_tbl ',
       [],
-      (tx, results) => {
-      
-      },
+      (tx, results) => {},
       SQLerror,
     );
   });
@@ -244,7 +293,6 @@ function DeletePerAreaAPIData() {
         if (results.rowsAffected > 0) {
           console.log('DeletePerAreaAPIData DONE');
         }
-
       },
       SQLerror,
     );
@@ -288,11 +336,10 @@ function DeleteCalendar() {
 }
 
 export function UpdateYearMonthsFilter() {
- 
   GetVendorsforFilter();
   GetTeamsforFilter();
-  GetYearforFilter();
-  GetMonthsforFilter();
+  // GetYearforFilter();
+  // GetMonthsforFilter();
   GetDateTime();
   // console.log('GLOBAL YEARS MONTHS TEAM  LOADED');
 }
@@ -300,8 +347,6 @@ export function UpdateYearMonthsFilter() {
 function GetVendorsforFilter() {
   DashboardVendor.length = 0;
   dbperprincipal.transaction((tx) => {
-
- 
     tx.executeSql(
       'SELECT Distinct principal_name as label, principal_name as value FROM perprincipalpermonth_tbl ' +
         ' where  business_year = 2020 ' +
@@ -366,23 +411,27 @@ function GetTeamsforFilter() {
 function GetMonthsforFilter() {
   DashboardMonths.length = 0;
 
-  // console.log('months adding  from START..');
+  console.log(
+    'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
+      ' ORDER BY right(invoice_date,5)  desc ',
+  );
   dbperymtsat.transaction((tx) => {
     tx.executeSql(
       'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
-        ' where  business_year = 2020 ' +
-        'order  by invoice_date desc ',
+        ' ORDER BY  invoice_date   desc ',
       [],
       (tx, results) => {
         var len = results.rows.length;
         if (len > 0) {
           for (let i = 0; i < results.rows.length; ++i) {
+            console.log(results.rows.item(i).label);
             DashboardMonths.push({
               label: results.rows.item(i).label,
               value: results.rows.item(i).value,
             });
           }
         }
+        SQLerror;
       },
     );
   });
@@ -401,6 +450,7 @@ function GetYearforFilter() {
         var len = results.rows.length;
         if (len > 0) {
           for (let i = 0; i < results.rows.length; ++i) {
+            console.log(results.rows.item(i));
             DashboardYears.push({
               label: results.rows.item(i).label,
               value: results.rows.item(i).value,
@@ -425,7 +475,7 @@ export function GetDateTime() {
             0,
           ).dateTimeUpdated24hr;
           // ComputeLastDateTimeUpdate();
-     //     console.log('called');
+          //     console.log('called');
           // console.log(results.rows.item(0).dateTimeUpdated24hr);
           //  console.log(results.rows.item(0).dateTimeUpdated24hr);
         } else {
@@ -450,11 +500,7 @@ export function hhmmss(secs) {
   // return pad(hours)+":"+pad(minutes)+":"+pad(secs); for old browsers
 }
 
-
-
-           
-          // setCurrentLocalItem([
-          //   ...CurrentLocalItem,
-          //   ...temp,
-          // ]);
-          
+// setCurrentLocalItem([
+//   ...CurrentLocalItem,
+//   ...temp,
+// ]);

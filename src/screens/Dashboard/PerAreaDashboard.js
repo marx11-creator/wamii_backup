@@ -51,7 +51,6 @@ import {
   LastDateTimeUpdated,
   globalStatus,
   PageVisited,
-  UpdateYearMonthsFilter,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
@@ -294,7 +293,7 @@ export default function PerAreaDashboard(props) {
         //BUILD PRINCIPAL ACONYM
         temp.push(item.principal_acronym);
       });
-      UpdateYearMonthsFilter();
+
 
       var tempSales = [];
       var firstContribution = 1;

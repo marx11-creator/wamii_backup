@@ -410,10 +410,10 @@ export default function DashboardModal(props) {
                       : FilterList.DashboardFilterYear
                   }
                   onChangeItem={(itemValue) => {
-                    setarrMonth([]);
+                    // setarrMonth([]);
                     FilterListMirror.DashboardFilterMonth = '';
                     FilterListMirror.DashboardFilterYear = itemValue.value;
-                    GetMonthsforFilter();
+                    // GetMonthsforFilter();
                   }} //                                                YEAR >>>>>>>>>>>>>>>>
                 />
               </View>
@@ -468,11 +468,11 @@ export default function DashboardModal(props) {
                   dropDownMaxHeight={scale(290)}
                   containerStyle={{height: 50}}
                   isVisible={isVisibleMonth}
-                  defaultValue={MonthState}
-                  items={arrMonth}
+                  defaultValue={FilterList.DashboardFilterMonth}
+                  items={DashboardMonths}
                   onChangeItem={(itemValue) => {
                     FilterListMirror.DashboardFilterMonth = itemValue.value;
-                    setMonthState(itemValue.value);
+                    //setMonthState(itemValue.value);
                   }} //                                                MONTH >>>>>>>>>>>>>>>>
                 />
               </View>

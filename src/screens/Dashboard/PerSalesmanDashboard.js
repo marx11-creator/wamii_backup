@@ -47,7 +47,6 @@ import moment from 'moment';
 import {ProgressCircle} from 'react-native-svg-charts';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {
-  UpdateYearMonthsFilter,
   CurrentDashboardScreen,
   FilterList,
   DashboardYears,
@@ -298,7 +297,7 @@ export default function PerSalesmanDashboard(props) {
 
   useEffect(() => {
     console.log('focus on per salesman from update'); //
-    UpdateYearMonthsFilter();
+
     SearchPerSalesman();
   }, [globalState.dateTimeUpdated24hr]);
 
