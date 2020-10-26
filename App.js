@@ -7,7 +7,8 @@ import StartLandingScreen from './src/screens/loginscreens/StartLandingScreen';
 import PageContextGlobalState from './src/screens/MainDrawerScreens/pagecontextGlobalState';
 import PageContextGlobalTimer from './src/screens/MainDrawerScreens/pagecontextGlobalTimer';
 import PageContextAutoLogout from './src/screens/MainDrawerScreens/pagecontextAutoLogout';
-import PageContextDatas from './src/screens/MainDrawerScreens/pagecontextDatas';
+import PageContextGlobalDashboard from './src/screens/MainDrawerScreens/pagecontextGlobalDashboard';
+
 import moment from 'moment';
 const Stack = createStackNavigator();
 
@@ -44,33 +45,20 @@ const App = () => {
       '',
   });
 
-  const [datas, setdatas] = useState(
-    {
-      name: 'ARJAY',
-      lastname: 'DAVID',
-      age: '28',
-      sex: 'M',
-    },
-    {
-      name: 'JANE',
-      lastname: 'NALUS',
-      age: '27',
-      sex: 'F',
-    },
-    {
-      name: 'MARK',
-      lastname: 'MANGILA',
-      age: '27',
-      sex: 'F',
-    },
-  );
+  const [GlobalDashboardfilter, setGlobalDashboardfilter] = useState({
+    YearValue: moment().utcOffset('+08:00').format('YYYY'),
+    MonthValue: moment().utcOffset('+08:00').format('MMMM'),
+    VendorValue: '',
+    TeamValue: '',
+  });
 
   return (
     <PageContextGlobalState.Provider value={[globalState, setglobalState]}>
       <PageContextGlobalTimer.Provider value={[globalTimer, setglobalTimer]}>
         <PageContextAutoLogout.Provider
           value={[globalAutoLogout, setglobalAutoLogout]}>
-          <PageContextDatas.Provider value={[datas, setdatas]}>
+          <PageContextGlobalDashboard.Provider
+            value={[GlobalDashboardfilter, setGlobalDashboardfilter]}>
             <NavigationContainer>
               <Stack.Navigator headerMode="none">
                 <Stack.Screen
@@ -79,7 +67,7 @@ const App = () => {
                 />
               </Stack.Navigator>
             </NavigationContainer>
-          </PageContextDatas.Provider>
+          </PageContextGlobalDashboard.Provider>
         </PageContextAutoLogout.Provider>
       </PageContextGlobalTimer.Provider>
     </PageContextGlobalState.Provider>

@@ -1,6 +1,6 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -34,27 +34,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import FlatButton from '../../sharedComponents/custombutton';
 import moment from 'moment';
 import {dbperymtsat} from '../../database/sqliteSetup';
-import RNPickerSelect from 'react-native-picker-select';
-import Icon from 'react-native-vector-icons/Ionicons';
-import PageContextGlobalDashboard from '../MainDrawerScreens/pagecontextGlobalDashboard';
-
 export default function DashboardModal(props) {
-  const [YearValue, setYearValue] = useState(
-    moment().utcOffset('+08:00').format('YYYY'),
-  );
-  const [MonthValue, setMonthValue] = useState(
-    moment().utcOffset('+08:00').format('MMMM'),
-  );
-  const [VendorValue, setVendorValue] = useState('');
-  const [TeamValue, setTeamValue] = useState('');
-
-  const [Months, setMonths] = useState(DashboardMonths);
-  const [Vendors, setVendors] = useState(DashboardVendor);
-  const [Teams, setTeams] = useState(DashboardTeams);
-
-  const [GlobalDashboardfilter, setGlobalDashboardfilter] = useContext(
-    PageContextGlobalDashboard,
-  );
 
   const [isVisibleYear, setisVisibleYear] = useState(false);
   const [isVisibleMonth, setisVisibleMonth] = useState(false);
@@ -63,63 +43,63 @@ export default function DashboardModal(props) {
 
   const [arrMonth, setarrMonth] = useState(DashboardMonths);
   const [MonthState, setMonthState] = useState('');
-
-  useEffect(() => {
-    setVendors(DashboardVendor);
-  }, [DashboardVendor]);
-
-  useEffect(() => {
-    setTeams(DashboardTeams);
-  }, [DashboardTeams]);
-
   // useEffect(() => {
-  //   Months.length = 0;
-  //   setMonths(DashboardMonths);
-  // }, [DashboardMonths]);
+  //   GetMonthsforFilter();
+  // }, []);
+  function GetMonthsforFilter() {
+    var month1 = '';
 
-  useEffect(() => {
-    if (GlobalDashboardfilter.YearValue !== '') {
-      var YearQuery = '';
-      if (GlobalDashboardfilter.YearValue === '') {
-        YearQuery =
-          '  business_year =  ' +
-          "'" +
-          moment().utcOffset('+08:00').format('YYYY') +
-          "'";
-      } else {
-        YearQuery =
-          ' business_year = ' + "'" + GlobalDashboardfilter.YearValue + "'";
-      }
+    var YearQuery = '';
+    if (FilterListMirror.DashboardFilterYear === '') {
+      YearQuery =
+        '  business_year =  ' +
+        "'" +
+        moment().utcOffset('+08:00').format('YYYY') +
+        "'";
+    } else {
+      YearQuery =
+        ' business_year = ' + "'" + FilterListMirror.DashboardFilterYear + "'";
+    }
 
-      DashboardMonths.length = 0;
+    DashboardMonths.length = 0;
 
-      console.log(
+    console.log('from dashboard months adding..');
+    dbperymtsat.transaction((tx) => {
+      tx.executeSql(
         'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
           ' where  ' +
           YearQuery +
-          ' order  by invoice_date desc ',
-      );
-      dbperymtsat.transaction((tx) => {
-        tx.executeSql(
-          'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
-            ' where  ' +
-            YearQuery +
-            ' order  by invoice_date desc ',
-          [],
-          (tx, results) => {
-            var len = results.rows.length;
+          'order  by invoice_date desc ',
+        [],
+        (tx, results) => {
+          var len = results.rows.length;
+          if (len > 0) {
             var temp = [];
-            if (len > 0) {
-              for (let i = 0; i < results.rows.length; ++i) {
-                temp.push(results.rows.item(i));
+            for (let i = 0; i < results.rows.length; ++i) {
+              if (i === 0) {
+                month1 = results.rows.item(i).label;
               }
-              setMonths(temp);
+              temp.push(results.rows.item(i));
+
+              setarrMonth(temp);
+
+              setMonthState(month1);
+
+              FilterListMirror.DashboardFilterMonth = month1;
+
+              DashboardMonths.push({
+                label: results.rows.item(i).label,
+                value: results.rows.item(i).value,
+              });
             }
-          },
-        );
-      });
-    }
-  }, [GlobalDashboardfilter.YearValue]);
+
+            // TRANSFER TO GLOBAL MONTH-AO
+          }
+        },
+      );
+    });
+  }
+
   return (
     <Modal
       transparent={true}
@@ -148,219 +128,15 @@ export default function DashboardModal(props) {
                 width: scale(450),
                 alignSelf: 'center',
               }}>
-              {/* YEAR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
-              <View
-                style={{
-                  marginHorizontal: 5,
-                  justifyContent: 'space-around',
-                  alignContent: 'space-between',
-                }}>
-                <Text>Year :</Text>
-              </View>
-              <View paddingVertical={2} />
-              <RNPickerSelect
-                placeholder={{
-                  label: 'Select Year',
-                  value: null,
-                  color: 'green',
+              {/* <Button
+                title="Test"
+                onPress={() => {
+                  console.log(FilterList.DashboardFilterYear + ' orig');
+                  console.log(FilterListMirror.DashboardFilterYear + ' mirror');
                 }}
-                items={[
-                  {
-                    label: '2020',
-                    value: '2020',
-                  },
-                  {
-                    label: '2019',
-                    value: '2019',
-                  },
-                ]}
-                onValueChange={(value) => {
-                  setGlobalDashboardfilter({
-                    ...GlobalDashboardfilter,
-                    YearValue: value,
-                    MonthValue: '',
-                  });
+              /> */}
 
-                  // setMonthValue('');
-                  // setYearValue(value);
-                  FilterListMirror.DashboardFilterYear = value;
-                }}
-                style={{
-                  iconContainer: {
-                    top: 10,
-                    right: 12,
-                  },
-                  inputAndroid: {
-                    borderColor: 'green',
-                    fontSize: 16,
-                    paddingHorizontal: 10,
-                    paddingVertical: 8,
-                    borderWidth: 0.5,
-                    borderRadius: 8,
-                    color: 'black',
-                    paddingRight: 30, // to ensure the text is never behind the icon
-                  },
-                }}
-                value={GlobalDashboardfilter.YearValue}
-                useNativeAndroidPickerStyle={false}
-                textInputProps={{underlineColor: 'yellow'}}
-                Icon={() => {
-                  return <Icon name="md-arrow-down" size={24} color="gray" />;
-                }}
-              />
-              <View paddingVertical={5} />
-              {/* YEAR >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
-              {/* MONTH >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
               <View
-                style={{
-                  marginHorizontal: 5,
-                  justifyContent: 'space-around',
-                  alignContent: 'space-between',
-                }}>
-                <Text>Month :</Text>
-              </View>
-              <View paddingVertical={2} />
-              <RNPickerSelect
-                placeholder={{
-                  label: 'Select Month',
-                  value: null,
-                  color: 'green',
-                }}
-                items={Months}
-                onValueChange={(value) => {
-                  setGlobalDashboardfilter({
-                    ...GlobalDashboardfilter,
-                    MonthValue: value,
-                  });
-
-                  // setMonthValue(value);
-                  FilterListMirror.DashboardFilterMonth = value;
-                }}
-                style={{
-                  iconContainer: {
-                    top: 10,
-                    right: 12,
-                  },
-                  inputAndroid: {
-                    borderColor: 'green',
-                    fontSize: 16,
-                    paddingHorizontal: 10,
-                    paddingVertical: 8,
-                    borderWidth: 0.5,
-                    borderRadius: 8,
-                    color: 'black',
-                    paddingRight: 30, // to ensure the text is never behind the icon
-                  },
-                }}
-                value={GlobalDashboardfilter.MonthValue}
-                useNativeAndroidPickerStyle={false}
-                textInputProps={{underlineColor: 'yellow'}}
-                Icon={() => {
-                  return <Icon name="md-arrow-down" size={24} color="gray" />;
-                }}
-              />
-              <View paddingVertical={5} />
-              {/* MONTH >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
-              {/* VENDORS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
-              <View
-                style={{
-                  marginHorizontal: 5,
-                  justifyContent: 'space-around',
-                  alignContent: 'space-between',
-                }}>
-                <Text>Vendor :</Text>
-              </View>
-              <View paddingVertical={2} />
-              <RNPickerSelect
-                placeholder={{
-                  label: 'Select Vendor',
-                  value: null,
-                  color: 'green',
-                }}
-                items={Vendors}
-                onValueChange={(value) => {
-                  // setVendorValue(value);
-                  setGlobalDashboardfilter({
-                    ...GlobalDashboardfilter,
-                    VendorValue: value,
-                  });
-                  FilterListMirror.DashboardFilterVendor = value;
-                }}
-                style={{
-                  iconContainer: {
-                    top: 10,
-                    right: 12,
-                  },
-                  inputAndroid: {
-                    borderColor: 'green',
-                    fontSize: 16,
-                    paddingHorizontal: 10,
-                    paddingVertical: 8,
-                    borderWidth: 0.5,
-                    borderRadius: 8,
-                    color: 'black',
-                    paddingRight: 30, // to ensure the text is never behind the icon
-                  },
-                }}
-                value={GlobalDashboardfilter.VendorValue}
-                useNativeAndroidPickerStyle={false}
-                textInputProps={{underlineColor: 'yellow'}}
-                Icon={() => {
-                  return <Icon name="md-arrow-down" size={24} color="gray" />;
-                }}
-              />
-              <View paddingVertical={5} />
-              {/* VENDORS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
-              {/* TEAMS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
-              <View
-                style={{
-                  marginHorizontal: 5,
-                  justifyContent: 'space-around',
-                  alignContent: 'space-between',
-                }}>
-                <Text>Teams :</Text>
-              </View>
-              <View paddingVertical={2} />
-              <RNPickerSelect
-                placeholder={{
-                  label: 'Select Team',
-                  value: null,
-                  color: 'green',
-                }}
-                items={Teams}
-                onValueChange={(value) => {
-                  setGlobalDashboardfilter({
-                    ...GlobalDashboardfilter,
-                    TeamValue: value,
-                  });
-                  FilterListMirror.DashboardFilterTeam = value;
-                }}
-                style={{
-                  iconContainer: {
-                    top: 10,
-                    right: 12,
-                  },
-                  inputAndroid: {
-                    borderColor: 'green',
-                    fontSize: 16,
-                    paddingHorizontal: 10,
-                    paddingVertical: 8,
-                    borderWidth: 0.5,
-                    borderRadius: 8,
-                    color: 'black',
-                    paddingRight: 30, // to ensure the text is never behind the icon
-                  },
-                }}
-                value={GlobalDashboardfilter.TeamValue}
-                useNativeAndroidPickerStyle={false}
-                textInputProps={{underlineColor: 'yellow'}}
-                Icon={() => {
-                  return <Icon name="md-arrow-down" size={24} color="gray" />;
-                }}
-              />
-              <View paddingVertical={5} />
-              {/* TEAMS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
-              {/* <View
                 style={{
                   //                                                 YEAR >>>>>>>>>>>>>>>>
                   marginHorizontal: 5,
@@ -565,7 +341,7 @@ export default function DashboardModal(props) {
                     FilterListMirror.DashboardFilterTeam = itemValue.value;
                   }} //                                               TEAM>>>>>>>>>>>>>>>>
                 />
-              </View> */}
+              </View>
 
               <View
                 style={{
@@ -670,16 +446,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderColor: 'purple',
-    borderRadius: 8,
-    color: 'black',
-    paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
 

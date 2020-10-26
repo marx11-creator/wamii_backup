@@ -280,9 +280,8 @@ export default function Home(props) {
 
         globalStatus.updateMode = 'auto';
 
-      //props.navigation.navigate('Inventory');
-        // props.navigation.navigate(screenname);
-
+      // props.navigation.navigate('test');
+         
         BackgroundTimer.clearInterval(intervalId);
       }
     }, 1000);
@@ -663,7 +662,7 @@ export default function Home(props) {
           </Text>
         </View> */}
           </View>
-          {localSeconds === 2 ? <UpdateModal /> : null}
+          {localSeconds === 200 ? <UpdateModal /> : null}
         </View>
       </ScrollView>
     </ImageOverlay>

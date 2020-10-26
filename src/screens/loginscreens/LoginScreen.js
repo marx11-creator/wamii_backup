@@ -195,8 +195,9 @@ const SignScreen = (props) => {
             GetToken();
           } else if (
             global.device_id === '69b761866cb11621' ||
-            global.device_id === 'ede7b31a387e8c30'||
-            global.device_id === 'bc60fd695d01c3da'
+            global.device_id === 'ede7b31a387e8c30' ||
+            global.device_id === 'bc60fd695d01c3da' ||
+            global.device_id === 'a64d03d0164ada0c'
           ) {
             freshLogin = false;
             console.log('ARJAY AND MARC TESTING UNIT, GODMODE');
@@ -291,7 +292,8 @@ const SignScreen = (props) => {
           if (
             global.device_id === '69b761866cb11621' ||
             global.device_id === 'ede7b31a387e8c30' ||
-            global.device_id === 'bc60fd695d01c3da'
+            global.device_id === 'bc60fd695d01c3da' ||
+            global.device_id === 'a64d03d0164ada0c'
           ) {
             console.log('GODMODE DETECTED NOT SAVING');
           } else {

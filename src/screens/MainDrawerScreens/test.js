@@ -1,52 +1,71 @@
-import React, {useEffect, useRef} from 'react';
-import {View, Animated, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import { moderateScale, scale } from '../../sharedComponents/scaling';
+import React, {useState} from 'react';
+import {
+  Button,
+  Text,
+  TextInput,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
-export default function Fade() {
-  const fadeIn = useRef(new Animated.Value(0)).current;
-  const fadeOut = useRef(new Animated.Value(0)).current;
+import RNPickerSelect, {defaultStyles} from 'react-native-picker-select';
+import Icon from 'react-native-vector-icons/Ionicons';
+const sports = [
+  {
+    label: 'Football',
+    value: 'football',
+  },
+  {
+    label: 'Baseball',
+    value: 'baseball',
+  },
+  {
+    label: 'Hockey',
+    value: 'hockey',
+  },
+];
 
-  // useEffect(() => {
-  //   Animated.timing(fadeIn, {
-  //     toValue: 1,
-  //     duration: 1000,
-  //   }).start(() =>
-  //     Animated.timing(fadeIn, {
-  //       toValue: 0,
-  //       duration: 500,
-  //     }).start(),
-  //   );
-  // }, []);
-
-  function start() {
-    Animated.timing(fadeIn, {
-      toValue: 1,
-      duration: 1000,
-    }).start(() =>
-      Animated.timing(fadeIn, {
-        toValue: 0,
-        duration: 1000,
-      }).start(),
-    );
-  }
-
+export default function test(props) {
+  const [favSport, settfavSport] = useState('Football');
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.btn} onPress={() => start()}>
-        <Text style={styles.textBtn}>Click</Text>
-      </TouchableOpacity>
-      <Animated.View
+      <View paddingVertical={5} />
+
+      <RNPickerSelect
+        placeholder={{
+          label: 'Select Vendor',
+          value: null,
+          color: 'green',
+        }}
+        items={sports}
+        onValueChange={(value) => {
+          settfavSport(value);
+        }}
         style={{
-          opacity: fadeIn,
-          height: scale(50),
-          width: scale(200),
-          margin: 5,
-          borderRadius: 12,
-          backgroundColor: 'rgba(192, 190, 202, 1)',
-          justifyContent: 'center',
-        }}>
-        <Text style={styles.text}>Comming Soon... </Text>
-      </Animated.View>
+          iconContainer: {
+            top: 10,
+            right: 12,
+          },
+          inputAndroid: {
+            borderColor: 'green',
+            fontSize: 16,
+            paddingHorizontal: 10,
+            paddingVertical: 8,
+            borderWidth: 0.5,
+            borderRadius: 8,
+            color: 'black',
+            paddingRight: 30, // to ensure the text is never behind the icon
+          },
+        }}
+        value={favSport}
+        useNativeAndroidPickerStyle={false}
+        textInputProps={{underlineColor: 'yellow'}}
+        Icon={() => {
+          return <Icon name="md-arrow-down" size={24} color="gray" />;
+        }}
+      />
     </View>
   );
 }
@@ -54,35 +73,26 @@ export default function Fade() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0)',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  item: {},
-  btn: {
-    backgroundColor: '#480032',
-    width: 100,
-    height: 40,
-    padding: 3,
-    justifyContent: 'center',
-    borderRadius: 6,
+  scrollContainer: {
+    flex: 1,
+    paddingHorizontal: 15,
   },
-  text: {
-    fontSize: moderateScale(16),
-    color: '#fff',
-    fontWeight: '100',
-    textAlign: 'center',
+  scrollContentContainer: {
+    paddingTop: 40,
+    paddingBottom: 10,
   },
-  item1: {
-    backgroundColor: 'red',
-    padding: 20,
-    width: 100,
-    margin: 10,
-  },
+});
 
-  textBtn: {
-    color: '#f4f4f4',
-    fontWeight: 'bold',
-    textAlign: 'center',
+const pickerSelectStyles = StyleSheet.create({
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
