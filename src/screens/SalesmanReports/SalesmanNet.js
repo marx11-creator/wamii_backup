@@ -70,7 +70,7 @@ export default function ViewScreen(props) {
       push_sales_per_vendor();
       push_sales_per_customer();
       push_sales_per_category();
-      update_formatted_sectionlist();
+      //update_formatted_sectionlist();
       setfocus_int(1);
     });
   }, []);
@@ -82,7 +82,7 @@ export default function ViewScreen(props) {
       push_sales_per_vendor();
       push_sales_per_customer();
       push_sales_per_category();
-      update_formatted_sectionlist();
+      //update_formatted_sectionlist();
       setfocus_int(1);
     }
   }, [FilterList.DashboardFilterYearNMonthTeam]);
@@ -93,12 +93,12 @@ export default function ViewScreen(props) {
     push_sales_per_vendor();
     push_sales_per_customer();
     push_sales_per_category();
-    update_formatted_sectionlist();
+    //update_formatted_sectionlist();
     setfocus_int(1);
   }, [globalState.dateTimeUpdated24hr]);
 
-  let [FlatListItems, setFlatListItems] = useState([]);
-  let [SectionListItems, setSectionListItems] = useState([]);
+  //let [FlatListItems, setFlatListItems] = useState([]);
+  //let [SectionListItems, setSectionListItems] = useState([]);
   let [Formatted_SL, setFormatted_SL] = useState([]);
   let [FlatVendor, setFlatVendor] = useState([]);
   let [FlatCategory, setFlatCategory] = useState([]);
@@ -270,11 +270,11 @@ export default function ViewScreen(props) {
       tx.executeSql(
         'SELECT invoice_date, account_customer_name, principal_name, SUM(sales) AS sales, invoice_status_final FROM tbl_sales_per_customer WHERE invoice_date BETWEEN  ' +
           "'" +
-          '2020-10-05' +
+          DateFrom +
           "'" +
           '  AND   ' +
           "'" +
-          '2020-10-05' +
+          DateTo +
           "'" +
           '  GROUP BY invoice_date, account_customer_name, principal_name ORDER BY invoice_date DESC',
         [],
@@ -286,41 +286,49 @@ export default function ViewScreen(props) {
 
           //console.log(temp);
 
-          setSectionListItems(temp);
+          //setSectionListItems(temp);
 
           //setFlatListItems(temp);
+          const postsByCustomer = temp.reduce((acc, post) => {
+            const foundIndex = acc.findIndex(
+              (Element) => Element.key === post.account_customer_name,
+            );
+            if (foundIndex === -1) {
+              return [
+                ...acc,
+                {
+                  key: post.account_customer_name,
+                  data: [
+                    {
+                      invoice_date: post.invoice_date,
+                      principal_name: post.principal_name,
+                      sales: post.sales,
+                      invoice_status_final: post.invoice_status_final,
+                    },
+                  ],
+                },
+              ];
+            }
+            acc[foundIndex].data = [
+              ...acc[foundIndex].data,
+              {
+                invoice_date: post.invoice_date,
+                principal_name: post.principal_name,
+                sales: post.sales,
+                invoice_status_final: post.invoice_status_final,
+              },
+            ];
+            return acc;
+          }, []);
+
+          setFormatted_SL(postsByCustomer);
         },
       );
     });
   }
 
   //console.log(SectionListItems);
-
-  const postsByCustomer = SectionListItems.reduce((acc, post) => {
-    const foundIndex = acc.findIndex(
-      (Element) => Element.key === post.account_customer_name,
-    );
-    if (foundIndex === -1) {
-      return [
-        ...acc,
-        {
-          key: post.account_customer_name,
-          data: [{principal_name: post.principal_name, sales: post.sales}],
-        },
-      ];
-    }
-    acc[foundIndex].data = [
-      ...acc[foundIndex].data,
-      {principal_name: post.principal_name, sales: post.sales},
-    ];
-    return acc;
-  }, []);
-
-  console.log(postsByCustomer);
-
-  function update_formatted_sectionlist() {
-    setFormatted_SL(postsByCustomer);
-  }
+  //console.log(Formatted_SL);
 
   function push_sales_per_category() {
     var YearQuery = '';
@@ -1072,175 +1080,148 @@ export default function ViewScreen(props) {
             </TouchableOpacity>
 
             {/* <Button title="Customers" onPress={() => Customer_shown()} /> */}
-            <FlatList
-              data={FlatListItems}
-              ItemSeparatorComponent={listViewItemSeparator}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item}) => {
-                return (
-                  <TouchableOpacity onPress={() => console.log(item.user_id)}>
-                    <View
-                      key={item.user_id}
-                      style={{padding: 5, flexDirection: 'row'}}>
-                      <View style={{flex: 2.5}}>
-                        <Text
+            <SectionList
+              sections={Formatted_SL}
+              keyExtractor={(item, index) => item + index}
+              renderItem={({item}) => (
+                <View style={{flexDirection: 'row', padding: 2}}>
+                  <View style={{flex: 2}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(15, 0.5),
+                        color: 'white',
+                      }}>
+                      {item.invoice_date}
+                    </Text>
+                  </View>
+                  <View style={{flex: 5}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(15, 0.5),
+                        color: 'white',
+                      }}>
+                      {item.principal_name}
+                    </Text>
+                  </View>
+                  <View style={{flex: 2}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(20, 0.5),
+                        color: 'white',
+                      }}>
+                      {numFormatter(item.sales)}
+                    </Text>
+                  </View>
+                  <View style={{flex: 1}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(15, 0.5),
+                        color: 'white',
+                      }}>
+                      {item.invoice_status_final === 'null' ? (
+                        <View
                           style={{
-                            fontSize: moderateScale(13, 0.5),
-                            fontFamily: 'serif',
-                            alignSelf: 'flex-start',
-                            color: 'white',
-                          }}>
-                          {item.invoice_date}{' '}
-                        </Text>
-                      </View>
-                      <View style={{flex: 6}}>
-                        <Text
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'SAVED' ? (
+                        <View
                           style={{
-                            fontSize: moderateScale(13, 0.5),
-                            fontFamily: 'serif',
-                            alignSelf: 'flex-start',
-                            color: 'white',
-                          }}>
-                          {item.account_customer_name}
-                        </Text>
-                      </View>
-                      <View style={{flex: 2}}>
-                        <Text
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'PREPARING' ? (
+                        <View
                           style={{
-                            fontSize: moderateScale(13, 0.5),
-                            fontFamily: 'serif',
-                            alignSelf: 'center',
-                            color: 'white',
-                          }}>
-                          {numFormatter(item.sales)}{' '}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flex: 2,
-                          justifyContent: 'center',
-                          alignContent: 'center',
-                          alignItems: 'center',
-                        }}>
-                        {/* <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text> */}
-                        {item.invoice_status_final === 'null' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#F8A4AF',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'SAVED' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#F8A4AF',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'PREPARING' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#F8A4AF',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'PREPARED' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#F8A4AF',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'CONFIRMED' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#09F67F',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'LOADING' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#09F67F',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'LOADED' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#09F67F',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'DISPATCH' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#09F67F',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                        {item.invoice_status_final === 'DELIVERED' ? (
-                          <View
-                            style={{
-                              backgroundColor: '#09F67F',
-                              width: scale(30),
-                              height: scale(30),
-                              borderRadius: 50,
-                            }}
-                          />
-                        ) : null}
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                );
-
-                // return (
-                //   <TouchableOpacity onPress={() => console.log(item.user_id)}>
-                //   <View key={item.user_id} style={{ padding: 5, flexDirection: 'row'}}>
-                //     <View style={{flex: 2}}>
-                //     <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.invoice_date}  </Text>
-                //     </View>
-                //     <View style={{flex: 5}}>
-                //     <Text style={{fontSize: moderateScale(15, 0.5), fontFamily: 'serif', alignSelf: 'flex-start'}}>{item.account_customer_name}</Text>
-                //     </View>
-                //     <View style={{flex: 1 }}>
-                //     <Text style={{fontSize: moderateScale(16, 0.5), fontFamily: 'serif', alignSelf: 'center', color: 'green'}}>{numFormatter(item.sales)}  </Text>
-                //     </View>
-                //     <View style={{flex: 1 }}>
-                //     <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
-                //     </View>
-                //     <View style={{flex: 1 }}>
-
-                //     <Text style={{fontSize: moderateScale(10, 0.5), fontFamily: 'serif', alignSelf: 'center'}}>{item.invoice_status_final}</Text>
-                //     </View>
-                //   </View>
-                //   </TouchableOpacity>
-                // );
-              }}
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'PREPARED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'CONFIRMED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'LOADING' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'LOADED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'DISPATCH' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'DELIVERED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                    </Text>
+                  </View>
+                </View>
+              )}
+              renderSectionHeader={({section: {key}}) => (
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#10D070',
+                    borderRadius: 5,
+                  }}>
+                  <Text style={{fontSize: 25}}>{key}</Text>
+                </View>
+              )}
             />
           </View>
         </View>
@@ -1561,7 +1542,11 @@ export default function ViewScreen(props) {
     return (
       <SafeAreaView style={{flex: 1}}>
         <View
-          style={{flex: 1, flexDirection: 'column', backgroundColor: 'gray'}}>
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            backgroundColor: 'rgba(0,52,76,0.83)',
+          }}>
           {/* <Image source={require('../../assets/pic/green.png')} style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%'}}/> */}
 
           {/* per customer */}
@@ -1598,18 +1583,126 @@ export default function ViewScreen(props) {
               sections={Formatted_SL}
               keyExtractor={(item, index) => item + index}
               renderItem={({item}) => (
-                <View style={{flexDirection: 'row'}}>
-                  <View style={{flex: 1}}>
-                    <Text style={{fontSize: 10}}>{item.principal_name}</Text>
+                <View style={{flexDirection: 'row', padding: 2}}>
+                  <View style={{flex: 2}}>
+                    <Text style={{fontSize: 15, color: 'white'}}>
+                      {item.invoice_date}
+                    </Text>
                   </View>
-                  <View style={{flex: 1}}>
-                    <Text style={{fontSize: 10}}>{item.sales}</Text>
+                  <View style={{flex: 5}}>
+                    <Text style={{fontSize: 15, color: 'white'}}>
+                      {item.principal_name}
+                    </Text>
+                  </View>
+                  <View style={{flex: 2}}>
+                    <Text style={{fontSize: 20, color: 'white'}}>
+                      {numFormatter(item.sales)}
+                    </Text>
+                  </View>
+                  <View style={{flex: 0.5}}>
+                    <Text style={{fontSize: 15, color: 'white'}}>
+                      {item.invoice_status_final === 'null' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'SAVED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'PREPARING' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'PREPARED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'CONFIRMED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'LOADING' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'LOADED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'DISPATCH' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'DELIVERED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                    </Text>
                   </View>
                 </View>
               )}
               renderSectionHeader={({section: {key}}) => (
-                <View style={{flex: 1}}>
-                  <Text style={{fontSize: 20}}>{key}</Text>
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#10D070',
+                    borderRadius: 5,
+                  }}>
+                  <Text style={{fontSize: 25}}>{key}</Text>
                 </View>
               )}
             />
