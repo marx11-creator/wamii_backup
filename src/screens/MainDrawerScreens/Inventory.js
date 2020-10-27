@@ -58,19 +58,11 @@ import MaterialIcons from 'react-native-vector-icons//MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import BackgroundTimer from 'react-native-background-timer';
+import RNPickerSelect from 'react-native-picker-select';
 import {getBrand} from 'react-native-device-info';
 var CurrentItemCount = 0;
 var count = 0;
 var localItemcount = 0;
-//
-var PrincipalPickerCatcher = '';
-var CategoryPickerCatcher = '';
-var BrandPickerCatcher = '';
-var VariantPickerCatcher = '';
-var ProductTypePickerCatcher = '';
-var PriceOptionPickerCatcher = '';
-
-//
 
 // var VariantListfromPicker = '';
 // var TypeListfromPicker = '';
@@ -103,7 +95,7 @@ export default function Inventory(props) {
 
   const [pleaseWaitMessage, setpleaseWaitMessage] = useState('Please wait...');
   //
-  const [arrPrincipalfromPicker, setarrPrincipalfromPicker] = useState('');
+  const [arrVendorfromPicker, setarrVendorfromPicker] = useState('');
   const [arrCategoryfromPicker, setarrCategoryfromPicker] = useState([]);
   const [arrBrandfromPicker, setarrBrandfromPicker] = useState([]);
   const [arrPriceOptionfromPicker, setarrPriceOptionfromPicker] = useState(
@@ -115,6 +107,7 @@ export default function Inventory(props) {
   );
   //
 
+  const [VendorPickerCatcherState, setVendorPickerCatcherState] = useState('');
   const [CategoryPickerCatcherState, setCategoryPickerCatcherState] = useState(
     '',
   );
@@ -427,7 +420,6 @@ export default function Inventory(props) {
     GetPrincipalList();
     GetLocalPromoItems(page);
   }, [globalState.dateTimeUpdated24hr]);
- 
 
   function GetLocalPromoItems(page) {
     var pageNumber = page * 50;
@@ -443,49 +435,78 @@ export default function Inventory(props) {
     var TotalAmount1 = 0;
 
     var PrincipalQuery = '';
-    if (PrincipalPickerCatcher === '' || PrincipalPickerCatcher === 'ALL') {
+    if (
+      VendorPickerCatcherState === '' ||
+      VendorPickerCatcherState === 'ALL' ||
+      VendorPickerCatcherState === null
+    ) {
       PrincipalQuery = '  principal_name like ' + "'%%' ";
     } else {
       PrincipalQuery =
-        ' principal_name = ' + "'" + PrincipalPickerCatcher + "'";
+        ' principal_name = ' + "'" + VendorPickerCatcherState + "'";
     }
 
     var CategoryQuery = '';
 
-    if (CategoryPickerCatcher === '' || CategoryPickerCatcher === 'ALL') {
+    if (
+      CategoryPickerCatcherState === '' ||
+      CategoryPickerCatcherState === 'ALL' ||
+      CategoryPickerCatcherState === null
+    ) {
       CategoryQuery = '  and product_category like ' + "'%%' ";
     } else {
       CategoryQuery =
-        ' and product_category = ' + "'" + CategoryPickerCatcher + "'";
+        ' and product_category = ' + "'" + CategoryPickerCatcherState + "'";
     }
 
     var BrandQuery = '';
 
-    if (BrandPickerCatcher === '' || BrandPickerCatcher === 'ALL') {
+    if (
+      BrandPickerCatcherState === '' ||
+      BrandPickerCatcherState === 'ALL' ||
+      BrandPickerCatcherState === null
+    ) {
       BrandQuery = '  and product_brand like ' + "'%%' ";
     } else {
-      BrandQuery = ' and product_brand = ' + "'" + BrandPickerCatcher + "'";
+      BrandQuery =
+        ' and product_brand = ' + "'" + BrandPickerCatcherState + "'";
     }
 
     var VariantQuery = '';
 
-    if (VariantPickerCatcher === '' || VariantPickerCatcher === 'ALL') {
+    if (
+      VariantPickerCatcherState === '' ||
+      VariantPickerCatcherState === 'ALL' ||
+      VariantPickerCatcherState === null
+    ) {
       VariantQuery = '  and product_variant like ' + "'%%' ";
     } else {
       VariantQuery =
-        ' and product_variant = ' + "'" + VariantPickerCatcher + "'";
+        ' and product_variant = ' + "'" + VariantPickerCatcherState + "'";
     }
 
     var PromoProductQuery = '';
 
-    if (ProductTypePickerCatcher === '' || ProductTypePickerCatcher === 'ALL') {
+    if (
+      ProductTypePickerCatcherState === '' ||
+      ProductTypePickerCatcherState === 'ALL' ||
+      ProductTypePickerCatcherState === null
+    ) {
       PromoProductQuery = '  and promo_product like ' + "'%%' ";
     } else {
       PromoProductQuery =
-        ' and promo_product = ' + "'" + ProductTypePickerCatcher + "'";
+        ' and promo_product = ' + "'" + ProductTypePickerCatcherState + "'";
     }
 
- 
+    console.log(
+      'SELECT * FROM promo_items_tbl where ' +
+        PrincipalQuery +
+        CategoryQuery +
+        BrandQuery +
+        VariantQuery +
+        PromoProductQuery +
+        ' order by principal_name, product_variant, product_name  ',
+    );
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM promo_items_tbl where ' +
@@ -494,7 +515,7 @@ export default function Inventory(props) {
           BrandQuery +
           VariantQuery +
           PromoProductQuery +
-          ' order by principal_name, product_variant, product_name   ',
+          ' order by principal_name, product_variant, product_name  ',
         [],
         (tx, results) => {
           var len = results.rows.length;
@@ -528,8 +549,8 @@ export default function Inventory(props) {
 
             var VendorShow = '';
             if (
-              PrincipalPickerCatcher === '' ||
-              PrincipalPickerCatcher === 'ALL'
+              VendorPickerCatcherState === '' ||
+              VendorPickerCatcherState === 'ALL'
             ) {
               VendorShow = 'ALL';
             } else {
@@ -538,8 +559,8 @@ export default function Inventory(props) {
 
             var CategoryShow = '';
             if (
-              CategoryPickerCatcher === '' ||
-              CategoryPickerCatcher === 'ALL'
+              CategoryPickerCatcherState === '' ||
+              CategoryPickerCatcherState === 'ALL'
             ) {
               CategoryShow = 'ALL';
             } else {
@@ -547,7 +568,10 @@ export default function Inventory(props) {
             }
 
             var BrandShow = '';
-            if (BrandPickerCatcher === '' || BrandPickerCatcher === 'ALL') {
+            if (
+              BrandPickerCatcherState === '' ||
+              BrandPickerCatcherState === 'ALL'
+            ) {
               BrandShow = 'ALL';
             } else {
               BrandShow = results.rows.item(0).product_brand;
@@ -596,7 +620,7 @@ export default function Inventory(props) {
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
             }
-            setarrPrincipalfromPicker(temp);
+            setarrVendorfromPicker(temp);
           } else {
             console.log('error getting principal list');
           }
@@ -605,33 +629,36 @@ export default function Inventory(props) {
     });
   }
 
-  function GetCategoryList() {
-    var category1 = '';
+  function GetCategoryList(value) {
+    // var category1 = '';
 
     const AllCategory = {
       label: 'ALL',
       value: 'ALL',
     };
 
-    var TwoRow = [];
-    const AllRow = {
-      label: 'ALL',
-      value: 'ALL',
-    };
+    // var TwoRow = [];
+    // const AllRow = {
+    //   label: 'ALL',
+    //   value: 'ALL',
+    // };
 
-    const BlankRow = {
-      label: '--',
-      value: '--',
-    };
+    // const BlankRow = {
+    //   label: '--',
+    //   value: '--',
+    // };
 
     var PrincipalQuery = '';
-    if (PrincipalPickerCatcher === 'ALL' || PrincipalPickerCatcher === '') {
+    if (value === 'ALL' || value === '' || value === null) {
       PrincipalQuery = '  principal_name like ' + "'%%' ";
     } else {
-      PrincipalQuery =
-        ' principal_name = ' + "'" + PrincipalPickerCatcher + "'";
+      PrincipalQuery = ' principal_name = ' + "'" + value + "'";
     }
-
+    console.log(
+      'SELECT Distinct product_category as label, product_category as value FROM promo_items_tbl where ' +
+        PrincipalQuery +
+        ' order by product_category',
+    );
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct product_category as label, product_category as value FROM promo_items_tbl where ' +
@@ -646,28 +673,31 @@ export default function Inventory(props) {
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
 
-              if (i === 0) {
-                category1 = results.rows.item(i).label;
-              }
+              // if (i === 0) {
+              //   category1 = results.rows.item(i).label;
+              // }
             }
             setarrCategoryfromPicker(temp);
-            setCategoryPickerCatcherState(category1);
-            setCategoryPickerCatcherState('ALL');
+            setarrBrandfromPicker([]);
+            setarrVariantfromPicker([]);
+            // setarrCategoryfromPicker(temp);
+            // setCategoryPickerCatcherState(category1);
+            // setCategoryPickerCatcherState('ALL');
             //////////////////////////////////
 
-            TwoRow.push(AllRow);
-            TwoRow.push(BlankRow);
+            // TwoRow.push(AllRow);
+            // TwoRow.push(BlankRow);
 
-            setarrBrandfromPicker(TwoRow);
+            // setarrBrandfromPicker(TwoRow);
 
-            setBrandPickerCatcherState('--');
-            setBrandPickerCatcherState('ALL');
-            //////////////////////////////////
+            // setBrandPickerCatcherState('--');
+            // setBrandPickerCatcherState('ALL');
+            // //////////////////////////////////
 
-            setarrVariantfromPicker(TwoRow);
+            // setarrVariantfromPicker(TwoRow);
 
-            setVariantPickerCatcherState('--');
-            setVariantPickerCatcherState('ALL');
+            // setVariantPickerCatcherState('--');
+            // setVariantPickerCatcherState('ALL');
           } else {
             console.log('error on 1G2tCategoryList');
           }
@@ -677,41 +707,37 @@ export default function Inventory(props) {
     });
   }
 
-  function GetBrandList() {
-    var brand1 = '';
-
+  function GetBrandList(value) {
     const AllBrand = {
       label: 'ALL',
       value: 'ALL',
     };
 
-    var TwoRow = [];
-    const AllRow = {
-      label: 'ALL',
-      value: 'ALL',
-    };
-
-    const BlankRow = {
-      label: '--',
-      value: '--',
-    };
-
     var PrincipalQuery = '';
-    if (PrincipalPickerCatcher === 'ALL' || PrincipalPickerCatcher === '') {
+    if (
+      VendorPickerCatcherState === 'ALL' ||
+      VendorPickerCatcherState === '' ||
+      VendorPickerCatcherState === null
+    ) {
       PrincipalQuery = '  principal_name like ' + "'%%' ";
     } else {
       PrincipalQuery =
-        ' principal_name = ' + "'" + PrincipalPickerCatcher + "'";
+        ' principal_name = ' + "'" + VendorPickerCatcherState + "'";
     }
 
     var CategoryQuery = '';
-    if (CategoryPickerCatcher === 'ALL' || CategoryPickerCatcher === '') {
+    if (value === 'ALL' || value === '' || value === null) {
       CategoryQuery = ' and  product_category like ' + "'%%' ";
     } else {
-      CategoryQuery =
-        ' and  product_category = ' + "'" + CategoryPickerCatcher + "'";
+      CategoryQuery = ' and  product_category = ' + "'" + value + "'";
     }
 
+    console.log(
+      'SELECT Distinct product_brand as label, product_brand as value FROM promo_items_tbl where ' +
+        PrincipalQuery +
+        CategoryQuery +
+        ' order by product_brand',
+    );
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct product_brand as label, product_brand as value FROM promo_items_tbl where ' +
@@ -726,24 +752,23 @@ export default function Inventory(props) {
             temp.push(AllBrand);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
-
-              if (i === 0) {
-                brand1 = results.rows.item(i).label;
-              }
             }
             setarrBrandfromPicker(temp);
 
-            setBrandPickerCatcherState(brand1);
-            setBrandPickerCatcherState('ALL');
-            //////////////////////////////////
+            setarrVariantfromPicker([]);
+            // setarrBrandfromPicker(temp);
 
-            TwoRow.push(AllRow);
-            TwoRow.push(BlankRow);
+            // setBrandPickerCatcherState(brand1);
+            // setBrandPickerCatcherState('ALL');
+            // //////////////////////////////////
 
-            setarrVariantfromPicker(TwoRow);
+            // TwoRow.push(AllRow);
+            // TwoRow.push(BlankRow);
 
-            setVariantPickerCatcherState('--');
-            setVariantPickerCatcherState('ALL');
+            // setarrVariantfromPicker(TwoRow);
+
+            // setVariantPickerCatcherState('--');
+            // setVariantPickerCatcherState('ALL');
           } else {
             console.log('error on GetBrandList');
           }
@@ -753,35 +778,49 @@ export default function Inventory(props) {
     });
   }
 
-  function GetVariantList() {
-    var variant1 = '';
+  function GetVariantList(value) {
     const AllVariant = {
       label: 'ALL',
       value: 'ALL',
     };
     var PrincipalQuery = '';
-    if (PrincipalPickerCatcher === 'ALL' || PrincipalPickerCatcher === '') {
+    if (
+      VendorPickerCatcherState === 'ALL' ||
+      VendorPickerCatcherState === '' ||
+      VendorPickerCatcherState === null
+    ) {
       PrincipalQuery = '  principal_name like ' + "'%%' ";
     } else {
       PrincipalQuery =
-        ' principal_name = ' + "'" + PrincipalPickerCatcher + "'";
+        ' principal_name = ' + "'" + VendorPickerCatcherState + "'";
     }
 
     var CategoryQuery = '';
-    if (CategoryPickerCatcher === 'ALL' || CategoryPickerCatcher === '') {
+    if (
+      CategoryPickerCatcherState === 'ALL' ||
+      CategoryPickerCatcherState === '' ||
+      CategoryPickerCatcherState === null
+    ) {
       CategoryQuery = ' and  product_category like ' + "'%%' ";
     } else {
       CategoryQuery =
-        ' and  product_category = ' + "'" + CategoryPickerCatcher + "'";
+        ' and  product_category = ' + "'" + CategoryPickerCatcherState + "'";
     }
 
     var BrandQuery = '';
-    if (BrandPickerCatcher === 'ALL' || BrandPickerCatcher === '') {
+    if (value === 'ALL' || value === '' || value === null) {
       BrandQuery = ' and  product_brand like ' + "'%%' ";
     } else {
-      BrandQuery = ' and  product_brand = ' + "'" + BrandPickerCatcher + "'";
+      BrandQuery = ' and  product_brand = ' + "'" + value + "'";
     }
 
+    console.log(
+      'SELECT Distinct product_variant as label, product_variant as value FROM promo_items_tbl where ' +
+        PrincipalQuery +
+        CategoryQuery +
+        BrandQuery +
+        ' order by product_brand',
+    );
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct product_variant as label, product_variant as value FROM promo_items_tbl where ' +
@@ -797,15 +836,12 @@ export default function Inventory(props) {
             temp.push(AllVariant);
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
-
-              if (i === 0) {
-                variant1 = results.rows.item(i).label;
-              }
             }
             setarrVariantfromPicker(temp);
+            // setarrVariantfromPicker(temp);
 
-            setVariantPickerCatcherState(variant1);
-            setVariantPickerCatcherState('ALL');
+            // setVariantPickerCatcherState(variant1);
+            // setVariantPickerCatcherState('ALL');
           } else {
             console.log('error on GetVariantList');
           }
@@ -1059,8 +1095,8 @@ export default function Inventory(props) {
               alignContent: 'center',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: moderateScale(18)}}>Please wait...  </Text>
-             <ActivityIndicator size="large" color="green" />
+            <Text style={{fontSize: moderateScale(18)}}>Please wait... </Text>
+            <ActivityIndicator size="large" color="green" />
           </View>
         </View>
       </View>
@@ -1817,12 +1853,10 @@ export default function Inventory(props) {
         console.log('PRESED imagelistmodal ON INDEX ' + Number(index));
         setPleaseWaitVisible(true);
         setcurrentIndex(setindexforImagelIst);
- 
 
         var secs = 0;
         const timerID = BackgroundTimer.setInterval(() => {
           secs = secs + 1;
-     
 
           if (secs === 1) {
             setPleaseWaitVisible(false);
@@ -2564,10 +2598,258 @@ export default function Inventory(props) {
             setisVisiblePriceOptionDropdownPicker(false);
           }}>
           <View style={styles.FilterHeightMax}>
-            <View style={{padding: 5}}>
-              <View style={{marginTop: moderateScale(20, 0.5)}}>
+            {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
+            <View paddingVertical={5} />
+            <View
+              style={{
+                marginHorizontal: 5,
+                justifyContent: 'space-around',
+                alignContent: 'space-between',
+              }}>
+              <Text>Vendor :</Text>
+            </View>
+            <View paddingVertical={1} />
+            <RNPickerSelect
+              placeholder={{
+                label: 'Select Vendor',
+                value: null,
+                color: 'green',
+              }}
+              items={arrVendorfromPicker}
+              onValueChange={(value) => {
+                setVendorPickerCatcherState(value);
+                GetCategoryList(value);
+              }}
+              style={{
+                iconContainer: {
+                  top: 10,
+                  right: 12,
+                },
+                inputAndroid: {
+                  borderColor: 'green',
+                  fontSize: scale(18),
+                  paddingHorizontal: 10,
+                  paddingVertical: 8,
+                  borderWidth: 0.5,
+                  borderRadius: 8,
+                  color: 'black',
+                  paddingRight: 30, // to ensure the text is never behind the icon
+                },
+              }}
+              value={VendorPickerCatcherState}
+              useNativeAndroidPickerStyle={false}
+              textInputProps={{underlineColor: 'yellow'}}
+              Icon={() => {
+                return <Icon name="md-arrow-down" size={24} color="gray" />;
+              }}
+            />
+            <View paddingVertical={2} />
+            {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
+
+            {/* CATEGORY ///////////////////////////////////////////////////////////////////////////////*/}
+            <View paddingVertical={5} />
+            <View
+              style={{
+                marginHorizontal: 5,
+                justifyContent: 'space-around',
+                alignContent: 'space-between',
+              }}>
+              <Text>Category :</Text>
+            </View>
+            <View paddingVertical={1} />
+            <RNPickerSelect
+              placeholder={{
+                label: 'Select Category',
+                value: null,
+                color: 'green',
+              }}
+              items={arrCategoryfromPicker}
+              onValueChange={(value) => {
+                setCategoryPickerCatcherState(value);
+                GetBrandList(value);
+              }}
+              style={{
+                iconContainer: {
+                  top: 10,
+                  right: 12,
+                },
+                inputAndroid: {
+                  borderColor: 'green',
+                  fontSize: scale(18),
+                  paddingHorizontal: 10,
+                  paddingVertical: 8,
+                  borderWidth: 0.5,
+                  borderRadius: 8,
+                  color: 'black',
+                  paddingRight: 30, // to ensure the text is never behind the icon
+                },
+              }}
+              value={CategoryPickerCatcherState}
+              useNativeAndroidPickerStyle={false}
+              textInputProps={{underlineColor: 'yellow'}}
+              Icon={() => {
+                return <Icon name="md-arrow-down" size={24} color="gray" />;
+              }}
+            />
+            <View paddingVertical={2} />
+            {/* CATEGORY ///////////////////////////////////////////////////////////////////////////////*/}
+            {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
+            <View paddingVertical={5} />
+            <View
+              style={{
+                marginHorizontal: 5,
+                justifyContent: 'space-around',
+                alignContent: 'space-between',
+              }}>
+              <Text>Brand :</Text>
+            </View>
+            <View paddingVertical={1} />
+            <RNPickerSelect
+              placeholder={{
+                label: 'Select Brand',
+                value: null,
+                color: 'green',
+              }}
+              items={arrBrandfromPicker}
+              onValueChange={(value) => {
+                setBrandPickerCatcherState(value);
+                GetVariantList(value);
+              }}
+              style={{
+                iconContainer: {
+                  top: 10,
+                  right: 12,
+                },
+                inputAndroid: {
+                  borderColor: 'green',
+                  fontSize: scale(18),
+                  paddingHorizontal: 10,
+                  paddingVertical: 8,
+                  borderWidth: 0.5,
+                  borderRadius: 8,
+                  color: 'black',
+                  paddingRight: 30, // to ensure the text is never behind the icon
+                },
+              }}
+              value={BrandPickerCatcherState}
+              useNativeAndroidPickerStyle={false}
+              textInputProps={{underlineColor: 'yellow'}}
+              Icon={() => {
+                return <Icon name="md-arrow-down" size={24} color="gray" />;
+              }}
+            />
+            <View paddingVertical={2} />
+            {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
+            {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
+            <View paddingVertical={5} />
+            <View
+              style={{
+                marginHorizontal: 5,
+                justifyContent: 'space-around',
+                alignContent: 'space-between',
+              }}>
+              <Text>Variant :</Text>
+            </View>
+            <View paddingVertical={1} />
+            <RNPickerSelect
+              placeholder={{
+                label: 'Select Variant',
+                value: null,
+                color: 'green',
+              }}
+              items={arrVariantfromPicker}
+              onValueChange={(value) => {
+                setVariantPickerCatcherState(value);
+              }}
+              style={{
+                iconContainer: {
+                  top: 10,
+                  right: 12,
+                },
+                inputAndroid: {
+                  borderColor: 'green',
+                  fontSize: scale(18),
+                  paddingHorizontal: 10,
+                  paddingVertical: 8,
+                  borderWidth: 0.5,
+                  borderRadius: 8,
+                  color: 'black',
+                  paddingRight: 30, // to ensure the text is never behind the icon
+                },
+              }}
+              value={VariantPickerCatcherState}
+              useNativeAndroidPickerStyle={false}
+              textInputProps={{underlineColor: 'yellow'}}
+              Icon={() => {
+                return <Icon name="md-arrow-down" size={24} color="gray" />;
+              }}
+            />
+            <View paddingVertical={2} />
+            {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
+ {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
+ <View paddingVertical={5} />
+            <View
+              style={{
+                marginHorizontal: 5,
+                justifyContent: 'space-around',
+                alignContent: 'space-between',
+              }}>
+              <Text>Type :</Text>
+            </View>
+            <View paddingVertical={1} />
+            <RNPickerSelect
+              placeholder={{
+                label: 'Select Variant',
+                value: null,
+                color: 'green',
+              }}
+              items={[
+                {
+                  label: 'ALL',
+                  value: 'ALL',
+                },
+                {
+                  label: 'Promo',
+                  value: 'Promo',
+                },
+                {
+                  label: 'Regular',
+                  value: 'Regular',
+                },
+              ]}
+              onValueChange={(value) => {
+                setProductTypePickerCatcherState(value);
+              }}
+              style={{
+                iconContainer: {
+                  top: 10,
+                  right: 12,
+                },
+                inputAndroid: {
+                  borderColor: 'green',
+                  fontSize: scale(18),
+                  paddingHorizontal: 10,
+                  paddingVertical: 8,
+                  borderWidth: 0.5,
+                  borderRadius: 8,
+                  color: 'black',
+                  paddingRight: 30, // to ensure the text is never behind the icon
+                },
+              }}
+              value={ProductTypePickerCatcherState}
+              useNativeAndroidPickerStyle={false}
+              textInputProps={{underlineColor: 'yellow'}}
+              Icon={() => {
+                return <Icon name="md-arrow-down" size={24} color="gray" />;
+              }}
+            />
+            <View paddingVertical={2} />
+            {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
+
+            {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
+            {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Vendor :</Text>
-                <DropDownPicker //  -----------------------------------------------//// VENDOR
+                <DropDownPicker  
                   placeholder={'ALL'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(490)}
@@ -2614,12 +2896,13 @@ export default function Inventory(props) {
                     GetCategoryList();
                   }}
                 />
-              </View>
-
-              {/* // ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-              <View style={{marginTop: moderateScale(20, 0.5)}}>
+              </View> */}
+            {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
+            {/*} CATEGORY ///////////////////////////////////////////////////////////////////////////////  */}
+            {/*              
+               <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Category :</Text>
-                <DropDownPicker //  -----------------------------------------------//// VENDOR
+                <DropDownPicker 
                   placeholder={'ALL'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(490)}
@@ -2664,12 +2947,13 @@ export default function Inventory(props) {
                     GetBrandList();
                   }}
                 />
-              </View>
+              </View> */}
 
-              {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-              <View style={{marginTop: moderateScale(20, 0.5)}}>
+            {/* CATEGORY ///////////////////////////////////////////////////////////////////////////////*/}
+            {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
+            {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Brand :</Text>
-                <DropDownPicker //  -----------------------------------------------//// VENDOR
+                <DropDownPicker  
                   placeholder={'ALL'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(490)}
@@ -2718,12 +3002,13 @@ export default function Inventory(props) {
                     GetVariantList();
                   }}
                 />
-              </View>
-              {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+              </View> */}
+            {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
+            {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
 
-              <View style={{marginTop: moderateScale(20, 0.5)}}>
+            {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Variant :</Text>
-                <DropDownPicker //  -----------------------------------------------//// VARIANT
+                <DropDownPicker  
                   placeholder={'ALL'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(530)}
@@ -2768,12 +3053,12 @@ export default function Inventory(props) {
                     }
                   }}
                 />
-              </View>
-
-              {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-              <View style={{marginTop: moderateScale(20, 0.5)}}>
+              </View> */}
+            {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
+            {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
+            {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Product Type :</Text>
-                <DropDownPicker //  -----------------------------------------------//// TYPE
+                <DropDownPicker  
                   placeholder={'ALL'}
                   style={{backgroundColor: '#F1F8F5'}}
                   dropDownMaxHeight={scale(430)}
@@ -2813,9 +3098,10 @@ export default function Inventory(props) {
                     setProductTypePickerCatcherState(itemValue.value);
                   }}
                 />
-              </View>
-              {/*  ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
-
+              </View> */}
+            {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
+            {/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
+            {/*              
               {global.sales_position_name === 'ALLSALESMAN' ? (
                 <View style={{marginTop: moderateScale(20, 0.5)}}>
                   <Text>Price Option :</Text>
@@ -2864,54 +3150,55 @@ export default function Inventory(props) {
                     // max={100}
                   />
                 </View>
-              ) : null}
-              <View>
+              ) : null} */}
+            {/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
+
+            <View>
+              <View
+                style={{
+                  flexDirection: 'column',
+                  marginTop: 5,
+                  alignItems: 'flex-end',
+                  marginRight: moderateScale(20),
+                }}>
                 <View
                   style={{
-                    flexDirection: 'column',
-                    marginTop: 5,
-                    alignItems: 'flex-end',
-                    marginRight: moderateScale(20),
+                    marginBottom: moderateScale(20, 0.5),
+                    marginTop: moderateScale(20, 0.5),
                   }}>
-                  <View
-                    style={{
-                      marginBottom: moderateScale(20, 0.5),
-                      marginTop: moderateScale(20, 0.5),
-                    }}>
-                    <FlatButton
-                      width={140}
-                      gradientFrom="red"
-                      gradientTo="pink"
-                      text="Filter"
-                      onPress={() => {
-                        setPleaseWaitVisible(true);
+                  <FlatButton
+                    width={140}
+                    gradientFrom="red"
+                    gradientTo="pink"
+                    text="Filter"
+                    onPress={() => {
+                      setPleaseWaitVisible(true);
 
-                        setpage(0);
-                        setisVisiblePrincipalDropdownPicker(false);
-                        setisVisibleVariantDropdownPicker(false);
-                        setisVisibleTypeDropdownPicker(false);
-                        setisVisibleCategoryDropdownPicker(false);
-                        setisVisibleBrandDropdownPicker(false);
-                        setisVisiblePriceOptionDropdownPicker(false);
+                      setpage(0);
+                      setisVisiblePrincipalDropdownPicker(false);
+                      setisVisibleVariantDropdownPicker(false);
+                      setisVisibleTypeDropdownPicker(false);
+                      setisVisibleCategoryDropdownPicker(false);
+                      setisVisibleBrandDropdownPicker(false);
+                      setisVisiblePriceOptionDropdownPicker(false);
 
-                        GetLocalPromoItems(page * 0);
-                        setisModalVisible2(false);
-                      }}
-                    />
-                  </View>
-                  <View>
-                    <FlatButton
-                      width={140}
-                      gradientFrom="red"
-                      gradientTo="pink"
-                      text="Close"
-                      onPress={() => {
-                        setisVisiblePrincipalDropdownPicker(false);
-                        setisVisibleVariantDropdownPicker(false);
-                        setisModalVisible2(false);
-                      }}
-                    />
-                  </View>
+                      GetLocalPromoItems(page * 0);
+                      setisModalVisible2(false);
+                    }}
+                  />
+                </View>
+                <View>
+                  <FlatButton
+                    width={140}
+                    gradientFrom="red"
+                    gradientTo="pink"
+                    text="Close"
+                    onPress={() => {
+                      setisVisiblePrincipalDropdownPicker(false);
+                      setisVisibleVariantDropdownPicker(false);
+                      setisModalVisible2(false);
+                    }}
+                  />
                 </View>
               </View>
             </View>
