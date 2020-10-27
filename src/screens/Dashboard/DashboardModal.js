@@ -15,13 +15,7 @@ import {
   FilterListMirror,
   CurrentDashboardScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
-import {
-  DashboardMonths,
-  DashboardYears,
-  DashboardTeams,
-  DashboardVendor,
-  PageVisited,
-} from '../../sharedComponents/globalCommands/globalCommands';
+import {PageVisited} from '../../sharedComponents/globalCommands/globalCommands';
 
 import {
   scale,
@@ -33,93 +27,188 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import FlatButton from '../../sharedComponents/custombutton';
 import moment from 'moment';
-import {dbperymtsat} from '../../database/sqliteSetup';
+import {
+  dbperprincipal,
+  dbperarea,
+  dbperymtsat,
+  dbinventory,
+  dbSalesmanNet,
+  dblastdatetimeupdated,
+  dbsystem_users,
+} from '../../database/sqliteSetup';
 import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/Ionicons';
 import PageContextGlobalDashboard from '../MainDrawerScreens/pagecontextGlobalDashboard';
 
 export default function DashboardModal(props) {
-  const [YearValue, setYearValue] = useState(
-    moment().utcOffset('+08:00').format('YYYY'),
-  );
-  const [MonthValue, setMonthValue] = useState(
-    moment().utcOffset('+08:00').format('MMMM'),
-  );
-  const [VendorValue, setVendorValue] = useState('');
-  const [TeamValue, setTeamValue] = useState('');
-
-  const [Months, setMonths] = useState(DashboardMonths);
-  const [Vendors, setVendors] = useState(DashboardVendor);
-  const [Teams, setTeams] = useState(DashboardTeams);
-
   const [GlobalDashboardfilter, setGlobalDashboardfilter] = useContext(
     PageContextGlobalDashboard,
   );
+  const [YearValue, setYearValue] = useState(GlobalDashboardfilter.YearValue);
+  const [MonthValue, setMonthValue] = useState(
+    GlobalDashboardfilter.MonthValue,
+  );
+  const [VendorValue, setVendorValue] = useState(
+    GlobalDashboardfilter.VendorValue,
+  );
+  const [TeamValue, setTeamValue] = useState(GlobalDashboardfilter.TeamValue);
 
-  const [isVisibleYear, setisVisibleYear] = useState(false);
-  const [isVisibleMonth, setisVisibleMonth] = useState(false);
-  const [isVisibleTeam, setisVisibleTeam] = useState(false);
-  const [isVisibleVendor, setisVisibleVendor] = useState(false);
-
-  const [arrMonth, setarrMonth] = useState(DashboardMonths);
-  const [MonthState, setMonthState] = useState('');
+  const [Months, setMonths] = useState([]);
+  const [Vendors, setVendors] = useState([]);
+  const [Teams, setTeams] = useState([]);
 
   useEffect(() => {
-    setVendors(DashboardVendor);
-  }, [DashboardVendor]);
-
-  useEffect(() => {
-    setTeams(DashboardTeams);
-  }, [DashboardTeams]);
+    GetVendorsforFilter();
+    GetTeamsforFilter();
+    // GetYearforFilter();
+    if (GlobalDashboardfilter.YearValue === '') {
+      GetMonthsforFilter(moment().utcOffset('+08:00').format('YYYY'));
+    } else {
+      GetMonthsforFilter(GlobalDashboardfilter.YearValue);
+    }
+  }, []);
 
   // useEffect(() => {
+  //   setTeams(DashboardTeams);
+  // }, [DashboardTeams]);
+
+  // useEffect(() => {teamqu
   //   Months.length = 0;
   //   setMonths(DashboardMonths);
   // }, [DashboardMonths]);
 
-  useEffect(() => {
-    if (GlobalDashboardfilter.YearValue !== '') {
-      var YearQuery = '';
-      if (GlobalDashboardfilter.YearValue === '') {
-        YearQuery =
-          '  business_year =  ' +
-          "'" +
-          moment().utcOffset('+08:00').format('YYYY') +
-          "'";
-      } else {
-        YearQuery =
-          ' business_year = ' + "'" + GlobalDashboardfilter.YearValue + "'";
-      }
+  // useEffect(() => {
+  //   if (GlobalDashboardfilter.YearValue !== '') {
+  //     GetMonthsforFilter();
+  //   }
+  // }, [GlobalDashboardfilter.YearValue]);
+  function GetVendorsforFilter() {
+    dbperprincipal.transaction((tx) => {
+      tx.executeSql(
+        'SELECT Distinct principal_name as label, principal_name as value FROM perprincipalpermonth_tbl ' +
+          ' where  business_year = 2020 ' +
+          ' order  by principal_name  ',
+        [],
+        (tx, results) => {
+          var temp = [];
+          var len = results.rows.length;
 
-      DashboardMonths.length = 0;
+          if (len > 1) {
+            temp.push({
+              label: 'ALL',
+              value: 'ALL',
+            });
+          }
 
-      console.log(
-        'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
-          ' where  ' +
-          YearQuery +
-          ' order  by invoice_date desc ',
-      );
-      dbperymtsat.transaction((tx) => {
-        tx.executeSql(
-          'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
-            ' where  ' +
-            YearQuery +
-            ' order  by invoice_date desc ',
-          [],
-          (tx, results) => {
-            var len = results.rows.length;
-            var temp = [];
-            if (len > 0) {
-              for (let i = 0; i < results.rows.length; ++i) {
-                temp.push(results.rows.item(i));
-              }
-              setMonths(temp);
+          if (len > 0) {
+            for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+              // DashboardVendor.push({
+              //   label: results.rows.item(i).label,
+              //   value: results.rows.item(i).value,
+              // });
             }
-          },
-        );
-      });
+            setVendors(temp);
+          }
+        },
+      );
+    });
+  }
+
+  function GetTeamsforFilter() {
+    dbperymtsat.transaction((tx) => {
+      tx.executeSql(
+        'SELECT Distinct team as label, team as value FROM perymtsat_tbl ' +
+          ' where  business_year = 2020 ' +
+          ' and team in ' +
+          global.TeamAccessList +
+          ' order  by team  ',
+        [],
+        (tx, results) => {
+          var len = results.rows.length;
+          var temp = [];
+          if (len > 1) {
+            temp.push({
+              label: 'ALL',
+              value: 'ALL',
+            });
+          }
+
+          if (len > 0) {
+            for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+            }
+            setTeams(temp);
+          }
+        },
+      );
+    });
+  }
+
+  function GetMonthsforFilter(value) {
+    var YearQuery = '';
+    if (value === '') {
+      YearQuery =
+        ' where  business_year = ' +
+        "'" +
+        moment().utcOffset('+08:00').format('YYYY') +
+        "'";
+    } else {
+      YearQuery = ' where business_year = ' + "'" + value + "'";
     }
-  }, [GlobalDashboardfilter.YearValue]);
+ 
+    dbperymtsat.transaction((tx) => {
+      tx.executeSql(
+        'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
+          YearQuery +
+          ' ORDER BY  invoice_date   desc ',
+        [],
+        (tx, results) => {
+          var temp = [];
+          var len = results.rows.length;
+          if (len > 0) {
+            for (let i = 0; i < results.rows.length; ++i) {
+              temp.push(results.rows.item(i));
+            
+              // DashboardMonths.push({
+              //   label: results.rows.item(i).label,
+              //   value: results.rows.item(i).value,
+              // });
+            }
+            setMonths(temp);
+          } else {
+            console.log('nmf');
+          }
+          SQLerror;
+        },
+      );
+    });
+  }
+
+  function GetYearforFilter() {
+    // console.log('years adding from START..');
+    dbperymtsat.transaction((tx) => {
+      tx.executeSql(
+        'SELECT Distinct business_year as label, business_year as value FROM perymtsat_tbl ' +
+          'order  by invoice_date desc ',
+        [],
+        (tx, results) => {
+          var len = results.rows.length;
+          if (len > 0) {
+            for (let i = 0; i < results.rows.length; ++i) {
+             
+              DashboardYears.push({
+                label: results.rows.item(i).label,
+                value: results.rows.item(i).value,
+              });
+            }
+            // console.log('YEARS LOADED');
+          }
+        },
+      );
+    });
+  }
+
   return (
     <Modal
       transparent={true}
@@ -175,12 +264,13 @@ export default function DashboardModal(props) {
                   },
                 ]}
                 onValueChange={(value) => {
-                  setGlobalDashboardfilter({
-                    ...GlobalDashboardfilter,
-                    YearValue: value,
-                    MonthValue: '',
-                  });
-
+                  // setGlobalDashboardfilter({
+                  //   ...GlobalDashboardfilter,
+                  //   YearValue: value,
+                  //   MonthValue: '',
+                  // });
+                  setYearValue(value);
+                  GetMonthsforFilter(value);
                   // setMonthValue('');
                   // setYearValue(value);
                   FilterListMirror.DashboardFilterYear = value;
@@ -201,7 +291,7 @@ export default function DashboardModal(props) {
                     paddingRight: 30, // to ensure the text is never behind the icon
                   },
                 }}
-                value={GlobalDashboardfilter.YearValue}
+                value={YearValue}
                 useNativeAndroidPickerStyle={false}
                 textInputProps={{underlineColor: 'yellow'}}
                 Icon={() => {
@@ -228,13 +318,9 @@ export default function DashboardModal(props) {
                 }}
                 items={Months}
                 onValueChange={(value) => {
-                  setGlobalDashboardfilter({
-                    ...GlobalDashboardfilter,
-                    MonthValue: value,
-                  });
-
                   // setMonthValue(value);
                   FilterListMirror.DashboardFilterMonth = value;
+                  setMonthValue(value);
                 }}
                 style={{
                   iconContainer: {
@@ -252,7 +338,7 @@ export default function DashboardModal(props) {
                     paddingRight: 30, // to ensure the text is never behind the icon
                   },
                 }}
-                value={GlobalDashboardfilter.MonthValue}
+                value={MonthValue}
                 useNativeAndroidPickerStyle={false}
                 textInputProps={{underlineColor: 'yellow'}}
                 Icon={() => {
@@ -279,11 +365,8 @@ export default function DashboardModal(props) {
                 }}
                 items={Vendors}
                 onValueChange={(value) => {
-                  // setVendorValue(value);
-                  setGlobalDashboardfilter({
-                    ...GlobalDashboardfilter,
-                    VendorValue: value,
-                  });
+                  setVendorValue(value);
+
                   FilterListMirror.DashboardFilterVendor = value;
                 }}
                 style={{
@@ -302,7 +385,7 @@ export default function DashboardModal(props) {
                     paddingRight: 30, // to ensure the text is never behind the icon
                   },
                 }}
-                value={GlobalDashboardfilter.VendorValue}
+                value={VendorValue}
                 useNativeAndroidPickerStyle={false}
                 textInputProps={{underlineColor: 'yellow'}}
                 Icon={() => {
@@ -329,10 +412,7 @@ export default function DashboardModal(props) {
                 }}
                 items={Teams}
                 onValueChange={(value) => {
-                  setGlobalDashboardfilter({
-                    ...GlobalDashboardfilter,
-                    TeamValue: value,
-                  });
+                  setTeamValue(value);
                   FilterListMirror.DashboardFilterTeam = value;
                 }}
                 style={{
@@ -351,7 +431,7 @@ export default function DashboardModal(props) {
                     paddingRight: 30, // to ensure the text is never behind the icon
                   },
                 }}
-                value={GlobalDashboardfilter.TeamValue}
+                value={TeamValue}
                 useNativeAndroidPickerStyle={false}
                 textInputProps={{underlineColor: 'yellow'}}
                 Icon={() => {
@@ -575,48 +655,71 @@ export default function DashboardModal(props) {
                   width={160}
                   text="Filter"
                   onPress={() => {
-                    if (FilterListMirror.DashboardFilterYear === '') {
-                      FilterListMirror.DashboardFilterYear =
-                        FilterList.DashboardFilterYear;
+                  
+                    if (FilterListMirror.DashboardFilterMonth === null) {
+                     
+                      Alert.alert(
+                        'System Message',
+                        'Please Select Month.',
+                        [
+                          {
+                            text: 'OK',
+                          },
+                        ],
+                        {cancelable: true},
+                      );
+                    } else {
+                      if (FilterListMirror.DashboardFilterYear === '') {
+                        FilterListMirror.DashboardFilterYear =
+                          FilterList.DashboardFilterYear;
+                      }
+                      if (FilterListMirror.DashboardFilterMonth === '') {
+                        FilterListMirror.DashboardFilterMonth =
+                          FilterList.DashboardFilterMonth;
+                      }
+                      if (FilterListMirror.DashboardFilterTeam === '') {
+                        FilterListMirror.DashboardFilterTeam =
+                          FilterList.DashboardFilterTeam;
+                      }
+
+                      if (FilterListMirror.DashboardFilterVendor === '') {
+                        FilterListMirror.DashboardFilterVendor =
+                          FilterList.DashboardFilterVendor;
+                      }
+
+                      PageVisited.PerTeamPAGE = 'NO';
+                      PageVisited.PerAreaPAGE = 'NO';
+                      PageVisited.PerSalesmanPAGE = 'NO';
+                      PageVisited.PerPrincipalPAGE = 'NO';
+
+                      FilterList.DashboardFilterYearNMonthTeamVendor =
+                        FilterListMirror.DashboardFilterYear +
+                        FilterListMirror.DashboardFilterMonth +
+                        FilterListMirror.DashboardFilterTeam +
+                        FilterListMirror.DashboardFilterVendor;
+
+                      FilterList.DashboardFilterYear =
+                        FilterListMirror.DashboardFilterYear;
+
+                      FilterList.DashboardFilterMonth =
+                        FilterListMirror.DashboardFilterMonth;
+
+                      FilterList.DashboardFilterTeam =
+                        FilterListMirror.DashboardFilterTeam;
+
+                      FilterList.DashboardFilterVendor =
+                        FilterListMirror.DashboardFilterVendor;
+
+                      setGlobalDashboardfilter({
+                        ...GlobalDashboardfilter,
+                        YearValue: FilterListMirror.DashboardFilterYear,
+                        MonthValue: FilterListMirror.DashboardFilterMonth,
+                        VendorValue: FilterListMirror.DashboardFilterVendor,
+                        TeamValue: FilterListMirror.DashboardFilterTeam,
+                      });
+
+                      props.closeDisplay();
                     }
-                    if (FilterListMirror.DashboardFilterMonth === '') {
-                      FilterListMirror.DashboardFilterMonth =
-                        FilterList.DashboardFilterMonth;
-                    }
-                    if (FilterListMirror.DashboardFilterTeam === '') {
-                      FilterListMirror.DashboardFilterTeam =
-                        FilterList.DashboardFilterTeam;
-                    }
-
-                    if (FilterListMirror.DashboardFilterVendor === '') {
-                      FilterListMirror.DashboardFilterVendor =
-                        FilterList.DashboardFilterVendor;
-                    }
-
-                    PageVisited.PerTeamPAGE = 'NO';
-                    PageVisited.PerAreaPAGE = 'NO';
-                    PageVisited.PerSalesmanPAGE = 'NO';
-                    PageVisited.PerPrincipalPAGE = 'NO';
-
-                    FilterList.DashboardFilterYearNMonthTeamVendor =
-                      FilterListMirror.DashboardFilterYear +
-                      FilterListMirror.DashboardFilterMonth +
-                      FilterListMirror.DashboardFilterTeam +
-                      FilterListMirror.DashboardFilterVendor;
-
-                    FilterList.DashboardFilterYear =
-                      FilterListMirror.DashboardFilterYear;
-
-                    FilterList.DashboardFilterMonth =
-                      FilterListMirror.DashboardFilterMonth;
-
-                    FilterList.DashboardFilterTeam =
-                      FilterListMirror.DashboardFilterTeam;
-
-                    FilterList.DashboardFilterVendor =
-                      FilterListMirror.DashboardFilterVendor;
-
-                    props.closeDisplay();
                   }}
                   gradientFrom="red"
                   gradientTo="pink"

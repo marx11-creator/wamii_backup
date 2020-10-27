@@ -240,7 +240,7 @@ export default function PerAreaDashboard(props) {
   useEffect(() => {
     props.navigation.addListener('focus', () => {
       console.log('focus on per area focus'); //
- 
+
       CurrentAppScreen.Screen = 'PerArea';
       if (PageVisited.PerAreaPAGE === 'NO') {
         PageVisited.PerAreaPAGE = 'YES';
@@ -293,7 +293,6 @@ export default function PerAreaDashboard(props) {
         //BUILD PRINCIPAL ACONYM
         temp.push(item.principal_acronym);
       });
-
 
       var tempSales = [];
       var firstContribution = 1;
@@ -503,7 +502,7 @@ export default function PerAreaDashboard(props) {
   function SearchPrincipal() {
     GetBottomPerAreaLocalData();
     setisVisibleFilterModal(false);
-  };
+  }
 
   //CENTER 4 SUMMARY                     >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -531,7 +530,7 @@ export default function PerAreaDashboard(props) {
       MonthQuery =
         ' and  business_month = ' + "'" + FilterList.DashboardFilterMonth + "'";
     }
- 
+
     var TeamQuery = '';
     if (
       FilterList.DashboardFilterTeam === '' ||
@@ -553,13 +552,13 @@ export default function PerAreaDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
-
     dbperarea.transaction((tx) => {
-       
       tx.executeSql(
         'SELECT business_year, business_month, province,   sum(sales) as sales1, sum(uba)  as uba FROM perareapermonth_tbl  where ' +
           YearQuery +
-          MonthQuery + TeamQuery + VendorQuery +
+          MonthQuery +
+          TeamQuery +
+          VendorQuery +
           ' group by business_year, business_month,  province' +
           ' ORDER BY CAST(sales1 AS UNSIGNED) desc  ',
         [],
@@ -588,8 +587,8 @@ export default function PerAreaDashboard(props) {
 
   return (
     // ===================================================================================================================
-    <View style={{flex: 1}}>
-      <Video
+    <View style={{flex: 1, backgroundColor: '#333333'}}>
+      {/* <Video
         rate={0.9}
         repeat={true}
         resizeMode="cover"
@@ -598,7 +597,7 @@ export default function PerAreaDashboard(props) {
         // onBuffer={this.onBuffer} // Callback when remote video is buffering
         onError={(Error) => console.log(Error)} // Callback when video cannot be loaded
         style={styles.backgroundVideo}
-      />
+      /> */}
       <ScrollView>
         <View style={{flexDirection: 'column'}}>
           <View
@@ -617,12 +616,8 @@ export default function PerAreaDashboard(props) {
 
             <TouchableOpacity
               onPress={() => {
-                {
-                  DashboardYears.length > 0
-                    ? (setisVisibleModalFilter(true),
-                      (CurrentDashboardScreen.Screen = 'PERAREA'))
-                    : null;
-                }
+                setisVisibleModalFilter(true);
+                CurrentDashboardScreen.Screen = 'PERAREA';
               }}>
               <Text
                 style={{

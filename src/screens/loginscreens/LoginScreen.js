@@ -565,7 +565,7 @@ const SignScreen = (props) => {
                 //    'FOR API  USE SALESMAN
 
                 if (global.PrincipalAccessList === '') {
-                  global.PrincipalAccessList = 'ALLSALESMAN';
+                  global.PrincipalAccessList = 'ALLPRINCIPAL';
                 } else {
                   global.PrincipalAccessList = global.PrincipalAccessList.slice(
                     0,

@@ -49,8 +49,6 @@ import {locales} from 'moment';
 import {
   CurrentDashboardScreen,
   FilterList,
-  DashboardYears,
-  DashboardMonths,
   CurrentAppScreen,
   LastDateTimeUpdated,
   hhmmss,
@@ -566,8 +564,8 @@ export default function PerTeamDashboard(props) {
 
   return (
     // ===================================================================================================================
-    <View style={{flex: 1}}>
-      <Video
+    <View style={{flex: 1, backgroundColor: '#333333'}}>
+      {/* <Video
         rate={1}
         repeat={true}
         resizeMode="cover"
@@ -576,7 +574,7 @@ export default function PerTeamDashboard(props) {
         // onBuffer={this.onBuffer} // Callback when remote video is buffering
         onError={(Error) => console.log(Error)} // Callback when video cannot be loaded
         style={styles.backgroundVideo}
-      />
+      /> */}
       <ScrollView>
         <View style={{flexDirection: 'column'}}>
           <View style={{margin: moderateScale(5), flex: 1}}>
@@ -601,12 +599,8 @@ export default function PerTeamDashboard(props) {
 
               <TouchableOpacity
                 onPress={() => {
-                  {
-                    DashboardYears.length > 0
-                      ? (setisVisibleModalFilter(true),
-                        (CurrentDashboardScreen.Screen = 'PERTEAM'))
-                      : null;
-                  }
+                  setisVisibleModalFilter(true),
+                    (CurrentDashboardScreen.Screen = 'PERTEAM');
                 }}>
                 <Text
                   style={{

@@ -34,7 +34,7 @@ import {
   ClearDefaults,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {
-  UpdateYearMonthsFilter,
+  GetDateTime,
   globalStatus,
   OtherSettings,
 } from '../../sharedComponents/globalCommands/globalCommands';
@@ -308,7 +308,7 @@ export default function Home(props) {
     props.navigation.addListener('focus', () => {
       console.log('focus on per Home1');
       CurrentAppScreen.Screen = 'Home';
-      UpdateYearMonthsFilter();
+      GetDateTime();
       //props.navigation.navigate('Inventory');
     });
   }, []);
@@ -662,7 +662,7 @@ export default function Home(props) {
           </Text>
         </View> */}
           </View>
-          {localSeconds === 200 ? <UpdateModal /> : null}
+          {localSeconds === 2 ? <UpdateModal /> : null}
         </View>
       </ScrollView>
     </ImageOverlay>

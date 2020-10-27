@@ -382,8 +382,6 @@ export default function PerSalesmanDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
-  
-
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT (sum(amount) / 1000000) as amount FROM perymtsat_tbl ' +
@@ -598,7 +596,6 @@ export default function PerSalesmanDashboard(props) {
         ' and principal_name = ' + "'" + FilterList.DashboardFilterVendor + "'";
     }
 
- 
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT salesman_name , position_name , sum(amount) as sales, sum(target) as target,  ' +
@@ -653,7 +650,8 @@ export default function PerSalesmanDashboard(props) {
               marginVertical: 0,
               marginLeft: 5,
             }}>
-            <View style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
+            <View
+              style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
               <View style={{flex: 1, backgroundColor: 'transparnt'}}>
                 <Text
                   style={{
@@ -670,12 +668,14 @@ export default function PerSalesmanDashboard(props) {
                     fontSize: moderateScale(12, 0.5),
                     color: '#ffffff',
                   }}>
-                {FilterList.DashboardFilterVendor === '' ? 'ALL': 
-               FilterList.DashboardFilterVendor }
+                  {FilterList.DashboardFilterVendor === ''
+                    ? 'ALL'
+                    : FilterList.DashboardFilterVendor}
                 </Text>
               </View>
             </View>
-            <View style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
+            <View
+              style={{backgroundColor: 'transparent', flexDirection: 'row'}}>
               <View style={{flex: 1, backgroundColor: 'transparent'}}>
                 <Text
                   style={{
@@ -692,8 +692,9 @@ export default function PerSalesmanDashboard(props) {
                     fontSize: moderateScale(12, 0.5),
                     color: '#ffffff',
                   }}>
-                  {FilterList.DashboardFilterTeam === '' ? 'ALL': 
-               FilterList.DashboardFilterTeam }
+                  {FilterList.DashboardFilterTeam === ''
+                    ? 'ALL'
+                    : FilterList.DashboardFilterTeam}
                 </Text>
               </View>
             </View>
@@ -707,8 +708,8 @@ export default function PerSalesmanDashboard(props) {
 
   return (
     // ===================================================================================================================
-    <View style={styles.container}>
-      <Video
+    <View style={[styles.container, {backgroundColor: '#333333'}]}>
+      {/* <Video
         rate={0.9}
         repeat={true}
         resizeMode="cover"
@@ -717,7 +718,7 @@ export default function PerSalesmanDashboard(props) {
         // onBuffer={this.onBuffer} // Callback when remote video is buffering
         onError={(Error) => console.log(Error)} // Callback when video cannot be loaded
         style={styles.backgroundVideo}
-      />
+      /> */}
       <ScrollView>
         <View
           style={{
@@ -733,12 +734,8 @@ export default function PerSalesmanDashboard(props) {
 
           <TouchableOpacity
             onPress={() => {
-              {
-                DashboardYears.length > 0
-                  ? (setisVisibleModalFilter(true),
-                    (CurrentDashboardScreen.Screen = 'PERSALESMAN'))
-                  : null;
-              }
+              setisVisibleModalFilter(true);
+              CurrentDashboardScreen.Screen = 'PERSALESMAN';
             }}>
             <Text
               style={{

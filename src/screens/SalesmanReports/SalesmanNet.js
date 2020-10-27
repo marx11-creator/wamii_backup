@@ -565,12 +565,8 @@ export default function ViewScreen(props) {
             <View style={{alignItems: 'center'}}>
               <TouchableOpacity
                 onPress={() => {
-                  {
-                    DashboardYears.length > 0
-                      ? (setisVisibleModalFilter(true),
-                        (CurrentDashboardScreen.Screen = 'PERSALESMANNET'))
-                      : null;
-                  }
+                  setisVisibleModalFilter(true);
+                  CurrentDashboardScreen.Screen = 'PERSALESMANNET';
                 }}>
                 <Text style={{fontSize: 20, color: '#FAF0E6'}}>
                   {FilterList.DashboardFilterMonth}{' '}
@@ -649,6 +645,23 @@ export default function ViewScreen(props) {
               Last Update {LastDateTimeUpdated.value} {' ||   '}
             </Text>
             <Text
+              style={{
+                color: 'white',
+                fontSize: moderateScale(12, 0.5),
+                alignContent: 'flex-end',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+              }}>
+              {globalTimer.lastUpdate}{' '}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text
                 style={{
                   color: 'white',
                   fontSize: moderateScale(12, 0.5),
@@ -656,42 +669,25 @@ export default function ViewScreen(props) {
                   alignItems: 'flex-end',
                   justifyContent: 'flex-end',
                 }}>
-                {globalTimer.lastUpdate}{' '}
-              </Text>
-            <View
-                style={{
-                  flexDirection: 'row',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
- 
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                  }}>
-                  {globalState.updateStatus === 'Updating' ||
-                  globalState.updateStatus === 'Start' ? (
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: moderateScale(12, 0.5),
-                        alignContent: 'flex-end',
-                        alignItems: 'flex-end',
-                        justifyContent: 'flex-end',
-                      }}>
-                      {'>> '}{'Updating...'}{' '}
-                      {globalState.updatePercentage > 0
-                        ? globalState.updatePercentage + ' %'
-                        : ''}
-                    </Text>
-                  ) : null}
+                {globalState.updateStatus === 'Updating' ||
+                globalState.updateStatus === 'Start' ? (
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {'>> '}
+                    {'Updating...'}{' '}
+                    {globalState.updatePercentage > 0
+                      ? globalState.updatePercentage + ' %'
+                      : ''}
+                  </Text>
+                ) : null}
 
-                  {/* <Text
+                {/* <Text
                         style={{
                           color: 'white',
                           fontSize: moderateScale(12, 0.5),
@@ -701,8 +697,8 @@ export default function ViewScreen(props) {
                         }}>
                         {hhmmss(900 - globalStatus.CurrentSeconds)}
                       </Text> */}
-                </Text>
-              </View>
+              </Text>
+            </View>
           </View>
           <View style={{flex: 1.5, flexDirection: 'row', padding: 10}}>
             <View style={{flex: 1, flexDirection: 'column'}}>

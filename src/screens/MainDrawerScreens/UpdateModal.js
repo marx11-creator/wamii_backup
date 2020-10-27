@@ -33,7 +33,6 @@ import {CommonActions} from '@react-navigation/native';
 import moment from 'moment';
 import {
   APIToken,
-  UpdateYearMonthsFilter,
   server,
   globalCompany,
   globalStatus,
@@ -232,7 +231,7 @@ export default function UpdateModal(props) {
       globalStatus.updateMode = 'auto';
 
       globalStatus.updateStatus = 'Idle';
- 
+
       setglobalState({
         ...globalState,
         updateStatus: 'Idle',
@@ -776,7 +775,6 @@ export default function UpdateModal(props) {
   }
 
   const GetPerymtsatAPIData = () => {
-
     updateProgress = Number(updateProgress) + Number(9);
     setglobalState({
       ...globalState,
@@ -798,10 +796,12 @@ export default function UpdateModal(props) {
 
     //DONE1
     //8
-    console.log(server.server_address +
-      globalCompany.company +
-      'persalesmansalestarget?' +
-      tempstr1)
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'persalesmansalestarget?' +
+        tempstr1,
+    );
     Promise.race([
       fetch(
         server.server_address +
@@ -994,7 +994,6 @@ export default function UpdateModal(props) {
           updatePercentage: updateProgress,
         });
 
-        UpdateYearMonthsFilter();
         setq1Principal(true);
         // console.log('6 ' + 'DONE SAVING SavePerymtsatAPIData ');
       }
@@ -1233,10 +1232,12 @@ export default function UpdateModal(props) {
       principal_id;
     //10
 
-    console.log( server.server_address +
-      globalCompany.company +
-      'perareasalesuba?' +
-      tempstr2)
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'perareasalesuba?' +
+        tempstr2,
+    );
     Promise.race([
       fetch(
         server.server_address +
@@ -1890,9 +1891,6 @@ export default function UpdateModal(props) {
   };
 
   let fetch_per_customer_data = () => {
-    console.log(
-      server.server_address + 'sales_tbl/salesmanfilterddaterange?' + tempstr1,
-    );
     if (Object.keys(prev_month.toString()).length === 1) {
       var get_date_from = year + '-0' + prev_month + '-' + '01';
     } else if (Object.keys(prev_month.toString()).length === 2) {
@@ -1917,6 +1915,11 @@ export default function UpdateModal(props) {
       'date_to=' +
       get_date_to;
     //3
+
+    console.log(
+      server.server_address + 'sales_tbl/salesmanfilterddaterange?' + tempstr1,
+    );
+
     Promise.race([
       fetch(
         server.server_address +
