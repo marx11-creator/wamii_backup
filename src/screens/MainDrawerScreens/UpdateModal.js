@@ -776,7 +776,6 @@ export default function UpdateModal(props) {
   }
 
   const GetPerymtsatAPIData = () => {
-
     updateProgress = Number(updateProgress) + Number(9);
     setglobalState({
       ...globalState,
@@ -798,10 +797,12 @@ export default function UpdateModal(props) {
 
     //DONE1
     //8
-    console.log(server.server_address +
-      globalCompany.company +
-      'persalesmansalestarget?' +
-      tempstr1)
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'persalesmansalestarget?' +
+        tempstr1,
+    );
     Promise.race([
       fetch(
         server.server_address +
@@ -1234,10 +1235,12 @@ export default function UpdateModal(props) {
       principal_id;
     //10
 
-    console.log( server.server_address +
-      globalCompany.company +
-      'perareasalesuba?' +
-      tempstr2)
+    console.log(
+      server.server_address +
+        globalCompany.company +
+        'perareasalesuba?' +
+        tempstr2,
+    );
     Promise.race([
       fetch(
         server.server_address +

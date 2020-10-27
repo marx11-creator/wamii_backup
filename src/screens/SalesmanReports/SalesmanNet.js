@@ -268,7 +268,7 @@ export default function ViewScreen(props) {
       var DateTo = YearQuery + '-' + MonthQuery + '-' + '31';
 
       tx.executeSql(
-        'SELECT invoice_date, account_customer_name, principal_name, SUM(sales) AS sales, invoice_status_final FROM tbl_sales_per_customer WHERE invoice_date BETWEEN  ' +
+        'SELECT * FROM (SELECT invoice_date, account_customer_name, principal_name, SUM(sales) AS sales, invoice_status_final FROM tbl_sales_per_customer WHERE invoice_date BETWEEN  ' +
           "'" +
           DateFrom +
           "'" +
@@ -276,7 +276,7 @@ export default function ViewScreen(props) {
           "'" +
           DateTo +
           "'" +
-          '  GROUP BY invoice_date, account_customer_name, principal_name ORDER BY account_customer_name ASC',
+          '  GROUP BY invoice_date, account_customer_name, principal_name ORDER BY invoice_date DESC) as sortinvoicedate ORDER BY sortinvoicedate.account_customer_name ASC',
         [],
         (tx, results) => {
           var temp = [];
