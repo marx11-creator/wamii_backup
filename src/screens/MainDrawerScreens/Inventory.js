@@ -60,6 +60,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import BackgroundTimer from 'react-native-background-timer';
 import RNPickerSelect from 'react-native-picker-select';
 import {getBrand} from 'react-native-device-info';
+import { cos } from 'react-native-reanimated';
 var CurrentItemCount = 0;
 var count = 0;
 var localItemcount = 0;
@@ -497,16 +498,7 @@ export default function Inventory(props) {
       PromoProductQuery =
         ' and promo_product = ' + "'" + ProductTypePickerCatcherState + "'";
     }
-
-    console.log(
-      'SELECT * FROM promo_items_tbl where ' +
-        PrincipalQuery +
-        CategoryQuery +
-        BrandQuery +
-        VariantQuery +
-        PromoProductQuery +
-        ' order by principal_name, product_variant, product_name  ',
-    );
+ 
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM promo_items_tbl where ' +
@@ -515,7 +507,7 @@ export default function Inventory(props) {
           BrandQuery +
           VariantQuery +
           PromoProductQuery +
-          ' order by principal_name, product_variant, product_name  ',
+          ' order by principal_name, product_variant, product_name limit 3  ',
         [],
         (tx, results) => {
           var len = results.rows.length;
@@ -550,7 +542,8 @@ export default function Inventory(props) {
             var VendorShow = '';
             if (
               VendorPickerCatcherState === '' ||
-              VendorPickerCatcherState === 'ALL'
+              VendorPickerCatcherState === 'ALL'||
+              VendorPickerCatcherState === null
             ) {
               VendorShow = 'ALL';
             } else {
@@ -560,7 +553,8 @@ export default function Inventory(props) {
             var CategoryShow = '';
             if (
               CategoryPickerCatcherState === '' ||
-              CategoryPickerCatcherState === 'ALL'
+              CategoryPickerCatcherState === 'ALL'||
+              CategoryPickerCatcherState === null
             ) {
               CategoryShow = 'ALL';
             } else {
@@ -570,7 +564,8 @@ export default function Inventory(props) {
             var BrandShow = '';
             if (
               BrandPickerCatcherState === '' ||
-              BrandPickerCatcherState === 'ALL'
+              BrandPickerCatcherState === 'ALL'||
+              BrandPickerCatcherState === null
             ) {
               BrandShow = 'ALL';
             } else {
@@ -654,11 +649,7 @@ export default function Inventory(props) {
     } else {
       PrincipalQuery = ' principal_name = ' + "'" + value + "'";
     }
-    console.log(
-      'SELECT Distinct product_category as label, product_category as value FROM promo_items_tbl where ' +
-        PrincipalQuery +
-        ' order by product_category',
-    );
+ 
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct product_category as label, product_category as value FROM promo_items_tbl where ' +
@@ -732,12 +723,7 @@ export default function Inventory(props) {
       CategoryQuery = ' and  product_category = ' + "'" + value + "'";
     }
 
-    console.log(
-      'SELECT Distinct product_brand as label, product_brand as value FROM promo_items_tbl where ' +
-        PrincipalQuery +
-        CategoryQuery +
-        ' order by product_brand',
-    );
+ 
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct product_brand as label, product_brand as value FROM promo_items_tbl where ' +
@@ -1371,7 +1357,9 @@ export default function Inventory(props) {
               fontFamily: 'Lato-Bold',
             }}>
             {PriceOptionPickerCatcherState === '' ||
-            PriceOptionPickerCatcherState === 'Booking'
+            PriceOptionPickerCatcherState === 'Booking' ||
+            PriceOptionPickerCatcherState === 'ALL' ||
+            PriceOptionPickerCatcherState === null
               ? '₱' +
                 numbro(Number(item.PCS_BOOKING)).format({
                   thousandSeparated: true,
@@ -1920,7 +1908,9 @@ export default function Inventory(props) {
                   //FOR FLATLIST
                   style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
                   {PriceOptionPickerCatcherState === '' ||
-                  PriceOptionPickerCatcherState === 'Booking'
+                  PriceOptionPickerCatcherState === 'Booking' ||
+                  PriceOptionPickerCatcherState === 'ALL' ||
+                  PriceOptionPickerCatcherState === null
                     ? '₱' +
                       numbro(Number(item.PCS_BOOKING)).format({
                         thousandSeparated: true,
@@ -3172,6 +3162,7 @@ export default function Inventory(props) {
                     gradientTo="pink"
                     text="Filter"
                     onPress={() => {
+                      console.log(CategoryPickerCatcherState);
                       setPleaseWaitVisible(true);
 
                       setpage(0);

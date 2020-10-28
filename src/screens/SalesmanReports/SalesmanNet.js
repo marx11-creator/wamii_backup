@@ -82,7 +82,7 @@ export default function ViewScreen(props) {
       push_sales_per_category();
       setfocus_int(1);
     }
-  }, [FilterList.DashboardFilterYearNMonthTeam]);
+  }, [FilterList.DashboardFilterYearNMonthTeamVendor]);
 
   useEffect(() => {
     console.log('focus on per MARC from update'); //

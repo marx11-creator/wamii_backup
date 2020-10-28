@@ -14,6 +14,7 @@ import {
   FilterList,
   FilterListMirror,
   CurrentDashboardScreen,
+  CurrentAppScreen,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import {PageVisited} from '../../sharedComponents/globalCommands/globalCommands';
 
@@ -156,7 +157,7 @@ export default function DashboardModal(props) {
     } else {
       YearQuery = ' where business_year = ' + "'" + value + "'";
     }
- 
+
     dbperymtsat.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct business_month as label, business_month as value FROM perymtsat_tbl ' +
@@ -169,7 +170,7 @@ export default function DashboardModal(props) {
           if (len > 0) {
             for (let i = 0; i < results.rows.length; ++i) {
               temp.push(results.rows.item(i));
-            
+
               // DashboardMonths.push({
               //   label: results.rows.item(i).label,
               //   value: results.rows.item(i).value,
@@ -196,7 +197,6 @@ export default function DashboardModal(props) {
           var len = results.rows.length;
           if (len > 0) {
             for (let i = 0; i < results.rows.length; ++i) {
-             
               DashboardYears.push({
                 label: results.rows.item(i).label,
                 value: results.rows.item(i).value,
@@ -348,98 +348,108 @@ export default function DashboardModal(props) {
               <View paddingVertical={5} />
               {/* MONTH >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
               {/* VENDORS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
-              <View
-                style={{
-                  marginHorizontal: 5,
-                  justifyContent: 'space-around',
-                  alignContent: 'space-between',
-                }}>
-                <Text>Vendor :</Text>
-              </View>
-              <View paddingVertical={2} />
-              <RNPickerSelect
-                placeholder={{
-                  label: 'Select Vendor',
-                  value: null,
-                  color: 'green',
-                }}
-                items={Vendors}
-                onValueChange={(value) => {
-                  setVendorValue(value);
 
-                  FilterListMirror.DashboardFilterVendor = value;
-                }}
-                style={{
-                  iconContainer: {
-                    top: 10,
-                    right: 12,
-                  },
-                  inputAndroid: {
-                    borderColor: 'green',
-                    fontSize: 16,
-                    paddingHorizontal: 10,
-                    paddingVertical: 8,
-                    borderWidth: 0.5,
-                    borderRadius: 8,
-                    color: 'black',
-                    paddingRight: 30, // to ensure the text is never behind the icon
-                  },
-                }}
-                value={VendorValue}
-                useNativeAndroidPickerStyle={false}
-                textInputProps={{underlineColor: 'yellow'}}
-                Icon={() => {
-                  return <Icon name="md-arrow-down" size={24} color="gray" />;
-                }}
-              />
-              <View paddingVertical={5} />
-              {/* VENDORS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
-              {/* TEAMS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
-              <View
-                style={{
-                  marginHorizontal: 5,
-                  justifyContent: 'space-around',
-                  alignContent: 'space-between',
-                }}>
-                <Text>Teams :</Text>
-              </View>
-              <View paddingVertical={2} />
-              <RNPickerSelect
-                placeholder={{
-                  label: 'Select Team',
-                  value: null,
-                  color: 'green',
-                }}
-                items={Teams}
-                onValueChange={(value) => {
-                  setTeamValue(value);
-                  FilterListMirror.DashboardFilterTeam = value;
-                }}
-                style={{
-                  iconContainer: {
-                    top: 10,
-                    right: 12,
-                  },
-                  inputAndroid: {
-                    borderColor: 'green',
-                    fontSize: 16,
-                    paddingHorizontal: 10,
-                    paddingVertical: 8,
-                    borderWidth: 0.5,
-                    borderRadius: 8,
-                    color: 'black',
-                    paddingRight: 30, // to ensure the text is never behind the icon
-                  },
-                }}
-                value={TeamValue}
-                useNativeAndroidPickerStyle={false}
-                textInputProps={{underlineColor: 'yellow'}}
-                Icon={() => {
-                  return <Icon name="md-arrow-down" size={24} color="gray" />;
-                }}
-              />
-              <View paddingVertical={5} />
-              {/* TEAMS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
+              {CurrentAppScreen.Screen === 'SalesmanNet' ? null : (
+                <View>
+                  <View
+                    style={{
+                      marginHorizontal: 5,
+                      justifyContent: 'space-around',
+                      alignContent: 'space-between',
+                    }}>
+                    <Text>Vendor :</Text>
+                  </View>
+                  <View paddingVertical={2} />
+                  <RNPickerSelect
+                    placeholder={{
+                      label: 'Select Vendor',
+                      value: null,
+                      color: 'green',
+                    }}
+                    items={Vendors}
+                    onValueChange={(value) => {
+                      setVendorValue(value);
+
+                      FilterListMirror.DashboardFilterVendor = value;
+                    }}
+                    style={{
+                      iconContainer: {
+                        top: 10,
+                        right: 12,
+                      },
+                      inputAndroid: {
+                        borderColor: 'green',
+                        fontSize: 16,
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        borderWidth: 0.5,
+                        borderRadius: 8,
+                        color: 'black',
+                        paddingRight: 30, // to ensure the text is never behind the icon
+                      },
+                    }}
+                    value={VendorValue}
+                    useNativeAndroidPickerStyle={false}
+                    textInputProps={{underlineColor: 'yellow'}}
+                    Icon={() => {
+                      return (
+                        <Icon name="md-arrow-down" size={24} color="gray" />
+                      );
+                    }}
+                  />
+                  <View paddingVertical={5} />
+                  {/* VENDORS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
+                  {/* TEAMS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
+                  <View
+                    style={{
+                      marginHorizontal: 5,
+                      justifyContent: 'space-around',
+                      alignContent: 'space-between',
+                    }}>
+                    <Text>Teams :</Text>
+                  </View>
+                  <View paddingVertical={2} />
+                  <RNPickerSelect
+                    placeholder={{
+                      label: 'Select Team',
+                      value: null,
+                      color: 'green',
+                    }}
+                    items={Teams}
+                    onValueChange={(value) => {
+                      setTeamValue(value);
+                      FilterListMirror.DashboardFilterTeam = value;
+                    }}
+                    style={{
+                      iconContainer: {
+                        top: 10,
+                        right: 12,
+                      },
+                      inputAndroid: {
+                        borderColor: 'green',
+                        fontSize: 16,
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        borderWidth: 0.5,
+                        borderRadius: 8,
+                        color: 'black',
+                        paddingRight: 30, // to ensure the text is never behind the icon
+                      },
+                    }}
+                    value={TeamValue}
+                    useNativeAndroidPickerStyle={false}
+                    textInputProps={{underlineColor: 'yellow'}}
+                    Icon={() => {
+                      return (
+                        <Icon name="md-arrow-down" size={24} color="gray" />
+                      );
+                    }}
+                  />
+                  <View paddingVertical={5} />
+                  {/* TEAMS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/}
+                </View>
+              )}
+
               {/* <View
                 style={{
                   //                                                 YEAR >>>>>>>>>>>>>>>>
@@ -655,9 +665,7 @@ export default function DashboardModal(props) {
                   width={160}
                   text="Filter"
                   onPress={() => {
-                  
                     if (FilterListMirror.DashboardFilterMonth === null) {
-                     
                       Alert.alert(
                         'System Message',
                         'Please Select Month.',
