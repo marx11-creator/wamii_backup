@@ -228,10 +228,6 @@ export default function BusinessCalendar(props) {
     if (currIndex === selectedDays.length) {
       var YEAR_MONTH_FILTER =
         'year=' + YearToSearch + '&' + 'month=' + MonthToSearch;
-console.log(server.server_address +
-  globalCompany.company +
-  'business_calendar/update?' +
-  YEAR_MONTH_FILTER)
       Promise.race([
         fetch(
           server.server_address +
@@ -408,8 +404,7 @@ console.log(server.server_address +
           });
 
           if (CurrIndex === jsonData.length) {
-            console.log(BusinessCalendarString);
-
+           
             dbBusinessCalendar.transaction(function (tx) {
               tx.executeSql(
                 'Delete from business_calendar_tbl   ',
@@ -766,10 +761,10 @@ console.log(server.server_address +
               width={160}
               text={isEditing ? 'UPDATE' : 'EDIT'}
               onPress={() => {
-                if (global.account_type === 'User') {
+                if (global.account_type === 'Administrator') {
                   if (isEditing === false) {
                     setisMonthMoveEnabled(1);
-                    console.log(BusinessCalendarField.update_version);
+                   
                     setisVisibleCaldendarModal(true);
                     setModalMessage('Checking for updates...');
                     BusinessCalendarEdit();
