@@ -30,14 +30,14 @@ export default function SalesperCustomer() {
   let [FlatVendor, setFlatVendor] = useState([]);
 
   useEffect(() => {
-    console.log('focus on per Customer Screen');
+    //console.log('focus on per Customer Screen');
     CurrentAppScreen.Screen = 'SalesperCustomer';
     push_sales_per_customer();
   }, []);
 
   useEffect(() => {
     if (CurrentDashboardScreen.Screen === 'PERCUSTOMER') {
-      console.log('CHANGE TRIGGERED');
+      //console.log('CHANGE TRIGGERED');
       push_sales_per_customer();
     }
   }, [FilterList.DashboardFilterYearNMonthTeam]);
@@ -46,7 +46,7 @@ export default function SalesperCustomer() {
     //console.log(FilterList.DashboardFilterYear);
     //console.log(FilterList.DashboardFilterMonth);
 
-    console.log('run');
+    //console.log('run');
 
     var YearQuery = '';
     if (FilterList.DashboardFilterYear === '') {
@@ -92,7 +92,7 @@ export default function SalesperCustomer() {
       var DateFrom = YearQuery + '-' + MonthQuery + '-' + '01';
       var DateTo = YearQuery + '-' + MonthQuery + '-' + '31';
 
-      console.log(DateFrom + ' ' + DateTo);
+      //console.log(DateFrom + ' ' + DateTo);
 
       tx.executeSql(
         'SELECT invoice_date, account_customer_name, principal_name, SUM(sales) AS sales FROM tbl_sales_per_customer WHERE invoice_date BETWEEN  ' +
@@ -141,7 +141,7 @@ export default function SalesperCustomer() {
           <Text
             style={{
               fontSize: moderateScale(15, 0.5),
-              color: '#FFFFFF',
+              color: 'rgba(0, 0, 0, 0.7)',
               marginLeft: 10,
               fontWeight: 'normal',
               alignSelf: 'flex-start',
@@ -153,7 +153,7 @@ export default function SalesperCustomer() {
           <Text
             style={{
               fontSize: moderateScale(15, 0.5),
-              color: '#FFFFFF',
+              color: 'rgba(0, 0, 0, 0.7)',
               fontWeight: 'normal',
               alignSelf: 'center',
             }}>
@@ -164,18 +164,18 @@ export default function SalesperCustomer() {
           <Text
             style={{
               fontSize: moderateScale(15, 0.5),
-              color: '#FFFFFF',
+              color: 'rgba(0, 0, 0, 0.7)',
               fontWeight: 'normal',
               alignSelf: 'center',
             }}>
             {numFormatter(item.sales)}
           </Text>
         </View>
-        <View style={{flex: 1, borderWidth: 0}}>
+        <View style={{flex: 0.75, borderWidth: 0}}>
           <Text
             style={{
-              fontSize: moderateScale(15, 0.5),
-              color: '#FFFFFF',
+              fontSize: moderateScale(12, 0.5),
+              color: 'rgba(0, 0, 0, 0.7)',
               fontWeight: 'normal',
               alignSelf: 'center',
             }}>
@@ -197,7 +197,12 @@ export default function SalesperCustomer() {
   }
 
   return (
-    <View style={{flex: 1, backgroundColor: 'gray'}}>
+    <View
+      style={{
+        flex: 1,
+        //backgroundColor: 'rgba(47, 79, 79, 0.75)',
+        paddingTop: 10,
+      }}>
       <TouchableOpacity
         onPress={() => {
           {
@@ -212,10 +217,9 @@ export default function SalesperCustomer() {
             paddingBottom: moderateScale(10),
             alignSelf: 'center',
             fontSize: moderateScale(22),
-            color: '#FFFFFF',
+            color: 'rgba(0, 0, 0, 0.7)',
             fontWeight: 'bold',
             marginLeft: width / 3 - scale(185),
-            paddingTop: 5,
           }}>
           Sales per Customer
         </Text>
@@ -236,47 +240,47 @@ export default function SalesperCustomer() {
             flexDirection: 'row',
             paddingVertical: 5,
             paddingHorizontal: 5,
-            backgroundColor: '#10D070',
+            backgroundColor: 'rgba(0, 255, 255, 0.9)',
             alignItems: 'center',
           }}>
-          <View style={{flex: 4, borderRightWidth: 1}}>
+          <View style={{flex: 4, borderRightWidth: 1, borderRadius: 2}}>
             <Text
               style={{
                 alignSelf: 'flex-start',
-                fontSize: moderateScale(15, 0.5),
+                fontSize: moderateScale(18, 0.5),
                 padding: 10,
               }}>
-              Customer Name
+              ACCOUNT NAME
             </Text>
           </View>
-          <View style={{flex: 1, borderRightWidth: 1}}>
+          <View style={{flex: 1, borderRightWidth: 1, borderRadius: 2}}>
             <Text
               style={{
                 alignSelf: 'center',
                 fontSize: moderateScale(15, 0.5),
                 padding: 10,
               }}>
-              Sales
+              SALES
             </Text>
           </View>
-          <View style={{flex: 1, borderRightWidth: 1}}>
+          <View style={{flex: 1, borderRightWidth: 1, borderRadius: 2}}>
             <Text
               style={{
                 alignSelf: 'center',
                 fontSize: moderateScale(15, 0.5),
                 padding: 10,
               }}>
-              Target
+              TARGET
             </Text>
           </View>
-          <View style={{flex: 1}}>
+          <View style={{flex: 0.75}}>
             <Text
               style={{
                 alignSelf: 'center',
-                fontSize: moderateScale(15, 0.5),
+                fontSize: moderateScale(20, 0.5),
                 padding: 10,
               }}>
-              ACHV
+              %
             </Text>
           </View>
         </View>
