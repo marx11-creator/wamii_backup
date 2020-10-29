@@ -587,8 +587,8 @@ export default function PerAreaDashboard(props) {
 
   return (
     // ===================================================================================================================
-    <View style={{flex: 1, backgroundColor: '#333333'}}>
-      {/* <Video
+    <View style={{flex: 1}}>
+      <Video
         rate={0.9}
         repeat={true}
         resizeMode="cover"
@@ -597,7 +597,7 @@ export default function PerAreaDashboard(props) {
         // onBuffer={this.onBuffer} // Callback when remote video is buffering
         onError={(Error) => console.log(Error)} // Callback when video cannot be loaded
         style={styles.backgroundVideo}
-      /> */}
+      />
       <ScrollView>
         <View style={{flexDirection: 'column'}}>
           <View

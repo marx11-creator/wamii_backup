@@ -661,6 +661,7 @@ const styles = StyleSheet.create({
   textSign: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: scale(14)
   },
   loading: {
     position: 'absolute',

@@ -122,6 +122,7 @@ export var APIUpdateVersion = {
   APIUpdateVersionStatus: '',
   APIUpdateVersionNotice: '',
   APIForceLogout: 'FALSE',
+  APIUpdatingStatus: '',
 };
 
 export var OtherSettings = {

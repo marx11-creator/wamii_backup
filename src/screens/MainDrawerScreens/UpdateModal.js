@@ -238,7 +238,7 @@ export default function UpdateModal(props) {
         updatePercentage: updateProgress,
         dateTimeUpdated24hr: moment().format('DD/MM/YYYY HH:mm:ss'),
       });
-      props.navigation.navigate('Home');
+      props.navigation.navigate(CurrentAppScreen.Screen);
       CheckSystemStatus(); //3.3
       // RunTimer();
       //5
@@ -1506,21 +1506,10 @@ export default function UpdateModal(props) {
 
   const GETUpdateVersionAPI = () => {
     InsertUpdateDataInfo();
-    //  console.log('9 ' + 'run GETUpdateVersionAPI');
     var user_name = global.user_name;
     var dateTimeUpdated = moment()
       .utcOffset('+08:00')
       .format('YYYY-MM-DD hh:mm:ss a');
-    // console.log(
-    //   server.server_address +
-    //     globalCompany.company +
-    //     'updateversion2/' +
-    //     user_name +
-    //     '&' +
-    //     dateTimeUpdated,
-    // );
-    // console.log(APIToken.access_token);
-    //1
     Promise.race([
       fetch(
         server.server_address +
@@ -1548,7 +1537,6 @@ export default function UpdateModal(props) {
       .then((jsonData) => {
         console.log('FETCH 1 DONE');
         if (jsonData.length > 0) {
-          //  console.log('10 ' + 'successfully get updateversion test');
           jsonData.map((key, index) => {
             APIUpdateVersion.APIUpdateVersionField = key.version;
             APIUpdateVersion.APIUpdateVersionDateTimeRelease =
@@ -1556,27 +1544,61 @@ export default function UpdateModal(props) {
             APIUpdateVersion.APIUpdateVersionStatus = key.status;
             APIUpdateVersion.APIUpdateVersionNotice = key.notice;
             APIUpdateVersion.APIForceLogout = key.auto_logout;
-            //   console.log(key.auto_logout);
+            APIUpdateVersion.APIUpdatingStatus = key.serverUpdateStatus;
           });
 
           if (APIUpdateVersion.APIForceLogout === 'TRUE') {
             setglobalAutoLogout('TRUE');
           } else {
             if (APIUpdateVersion.APIUpdateVersionStatus === 'ONLINE') {
-              StartUpdate();
+              if (APIUpdateVersion.APIUpdatingStatus === 'Updating') {
+              
+                if (globalStatus.updateMode === 'manual') {
+                  globalStatus.updateMode = 'auto';
+                  updateProgress = 0;
+                  setglobalState({
+                    ...globalState,
+                    updatePercentage: updateProgress,
+                    updateStatus: 'Idle',
+                  });
 
-              updateProgress = Number(updateProgress) + Number(4);
-              setglobalState({
-                ...globalState,
-                updatePercentage: updateProgress,
-              });
+                  globalStatus.updateStatus = 'Idle';
 
-              //   console.log('11 ' + 'user update log saved in API');
-              setq3UserUpdateLog(true);
+                  RunTimer();
+
+                  //1
+
+                  setisModalConnectionError(false);
+                  setisLoadingActivityIndicator(false);
+                  props.navigation.navigate(CurrentAppScreen.Screen);
+                  alert('Server is updating. please try again after a minute.');
+                } else {
+                  // console.log(APIUpdateVersion.APIUpdateVersionStatus);
+                  updateProgress = 0;
+                  setglobalState({
+                    ...globalState,
+                    updatePercentage: updateProgress,
+                    updateStatus: 'Idle',
+                  });
+
+                  globalStatus.updateStatus = 'Idle';
+
+                  RunTimer();
+                  //2
+                  console.log('Server is updating. please try again after a minute.');
+                }
+              } else {
+                StartUpdate();
+                updateProgress = Number(updateProgress) + Number(4);
+                setglobalState({
+                  ...globalState,
+                  updatePercentage: updateProgress,
+                });
+                setq3UserUpdateLog(true);
+              }
             } else if (APIUpdateVersion.APIUpdateVersionStatus === 'OFFLINE') {
               //2
               if (globalStatus.updateMode === 'manual') {
-                //   console.log('MANUAL');
                 globalStatus.updateMode = 'auto';
                 updateProgress = 0;
                 setglobalState({

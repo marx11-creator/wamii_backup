@@ -507,7 +507,7 @@ export default function Inventory(props) {
           BrandQuery +
           VariantQuery +
           PromoProductQuery +
-          ' order by principal_name, product_variant, product_name limit 3  ',
+          ' order by principal_name, product_variant, product_name   ',
         [],
         (tx, results) => {
           var len = results.rows.length;
