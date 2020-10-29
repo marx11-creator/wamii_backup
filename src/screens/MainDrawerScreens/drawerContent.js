@@ -218,6 +218,16 @@ export function DrawerContent(props) {
               />
             ) : null}
 
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="account-outline" color={color} size={size} />
+              )}
+              label="Other Reports"
+              onPress={() => {
+                props.navigation.navigate('MainScreen');
+              }}
+            />
+
             {/* <DrawerItem
               icon={({color, size}) => (
                 <Icon name="clock" color={color} size={size} />
@@ -243,7 +253,7 @@ export function DrawerContent(props) {
               }}>
               <View style={{alignItems: 'flex-start', marginLeft: scale(80)}}>
                 <FlatButton
-                 width={160}
+                  width={160}
                   text={
                     globalState.updateStatus === 'Idle'
                       ? 'Update Now'
