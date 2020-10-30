@@ -36,7 +36,7 @@ export default function StartMainDrawerScreen(props) {
       <Drawer.Screen name="BusinessCalendar" component={BusinessCalendar} />
       <Drawer.Screen name="SalesmanNet" component={ViewScreen} />
       <Drawer.Screen name="InventoryImageList" component={InventoryImageList} />
-      <Drawer.Screen name="MainScreen" component={MainScreen} />
+      <Drawer.Screen name="VendorSreen" component={MainScreen} />
     </Drawer.Navigator>
   );
 }

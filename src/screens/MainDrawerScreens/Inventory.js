@@ -1786,7 +1786,7 @@ export default function Inventory(props) {
                   alignContent: 'center',
                   alignItems: 'center',
                 }}>
-                <Text>
+                <Text style={{fontSize: moderateScale(16)}}>
                   {' '}
                   {'      '}Add to Cart{'         '}
                 </Text>
@@ -1820,7 +1820,7 @@ export default function Inventory(props) {
                   alignContent: 'center',
                   alignItems: 'center',
                 }}>
-                <Text>
+                <Text style={{fontSize: moderateScale(16)}}>
                   {' '}
                   {'        '}Buy Now{'         '}
                 </Text>
@@ -2588,6 +2588,7 @@ export default function Inventory(props) {
             setisVisiblePriceOptionDropdownPicker(false);
           }}>
           <View style={styles.FilterHeightMax}>
+            <View style={{marginHorizontal: moderateScale(20)}}>
             {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
             <View paddingVertical={5} />
             <View
@@ -2596,7 +2597,7 @@ export default function Inventory(props) {
                 justifyContent: 'space-around',
                 alignContent: 'space-between',
               }}>
-              <Text>Vendor :</Text>
+              <Text syle={{fontSize: moderateScale(15)}}>Vendor :</Text>
             </View>
             <View paddingVertical={1} />
             <RNPickerSelect
@@ -2644,7 +2645,7 @@ export default function Inventory(props) {
                 justifyContent: 'space-around',
                 alignContent: 'space-between',
               }}>
-              <Text>Category :</Text>
+                   <Text syle={{fontSize: moderateScale(15)}}>Category :</Text>
             </View>
             <View paddingVertical={1} />
             <RNPickerSelect
@@ -2691,7 +2692,7 @@ export default function Inventory(props) {
                 justifyContent: 'space-around',
                 alignContent: 'space-between',
               }}>
-              <Text>Brand :</Text>
+               <Text syle={{fontSize: moderateScale(15)}}>Brand :</Text>
             </View>
             <View paddingVertical={1} />
             <RNPickerSelect
@@ -2738,7 +2739,7 @@ export default function Inventory(props) {
                 justifyContent: 'space-around',
                 alignContent: 'space-between',
               }}>
-              <Text>Variant :</Text>
+               <Text syle={{fontSize: moderateScale(15)}}>Variant :</Text>
             </View>
             <View paddingVertical={1} />
             <RNPickerSelect
@@ -2776,15 +2777,15 @@ export default function Inventory(props) {
             />
             <View paddingVertical={2} />
             {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
- {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
- <View paddingVertical={5} />
+               {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
+               <View paddingVertical={5} />
             <View
               style={{
                 marginHorizontal: 5,
                 justifyContent: 'space-around',
                 alignContent: 'space-between',
               }}>
-              <Text>Type :</Text>
+             <Text syle={{fontSize: moderateScale(15)}}>Type :</Text>
             </View>
             <View paddingVertical={1} />
             <RNPickerSelect
@@ -3192,6 +3193,7 @@ export default function Inventory(props) {
                   />
                 </View>
               </View>
+            </View>
             </View>
           </View>
         </TouchableWithoutFeedback>

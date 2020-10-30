@@ -164,7 +164,7 @@ export default function CreateDatabase() {
 }
 
 function SQLerror(err) {
-  console.log('SQL Error: ' + err);
+  console.log('SQL Error: ' + err.message);
 }
 
 // SALESMAN NET MARC
@@ -685,4 +685,258 @@ export function Update1008() {
     });
   }
 }
+
+
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1009
+
+export function Update1009() {
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name ='promo_items_tbl'",
+      [],
+      function (tx, res) {
+        if (res.rows.length === 1) {
+          //if tbl exists
+          console.log('main tbl exist5');
+          txn.executeSql(
+            'SELECT  product_category FROM promo_items_tbl  LIMIT 1',
+            [],
+            function (tx2, res2) {
+              //if column exists
+              console.log('1009 update already found nothing to do');
+              LocalAppVersionUpdate.LocalAppVersionUpdateField =
+                Number(LocalAppVersionUpdate.LocalAppVersionUpdateField) +
+                Number(1);
+              Add1008UpdatetoLocal();
+            },
+            //if not function below is a error part where it run a fucntion
+            Alter_inventory_product1009,
+          );
+        }
+      },
+    );
+  });
+}
+
+function Alter_inventory_product1009() {
+  console.log(
+    '1009 query error finding new field, it means field is missing. run alter or udpdate now',
+  );
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      'ALTER TABLE promo_items_tbl ADD COLUMN product_category VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.1 new field added');
+      },
+      SQLerror,
+    );
+  });
+
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      'ALTER TABLE promo_items_tbl ADD COLUMN product_brand VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.2 new field added');
+      },
+      SQLerror,
+    );
+  });
+
+
+
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE promo_items_tbl  ADD COLUMN CASE_UNIT_PER_PCS VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.3 new field added');
+      },
+      SQLerror,
+    );
+  });
+
+  
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE promo_items_tbl  ADD COLUMN total_case VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.4 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE promo_items_tbl  ADD COLUMN total_pieces VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.5 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE promo_items_tbl  ADD COLUMN effective_price_date  VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.6 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE promo_items_tbl  ADD COLUMN CASE_COMPANY VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.7 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE promo_items_tbl  ADD COLUMN CASE_BOOKING  VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.8 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE promo_items_tbl  ADD COLUMN CASE_EXTRUCK  VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.9 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE promo_items_tbl  ADD COLUMN PCS_COMPANY VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.10 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE promo_items_tbl  ADD COLUMN PCS_BOOKING VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.11 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+  dbinventory.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE promo_items_tbl  ADD COLUMN PCS_EXTRUCK VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.12 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+
+    
+  dbperprincipal.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE perprincipalpermonth_tbl  ADD COLUMN team VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.13 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+
+    
+  dbperymtsat.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE perymtsat_tbl  ADD COLUMN principal_name VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.14 new field added');
+      },
+      SQLerror,
+    );
+  });
+  
+
+  dbperarea.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE perareapermonth_tbl  ADD COLUMN team VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.15 new field added');
+      },
+      SQLerror,
+    );
+  });
+
+  dbperarea.transaction(function (txn) {
+    txn.executeSql(
+      ' ALTER TABLE perareapermonth_tbl  ADD COLUMN principal_name VARCHAR(255)',
+      [],
+      function (tx3, res3) {
+        console.log('1009.16 new field added');
+        LocalAppVersionUpdate.LocalAppVersionUpdateField =
+          Number(LocalAppVersionUpdate.LocalAppVersionUpdateField) + Number(1);
+        CheckUpdate1009();
+      },
+      SQLerror,
+    );
+  });
+
+  
+}
+
+function CheckUpdate1009() {
+  if (LocalAppVersionUpdate.LocalAppVersionUpdateField === 1009) {
+    Add1009UpdatetoLocal();
+    console.log('1009 updated has been processed');
+  } else {
+    console.log('1009 updated NOT processed');
+  }
+}
+
+function Add1009UpdatetoLocal() {
+  {
+    dbUpdateDbVersion.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO  updateversion_tbl (updateversion, dateTimeUpdated) VALUES (?,?)',
+        [1009, moment().utcOffset('+08:00').format('YYYY-MM-DD hh:mm:ss a')],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            console.log('1009 updated added to local test');
+          }
+        },
+        SQLerror,
+      );
+    });
+  }
+}
+
+
 
