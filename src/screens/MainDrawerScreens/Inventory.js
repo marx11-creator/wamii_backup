@@ -47,6 +47,7 @@ import {
   CurrentAppScreen,
   LastDateTimeUpdated,
   hhmmss,
+  OtherSettings,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import PageContextGlobalState from '../MainDrawerScreens/pagecontextGlobalState';
 import PageContextGlobalTimer from '../MainDrawerScreens/pagecontextGlobalTimer';
@@ -126,7 +127,7 @@ export default function Inventory(props) {
   const [
     PriceOptionPickerCatcherState,
     setPriceOptionPickerCatcherState,
-  ] = useState('');
+  ] = useState(OtherSettings.UserDefaultpriceOption);
 
   const [refreshing, setRefreshing] = React.useState(false);
   const fadeIn = useRef(new Animated.Value(0)).current;
@@ -1357,7 +1358,7 @@ export default function Inventory(props) {
               fontFamily: 'Lato-Bold',
             }}>
             {PriceOptionPickerCatcherState === '' ||
-            PriceOptionPickerCatcherState === 'Booking' ||
+            PriceOptionPickerCatcherState === 'BOOKING' ||
             PriceOptionPickerCatcherState === 'ALL' ||
             PriceOptionPickerCatcherState === null
               ? '₱' +
@@ -1900,15 +1901,14 @@ export default function Inventory(props) {
               <TouchableOpacity>
                 <Text
                   style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
-                  {'Price per '}
-                  {unitPrice === 'CASE' ? 'CASE' : 'PCs'}
+                  {'Price per PC'}
                 </Text>
 
                 <Text
                   //FOR FLATLIST
                   style={{fontSize: moderateScale(13, 0.5), color: '#000000'}}>
                   {PriceOptionPickerCatcherState === '' ||
-                  PriceOptionPickerCatcherState === 'Booking' ||
+                  PriceOptionPickerCatcherState === 'BOOKING' ||
                   PriceOptionPickerCatcherState === 'ALL' ||
                   PriceOptionPickerCatcherState === null
                     ? '₱' +
@@ -2151,6 +2151,7 @@ export default function Inventory(props) {
               gradientFrom="#F9A7A8"
               gradientTo="#D6171A"
               onPress={() => {
+                console.log(PriceOptionPickerCatcherState);
                 setisModalVisible2(!isModalVisible2);
               }}
             />
@@ -2835,6 +2836,52 @@ export default function Inventory(props) {
             />
             <View paddingVertical={2} />
             {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
+{/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
+<View paddingVertical={5} />
+            <View
+              style={{
+                marginHorizontal: 5,
+                justifyContent: 'space-around',
+                alignContent: 'space-between',
+              }}>
+              <Text>Price Option :</Text>
+            </View>
+            <View paddingVertical={1} />
+            <RNPickerSelect
+              placeholder={{
+                label: 'Select Price option',
+                value: null,
+                color: 'green',
+              }}
+              items={arrPriceOptionfromPicker}
+              onValueChange={(value) => {
+                setPriceOptionPickerCatcherState(value);
+              }}
+              style={{
+                iconContainer: {
+                  top: 10,
+                  right: 12,
+                },
+                inputAndroid: {
+                  borderColor: 'green',
+                  fontSize: scale(18),
+                  paddingHorizontal: 10,
+                  paddingVertical: 8,
+                  borderWidth: 0.5,
+                  borderRadius: 8,
+                  color: 'black',
+                  paddingRight: 30, // to ensure the text is never behind the icon
+                },
+              }}
+              value={PriceOptionPickerCatcherState}
+              useNativeAndroidPickerStyle={false}
+              textInputProps={{underlineColor: 'yellow'}}
+              Icon={() => {
+                return <Icon name="md-arrow-down" size={24} color="gray" />;
+              }}
+            />
+            <View paddingVertical={2} />
+            {/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
 
             {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
             {/* <View style={{marginTop: moderateScale(20, 0.5)}}>

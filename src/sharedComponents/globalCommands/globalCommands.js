@@ -128,6 +128,7 @@ export var APIUpdateVersion = {
 export var OtherSettings = {
   AutoLogout: 0,
   AccountValidity: '',
+  UserDefaultpriceOption: '',
 };
 
 export const ResetModuleAccess = () => {
