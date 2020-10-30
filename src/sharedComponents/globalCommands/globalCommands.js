@@ -40,7 +40,7 @@ export var CurrentAppVersionUpdate = {
 export var CurrentDashboardScreen = {
   Screen: '',
 };
-
+//release mark
 //   company: 'coslor/',
 
 export var globalCompany = {
