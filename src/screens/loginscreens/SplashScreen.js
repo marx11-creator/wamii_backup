@@ -30,6 +30,7 @@ import {
   Update1006,
   Update1007,
   Update1008,
+  Update1009,
 } from '../../database/sqliteSetup';
 import {
   scale,
@@ -222,12 +223,21 @@ export default function SplashScreen(props) {
           // );
        //   console.log('focus on Splash123');
           Update1008();
+        }
+
+        if (LocalAppVersionUpdate.LocalAppVersionUpdateField < 1009) {
+          //console.log('update 005 initialized');
+          //console.log(
+          //   'before update' + LocalAppVersionUpdate.LocalAppVersionUpdateField,
+          // );
+       //   console.log('focus on Splash123');
+          Update1009();
           CheckUserifLogin(); //moved tihs when u have new update to load check user on last update
         }
       } else {
         //console.log('local is updated, nothing to update.');
-        // console.log('6');
-        // console.log(LocalAppVersionUpdate.LocalAppVersionUpdateField);
+         console.log('6addad');
+        console.log(LocalAppVersionUpdate.LocalAppVersionUpdateField);
 
         CheckUserifLogin();
       }
@@ -661,7 +671,7 @@ const styles = StyleSheet.create({
   textSign: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: scale(14)
+    fontSize: moderateScale(16)
   },
   loading: {
     position: 'absolute',

@@ -614,7 +614,7 @@ export default function ViewScreen(props) {
                   setisVisibleModalFilter(true);
                   CurrentDashboardScreen.Screen = 'PERSALESMANNET';
                 }}>
-                <Text style={{fontSize: 20, color: '#FAF0E6'}}>
+                <Text style={{fontSize: moderateScale(25), color: '#FAF0E6'}}>
                   {FilterList.DashboardFilterMonth}{' '}
                   {FilterList.DashboardFilterYear}
                 </Text>
@@ -968,7 +968,7 @@ export default function ViewScreen(props) {
                     fontSize: moderateScale(15, 0.5),
                     alignSelf: 'center',
                   }}>
-                  PRINCIPALS - CATEGORY
+                  PRINCIPALS / CATEGORY
                 </Text>
               </View>
             </TouchableOpacity>
@@ -1216,7 +1216,7 @@ export default function ViewScreen(props) {
                     backgroundColor: '#10D070',
                     borderRadius: 5,
                   }}>
-                  <Text style={{fontSize: 25}}>{key}</Text>
+                  <Text style={{fontSize: moderateScale(15)}}>{' '}{key}</Text>
                 </View>
               )}
             />
@@ -1582,22 +1582,22 @@ export default function ViewScreen(props) {
               renderItem={({item}) => (
                 <View style={{flexDirection: 'row', padding: 2}}>
                   <View style={{flex: 2}}>
-                    <Text style={{fontSize: 15, color: 'white'}}>
+                    <Text style={{fontSize: moderateScale(15, 0.5), color: 'white'}}>
                       {item.invoice_date}
                     </Text>
                   </View>
                   <View style={{flex: 5}}>
-                    <Text style={{fontSize: 15, color: 'white'}}>
+                    <Text style={{fontSize:  moderateScale(15, 0.5), color: 'white'}}>
                       {item.principal_name}
                     </Text>
                   </View>
                   <View style={{flex: 2}}>
-                    <Text style={{fontSize: 20, color: 'white'}}>
+                    <Text style={{fontSize:  moderateScale(15, 0.5), color: 'white'}}>
                       {numFormatter(item.sales)}
                     </Text>
                   </View>
                   <View style={{flex: 0.5}}>
-                    <Text style={{fontSize: 15, color: 'white'}}>
+                    <Text style={{fontSize:  moderateScale(15, 0.5), color: 'white'}}>
                       {item.invoice_status_final === 'null' ? (
                         <View
                           style={{
@@ -1699,7 +1699,7 @@ export default function ViewScreen(props) {
                     backgroundColor: '#10D070',
                     borderRadius: 5,
                   }}>
-                  <Text style={{fontSize: 25}}>{key}</Text>
+                  <Text style={{fontSize:  moderateScale(15, 0.5)}}>{' '}{key}</Text>
                 </View>
               )}
             />

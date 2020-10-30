@@ -218,16 +218,17 @@ export function DrawerContent(props) {
               />
             ) : null}
 
-            <DrawerItem
-              icon={({color, size}) => (
-                <Icon name="account-outline" color={color} size={size} />
-              )}
-              label="Other Reports"
-              onPress={() => {
-                props.navigation.navigate('MainScreen');
-              }}
-            />
-
+            {global.PrincipalAccessList === 'ALLPRINCIPALTEST' ? (
+              <DrawerItem
+                icon={({color, size}) => (
+                  <Icon name="account-outline" color={color} size={size} />
+                )}
+                label="Other Reports"
+                onPress={() => {
+                  props.navigation.navigate('VendorSreen');
+                }}
+              />
+            ) : null}
             {/* <DrawerItem
               icon={({color, size}) => (
                 <Icon name="clock" color={color} size={size} />

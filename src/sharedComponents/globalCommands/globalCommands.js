@@ -33,14 +33,14 @@ export var server = {
 };
 
 export var CurrentAppVersionUpdate = {
-  CurrentAppVersionUpdateField: 1008,
+  CurrentAppVersionUpdateField: 1009,
   CurrentAppVersionUpdateFieldDateRelease: 'October 06, 2020',
 };
 
 export var CurrentDashboardScreen = {
   Screen: '',
 };
-
+//release mark
 //   company: 'coslor/',
 
 export var globalCompany = {
