@@ -686,7 +686,6 @@ export function Update1008() {
   }
 }
 
-
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update 1009
 
 export function Update1009() {
@@ -744,8 +743,6 @@ function Alter_inventory_product1009() {
     );
   });
 
-
-
   dbinventory.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE promo_items_tbl  ADD COLUMN CASE_UNIT_PER_PCS VARCHAR(255)',
@@ -757,7 +754,6 @@ function Alter_inventory_product1009() {
     );
   });
 
-  
   dbinventory.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE promo_items_tbl  ADD COLUMN total_case VARCHAR(255)',
@@ -768,7 +764,7 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
+
   dbinventory.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE promo_items_tbl  ADD COLUMN total_pieces VARCHAR(255)',
@@ -779,7 +775,7 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
+
   dbinventory.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE promo_items_tbl  ADD COLUMN effective_price_date  VARCHAR(255)',
@@ -790,7 +786,7 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
+
   dbinventory.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE promo_items_tbl  ADD COLUMN CASE_COMPANY VARCHAR(255)',
@@ -801,7 +797,7 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
+
   dbinventory.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE promo_items_tbl  ADD COLUMN CASE_BOOKING  VARCHAR(255)',
@@ -812,7 +808,7 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
+
   dbinventory.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE promo_items_tbl  ADD COLUMN CASE_EXTRUCK  VARCHAR(255)',
@@ -823,7 +819,7 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
+
   dbinventory.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE promo_items_tbl  ADD COLUMN PCS_COMPANY VARCHAR(255)',
@@ -834,7 +830,7 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
+
   dbinventory.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE promo_items_tbl  ADD COLUMN PCS_BOOKING VARCHAR(255)',
@@ -845,7 +841,7 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
+
   dbinventory.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE promo_items_tbl  ADD COLUMN PCS_EXTRUCK VARCHAR(255)',
@@ -856,9 +852,7 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
 
-    
   dbperprincipal.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE perprincipalpermonth_tbl  ADD COLUMN team VARCHAR(255)',
@@ -869,9 +863,7 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
 
-    
   dbperymtsat.transaction(function (txn) {
     txn.executeSql(
       ' ALTER TABLE perymtsat_tbl  ADD COLUMN principal_name VARCHAR(255)',
@@ -882,7 +874,6 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-  
 
   dbperarea.transaction(function (txn) {
     txn.executeSql(
@@ -908,8 +899,6 @@ function Alter_inventory_product1009() {
       SQLerror,
     );
   });
-
-  
 }
 
 function CheckUpdate1009() {
@@ -937,6 +926,3 @@ function Add1009UpdatetoLocal() {
     });
   }
 }
-
-
-

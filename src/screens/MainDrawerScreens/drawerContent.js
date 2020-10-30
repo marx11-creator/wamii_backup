@@ -195,18 +195,8 @@ export function DrawerContent(props) {
                 props.navigation.navigate('Inventory');
               }}
             />
-            {global.sales_position_name === 'TEST' ? (
-              <DrawerItem
-                icon={({color, size}) => (
-                  <Icon name="microsoft-onenote" color={color} size={size} />
-                )}
-                label="Schedule"
-                onPress={() => {
-                  props.navigation.navigate('SalesmanNet');
-                }}
-              />
-            ) : null}
-            {global.sales_position_name !== 'ALLSALESMAN' ? (
+
+            {global.account_type === 'Salesman' ? (
               <DrawerItem
                 icon={({color, size}) => (
                   <Icon name="bookmark-outline" color={color} size={size} />
@@ -218,7 +208,7 @@ export function DrawerContent(props) {
               />
             ) : null}
 
-            {global.PrincipalAccessList === 'ALLPRINCIPALTEST' ? (
+            {global.account_type === 'Principal' ? (
               <DrawerItem
                 icon={({color, size}) => (
                   <Icon name="account-outline" color={color} size={size} />

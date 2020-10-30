@@ -759,10 +759,16 @@ export default function UpdateModal(props) {
     setq4Area(false); //update status of function to false
     setq5Marc(false); //update status of function to false
     setq6Inventory(false); //update Inventory
-    if (global.sales_position_name === 'ALLSALESMAN') {
+    if (global.account_type === 'Principal') {
       setq5Marc(true);
       console.log('3 4 5 6 initiate bypass');
-    } else {
+    } else if (global.account_type === 'Developer') {
+      setq5Marc(true);
+      console.log('3 4 5 6 initiate bypass');
+    } else if (global.account_type === 'Admin') {
+      setq5Marc(true);
+      console.log('3 4 5 6 initiate bypass');
+    } else if (global.account_type === 'Salesman') {
       initiate();
     }
 
@@ -1552,7 +1558,6 @@ export default function UpdateModal(props) {
           } else {
             if (APIUpdateVersion.APIUpdateVersionStatus === 'ONLINE') {
               if (APIUpdateVersion.APIUpdatingStatus === 'Updating') {
-              
                 if (globalStatus.updateMode === 'manual') {
                   globalStatus.updateMode = 'auto';
                   updateProgress = 0;
@@ -1585,7 +1590,9 @@ export default function UpdateModal(props) {
 
                   RunTimer();
                   //2
-                  console.log('Server is updating. please try again after a minute.');
+                  console.log(
+                    'Server is updating. please try again after a minute.',
+                  );
                 }
               } else {
                 StartUpdate();

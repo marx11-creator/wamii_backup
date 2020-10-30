@@ -390,6 +390,12 @@ export default function SplashScreen(props) {
               OtherSettings.AccountValidity = key.constant_value;
             }
 
+            
+            //GET USER_DEFAULT_PRICE_OPTION STATUS
+            if (key.constant_type === 'USER_DEFAULT_PRICE_OPTION') {
+              OtherSettings.UserDefaultpriceOption = key.constant_value;
+            }
+
             //if loop reach last record ------------------------------------------------------->
             if (index === temp.length - 1) {
               // console.log(

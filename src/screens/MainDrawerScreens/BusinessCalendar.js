@@ -761,7 +761,7 @@ export default function BusinessCalendar(props) {
               width={160}
               text={isEditing ? 'UPDATE' : 'EDIT'}
               onPress={() => {
-                if (global.account_type === 'Administrator') {
+                if (global.account_type === 'Developer') {
                   if (isEditing === false) {
                     setisMonthMoveEnabled(1);
                    

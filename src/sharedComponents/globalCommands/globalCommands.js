@@ -169,6 +169,9 @@ export function ClearDefaults() {
   FilterList.DashboardFilterMonth = '';
   FilterList.DashboardFilterTeam = '';
   FilterList.DashboardFilterVendor = '';
+  OtherSettings.AccountValidity = '';
+  OtherSettings.UserDefaultpriceOption = '';
+  OtherSettings.AutoLogout = 0;
 }
 
 let delete_per_customer_tbl = () => {

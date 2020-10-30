@@ -61,7 +61,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import BackgroundTimer from 'react-native-background-timer';
 import RNPickerSelect from 'react-native-picker-select';
 import {getBrand} from 'react-native-device-info';
-import { cos } from 'react-native-reanimated';
+import {cos} from 'react-native-reanimated';
 var CurrentItemCount = 0;
 var count = 0;
 var localItemcount = 0;
@@ -86,12 +86,12 @@ export default function Inventory(props) {
 
   const arrPriceOptionfromPickerFields = [
     {
-      label: 'Booking',
-      value: 'Booking',
+      label: 'BOOKING',
+      value: 'BOOKING',
     },
     {
-      label: 'Van',
-      value: 'Van',
+      label: 'VAN',
+      value: 'VAN',
     },
   ];
 
@@ -499,7 +499,7 @@ export default function Inventory(props) {
       PromoProductQuery =
         ' and promo_product = ' + "'" + ProductTypePickerCatcherState + "'";
     }
- 
+
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM promo_items_tbl where ' +
@@ -543,7 +543,7 @@ export default function Inventory(props) {
             var VendorShow = '';
             if (
               VendorPickerCatcherState === '' ||
-              VendorPickerCatcherState === 'ALL'||
+              VendorPickerCatcherState === 'ALL' ||
               VendorPickerCatcherState === null
             ) {
               VendorShow = 'ALL';
@@ -554,7 +554,7 @@ export default function Inventory(props) {
             var CategoryShow = '';
             if (
               CategoryPickerCatcherState === '' ||
-              CategoryPickerCatcherState === 'ALL'||
+              CategoryPickerCatcherState === 'ALL' ||
               CategoryPickerCatcherState === null
             ) {
               CategoryShow = 'ALL';
@@ -565,7 +565,7 @@ export default function Inventory(props) {
             var BrandShow = '';
             if (
               BrandPickerCatcherState === '' ||
-              BrandPickerCatcherState === 'ALL'||
+              BrandPickerCatcherState === 'ALL' ||
               BrandPickerCatcherState === null
             ) {
               BrandShow = 'ALL';
@@ -650,7 +650,7 @@ export default function Inventory(props) {
     } else {
       PrincipalQuery = ' principal_name = ' + "'" + value + "'";
     }
- 
+
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct product_category as label, product_category as value FROM promo_items_tbl where ' +
@@ -724,7 +724,6 @@ export default function Inventory(props) {
       CategoryQuery = ' and  product_category = ' + "'" + value + "'";
     }
 
- 
     dbinventory.transaction((tx) => {
       tx.executeSql(
         'SELECT Distinct product_brand as label, product_brand as value FROM promo_items_tbl where ' +
@@ -1235,7 +1234,9 @@ export default function Inventory(props) {
                 </View>
               </View>
 
-              {global.sales_position_name === 'ALLSALESMAN' ? (
+              {global.account_type === 'Principal' ||
+              global.account_type === 'Developer' ||
+              global.account_type === 'Admin' ? (
                 <View
                   style={{
                     backgroundColor: 'transparent',
@@ -2590,302 +2591,310 @@ export default function Inventory(props) {
           }}>
           <View style={styles.FilterHeightMax}>
             <View style={{marginHorizontal: moderateScale(20)}}>
-            {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
-            <View paddingVertical={5} />
-            <View
-              style={{
-                marginHorizontal: 5,
-                justifyContent: 'space-around',
-                alignContent: 'space-between',
-              }}>
-              <Text syle={{fontSize: moderateScale(15)}}>Vendor :</Text>
-            </View>
-            <View paddingVertical={1} />
-            <RNPickerSelect
-              placeholder={{
-                label: 'Select Vendor',
-                value: null,
-                color: 'green',
-              }}
-              items={arrVendorfromPicker}
-              onValueChange={(value) => {
-                setVendorPickerCatcherState(value);
-                GetCategoryList(value);
-              }}
-              style={{
-                iconContainer: {
-                  top: 10,
-                  right: 12,
-                },
-                inputAndroid: {
-                  borderColor: 'green',
-                  fontSize: scale(18),
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderWidth: 0.5,
-                  borderRadius: 8,
-                  color: 'black',
-                  paddingRight: 30, // to ensure the text is never behind the icon
-                },
-              }}
-              value={VendorPickerCatcherState}
-              useNativeAndroidPickerStyle={false}
-              textInputProps={{underlineColor: 'yellow'}}
-              Icon={() => {
-                return <Icon name="md-arrow-down" size={24} color="gray" />;
-              }}
-            />
-            <View paddingVertical={2} />
-            {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
+              <View paddingVertical={5} />
+              <View
+                style={{
+                  marginHorizontal: 5,
+                  justifyContent: 'space-around',
+                  alignContent: 'space-between',
+                }}>
+                <Text syle={{fontSize: moderateScale(15)}}>Vendor :</Text>
+              </View>
+              <View paddingVertical={1} />
+              <RNPickerSelect
+                placeholder={{
+                  label: 'Select Vendor',
+                  value: null,
+                  color: 'green',
+                }}
+                items={arrVendorfromPicker}
+                onValueChange={(value) => {
+                  setVendorPickerCatcherState(value);
+                  GetCategoryList(value);
+                }}
+                style={{
+                  iconContainer: {
+                    top: 10,
+                    right: 12,
+                  },
+                  inputAndroid: {
+                    borderColor: 'green',
+                    fontSize: scale(18),
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    borderWidth: 0.5,
+                    borderRadius: 8,
+                    color: 'black',
+                    paddingRight: 30, // to ensure the text is never behind the icon
+                  },
+                }}
+                value={VendorPickerCatcherState}
+                useNativeAndroidPickerStyle={false}
+                textInputProps={{underlineColor: 'yellow'}}
+                Icon={() => {
+                  return <Icon name="md-arrow-down" size={24} color="gray" />;
+                }}
+              />
+              <View paddingVertical={2} />
+              {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
 
-            {/* CATEGORY ///////////////////////////////////////////////////////////////////////////////*/}
-            <View paddingVertical={5} />
-            <View
-              style={{
-                marginHorizontal: 5,
-                justifyContent: 'space-around',
-                alignContent: 'space-between',
-              }}>
-                   <Text syle={{fontSize: moderateScale(15)}}>Category :</Text>
-            </View>
-            <View paddingVertical={1} />
-            <RNPickerSelect
-              placeholder={{
-                label: 'Select Category',
-                value: null,
-                color: 'green',
-              }}
-              items={arrCategoryfromPicker}
-              onValueChange={(value) => {
-                setCategoryPickerCatcherState(value);
-                GetBrandList(value);
-              }}
-              style={{
-                iconContainer: {
-                  top: 10,
-                  right: 12,
-                },
-                inputAndroid: {
-                  borderColor: 'green',
-                  fontSize: scale(18),
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderWidth: 0.5,
-                  borderRadius: 8,
-                  color: 'black',
-                  paddingRight: 30, // to ensure the text is never behind the icon
-                },
-              }}
-              value={CategoryPickerCatcherState}
-              useNativeAndroidPickerStyle={false}
-              textInputProps={{underlineColor: 'yellow'}}
-              Icon={() => {
-                return <Icon name="md-arrow-down" size={24} color="gray" />;
-              }}
-            />
-            <View paddingVertical={2} />
-            {/* CATEGORY ///////////////////////////////////////////////////////////////////////////////*/}
-            {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
-            <View paddingVertical={5} />
-            <View
-              style={{
-                marginHorizontal: 5,
-                justifyContent: 'space-around',
-                alignContent: 'space-between',
-              }}>
-               <Text syle={{fontSize: moderateScale(15)}}>Brand :</Text>
-            </View>
-            <View paddingVertical={1} />
-            <RNPickerSelect
-              placeholder={{
-                label: 'Select Brand',
-                value: null,
-                color: 'green',
-              }}
-              items={arrBrandfromPicker}
-              onValueChange={(value) => {
-                setBrandPickerCatcherState(value);
-                GetVariantList(value);
-              }}
-              style={{
-                iconContainer: {
-                  top: 10,
-                  right: 12,
-                },
-                inputAndroid: {
-                  borderColor: 'green',
-                  fontSize: scale(18),
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderWidth: 0.5,
-                  borderRadius: 8,
-                  color: 'black',
-                  paddingRight: 30, // to ensure the text is never behind the icon
-                },
-              }}
-              value={BrandPickerCatcherState}
-              useNativeAndroidPickerStyle={false}
-              textInputProps={{underlineColor: 'yellow'}}
-              Icon={() => {
-                return <Icon name="md-arrow-down" size={24} color="gray" />;
-              }}
-            />
-            <View paddingVertical={2} />
-            {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
-            {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
-            <View paddingVertical={5} />
-            <View
-              style={{
-                marginHorizontal: 5,
-                justifyContent: 'space-around',
-                alignContent: 'space-between',
-              }}>
-               <Text syle={{fontSize: moderateScale(15)}}>Variant :</Text>
-            </View>
-            <View paddingVertical={1} />
-            <RNPickerSelect
-              placeholder={{
-                label: 'Select Variant',
-                value: null,
-                color: 'green',
-              }}
-              items={arrVariantfromPicker}
-              onValueChange={(value) => {
-                setVariantPickerCatcherState(value);
-              }}
-              style={{
-                iconContainer: {
-                  top: 10,
-                  right: 12,
-                },
-                inputAndroid: {
-                  borderColor: 'green',
-                  fontSize: scale(18),
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderWidth: 0.5,
-                  borderRadius: 8,
-                  color: 'black',
-                  paddingRight: 30, // to ensure the text is never behind the icon
-                },
-              }}
-              value={VariantPickerCatcherState}
-              useNativeAndroidPickerStyle={false}
-              textInputProps={{underlineColor: 'yellow'}}
-              Icon={() => {
-                return <Icon name="md-arrow-down" size={24} color="gray" />;
-              }}
-            />
-            <View paddingVertical={2} />
-            {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
-               {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
-               <View paddingVertical={5} />
-            <View
-              style={{
-                marginHorizontal: 5,
-                justifyContent: 'space-around',
-                alignContent: 'space-between',
-              }}>
-             <Text syle={{fontSize: moderateScale(15)}}>Type :</Text>
-            </View>
-            <View paddingVertical={1} />
-            <RNPickerSelect
-              placeholder={{
-                label: 'Select Variant',
-                value: null,
-                color: 'green',
-              }}
-              items={[
-                {
-                  label: 'ALL',
-                  value: 'ALL',
-                },
-                {
-                  label: 'Promo',
-                  value: 'Promo',
-                },
-                {
-                  label: 'Regular',
-                  value: 'Regular',
-                },
-              ]}
-              onValueChange={(value) => {
-                setProductTypePickerCatcherState(value);
-              }}
-              style={{
-                iconContainer: {
-                  top: 10,
-                  right: 12,
-                },
-                inputAndroid: {
-                  borderColor: 'green',
-                  fontSize: scale(18),
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderWidth: 0.5,
-                  borderRadius: 8,
-                  color: 'black',
-                  paddingRight: 30, // to ensure the text is never behind the icon
-                },
-              }}
-              value={ProductTypePickerCatcherState}
-              useNativeAndroidPickerStyle={false}
-              textInputProps={{underlineColor: 'yellow'}}
-              Icon={() => {
-                return <Icon name="md-arrow-down" size={24} color="gray" />;
-              }}
-            />
-            <View paddingVertical={2} />
-            {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
-{/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
-<View paddingVertical={5} />
-            <View
-              style={{
-                marginHorizontal: 5,
-                justifyContent: 'space-around',
-                alignContent: 'space-between',
-              }}>
-              <Text>Price Option :</Text>
-            </View>
-            <View paddingVertical={1} />
-            <RNPickerSelect
-              placeholder={{
-                label: 'Select Price option',
-                value: null,
-                color: 'green',
-              }}
-              items={arrPriceOptionfromPicker}
-              onValueChange={(value) => {
-                setPriceOptionPickerCatcherState(value);
-              }}
-              style={{
-                iconContainer: {
-                  top: 10,
-                  right: 12,
-                },
-                inputAndroid: {
-                  borderColor: 'green',
-                  fontSize: scale(18),
-                  paddingHorizontal: 10,
-                  paddingVertical: 8,
-                  borderWidth: 0.5,
-                  borderRadius: 8,
-                  color: 'black',
-                  paddingRight: 30, // to ensure the text is never behind the icon
-                },
-              }}
-              value={PriceOptionPickerCatcherState}
-              useNativeAndroidPickerStyle={false}
-              textInputProps={{underlineColor: 'yellow'}}
-              Icon={() => {
-                return <Icon name="md-arrow-down" size={24} color="gray" />;
-              }}
-            />
-            <View paddingVertical={2} />
-            {/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* CATEGORY ///////////////////////////////////////////////////////////////////////////////*/}
+              <View paddingVertical={5} />
+              <View
+                style={{
+                  marginHorizontal: 5,
+                  justifyContent: 'space-around',
+                  alignContent: 'space-between',
+                }}>
+                <Text syle={{fontSize: moderateScale(15)}}>Category :</Text>
+              </View>
+              <View paddingVertical={1} />
+              <RNPickerSelect
+                placeholder={{
+                  label: 'Select Category',
+                  value: null,
+                  color: 'green',
+                }}
+                items={arrCategoryfromPicker}
+                onValueChange={(value) => {
+                  setCategoryPickerCatcherState(value);
+                  GetBrandList(value);
+                }}
+                style={{
+                  iconContainer: {
+                    top: 10,
+                    right: 12,
+                  },
+                  inputAndroid: {
+                    borderColor: 'green',
+                    fontSize: scale(18),
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    borderWidth: 0.5,
+                    borderRadius: 8,
+                    color: 'black',
+                    paddingRight: 30, // to ensure the text is never behind the icon
+                  },
+                }}
+                value={CategoryPickerCatcherState}
+                useNativeAndroidPickerStyle={false}
+                textInputProps={{underlineColor: 'yellow'}}
+                Icon={() => {
+                  return <Icon name="md-arrow-down" size={24} color="gray" />;
+                }}
+              />
+              <View paddingVertical={2} />
+              {/* CATEGORY ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
+              <View paddingVertical={5} />
+              <View
+                style={{
+                  marginHorizontal: 5,
+                  justifyContent: 'space-around',
+                  alignContent: 'space-between',
+                }}>
+                <Text syle={{fontSize: moderateScale(15)}}>Brand :</Text>
+              </View>
+              <View paddingVertical={1} />
+              <RNPickerSelect
+                placeholder={{
+                  label: 'Select Brand',
+                  value: null,
+                  color: 'green',
+                }}
+                items={arrBrandfromPicker}
+                onValueChange={(value) => {
+                  setBrandPickerCatcherState(value);
+                  GetVariantList(value);
+                }}
+                style={{
+                  iconContainer: {
+                    top: 10,
+                    right: 12,
+                  },
+                  inputAndroid: {
+                    borderColor: 'green',
+                    fontSize: scale(18),
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    borderWidth: 0.5,
+                    borderRadius: 8,
+                    color: 'black',
+                    paddingRight: 30, // to ensure the text is never behind the icon
+                  },
+                }}
+                value={BrandPickerCatcherState}
+                useNativeAndroidPickerStyle={false}
+                textInputProps={{underlineColor: 'yellow'}}
+                Icon={() => {
+                  return <Icon name="md-arrow-down" size={24} color="gray" />;
+                }}
+              />
+              <View paddingVertical={2} />
+              {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
+              <View paddingVertical={5} />
+              <View
+                style={{
+                  marginHorizontal: 5,
+                  justifyContent: 'space-around',
+                  alignContent: 'space-between',
+                }}>
+                <Text syle={{fontSize: moderateScale(15)}}>Variant :</Text>
+              </View>
+              <View paddingVertical={1} />
+              <RNPickerSelect
+                placeholder={{
+                  label: 'Select Variant',
+                  value: null,
+                  color: 'green',
+                }}
+                items={arrVariantfromPicker}
+                onValueChange={(value) => {
+                  setVariantPickerCatcherState(value);
+                }}
+                style={{
+                  iconContainer: {
+                    top: 10,
+                    right: 12,
+                  },
+                  inputAndroid: {
+                    borderColor: 'green',
+                    fontSize: scale(18),
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    borderWidth: 0.5,
+                    borderRadius: 8,
+                    color: 'black',
+                    paddingRight: 30, // to ensure the text is never behind the icon
+                  },
+                }}
+                value={VariantPickerCatcherState}
+                useNativeAndroidPickerStyle={false}
+                textInputProps={{underlineColor: 'yellow'}}
+                Icon={() => {
+                  return <Icon name="md-arrow-down" size={24} color="gray" />;
+                }}
+              />
+              <View paddingVertical={2} />
+              {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
+              <View paddingVertical={5} />
+              <View
+                style={{
+                  marginHorizontal: 5,
+                  justifyContent: 'space-around',
+                  alignContent: 'space-between',
+                }}>
+                <Text syle={{fontSize: moderateScale(15)}}>Type :</Text>
+              </View>
+              <View paddingVertical={1} />
+              <RNPickerSelect
+                placeholder={{
+                  label: 'Select Variant',
+                  value: null,
+                  color: 'green',
+                }}
+                items={[
+                  {
+                    label: 'ALL',
+                    value: 'ALL',
+                  },
+                  {
+                    label: 'Promo',
+                    value: 'Promo',
+                  },
+                  {
+                    label: 'Regular',
+                    value: 'Regular',
+                  },
+                ]}
+                onValueChange={(value) => {
+                  setProductTypePickerCatcherState(value);
+                }}
+                style={{
+                  iconContainer: {
+                    top: 10,
+                    right: 12,
+                  },
+                  inputAndroid: {
+                    borderColor: 'green',
+                    fontSize: scale(18),
+                    paddingHorizontal: 10,
+                    paddingVertical: 8,
+                    borderWidth: 0.5,
+                    borderRadius: 8,
+                    color: 'black',
+                    paddingRight: 30, // to ensure the text is never behind the icon
+                  },
+                }}
+                value={ProductTypePickerCatcherState}
+                useNativeAndroidPickerStyle={false}
+                textInputProps={{underlineColor: 'yellow'}}
+                Icon={() => {
+                  return <Icon name="md-arrow-down" size={24} color="gray" />;
+                }}
+              />
+              <View paddingVertical={2} />
+              {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
+              {global.account_type === 'Principal' ||
+              global.account_type === 'Developer' ||
+              global.account_type === 'Admin' ? (
+                <View>
+                  <View paddingVertical={5} />
+                  <View
+                    style={{
+                      marginHorizontal: 5,
+                      justifyContent: 'space-around',
+                      alignContent: 'space-between',
+                    }}>
+                    <Text>Price Option :</Text>
+                  </View>
+                  <View paddingVertical={1} />
+                  <RNPickerSelect
+                    placeholder={{
+                      label: 'Select Price Option',
+                      value: null,
+                      color: 'green',
+                    }}
+                    items={arrPriceOptionfromPicker}
+                    onValueChange={(value) => {
+                      setPriceOptionPickerCatcherState(value);
+                    }}
+                    style={{
+                      iconContainer: {
+                        top: 10,
+                        right: 12,
+                      },
+                      inputAndroid: {
+                        borderColor: 'green',
+                        fontSize: scale(18),
+                        paddingHorizontal: 10,
+                        paddingVertical: 8,
+                        borderWidth: 0.5,
+                        borderRadius: 8,
+                        color: 'black',
+                        paddingRight: 30, // to ensure the text is never behind the icon
+                      },
+                    }}
+                    value={PriceOptionPickerCatcherState}
+                    useNativeAndroidPickerStyle={false}
+                    textInputProps={{underlineColor: 'yellow'}}
+                    Icon={() => {
+                      return (
+                        <Icon name="md-arrow-down" size={24} color="gray" />
+                      );
+                    }}
+                  />
+                  <View paddingVertical={2} />
+                </View>
+              ) : null}
+              {/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
 
-            {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
-            {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
+              {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Vendor :</Text>
                 <DropDownPicker  
                   placeholder={'ALL'}
@@ -2935,9 +2944,9 @@ export default function Inventory(props) {
                   }}
                 />
               </View> */}
-            {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
-            {/*} CATEGORY ///////////////////////////////////////////////////////////////////////////////  */}
-            {/*              
+              {/* VENDOR ///////////////////////////////////////////////////////////////////////////////*/}
+              {/*} CATEGORY ///////////////////////////////////////////////////////////////////////////////  */}
+              {/*              
                <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Category :</Text>
                 <DropDownPicker 
@@ -2987,9 +2996,9 @@ export default function Inventory(props) {
                 />
               </View> */}
 
-            {/* CATEGORY ///////////////////////////////////////////////////////////////////////////////*/}
-            {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
-            {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
+              {/* CATEGORY ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Brand :</Text>
                 <DropDownPicker  
                   placeholder={'ALL'}
@@ -3041,10 +3050,10 @@ export default function Inventory(props) {
                   }}
                 />
               </View> */}
-            {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
-            {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* BRAND ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
 
-            {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
+              {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Variant :</Text>
                 <DropDownPicker  
                   placeholder={'ALL'}
@@ -3092,9 +3101,9 @@ export default function Inventory(props) {
                   }}
                 />
               </View> */}
-            {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
-            {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
-            {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
+              {/* VARIANT ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* <View style={{marginTop: moderateScale(20, 0.5)}}>
                 <Text>Product Type :</Text>
                 <DropDownPicker  
                   placeholder={'ALL'}
@@ -3137,10 +3146,10 @@ export default function Inventory(props) {
                   }}
                 />
               </View> */}
-            {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
-            {/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
-            {/*              
-              {global.sales_position_name === 'ALLSALESMAN' ? (
+              {/* TYPE ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
+              {/*              
+              {global.sales_position_name === 'ADDEDONLYA_LLSALESMAN' ? (
                 <View style={{marginTop: moderateScale(20, 0.5)}}>
                   <Text>Price Option :</Text>
                   <DropDownPicker //  -----------------------------------------------//// TYPE
@@ -3189,58 +3198,57 @@ export default function Inventory(props) {
                   />
                 </View>
               ) : null} */}
-            {/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
+              {/* OPTION ///////////////////////////////////////////////////////////////////////////////*/}
 
-            <View>
-              <View
-                style={{
-                  flexDirection: 'column',
-                  marginTop: 5,
-                  alignItems: 'flex-end',
-                  marginRight: moderateScale(20),
-                }}>
+              <View>
                 <View
                   style={{
-                    marginBottom: moderateScale(20, 0.5),
-                    marginTop: moderateScale(20, 0.5),
+                    flexDirection: 'column',
+                    marginTop: 5,
+                    alignItems: 'flex-end',
+                    marginRight: moderateScale(20),
                   }}>
-                  <FlatButton
-                    width={140}
-                    gradientFrom="red"
-                    gradientTo="pink"
-                    text="Filter"
-                    onPress={() => {
-                      console.log(CategoryPickerCatcherState);
-                      setPleaseWaitVisible(true);
+                  <View
+                    style={{
+                      marginBottom: moderateScale(20, 0.5),
+                      marginTop: moderateScale(20, 0.5),
+                    }}>
+                    <FlatButton
+                      width={140}
+                      gradientFrom="red"
+                      gradientTo="pink"
+                      text="Filter"
+                      onPress={() => {
+                        setPleaseWaitVisible(true);
 
-                      setpage(0);
-                      setisVisiblePrincipalDropdownPicker(false);
-                      setisVisibleVariantDropdownPicker(false);
-                      setisVisibleTypeDropdownPicker(false);
-                      setisVisibleCategoryDropdownPicker(false);
-                      setisVisibleBrandDropdownPicker(false);
-                      setisVisiblePriceOptionDropdownPicker(false);
+                        setpage(0);
+                        setisVisiblePrincipalDropdownPicker(false);
+                        setisVisibleVariantDropdownPicker(false);
+                        setisVisibleTypeDropdownPicker(false);
+                        setisVisibleCategoryDropdownPicker(false);
+                        setisVisibleBrandDropdownPicker(false);
+                        setisVisiblePriceOptionDropdownPicker(false);
 
-                      GetLocalPromoItems(page * 0);
-                      setisModalVisible2(false);
-                    }}
-                  />
-                </View>
-                <View>
-                  <FlatButton
-                    width={140}
-                    gradientFrom="red"
-                    gradientTo="pink"
-                    text="Close"
-                    onPress={() => {
-                      setisVisiblePrincipalDropdownPicker(false);
-                      setisVisibleVariantDropdownPicker(false);
-                      setisModalVisible2(false);
-                    }}
-                  />
+                        GetLocalPromoItems(page * 0);
+                        setisModalVisible2(false);
+                      }}
+                    />
+                  </View>
+                  <View>
+                    <FlatButton
+                      width={140}
+                      gradientFrom="red"
+                      gradientTo="pink"
+                      text="Close"
+                      onPress={() => {
+                        setisVisiblePrincipalDropdownPicker(false);
+                        setisVisibleVariantDropdownPicker(false);
+                        setisModalVisible2(false);
+                      }}
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
             </View>
           </View>
         </TouchableWithoutFeedback>

@@ -172,7 +172,7 @@ const SignScreen = (props) => {
         <View style={styles.action}>
           <FontAwesome name="user-o" color="#05375a" size={20} />
           <TextInput
-            editable={global.account_type === 'Administrator' ? true : false}
+            editable={global.account_type === 'Developer' ? true : false}
             defaultValue={global.user_name}
             placeholder="enter username"
             style={[styles.textInput]}
