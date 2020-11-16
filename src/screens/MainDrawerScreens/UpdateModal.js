@@ -240,7 +240,7 @@ export default function UpdateModal(props) {
       });
       props.navigation.navigate(CurrentAppScreen.Screen);
       CheckSystemStatus(); //3.3
-      // RunTimer();
+      RunTimer();
       //5
     } else {
       updateProgress = 0;
@@ -1238,12 +1238,12 @@ export default function UpdateModal(props) {
       principal_id;
     //10
 
-    console.log(
-      server.server_address +
-        globalCompany.company +
-        'perareasalesuba?' +
-        tempstr2,
-    );
+    // console.log(
+    //   server.server_address +
+    //     globalCompany.company +
+    //     'perareasalesuba?' +
+    //     tempstr2,
+    // );
     Promise.race([
       fetch(
         server.server_address +

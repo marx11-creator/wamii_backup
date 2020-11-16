@@ -54,6 +54,7 @@ import {
 } from '../../sharedComponents/globalCommands/globalCommands';
 import PageContextGlobalState from '../MainDrawerScreens/pagecontextGlobalState';
 import PageContextGlobalTimer from '../MainDrawerScreens/pagecontextGlobalTimer';
+import ImageOverlay from 'react-native-image-overlay';
 export default function PerPrincipalDashboard(props) {
   // LogBox.ignoreAllLogs();
 
@@ -693,9 +694,13 @@ export default function PerPrincipalDashboard(props) {
   }
 
   return (
-    // ===================================================================================================================
-    <View style={{flex: 1}}>
-      <Video
+    <ImageOverlay
+      // source={require('../../assets/homepagecoslor.jpg')}
+      source={require('../../assets/VideoImage.png')}
+      height={height}
+      contentPosition="top">
+      <View style={{flex: 1, width: '100%'}}>
+        {/* <Video
         rate={0.9}
         repeat={true}
         resizeMode="cover"
@@ -704,85 +709,56 @@ export default function PerPrincipalDashboard(props) {
         // onBuffer={this.onBuffer} // Callback when remote video is buffering
         onError={(Error) => console.log(Error)} // Callback when video cannot be loaded
         style={styles.backgroundVideo}
-      />
-      <ScrollView>
-        <View style={{flexDirection: 'column'}}>
-          <View style={{margin: moderateScale(5)}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                height: scale(70),
-                alignItems: 'center',
-              }}>
-              {/* <Image
+      /> */}
+        <ScrollView>
+          <View style={{flexDirection: 'column'}}>
+            <View style={{margin: moderateScale(5)}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  height: scale(70),
+                  alignItems: 'center',
+                }}>
+                {/* <Image
                 style={styles.CompanyLogo}
                 source={{
                   uri:
                     'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
                 }}
               /> */}
-              <View style={{width: 50}}>
-                <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-                  <Icon name="md-filter" color={'#ffffff'} size={34} />
-                </TouchableOpacity>
-              </View>
+                <View style={{width: 50}}>
+                  <TouchableOpacity
+                    onPress={() => props.navigation.openDrawer()}>
+                    <Icon name="md-filter" color={'#ffffff'} size={34} />
+                  </TouchableOpacity>
+                </View>
 
-              <TouchableOpacity
-                onPress={() => {
-                  setisVisibleModalFilter(true);
-                  CurrentDashboardScreen.Screen = 'PERVENDOR';
-                }}>
-                <Text
-                  style={{
-                    paddingBottom: moderateScale(10),
-                    alignSelf: 'center',
-                    fontSize: moderateScale(22),
-                    color: 'white',
-                    fontWeight: 'bold',
-                    marginLeft: width / 2 - scale(145),
+                <TouchableOpacity
+                  onPress={() => {
+                    setisVisibleModalFilter(true);
+                    CurrentDashboardScreen.Screen = 'PERVENDOR';
                   }}>
-                  Per Principal
-                </Text>
-              </TouchableOpacity>
-              <View
-                style={{
-                  flex: 1,
-                  width: scale(150),
-                  marginRight: 10,
-                  alignContent: 'flex-end',
-                  alignItems: 'flex-end',
-                  justifyContent: 'flex-end',
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                  }}>
-                  Last Update
-                </Text>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                  }}>
-                  {globalTimer.lastUpdate}
-                </Text>
+                  <Text
+                    style={{
+                      paddingBottom: moderateScale(10),
+                      alignSelf: 'center',
+                      fontSize: moderateScale(22),
+                      color: 'white',
+                      fontWeight: 'bold',
+                      marginLeft: width / 2 - scale(145),
+                    }}>
+                    Per Principal
+                  </Text>
+                </TouchableOpacity>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    flex: 1,
+                    width: scale(150),
+                    marginRight: 10,
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
                   }}>
-                  <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                    <Icon name="refresh" color={'#ffffff'} size={10} />
-                  </View>
                   <Text
                     style={{
                       color: 'white',
@@ -791,24 +767,55 @@ export default function PerPrincipalDashboard(props) {
                       alignItems: 'flex-end',
                       justifyContent: 'flex-end',
                     }}>
-                    {globalState.updateStatus === 'Updating' ||
-                    globalState.updateStatus === 'Start' ? (
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: moderateScale(12, 0.5),
-                          alignContent: 'flex-end',
-                          alignItems: 'flex-end',
-                          justifyContent: 'flex-end',
-                        }}>
-                        {'Updating...'}{' '}
-                        {globalState.updatePercentage > 0
-                          ? globalState.updatePercentage + ' %'
-                          : ''}
-                      </Text>
-                    ) : null}
+                    Last Update
+                  </Text>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {globalTimer.lastUpdate}
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignContent: 'center',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <View
+                      style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                      <Icon name="refresh" color={'#ffffff'} size={10} />
+                    </View>
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: moderateScale(12, 0.5),
+                        alignContent: 'flex-end',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                      }}>
+                      {globalState.updateStatus === 'Updating' ||
+                      globalState.updateStatus === 'Start' ? (
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: moderateScale(12, 0.5),
+                            alignContent: 'flex-end',
+                            alignItems: 'flex-end',
+                            justifyContent: 'flex-end',
+                          }}>
+                          {'Updating...'}{' '}
+                          {globalState.updatePercentage > 0
+                            ? globalState.updatePercentage + ' %'
+                            : ''}
+                        </Text>
+                      ) : null}
 
-                    {/* <Text
+                      {/* <Text
                         style={{
                           color: 'white',
                           fontSize: moderateScale(12, 0.5),
@@ -818,10 +825,10 @@ export default function PerPrincipalDashboard(props) {
                         }}>
                         {hhmmss(900 - globalStatus.CurrentSeconds)}
                       </Text> */}
-                  </Text>
+                    </Text>
+                  </View>
                 </View>
-              </View>
-              {/* <View style={styles.textLastUpdateView}>
+                {/* <View style={styles.textLastUpdateView}>
                 <Text style={styles.textLastUpdate}>Last Update</Text>
                 <Text style={styles.textLastUpdate}>
                   {dateTime.substring(0, 10)}
@@ -830,35 +837,35 @@ export default function PerPrincipalDashboard(props) {
                   {dateTime.substring(11, 50)}
                 </Text>
               </View> */}
-            </View>
-            <View>
-              <Text
-                style={{
-                  color: 'white',
-                  fontWeight: 'bold',
-                  fontSize: moderateScale(20),
-                }}>
-                {FilterList.DashboardFilterMonth}{' '}
-                {FilterList.DashboardFilterYear}
-              </Text>
-              <Animatable.View
-                style={{justifyContent: 'center', marginTop: -scale(29)}}
-                useNativeDriver={true}
-                opacity={0.9}
-                delay={1000}
-                animation={LineChartAnimation ? 'fadeIn' : undefined}
-                onAnimationEnd={() => setLineChartAnimation(false)}>
+              </View>
+              <View>
                 <Text
                   style={{
-                    position: 'absolute',
-                    alignSelf: 'center',
-                    fontSize: moderateScale(25),
-                    color: '#FFFFFF',
+                    color: 'white',
                     fontWeight: 'bold',
+                    fontSize: moderateScale(20),
                   }}>
-                  {numFormatter(totalSales)}
+                  {FilterList.DashboardFilterMonth}{' '}
+                  {FilterList.DashboardFilterYear}
                 </Text>
-                {/* <Text
+                <Animatable.View
+                  style={{justifyContent: 'center', marginTop: -scale(29)}}
+                  useNativeDriver={true}
+                  opacity={0.9}
+                  delay={1000}
+                  animation={LineChartAnimation ? 'fadeIn' : undefined}
+                  onAnimationEnd={() => setLineChartAnimation(false)}>
+                  <Text
+                    style={{
+                      position: 'absolute',
+                      alignSelf: 'center',
+                      fontSize: moderateScale(25),
+                      color: '#FFFFFF',
+                      fontWeight: 'bold',
+                    }}>
+                    {numFormatter(totalSales)}
+                  </Text>
+                  {/* <Text
                   style={{
                     position: 'absolute',
                     alignSelf: 'center',
@@ -868,68 +875,68 @@ export default function PerPrincipalDashboard(props) {
                   }}>
                   {CurrentContribution} %
                 </Text> */}
-                <PieChart
-                  style={{height: scale(400), opacity: 1}}
-                  outerRadius={'100%'}
-                  innerRadius={'40%'}
-                  data={data}>
-                  <Labels />
-                </PieChart>
-              </Animatable.View>
+                  <PieChart
+                    style={{height: scale(400), opacity: 1}}
+                    outerRadius={'100%'}
+                    innerRadius={'40%'}
+                    data={data}>
+                    <Labels />
+                  </PieChart>
+                </Animatable.View>
+              </View>
             </View>
-          </View>
 
-          <Animatable.View
-            style={{marginTop: 0}}
-            useNativeDriver={true}
-            delay={600}
-            animation={totalTeamAnimation ? 'zoomInRight' : undefined}
-            onAnimationEnd={() => setTotalTeamANimation(false)}>
-            <View style={{borderWidth: 0, margin: scale(5)}}>
-              {/* <LinearGradient
+            <Animatable.View
+              style={{marginTop: 0}}
+              useNativeDriver={true}
+              delay={600}
+              animation={totalTeamAnimation ? 'zoomInRight' : undefined}
+              onAnimationEnd={() => setTotalTeamANimation(false)}>
+              <View style={{borderWidth: 0, margin: scale(5)}}>
+                {/* <LinearGradient
           opacity={0.9}
           colors={['#00FF8B', '#28E2EE']}
           style={{width: scale(580), height: scale(530)}}> */}
-              <FlatList
-                data={[
-                  {
-                    team: 'PRINCIPAL',
-                    sales: 'SALES',
-                    target: 'TARGET',
-                    achievement: '%',
-                    uba: 'UBA',
-                  },
-                ]}
-                renderItem={renderData}
-                initialNumToRender={5}
-                maxToRenderPerBatch={10}
-                windowSize={10}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            </View>
-            <View
-              style={{
-                height: PerPrincipal.length * moderateScale(75, 0.5) + 10,
-              }}>
-              <FlatList
-                data={perPrincipalforFlatlist}
-                renderItem={renderDataDetails}
-                initialNumToRender={5}
-                maxToRenderPerBatch={10}
-                windowSize={10}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            </View>
-          </Animatable.View>
+                <FlatList
+                  data={[
+                    {
+                      team: 'PRINCIPAL',
+                      sales: 'SALES',
+                      target: 'TARGET',
+                      achievement: '%',
+                      uba: 'UBA',
+                    },
+                  ]}
+                  renderItem={renderData}
+                  initialNumToRender={5}
+                  maxToRenderPerBatch={10}
+                  windowSize={10}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+              <View
+                style={{
+                  height: PerPrincipal.length * moderateScale(75, 0.5) + 10,
+                }}>
+                <FlatList
+                  data={perPrincipalforFlatlist}
+                  renderItem={renderDataDetails}
+                  initialNumToRender={5}
+                  maxToRenderPerBatch={10}
+                  windowSize={10}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+            </Animatable.View>
 
-          {isVisibleModalFilter ? (
-            <DashboardModal
-              display={isVisibleModalFilter}
-              closeDisplay={() => setisVisibleModalFilter(false)} // <- we are passing this function
-            />
-          ) : null}
+            {isVisibleModalFilter ? (
+              <DashboardModal
+                display={isVisibleModalFilter}
+                closeDisplay={() => setisVisibleModalFilter(false)} // <- we are passing this function
+              />
+            ) : null}
 
-          {/* <Modal
+            {/* <Modal
             transparent={true}
             animationInTiming={200}
             useNativeDriver={true}
@@ -1014,7 +1021,7 @@ export default function PerPrincipalDashboard(props) {
                       }}
                     />
                   </View> */}
-          {/* </View>
+            {/* </View>
                     <View
                       style={{
                         alignSelf: 'flex-end',
@@ -1044,9 +1051,10 @@ export default function PerPrincipalDashboard(props) {
               </View>
             </TouchableWithoutFeedback>
           </Modal> */}
-        </View>
-      </ScrollView>
-    </View>
+          </View>
+        </ScrollView>
+      </View>
+    </ImageOverlay>
   );
 }
 

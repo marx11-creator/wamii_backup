@@ -59,6 +59,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import DashboardModal from '../Dashboard/DashboardModal';
 import PageContextGlobalState from '../MainDrawerScreens/pagecontextGlobalState';
 import PageContextGlobalTimer from '../MainDrawerScreens/pagecontextGlobalTimer';
+import ImageOverlay from 'react-native-image-overlay';
 var lineChartAPIdatalength = 0;
 var BottomPerTeamAPIdatalength = 0;
 LogBox.ignoreAllLogs();
@@ -563,9 +564,13 @@ export default function PerTeamDashboard(props) {
   }
 
   return (
-    // ===================================================================================================================
-    <View style={{flex: 1}}>
-      <Video
+    <ImageOverlay
+      // source={require('../../assets/homepagecoslor.jpg')}
+      source={require('../../assets/VideoImage.png')}
+      height={height}
+      contentPosition="top">
+      <View style={{flex: 1}}>
+        {/* <Video
         rate={1}
         repeat={true}
         resizeMode="cover"
@@ -574,85 +579,56 @@ export default function PerTeamDashboard(props) {
         // onBuffer={this.onBuffer} // Callback when remote video is buffering
         onError={(Error) => console.log(Error)} // Callback when video cannot be loaded
         style={styles.backgroundVideo}
-      />
-      <ScrollView>
-        <View style={{flexDirection: 'column'}}>
-          <View style={{margin: moderateScale(5), flex: 1}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                height: scale(70),
-                alignItems: 'center',
-              }}>
-              {/* <Image
+      /> */}
+        <ScrollView>
+          <View style={{flexDirection: 'column'}}>
+            <View style={{margin: moderateScale(5), flex: 1}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  height: scale(70),
+                  alignItems: 'center',
+                }}>
+                {/* <Image
                 style={styles.CompanyLogo}
                 source={{
                   uri:
                     'https://public-winganmarketing.sgp1.digitaloceanspaces.com/products/LOGO%20-%20Copy.png',
                 }}
               /> */}
-              <View style={{width: 50}}>
-                <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-                  <Icon name="md-filter" color={'#ffffff'} size={34} />
-                </TouchableOpacity>
-              </View>
+                <View style={{width: 50}}>
+                  <TouchableOpacity
+                    onPress={() => props.navigation.openDrawer()}>
+                    <Icon name="md-filter" color={'#ffffff'} size={34} />
+                  </TouchableOpacity>
+                </View>
 
-              <TouchableOpacity
-                onPress={() => {
-                  setisVisibleModalFilter(true),
-                    (CurrentDashboardScreen.Screen = 'PERTEAM');
-                }}>
-                <Text
-                  style={{
-                    paddingBottom: moderateScale(10),
-                    alignSelf: 'center',
-                    fontSize: moderateScale(22),
-                    color: 'white',
-                    fontWeight: 'bold',
-                    marginLeft: width / 2 - scale(145),
+                <TouchableOpacity
+                  onPress={() => {
+                    setisVisibleModalFilter(true),
+                      (CurrentDashboardScreen.Screen = 'PERTEAM');
                   }}>
-                  Per Team
-                </Text>
-              </TouchableOpacity>
-              <View
-                style={{
-                  flex: 1,
-                  width: scale(150),
-                  marginRight: 10,
-                  alignContent: 'flex-end',
-                  alignItems: 'flex-end',
-                  justifyContent: 'flex-end',
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                  }}>
-                  Last Update
-                </Text>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: moderateScale(12, 0.5),
-                    alignContent: 'flex-end',
-                    alignItems: 'flex-end',
-                    justifyContent: 'flex-end',
-                  }}>
-                  {globalTimer.lastUpdate}
-                </Text>
+                  <Text
+                    style={{
+                      paddingBottom: moderateScale(10),
+                      alignSelf: 'center',
+                      fontSize: moderateScale(22),
+                      color: 'white',
+                      fontWeight: 'bold',
+                      marginLeft: width / 2 - scale(145),
+                    }}>
+                    Per Team
+                  </Text>
+                </TouchableOpacity>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    flex: 1,
+                    width: scale(150),
+                    marginRight: 10,
+                    alignContent: 'flex-end',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-end',
                   }}>
-                  <View style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
-                    <Icon name="refresh" color={'#ffffff'} size={10} />
-                  </View>
                   <Text
                     style={{
                       color: 'white',
@@ -661,24 +637,55 @@ export default function PerTeamDashboard(props) {
                       alignItems: 'flex-end',
                       justifyContent: 'flex-end',
                     }}>
-                    {globalState.updateStatus === 'Updating' ||
-                    globalState.updateStatus === 'Start' ? (
-                      <Text
-                        style={{
-                          color: 'white',
-                          fontSize: moderateScale(12, 0.5),
-                          alignContent: 'flex-end',
-                          alignItems: 'flex-end',
-                          justifyContent: 'flex-end',
-                        }}>
-                        {'Updating...'}{' '}
-                        {globalState.updatePercentage > 0
-                          ? globalState.updatePercentage + ' %'
-                          : ''}
-                      </Text>
-                    ) : null}
+                    Last Update
+                  </Text>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: moderateScale(12, 0.5),
+                      alignContent: 'flex-end',
+                      alignItems: 'flex-end',
+                      justifyContent: 'flex-end',
+                    }}>
+                    {globalTimer.lastUpdate}
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignContent: 'center',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <View
+                      style={{width: 10, marginRight: moderateScale(5, 0.5)}}>
+                      <Icon name="refresh" color={'#ffffff'} size={10} />
+                    </View>
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: moderateScale(12, 0.5),
+                        alignContent: 'flex-end',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end',
+                      }}>
+                      {globalState.updateStatus === 'Updating' ||
+                      globalState.updateStatus === 'Start' ? (
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: moderateScale(12, 0.5),
+                            alignContent: 'flex-end',
+                            alignItems: 'flex-end',
+                            justifyContent: 'flex-end',
+                          }}>
+                          {'Updating...'}{' '}
+                          {globalState.updatePercentage > 0
+                            ? globalState.updatePercentage + ' %'
+                            : ''}
+                        </Text>
+                      ) : null}
 
-                    {/* <Text
+                      {/* <Text
                         style={{
                           color: 'white',
                           fontSize: moderateScale(12, 0.5),
@@ -688,10 +695,10 @@ export default function PerTeamDashboard(props) {
                         }}>
                         {hhmmss(900 - globalStatus.CurrentSeconds)}
                       </Text> */}
-                  </Text>
+                    </Text>
+                  </View>
                 </View>
-              </View>
-              {/* <View style={styles.textLastUpdateView}>
+                {/* <View style={styles.textLastUpdateView}>
                 <Text style={styles.textLastUpdate}>Last Update</Text>
                 <Text style={styles.textLastUpdate}>
                   {dateTime.substring(0, 10)}
@@ -700,267 +707,269 @@ export default function PerTeamDashboard(props) {
                   {dateTime.substring(11, 50)}
                 </Text>
               </View> */}
-            </View>
-            <Animatable.View
-              useNativeDriver={true}
-              opacity={0.9}
-              delay={1000}
-              animation={LineChartAnimation ? 'fadeIn' : undefined}
-              onAnimationEnd={() => setLineChartAnimation(false)}>
-              <BarChart
-                style={{
-                  marginVertical: 2,
-                  ...chartConfig.style,
-                }}
-                data={{
-                  labels: lineChartBottomLocalData,
-                  datasets: [
-                    {
-                      //LEFT COLUM LABEL - AMOUNT
-                      data: lineChartColLocalData,
-                      color: (opacity = 1) => 'white',
-                      strokeWidth: 2, // optional
+              </View>
+              <Animatable.View
+                useNativeDriver={true}
+                opacity={0.9}
+                delay={1000}
+                animation={LineChartAnimation ? 'fadeIn' : undefined}
+                onAnimationEnd={() => setLineChartAnimation(false)}>
+                <BarChart
+                  style={{
+                    marginVertical: 2,
+                    ...chartConfig.style,
+                  }}
+                  data={{
+                    labels: lineChartBottomLocalData,
+                    datasets: [
+                      {
+                        //LEFT COLUM LABEL - AMOUNT
+                        data: lineChartColLocalData,
+                        color: (opacity = 1) => 'white',
+                        strokeWidth: 2, // optional
+                      },
+                    ],
+                  }}
+                  fromZero={true}
+                  height={scale(290)}
+                  width={scale(585)}
+                  yAxisLabel=""
+                  yAxisSuffix="M"
+                  withInnerLines={false}
+                  chartConfig={{
+                    backgroundColor: 'transparent',
+                    backgroundGradientFrom: '#EA0A16',
+                    backgroundGradientFromOpacity: 0.9,
+                    backgroundGradientTo: 'white',
+                    backgroundGradientToOpacity: 0.3,
+                    strokeWidth: 2,
+                    decimalPlaces: 2, // optional, defaults to 2dp
+                    color: (opacity = 100) => 'white', //<- This is needed to prevent the color null from appearing
+                    barPercentage: barPercentageWidth,
+                    propsForLabels: {
+                      fontSize: '10',
                     },
-                  ],
-                }}
-                fromZero={true}
-                height={scale(290)}
-                width={scale(585)}
-                yAxisLabel=""
-                yAxisSuffix="M"
-                withInnerLines={false}
-                chartConfig={{
-                  backgroundColor: 'transparent',
-                  backgroundGradientFrom: '#EA0A16',
-                  backgroundGradientFromOpacity: 0.9,
-                  backgroundGradientTo: 'white',
-                  backgroundGradientToOpacity: 0.3,
-                  strokeWidth: 2,
-                  decimalPlaces: 2, // optional, defaults to 2dp
-                  color: (opacity = 100) => 'white', //<- This is needed to prevent the color null from appearing
-                  barPercentage: barPercentageWidth,
-                  propsForLabels: {
-                    fontSize: '10',
-                  },
-                  fillShadowGradient: '#EBCFD8', // THIS
-                  fillShadowGradientOpacity: 0.7, // THIS
-                }}
-                showBarTops={true}
-                showValuesOnTopOfBars={false}
-              />
-            </Animatable.View>
+                    fillShadowGradient: '#EBCFD8', // THIS
+                    fillShadowGradientOpacity: 0.7, // THIS
+                  }}
+                  showBarTops={true}
+                  showValuesOnTopOfBars={false}
+                />
+              </Animatable.View>
 
-            {/* <Button
+              {/* <Button
               title="Test"
               onPress={() => {
                 console.log(globalState.lastUpdate);
               }}
             /> */}
-            {/* <Button
+              {/* <Button
               title="Test"
               onPress={() => {
                 console.log(globalState.lastUpdate);
               }}
             /> */}
-          </View>
-          <View style={styles.LinearView}>
-            <Animatable.View
-              useNativeDriver={true}
-              delay={200}
-              animation={totalSalesAnimation ? 'fadeInLeft' : undefined}
-              onAnimationEnd={() => settotalSalesAnimation(false)}>
-              <LinearGradient
-                opacity={0.9}
-                start={{x: 0, y: 1}}
-                end={{x: 1, y: 1}}
-                colors={['#F5AD80', '#FF773E']}
-                style={SUmmaryStyle}>
-                <View style={styles.LinearTextView}>
-                  <Text style={styles.LinearTopBottomText}>
-                    {FilterList.DashboardFilterMonth === ''
-                      ? moment().utcOffset('+08:00').format('MMMM')
-                      : FilterList.DashboardFilterMonth}{' '}
-                    {FilterList.DashboardFilterYear === ''
-                      ? moment().utcOffset('+08:00').format('YYYYY')
-                      : FilterList.DashboardFilterYear}
-                    {' sales'}
-                  </Text>
-                  <Text style={styles.LinearCenterText}>
-                    P
-                    {numbro(totalSales).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })}
-                  </Text>
-                  <Text style={styles.LinearTopBottomText}>Current sales </Text>
-                </View>
-              </LinearGradient>
-            </Animatable.View>
-            <Animatable.View
-              useNativeDriver={true}
-              delay={200}
-              animation={totalTargetAnimation ? 'fadeInRight' : undefined}
-              onAnimationEnd={() => settotalTargetsAnimation(false)}>
-              <LinearGradient
-                opacity={0.9}
-                start={{x: 0, y: 1}}
-                end={{x: 1, y: 1}}
-                colors={['#99C0E8', '#1D85F0']}
-                style={SUmmaryStyle}>
-                <View style={styles.LinearTextView}>
-                  <Text style={styles.LinearTopBottomText}>
-                    {FilterList.DashboardFilterMonth === ''
-                      ? moment().utcOffset('+08:00').format('MMMM')
-                      : FilterList.DashboardFilterMonth}{' '}
-                    {FilterList.DashboardFilterYear === ''
-                      ? moment().utcOffset('+08:00').format('YYYY')
-                      : FilterList.DashboardFilterYear}
-                    {' target'}
-                  </Text>
-                  <Text style={styles.LinearCenterText}>
-                    P
-                    {numbro(totalTarget).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })}
-                  </Text>
-                  <Text style={styles.LinearTopBottomText}>
-                    Current target{' '}
-                  </Text>
-                </View>
-              </LinearGradient>
-              <Animatable.View />
-            </Animatable.View>
-          </View>
-          <View style={styles.LinearView}>
-            <Animatable.View
-              useNativeDriver={true}
-              delay={400}
-              animation={totalAchievementAnimation ? 'fadeInLeft' : undefined}
-              onAnimationEnd={() => settotalAchivementAnimation(false)}>
-              <LinearGradient
-                opacity={0.9}
-                start={{x: 0, y: 1}}
-                end={{x: 1, y: 1}}
-                colors={['#78F876', '#09E448']}
-                style={SUmmaryStyle}>
-                <View style={styles.LinearTextView}>
-                  <Text style={styles.LinearTopBottomText}>
-                    {FilterList.DashboardFilterMonth === ''
-                      ? moment().utcOffset('+08:00').format('MMMM')
-                      : FilterList.DashboardFilterMonth}{' '}
-                    {FilterList.DashboardFilterYear === ''
-                      ? moment().utcOffset('+08:00').format('YYYY')
-                      : FilterList.DashboardFilterYear}
-                    {' achievement'}
-                  </Text>
-                  <Animatable.Text
-                    animation="pulse"
-                    easing="ease-out-back"
-                    iterationCount={500}
-                    iterationDelay={100}
-                    style={{textAlign: 'center', fontSize: scale(22)}}>
-                    🏆
-                  </Animatable.Text>
-                  <Text
-                    style={[
-                      styles.LinearCenterText,
-                      {alignSelf: 'center', fontSize: scale(30)},
-                    ]}>
-                    {totalTarget > 0
-                      ? numbro(summaryPercentage).format({
-                          thousandSeparated: true,
-                          mantissa: 2,
-                        })
-                      : 0}
-                    %
-                  </Text>
-                  <Text style={styles.LinearTopBottomText}>Achievement</Text>
-                </View>
-              </LinearGradient>
-            </Animatable.View>
-            <Animatable.View
-              useNativeDriver={true}
-              delay={400}
-              animation={totalBalanceAnimation ? 'fadeInRight' : undefined}
-              onAnimationEnd={() => settotalBalanceAnimation(false)}>
-              <LinearGradient
-                opacity={0.9}
-                start={{x: 0, y: 1}}
-                end={{x: 1, y: 1}}
-                colors={['#F0C0EC', '#F42CE4']}
-                style={SUmmaryStyle}>
-                <View style={styles.LinearTextView}>
-                  <Text style={styles.LinearTopBottomText}>
-                    {FilterList.DashboardFilterMonth === ''
-                      ? moment().utcOffset('+08:00').format('MMMM')
-                      : FilterList.DashboardFilterMonth}{' '}
-                    {FilterList.DashboardFilterYear === ''
-                      ? moment().utcOffset('+08:00').format('YYYY')
-                      : FilterList.DashboardFilterYear}
-                    {' balance'}
-                  </Text>
-                  <Text style={styles.LinearCenterText}>
-                    P
-                    {numbro(summaryBaltoSell).format({
-                      thousandSeparated: true,
-                      mantissa: 2,
-                    })}
-                  </Text>
-                  <Text style={styles.LinearTopBottomText}>
-                    Current balance to sell{' '}
-                  </Text>
-                </View>
-              </LinearGradient>
-            </Animatable.View>
-          </View>
+            </View>
+            <View style={styles.LinearView}>
+              <Animatable.View
+                useNativeDriver={true}
+                delay={200}
+                animation={totalSalesAnimation ? 'fadeInLeft' : undefined}
+                onAnimationEnd={() => settotalSalesAnimation(false)}>
+                <LinearGradient
+                  opacity={0.9}
+                  start={{x: 0, y: 1}}
+                  end={{x: 1, y: 1}}
+                  colors={['#F5AD80', '#FF773E']}
+                  style={SUmmaryStyle}>
+                  <View style={styles.LinearTextView}>
+                    <Text style={styles.LinearTopBottomText}>
+                      {FilterList.DashboardFilterMonth === ''
+                        ? moment().utcOffset('+08:00').format('MMMM')
+                        : FilterList.DashboardFilterMonth}{' '}
+                      {FilterList.DashboardFilterYear === ''
+                        ? moment().utcOffset('+08:00').format('YYYYY')
+                        : FilterList.DashboardFilterYear}
+                      {' sales'}
+                    </Text>
+                    <Text style={styles.LinearCenterText}>
+                      P
+                      {numbro(totalSales).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })}
+                    </Text>
+                    <Text style={styles.LinearTopBottomText}>
+                      Current sales{' '}
+                    </Text>
+                  </View>
+                </LinearGradient>
+              </Animatable.View>
+              <Animatable.View
+                useNativeDriver={true}
+                delay={200}
+                animation={totalTargetAnimation ? 'fadeInRight' : undefined}
+                onAnimationEnd={() => settotalTargetsAnimation(false)}>
+                <LinearGradient
+                  opacity={0.9}
+                  start={{x: 0, y: 1}}
+                  end={{x: 1, y: 1}}
+                  colors={['#99C0E8', '#1D85F0']}
+                  style={SUmmaryStyle}>
+                  <View style={styles.LinearTextView}>
+                    <Text style={styles.LinearTopBottomText}>
+                      {FilterList.DashboardFilterMonth === ''
+                        ? moment().utcOffset('+08:00').format('MMMM')
+                        : FilterList.DashboardFilterMonth}{' '}
+                      {FilterList.DashboardFilterYear === ''
+                        ? moment().utcOffset('+08:00').format('YYYY')
+                        : FilterList.DashboardFilterYear}
+                      {' target'}
+                    </Text>
+                    <Text style={styles.LinearCenterText}>
+                      P
+                      {numbro(totalTarget).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })}
+                    </Text>
+                    <Text style={styles.LinearTopBottomText}>
+                      Current target{' '}
+                    </Text>
+                  </View>
+                </LinearGradient>
+                <Animatable.View />
+              </Animatable.View>
+            </View>
+            <View style={styles.LinearView}>
+              <Animatable.View
+                useNativeDriver={true}
+                delay={400}
+                animation={totalAchievementAnimation ? 'fadeInLeft' : undefined}
+                onAnimationEnd={() => settotalAchivementAnimation(false)}>
+                <LinearGradient
+                  opacity={0.9}
+                  start={{x: 0, y: 1}}
+                  end={{x: 1, y: 1}}
+                  colors={['#78F876', '#09E448']}
+                  style={SUmmaryStyle}>
+                  <View style={styles.LinearTextView}>
+                    <Text style={styles.LinearTopBottomText}>
+                      {FilterList.DashboardFilterMonth === ''
+                        ? moment().utcOffset('+08:00').format('MMMM')
+                        : FilterList.DashboardFilterMonth}{' '}
+                      {FilterList.DashboardFilterYear === ''
+                        ? moment().utcOffset('+08:00').format('YYYY')
+                        : FilterList.DashboardFilterYear}
+                      {' achievement'}
+                    </Text>
+                    <Animatable.Text
+                      animation="pulse"
+                      easing="ease-out-back"
+                      iterationCount={500}
+                      iterationDelay={100}
+                      style={{textAlign: 'center', fontSize: scale(22)}}>
+                      🏆
+                    </Animatable.Text>
+                    <Text
+                      style={[
+                        styles.LinearCenterText,
+                        {alignSelf: 'center', fontSize: scale(30)},
+                      ]}>
+                      {totalTarget > 0
+                        ? numbro(summaryPercentage).format({
+                            thousandSeparated: true,
+                            mantissa: 2,
+                          })
+                        : 0}
+                      %
+                    </Text>
+                    <Text style={styles.LinearTopBottomText}>Achievement</Text>
+                  </View>
+                </LinearGradient>
+              </Animatable.View>
+              <Animatable.View
+                useNativeDriver={true}
+                delay={400}
+                animation={totalBalanceAnimation ? 'fadeInRight' : undefined}
+                onAnimationEnd={() => settotalBalanceAnimation(false)}>
+                <LinearGradient
+                  opacity={0.9}
+                  start={{x: 0, y: 1}}
+                  end={{x: 1, y: 1}}
+                  colors={['#F0C0EC', '#F42CE4']}
+                  style={SUmmaryStyle}>
+                  <View style={styles.LinearTextView}>
+                    <Text style={styles.LinearTopBottomText}>
+                      {FilterList.DashboardFilterMonth === ''
+                        ? moment().utcOffset('+08:00').format('MMMM')
+                        : FilterList.DashboardFilterMonth}{' '}
+                      {FilterList.DashboardFilterYear === ''
+                        ? moment().utcOffset('+08:00').format('YYYY')
+                        : FilterList.DashboardFilterYear}
+                      {' balance'}
+                    </Text>
+                    <Text style={styles.LinearCenterText}>
+                      P
+                      {numbro(summaryBaltoSell).format({
+                        thousandSeparated: true,
+                        mantissa: 2,
+                      })}
+                    </Text>
+                    <Text style={styles.LinearTopBottomText}>
+                      Current balance to sell{' '}
+                    </Text>
+                  </View>
+                </LinearGradient>
+              </Animatable.View>
+            </View>
 
-          <Animatable.View
-            useNativeDriver={true}
-            delay={600}
-            animation={totalTeamAnimation ? 'zoomInRight' : undefined}
-            onAnimationEnd={() => setTotalTeamANimation(false)}>
-            <View style={{borderWidth: 0, margin: scale(5)}}>
-              {/* <LinearGradient
+            <Animatable.View
+              useNativeDriver={true}
+              delay={600}
+              animation={totalTeamAnimation ? 'zoomInRight' : undefined}
+              onAnimationEnd={() => setTotalTeamANimation(false)}>
+              <View style={{borderWidth: 0, margin: scale(5)}}>
+                {/* <LinearGradient
           opacity={0.9}
           colors={['#00FF8B', '#28E2EE']}
           style={{width: scale(580), height: scale(530)}}> */}
-              <FlatList
-                data={[
-                  {
-                    team: 'TEAM',
-                    sales: 'SALES',
-                    target: 'TARGET',
-                    achievement: 'ACHIEVEMENT',
-                  },
-                ]}
-                renderItem={renderData}
-                initialNumToRender={5}
-                maxToRenderPerBatch={10}
-                windowSize={10}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            </View>
-            <View style={{height: perTeam4.length * scale(75)}}>
-              <FlatList
-                data={perTeam4}
-                renderItem={renderDataDetails}
-                initialNumToRender={5}
-                maxToRenderPerBatch={10}
-                windowSize={10}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            </View>
-          </Animatable.View>
+                <FlatList
+                  data={[
+                    {
+                      team: 'TEAM',
+                      sales: 'SALES',
+                      target: 'TARGET',
+                      achievement: 'ACHIEVEMENT',
+                    },
+                  ]}
+                  renderItem={renderData}
+                  initialNumToRender={5}
+                  maxToRenderPerBatch={10}
+                  windowSize={10}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+              <View style={{height: perTeam4.length * scale(75)}}>
+                <FlatList
+                  data={perTeam4}
+                  renderItem={renderDataDetails}
+                  initialNumToRender={5}
+                  maxToRenderPerBatch={10}
+                  windowSize={10}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+            </Animatable.View>
 
-          {isVisibleModalFilter ? (
-            <DashboardModal
-              display={isVisibleModalFilter}
-              closeDisplay={() => setisVisibleModalFilter(false)} // <- we are passing this function
-            />
-          ) : null}
+            {isVisibleModalFilter ? (
+              <DashboardModal
+                display={isVisibleModalFilter}
+                closeDisplay={() => setisVisibleModalFilter(false)} // <- we are passing this function
+              />
+            ) : null}
 
-          {/* <Modal
+            {/* <Modal
             transparent={true}
             animationInTiming={200}
             useNativeDriver={true}
@@ -1063,9 +1072,10 @@ export default function PerTeamDashboard(props) {
               </View>
             </TouchableWithoutFeedback>
           </Modal> */}
-        </View>
-      </ScrollView>
-    </View>
+          </View>
+        </ScrollView>
+      </View>
+    </ImageOverlay>
   );
 }
 

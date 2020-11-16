@@ -260,6 +260,10 @@ export default function Home(props) {
   }, [globalState.dateTimeUpdated24hr]);
 
   useEffect(() => {
+    getWorkingDays();
+  }, [FilterList.DashboardFilterYearNMonthTeamVendor]);
+
+  useEffect(() => {
     // console.log('3seonds HERE run');
     var secs = 0;
     // BackgroundTimer.clearInterval();
@@ -280,8 +284,8 @@ export default function Home(props) {
 
         globalStatus.updateMode = 'auto';
 
-      // props.navigation.navigate('test');
-         
+        // props.navigation.navigate('test');
+
         BackgroundTimer.clearInterval(intervalId);
       }
     }, 1000);
