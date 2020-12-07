@@ -358,7 +358,7 @@ const SignScreen = (props) => {
 
   const GetUserAccess = () => {
     //*Enabled Hashed Password
-  //  const unpw = data.user_name + '&' + data.hashed_password;
+    //  const unpw = data.user_name + '&' + data.hashed_password;
     const unpw = data.user_name + '&' + data.password;
     console.log(
       server.server_address +
@@ -434,6 +434,14 @@ const SignScreen = (props) => {
             ) {
               // console.log('4');
               ModuleAccess.PerArea = 'ALLOWED';
+            }
+
+            if (
+              key.constant_type === 'MODULE_ACCESS' &&
+              key.constant_value === 'PER CATEGORY'
+            ) {
+              console.log('5');
+              ModuleAccess.PerCategory = 'ALLOWED';
             }
 
             //GET ACCESS TEAM

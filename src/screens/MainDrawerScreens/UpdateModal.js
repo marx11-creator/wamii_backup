@@ -131,16 +131,19 @@ export default function UpdateModal(props) {
   const [net_data, setnet_data] = useState([]);
   const [vendor_data, setvendor_data] = useState([]);
   const [category_data, setcategory_data] = useState([]);
+  const [scjcategory_data, setscjcategory_data] = useState([]);
 
   const [c_customer_data, setc_customer_data] = useState([]);
   const [c_net_data, setc_net_data] = useState([]);
   const [c_vendor_data, setc_vendor_data] = useState([]);
   const [c_category_data, setc_category_data] = useState([]);
+  const [scj_category_data, setscj_category_data] = useState([]);
 
   const [load_pc, setload_pc] = useState(0);
   const [load_n, setload_n] = useState(0);
   const [load_v, setload_v] = useState(0);
   const [load_c, setload_c] = useState(0);
+  const [load_scj, setload_scj] = useState(0);
 
   const [count_c_json, setcount_c_json] = useState('');
 
@@ -1777,6 +1780,7 @@ export default function UpdateModal(props) {
       load_v === 1 &&
       load_n === 1 &&
       load_c === 1 &&
+      load_scj === 1 &&
       MarcStatus === '0'
     ) {
       MarcStatus = '1';
@@ -1785,6 +1789,7 @@ export default function UpdateModal(props) {
       concat_data_per_vendor();
       concat_data_net();
       concat_data_per_category();
+      concat_data_scj_category();
     }
 
     if (
@@ -1792,6 +1797,7 @@ export default function UpdateModal(props) {
       load_v === 2 &&
       load_n === 2 &&
       load_c === 2 &&
+      load_scj === 2 &&
       MarcStatus === '1'
     ) {
       MarcStatus = '2';
@@ -1804,6 +1810,7 @@ export default function UpdateModal(props) {
         bypass_scj();
       } else {
         upload_data_per_category();
+        upload_data_scj_category();
       }
     }
 
@@ -1812,6 +1819,7 @@ export default function UpdateModal(props) {
       load_v === 3 &&
       load_n === 3 &&
       load_c === 3 &&
+      load_scj === 3 &&
       MarcStatus === '2'
     ) {
       MarcStatus = '3';
@@ -1831,6 +1839,7 @@ export default function UpdateModal(props) {
 
   let bypass_scj = () => {
     setload_c(3);
+    setload_scj(3);
   };
 
   let prompt = () => {
@@ -1840,6 +1849,7 @@ export default function UpdateModal(props) {
     setload_n(0);
     setload_v(0);
     setload_c(0);
+    setload_scj(0);
     MarcStatus = '0';
     setq5Marc(true);
     updateProgress = Number(updateProgress) + Number(10);
@@ -1871,11 +1881,13 @@ export default function UpdateModal(props) {
     delete_per_customer_tbl();
     delete_per_vendor_tbl();
     delete_per_category_tbl();
+    delete_scj_category_tbl();
 
     fetch_net_data();
     fetch_per_customer_data();
     fetch_per_vendor_data();
     fetch_per_category_data();
+    fetch_scj_category_data();
 
     setmodalvisible(true);
     setLoading(true);
@@ -1913,6 +1925,16 @@ export default function UpdateModal(props) {
     dbSalesmanNet.transaction(function (tx) {
       tx.executeSql(
         'DELETE FROM tbl_sales_per_category ',
+        [],
+        (tx, results) => {},
+      );
+    });
+  };
+
+  let delete_scj_category_tbl = () => {
+    dbSalesmanNet.transaction(function (tx) {
+      tx.executeSql(
+        'DELETE FROM tbl_scj_per_category ',
         [],
         (tx, results) => {},
       );
@@ -2126,6 +2148,53 @@ export default function UpdateModal(props) {
       .done();
   };
 
+  //done
+  let fetch_scj_category_data = () => {
+    // console.log('104 start');
+    var sales_position_name = global.sales_position_name;
+    var tempstr1 = 'sales_position_name=' + sales_position_name;
+
+    //console.log('22 ' + 'fetching fetch_scj_category_data start');
+    //6
+    Promise.race([
+      fetch(
+        server.server_address + 'scj_category_tbl/salesmanfilter?' + tempstr1,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + APIToken.access_token,
+          },
+        },
+      ),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), 80000),
+      ),
+    ])
+      .then((responseData) => {
+        return responseData.json();
+      })
+      .then((jsonData) => {
+        console.log('FETCH 6 DONE');
+        setscjcategory_data(jsonData);
+        //  console.log('103 success');
+        console.log('21.1 ' + 'fetching fetch_per_category_data success');
+        //setcount_c_json(Object.keys(jsonData).length);
+
+        setLoading(true);
+        setload_scj(1);
+
+        setloadname('Downloading ' + 'SCJ Categories');
+        // console.log('22.1 ' + 'fetching fetch_scj_category_data DONE');
+      })
+      .catch(function (error) {
+        console.log('SCJ category' + error);
+        onErrortimeout();
+      })
+      .done();
+  };
+
   let concat_data_per_customer = () => {
     var combine_data_per_customer = '';
     var mapdata = customer_data.map((item, index) => {
@@ -2262,6 +2331,40 @@ export default function UpdateModal(props) {
     setload_c(2);
   };
 
+  let concat_data_scj_category = () => {
+    var combine_data_scj_category = '';
+    var mapdata = scjcategory_data.map((item, index) => {
+      combine_data_scj_category =
+        combine_data_scj_category +
+        "('" +
+        item.business_year +
+        "','" +
+        item.business_month +
+        "','" +
+        item.team +
+        "','" +
+        item.sales_position_name +
+        "','" +
+        item.salesman_name +
+        "','" +
+        item.invoice_date +
+        "','" +
+        item.account_customer_name +
+        "','" +
+        item.product_category +
+        "','" +
+        item.sales +
+        "','" +
+        item.dateTimeUpdated +
+        "'),";
+    }, []);
+
+    combine_data_scj_category = combine_data_scj_category.slice(0, -1);
+    //console.log(combine_data_scj_customer);
+    setscj_category_data(combine_data_scj_category);
+    setload_scj(2);
+  };
+
   let upload_data_per_customer = () => {
     dbSalesmanNet.transaction(function (tx) {
       tx.executeSql(
@@ -2337,6 +2440,30 @@ export default function UpdateModal(props) {
         },
         (tx, err) => {
           console.log('ADDED HERE2' + err);
+        },
+      );
+    });
+  };
+
+  let upload_data_scj_category = () => {
+    // console.log(
+    //   'INSERT INTO tbl_scj_per_category (business_year, business_month, team, sales_position_name, salesman_name, invoice_date, account_customer_name, product_category, sales, dateTimeUpdated) VALUES ' +
+    //     scj_category_data,
+    // );
+    dbSalesmanNet.transaction(function (tx) {
+      tx.executeSql(
+        'INSERT INTO tbl_scj_per_category (business_year, business_month, team, sales_position_name, salesman_name, invoice_date, account_customer_name, product_category, sales, dateTimeUpdated) VALUES ' +
+          scj_category_data,
+        [],
+        (tx, results) => {
+          // console.log('Results', results.rowsAffected);
+          setmodalvisible(true);
+          // setload_v(i++);
+          setload_scj(3);
+          //   console.log('26 ' + 'DONE upload_data_scj_category');
+        },
+        (tx, err) => {
+          console.log('ADDED HERE2.1' + err);
         },
       );
     });

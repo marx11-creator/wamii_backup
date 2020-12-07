@@ -28,6 +28,7 @@ import {
   LastDateTimeUpdated,
   hhmmss,
   CurrentAppScreen,
+  ModuleAccess,
 } from '../../sharedComponents/globalCommands/globalCommands';
 import moment, {months} from 'moment';
 import {ProgressCircle} from 'react-native-svg-charts';
@@ -69,6 +70,7 @@ export default function ViewScreen(props) {
       push_sales_net();
       push_sales_per_vendor();
       push_sales_per_customer();
+      push_sales_scj_customer();
       push_sales_per_category();
       //update_formatted_sectionlist();
       setfocus_int(1);
@@ -81,6 +83,7 @@ export default function ViewScreen(props) {
       push_sales_net();
       push_sales_per_vendor();
       push_sales_per_customer();
+      push_sales_scj_customer();
       push_sales_per_category();
       //update_formatted_sectionlist();
       setfocus_int(1);
@@ -93,6 +96,7 @@ export default function ViewScreen(props) {
     push_sales_net();
     push_sales_per_vendor();
     push_sales_per_customer();
+    push_sales_scj_customer();
     push_sales_per_category();
     //update_formatted_sectionlist();
     setfocus_int(1);
@@ -101,6 +105,9 @@ export default function ViewScreen(props) {
   //let [FlatListItems, setFlatListItems] = useState([]);
   //let [SectionListItems, setSectionListItems] = useState([]);
   let [Formatted_SL, setFormatted_SL] = useState([]);
+
+  let [Formatted_SCJSL, setFormatted_SCJSL] = useState([]);
+
   let [FlatVendor, setFlatVendor] = useState([]);
   let [FlatCategory, setFlatCategory] = useState([]);
 
@@ -277,7 +284,7 @@ export default function ViewScreen(props) {
           "'" +
           DateTo +
           "'" +
-          '  GROUP BY invoice_date, account_customer_name, principal_name ORDER BY invoice_date DESC) as sortinvoicedate ORDER BY sortinvoicedate.account_customer_name ASC',
+          '  GROUP BY account_customer_name, principal_name ORDER BY invoice_date DESC) as sortinvoicedate ORDER BY sortinvoicedate.account_customer_name ASC',
         [],
         (tx, results) => {
           var temp = [];
@@ -301,10 +308,10 @@ export default function ViewScreen(props) {
                   key: post.account_customer_name,
                   data: [
                     {
-                      invoice_date: post.invoice_date,
+                      //invoice_date: post.invoice_date,
                       principal_name: post.principal_name,
                       sales: post.sales,
-                      invoice_status_final: post.invoice_status_final,
+                      //invoice_status_final: post.invoice_status_final,
                     },
                   ],
                 },
@@ -313,16 +320,117 @@ export default function ViewScreen(props) {
             acc[foundIndex].data = [
               ...acc[foundIndex].data,
               {
-                invoice_date: post.invoice_date,
+                //invoice_date: post.invoice_date,
                 principal_name: post.principal_name,
                 sales: post.sales,
-                invoice_status_final: post.invoice_status_final,
+                //invoice_status_final: post.invoice_status_final,
               },
             ];
             return acc;
           }, []);
 
           setFormatted_SL(postsByCustomer);
+        },
+      );
+    });
+  }
+
+  function push_sales_scj_customer() {
+    var YearQuery = '';
+    if (FilterList.DashboardFilterYear === '') {
+      YearQuery =
+        '  business_year =  ' +
+        "'" +
+        moment().utcOffset('+08:00').format('YYYY') +
+        "'";
+    } else {
+      YearQuery =
+        ' business_year = ' + "'" + FilterList.DashboardFilterYear + "'";
+    }
+
+    var MonthQuery = '';
+    if (FilterList.DashboardFilterMonth === '') {
+      MonthQuery =
+        ' and  business_month =  ' +
+        "'" +
+        moment().utcOffset('+08:00').format('MMMM') +
+        "'";
+    } else {
+      MonthQuery =
+        ' and  business_month = ' + "'" + FilterList.DashboardFilterMonth + "'";
+    }
+
+    db.transaction((tx) => {
+      var YearQuery = '';
+      if (FilterList.DashboardFilterYear === '') {
+        YearQuery = moment().utcOffset('+08:00').format('YYYY');
+      } else {
+        YearQuery = FilterList.DashboardFilterYear;
+      }
+
+      var MonthQuery = '';
+      if (FilterList.DashboardFilterMonth === '') {
+        MonthQuery = moment().utcOffset('+08:00').format('MM');
+      } else {
+        MonthQuery = moment()
+          .month(FilterList.DashboardFilterMonth)
+          .format('MM');
+      }
+
+      var DateFrom = YearQuery + '-' + MonthQuery + '-' + '01';
+      var DateTo = YearQuery + '-' + MonthQuery + '-' + '31';
+
+      tx.executeSql(
+        'SELECT * FROM (SELECT account_customer_name, product_category, SUM(sales) AS sales FROM tbl_scj_per_category WHERE invoice_date BETWEEN  ' +
+          "'" +
+          DateFrom +
+          "'" +
+          '  AND   ' +
+          "'" +
+          DateTo +
+          "'" +
+          '  GROUP BY account_customer_name, product_category ) as sortinvoicedate ORDER BY sortinvoicedate.account_customer_name ASC',
+        [],
+        (tx, results) => {
+          var temp = [];
+          for (let i = 0; i < results.rows.length; ++i) {
+            temp.push(results.rows.item(i));
+          }
+
+          //console.log(temp);
+
+          //setSectionListItems(temp);
+
+          //setFlatListItems(temp);
+          const postsBySCJCustomer = temp.reduce((acc, post) => {
+            const foundIndex = acc.findIndex(
+              (Element) => Element.key === post.account_customer_name,
+            );
+            if (foundIndex === -1) {
+              return [
+                ...acc,
+                {
+                  key: post.account_customer_name,
+                  data: [
+                    {
+                      product_category: post.product_category,
+                      sales: post.sales,
+                    },
+                  ],
+                },
+              ];
+            }
+            acc[foundIndex].data = [
+              ...acc[foundIndex].data,
+              {
+                product_category: post.product_category,
+                sales: post.sales,
+              },
+            ];
+            return acc;
+          }, []);
+
+          setFormatted_SCJSL(postsBySCJCustomer);
         },
       );
     });
@@ -1077,39 +1185,40 @@ export default function ViewScreen(props) {
             </TouchableOpacity>
 
             {/* <Button title="Customers" onPress={() => Customer_shown()} /> */}
-            <SectionList
-              sections={Formatted_SL}
-              keyExtractor={(item, index) => item + index}
-              renderItem={({item}) => (
-                <View style={{flexDirection: 'row', padding: 2}}>
-                  <View style={{flex: 2}}>
+            {ModuleAccess.PerCategory === 'ALLOWED' ? (
+              <SectionList
+                sections={Formatted_SCJSL}
+                keyExtractor={(item, index) => item + index}
+                renderItem={({item}) => (
+                  <View style={{flexDirection: 'row', padding: 2}}>
+                    {/* <View style={{flex: 2}}>
                     <Text
                       style={{
                         fontSize: moderateScale(15, 0.5),
                         color: 'white',
                       }}>
-                      {item.invoice_date}
+                      {item.product_category}
                     </Text>
-                  </View>
-                  <View style={{flex: 5}}>
-                    <Text
-                      style={{
-                        fontSize: moderateScale(15, 0.5),
-                        color: 'white',
-                      }}>
-                      {item.principal_name}
-                    </Text>
-                  </View>
-                  <View style={{flex: 2}}>
-                    <Text
-                      style={{
-                        fontSize: moderateScale(20, 0.5),
-                        color: 'white',
-                      }}>
-                      {numFormatter(item.sales)}
-                    </Text>
-                  </View>
-                  <View style={{flex: 1}}>
+                  </View> */}
+                    <View style={{flex: 5}}>
+                      <Text
+                        style={{
+                          fontSize: moderateScale(20, 0.5),
+                          color: 'white',
+                        }}>
+                        {item.product_category}
+                      </Text>
+                    </View>
+                    <View style={{flex: 1}}>
+                      <Text
+                        style={{
+                          fontSize: moderateScale(20, 0.5),
+                          color: 'white',
+                        }}>
+                        {numFormatter(item.sales)}
+                      </Text>
+                    </View>
+                    {/* <View style={{flex: 1}}>
                     <Text
                       style={{
                         fontSize: moderateScale(15, 0.5),
@@ -1206,20 +1315,165 @@ export default function ViewScreen(props) {
                         />
                       ) : null}
                     </Text>
+                  </View> */}
                   </View>
-                </View>
-              )}
-              renderSectionHeader={({section: {key}}) => (
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: '#10D070',
-                    borderRadius: 5,
-                  }}>
-                  <Text style={{fontSize: moderateScale(15)}}>{' '}{key}</Text>
-                </View>
-              )}
-            />
+                )}
+                renderSectionHeader={({section: {key}}) => (
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#10D070',
+                      borderRadius: 5,
+                    }}>
+                    <Text style={{fontSize: moderateScale(15)}}> {key}</Text>
+                  </View>
+                )}
+              />
+            ) : (
+              <SectionList
+                sections={Formatted_SL}
+                keyExtractor={(item, index) => item + index}
+                renderItem={({item}) => (
+                  <View style={{flexDirection: 'row', padding: 2}}>
+                    {/* <View style={{flex: 2}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(15, 0.5),
+                        color: 'white',
+                      }}>
+                      {item.product_category}
+                    </Text>
+                  </View> */}
+                    <View style={{flex: 5}}>
+                      <Text
+                        style={{
+                          fontSize: moderateScale(20, 0.5),
+                          color: 'white',
+                        }}>
+                        {item.principal_name}
+                      </Text>
+                    </View>
+                    <View style={{flex: 1}}>
+                      <Text
+                        style={{
+                          fontSize: moderateScale(20, 0.5),
+                          color: 'white',
+                        }}>
+                        {numFormatter(item.sales)}
+                      </Text>
+                    </View>
+                    {/* <View style={{flex: 1}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(15, 0.5),
+                        color: 'white',
+                      }}>
+                      {item.invoice_status_final === 'null' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'SAVED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'PREPARING' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'PREPARED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'CONFIRMED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'LOADING' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'LOADED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'DISPATCH' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'DELIVERED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                    </Text>
+                  </View> */}
+                  </View>
+                )}
+                renderSectionHeader={({section: {key}}) => (
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#10D070',
+                      borderRadius: 5,
+                    }}>
+                    <Text style={{fontSize: moderateScale(15)}}> {key}</Text>
+                  </View>
+                )}
+              />
+            )}
           </View>
         </View>
       </SafeAreaView>
@@ -1576,28 +1830,45 @@ export default function ViewScreen(props) {
             </TouchableOpacity>
             {/* <Button title="Minimize" onPress={() => All_shown()} /> */}
 
-            <SectionList
-              sections={Formatted_SL}
-              keyExtractor={(item, index) => item + index}
-              renderItem={({item}) => (
-                <View style={{flexDirection: 'row', padding: 2}}>
-                  <View style={{flex: 2}}>
-                    <Text style={{fontSize: moderateScale(15, 0.5), color: 'white'}}>
-                      {item.invoice_date}
+            {ModuleAccess.PerCategory === 'ALLOWED' ? (
+              <SectionList
+                sections={Formatted_SCJSL}
+                keyExtractor={(item, index) => item + index}
+                renderItem={({item}) => (
+                  <View style={{flexDirection: 'row', padding: 2}}>
+                    {/* <View style={{flex: 2}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(15, 0.5),
+                        color: 'white',
+                      }}>
+                      {item.product_category}
                     </Text>
-                  </View>
-                  <View style={{flex: 5}}>
-                    <Text style={{fontSize:  moderateScale(15, 0.5), color: 'white'}}>
-                      {item.principal_name}
-                    </Text>
-                  </View>
-                  <View style={{flex: 2}}>
-                    <Text style={{fontSize:  moderateScale(15, 0.5), color: 'white'}}>
-                      {numFormatter(item.sales)}
-                    </Text>
-                  </View>
-                  <View style={{flex: 0.5}}>
-                    <Text style={{fontSize:  moderateScale(15, 0.5), color: 'white'}}>
+                  </View> */}
+                    <View style={{flex: 5}}>
+                      <Text
+                        style={{
+                          fontSize: moderateScale(20, 0.5),
+                          color: 'white',
+                        }}>
+                        {item.product_category}
+                      </Text>
+                    </View>
+                    <View style={{flex: 1}}>
+                      <Text
+                        style={{
+                          fontSize: moderateScale(20, 0.5),
+                          color: 'white',
+                        }}>
+                        {numFormatter(item.sales)}
+                      </Text>
+                    </View>
+                    {/* <View style={{flex: 1}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(15, 0.5),
+                        color: 'white',
+                      }}>
                       {item.invoice_status_final === 'null' ? (
                         <View
                           style={{
@@ -1689,20 +1960,165 @@ export default function ViewScreen(props) {
                         />
                       ) : null}
                     </Text>
+                  </View> */}
                   </View>
-                </View>
-              )}
-              renderSectionHeader={({section: {key}}) => (
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: '#10D070',
-                    borderRadius: 5,
-                  }}>
-                  <Text style={{fontSize:  moderateScale(15, 0.5)}}>{' '}{key}</Text>
-                </View>
-              )}
-            />
+                )}
+                renderSectionHeader={({section: {key}}) => (
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#10D070',
+                      borderRadius: 5,
+                    }}>
+                    <Text style={{fontSize: moderateScale(15)}}> {key}</Text>
+                  </View>
+                )}
+              />
+            ) : (
+              <SectionList
+                sections={Formatted_SL}
+                keyExtractor={(item, index) => item + index}
+                renderItem={({item}) => (
+                  <View style={{flexDirection: 'row', padding: 2}}>
+                    {/* <View style={{flex: 2}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(15, 0.5),
+                        color: 'white',
+                      }}>
+                      {item.product_category}
+                    </Text>
+                  </View> */}
+                    <View style={{flex: 5}}>
+                      <Text
+                        style={{
+                          fontSize: moderateScale(20, 0.5),
+                          color: 'white',
+                        }}>
+                        {item.principal_name}
+                      </Text>
+                    </View>
+                    <View style={{flex: 1}}>
+                      <Text
+                        style={{
+                          fontSize: moderateScale(23, 0.5),
+                          color: 'white',
+                        }}>
+                        {numFormatter(item.sales)}
+                      </Text>
+                    </View>
+                    {/* <View style={{flex: 1}}>
+                    <Text
+                      style={{
+                        fontSize: moderateScale(15, 0.5),
+                        color: 'white',
+                      }}>
+                      {item.invoice_status_final === 'null' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'SAVED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'PREPARING' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'PREPARED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#F8A4AF',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'CONFIRMED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'LOADING' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'LOADED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'DISPATCH' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                      {item.invoice_status_final === 'DELIVERED' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#09F67F',
+                            width: scale(30),
+                            height: scale(30),
+                            borderRadius: 50,
+                          }}
+                        />
+                      ) : null}
+                    </Text>
+                  </View> */}
+                  </View>
+                )}
+                renderSectionHeader={({section: {key}}) => (
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#10D070',
+                      borderRadius: 5,
+                    }}>
+                    <Text style={{fontSize: moderateScale(15)}}> {key}</Text>
+                  </View>
+                )}
+              />
+            )}
             {/* sectionlist here */}
           </View>
         </View>

@@ -233,6 +233,22 @@ dbSalesmanNet.transaction(function (txn) {
   );
 });
 
+dbSalesmanNet.transaction(function (txn) {
+  txn.executeSql(
+    "SELECT name FROM sqlite_master WHERE type='table' AND name='tbl_scj_per_category'",
+    [],
+    function (tx, res) {
+      if (res.rows.length == 0) {
+        txn.executeSql('DROP TABLE IF EXISTS tbl_scj_per_category', []);
+        txn.executeSql(
+          'CREATE TABLE IF NOT EXISTS tbl_scj_per_category(user_id INTEGER PRIMARY KEY AUTOINCREMENT, business_year VARCHAR(255), business_month VARCHAR(255), team VARCHAR(255), sales_position_name VARCHAR(255), salesman_name VARCHAR(255), invoice_date VARCHAR(255), account_customer_name VARCHAR(255), product_category VARCHAR(255), sales INT(100), dateTimeUpdated VARCHAR(255))',
+          [],
+        );
+      }
+    },
+  );
+});
+
 dblastdatetimeupdated.transaction(function (txn) {
   txn.executeSql(
     "SELECT name FROM sqlite_master WHERE type='table' AND name='lastdatetimeupdated_tbl'",

@@ -221,7 +221,7 @@ export default function SplashScreen(props) {
           //console.log(
           //   'before update' + LocalAppVersionUpdate.LocalAppVersionUpdateField,
           // );
-       //   console.log('focus on Splash123');
+          //   console.log('focus on Splash123');
           Update1008();
         }
 
@@ -230,13 +230,13 @@ export default function SplashScreen(props) {
           //console.log(
           //   'before update' + LocalAppVersionUpdate.LocalAppVersionUpdateField,
           // );
-       //   console.log('focus on Splash123');
+          //   console.log('focus on Splash123');
           Update1009();
           CheckUserifLogin(); //moved tihs when u have new update to load check user on last update
         }
       } else {
         //console.log('local is updated, nothing to update.');
-         console.log('6addad');
+        console.log('6addad');
         console.log(LocalAppVersionUpdate.LocalAppVersionUpdateField);
 
         CheckUserifLogin();
@@ -276,7 +276,7 @@ export default function SplashScreen(props) {
           var dateTimeObtained = '';
           if (len > 0) {
             APIToken.access_token = results.rows.item(0).access_token;
-           // console.log(results.rows.item(0).access_token);
+            // console.log(results.rows.item(0).access_token);
             // console.log(results.rows.item(0).dateTimeObtained);
             dateTimeObtained = results.rows.item(0).dateTimeObtained;
             // console.log(moment(currentdate).diff(dateTimeObtained, 'days'));
@@ -367,6 +367,14 @@ export default function SplashScreen(props) {
               ModuleAccess.PerArea = 'ALLOWED';
             }
 
+            if (
+              key.constant_type === 'MODULE_ACCESS' &&
+              key.constant_value === 'PER CATEGORY'
+            ) {
+              console.log('5');
+              ModuleAccess.PerCategory = 'ALLOWED';
+            }
+
             //GET ACCESS TEAM
             if (key.constant_type === 'TEAM_ACCESS') {
               global.TeamAccessList =
@@ -390,7 +398,6 @@ export default function SplashScreen(props) {
               OtherSettings.AccountValidity = key.constant_value;
             }
 
-            
             //GET USER_DEFAULT_PRICE_OPTION STATUS
             if (key.constant_type === 'USER_DEFAULT_PRICE_OPTION') {
               OtherSettings.UserDefaultpriceOption = key.constant_value;
@@ -677,7 +684,7 @@ const styles = StyleSheet.create({
   textSign: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: moderateScale(16)
+    fontSize: moderateScale(16),
   },
   loading: {
     position: 'absolute',

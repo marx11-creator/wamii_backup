@@ -15,6 +15,8 @@ export var ModuleAccess = {
   PerSalesman: 'NOT ALLOWED',
   PerPrincipal: 'NOT ALLOWED',
   PerArea: 'NOT ALLOWED',
+
+  PerCategory: 'NOT ALLOWED',
 };
 
 function SQLerror(err) {
@@ -29,7 +31,8 @@ export var server = {
   //https://boiling-atoll-20376.herokuapp.com/
   //http://178.128.217.246/
   //http://172.16.0.53:81//
-  server_address: 'http://178.128.217.246:81/',
+  //server_address: 'http://178.128.217.246:81/',
+  server_address: 'http://172.16.0.99:8080/',
 };
 
 export var CurrentAppVersionUpdate = {
@@ -136,7 +139,8 @@ export const ResetModuleAccess = () => {
     (ModuleAccess.PerTeam = 'NOT ALLOWED'),
     (ModuleAccess.PerSalesman = 'NOT ALLOWED'),
     (ModuleAccess.PerPrincipal = 'NOT ALLOWED'),
-    (ModuleAccess.PerArea = 'NOT ALLOWED')
+    (ModuleAccess.PerArea = 'NOT ALLOWED'),
+    (ModuleAccess.PerCategory = 'NOT ALLOWED')
   );
 };
 
@@ -298,8 +302,6 @@ function DeleteCalendar() {
 //   GetDateTime();
 //   // console.log('GLOBAL YEARS MONTHS TEAM  LOADED');
 // }
-
-
 
 export function GetDateTime() {
   dblastdatetimeupdated.transaction((tx) => {
